@@ -117,6 +117,7 @@
 └── docs/                         # 项目文档
     ├── README.md                 # 详细文档
     ├── architecture.md           # 架构设计文档
+    ├── code-structure-guidelines.md # 代码结构指南
     ├── content-processing-workflow.md # 内容处理工作流程
     ├── future-index-refactor-plan.md # 索引页重构计划
     ├── plan.md                   # 开发计划
@@ -152,6 +153,12 @@
 由于网络环境的限制，在与 GitHub 交互时需要使用代理。我们已经配置了 Xray 代理服务，可以通过设置 `https_proxy=socks5://127.0.0.1:7911` 来使用。
 
 详细的版本管理计划请参考 [version-management.md](version-management.md)。
+
+## 代码结构与开发规范
+
+凿壁项目采用了一系列代码结构规范和最佳实践，以确保代码质量和可维护性。这些规范基于代码审计结果和实践经验总结而来。
+
+详细的代码结构指南请参考 [code-structure-guidelines.md](code-structure-guidelines.md)。
 
 ## 元数据管理与处理
 
