@@ -83,17 +83,17 @@ sudo systemctl enable nginx # 设置 Nginx 开机启动
     server {
         listen 80;
         # 替换为你的服务器域名或公网 IP 地址
-        server_name _; 
+        server_name _;
 
         # 如果你的项目名称不是 'my-react-app' 或选择了不同的构建输出目录，请调整 root 路径
-        root /var/www/react-app/my-react-app/dist; 
-        index index.html index.htm;
+        root /var/www/react-app/my-react-app/dist;
+        index html/index.html index.html index.htm;
 
         location / {
             # 对单页应用 (SPA) 很重要
             # 尝试直接提供请求的文件，如果找不到，
-            # 则提供 index.html 让客户端路由处理。
-            try_files $uri $uri/ /index.html;
+            # 则提供 html/index.html 让客户端路由处理。
+            try_files $uri $uri/ /html/index.html;
         }
 
         # 可选增强配置:
@@ -118,7 +118,7 @@ sudo systemctl enable nginx # 设置 Nginx 开机启动
 2.  通过创建符号链接来启用站点:
     ```bash
     # 如果默认站点存在且与端口 80 冲突，则移除
-    # sudo rm /etc/nginx/sites-enabled/default 
+    # sudo rm /etc/nginx/sites-enabled/default
     sudo ln -s /etc/nginx/sites-available/react-app /etc/nginx/sites-enabled/
     ```
 
