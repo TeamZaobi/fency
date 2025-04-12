@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布日期修正工具</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; padding: 20px; background-color: #f4f7f9; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c3e50; margin-bottom: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { background-color: #f8f9fa; font-weight: 600; color: #495057; }
+        tr:nth-child(even) { background-color: #fdfdfe; }
+        tr:hover { background-color: #f1f1f1; }
+        td span { display: block; font-size: 0.9em; color: #666; margin-top: 4px; }
+        input[type="date"] { padding: 8px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95em; width: 150px; }
+        input[type="date"]:invalid { border-color: #e74c3c; }
+        .actions { margin-top: 20px; text-align: center; }
+        button { padding: 12px 25px; margin: 0 10px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; transition: background-color 0.3s ease; }
+        button:hover { background-color: #2980b9; }
+        button#copy-json-btn { background-color: #2ecc71; }
+        button#copy-json-btn:hover { background-color: #27ae60; }
+        textarea { width: 100%; height: 300px; margin-top: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-family: monospace; font-size: 0.9em; resize: vertical; }
+        .path { font-family: monospace; font-size: 0.85em; color: #555; word-break: break-all; }
+        .title { font-weight: 500; }        
+        .description { font-size: 0.9em; color: #444; }
+        .date-info { font-size: 0.85em; color: #777; }
+        .date-input-cell { min-width: 170px; /* Ensure enough space for date input */ }
+        .notification { margin-top: 15px; padding: 10px; border-radius: 4px; text-align: center; display: none; }
+        .notification.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .notification.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>发布日期修正工具</h1>
+
+        <div id="loading-message">正在加载元数据...</div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>文件路径 / 标题 / 描述</th>
+                    <th>当前发布日期<br><span class="date-info">(最后修改日期)</span></th>
+                    <th>修正后发布日期</th>
+                </tr>
+            </thead>
+            <tbody id="pages-list">
+                <!-- 页面数据将动态插入这里 -->
+            </tbody>
+        </table>
+
+        <div class="actions">
+            <button id="generate-json-btn">生成更新后的 JSON</button>
+            <button id="copy-json-btn" disabled>复制 JSON 到剪贴板</button>
+        </div>
+
+        <textarea id="output-json" placeholder="生成的 JSON 将显示在这里..." readonly></textarea>
+
+        <div id="notification-area" class="notification"></div>
+
+    </div>
+
+    <script>
+        const pagesListBody = document.getElementById('pages-list');
+        const generateJsonBtn = document.getElementById('generate-json-btn');
+        const copyJsonBtn = document.getElementById('copy-json-btn');
+        const outputJsonTextarea = document.getElementById('output-json');
+        const loadingMessage = document.getElementById('loading-message');
+        const notificationArea = document.getElementById('notification-area');
+
+        let originalMetadata = null; // 存储原始加载的数据
+
+        // --- 功能函数 ---
+
+        function showNotification(message, type = 'success') {
+            notificationArea.textContent = message;
+            notificationArea.className = `notification ${type}`; // Reset classes
+            notificationArea.style.display = 'block';
+            setTimeout(() => {
+                notificationArea.style.display = 'none';
+            }, 3000); // Hide after 3 seconds
+        }
+
+        function formatDate(isoString) {
+             if (!isoString) return 'N/A';
+             try {
+                 // 尝试多种格式解析，优先 YYYY-MM-DD
+                 const dateMatch = isoString.match(/^(\d{4}-\d{2}-\d{2})/);
+                 if (dateMatch) {
+                     return dateMatch[1];
+                 }
+                 // 否则尝试解析 ISO 字符串
+                 const date = new Date(isoString);
+                 if (isNaN(date.getTime())) return '无效日期';
+                 return date.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+             } catch (e) {
+                 return '解析错误';
+             }
+        }
+
+        // 加载并显示数据
+        async function loadMetadata() {
+            try {
+                // 使用相对路径访问 metadata.json
+                const response = await fetch('../html/metadata.json');
+                if (!response.ok) {
+                    // 更详细的错误处理
+                    let errorMsg = `HTTP error! status: ${response.status}`;
+                    if (response.status === 404) {
+                        errorMsg += ' (metadata.json not found at expected location: ../html/metadata.json)';
+                    } else {
+                         try {
+                              const text = await response.text();
+                              errorMsg += ` - ${text}`;
+                         } catch(e) {}
+                    }
+                    throw new Error(errorMsg);
+                }
+                originalMetadata = await response.json();
+
+                if (!originalMetadata || !originalMetadata.pages || !Array.isArray(originalMetadata.pages)) {
+                     throw new Error('无效的 metadata.json 格式');
+                }
+
+                pagesListBody.innerHTML = ''; // 清空现有列表
+
+                // 按原始 publish-date (非格式化) 或 lastModifiedDate 粗略排序，让新文件靠前？或者维持原顺序
+                 originalMetadata.pages.sort((a, b) => {
+                     const dateA = new Date(a['publish-date'] || a.publishDate || a.lastModifiedDate);
+                     const dateB = new Date(b['publish-date'] || b.publishDate || b.lastModifiedDate);
+                     if (isNaN(dateA.getTime())) return 1;
+                     if (isNaN(dateB.getTime())) return -1;
+                     return dateB - dateA; // 降序
+                 });
+
+
+                originalMetadata.pages.forEach(page => {
+                    const row = pagesListBody.insertRow();
+
+                    const cellInfo = row.insertCell();
+                    const cellCurrentDate = row.insertCell();
+                    const cellNewDate = row.insertCell();
+                    cellNewDate.classList.add('date-input-cell');
+
+                    // 使用 'publish-date' 字段，如果不存在则用 publishDate
+                    const currentPublishDate = page['publish-date'] || page.publishDate || '';
+                    const formattedCurrentDate = formatDate(currentPublishDate);
+                    const formattedLastModified = formatDate(page.lastModifiedDate);
+
+                    cellInfo.innerHTML = `
+                        <div class="path">${page.path || 'N/A'}</div>
+                        <div class="title">${page.title || '无标题'}</div>
+                        <span class="description">${page.description || '无描述'}</span>
+                    `;
+                    cellCurrentDate.innerHTML = `
+                        ${formattedCurrentDate}
+                        <span class="date-info">(${formattedLastModified})</span>
+                    `;
+
+                    const dateInput = document.createElement('input');
+                    dateInput.type = 'date';
+                    dateInput.dataset.pageId = page.id; // 存储页面ID以便后续查找
+                    // 设置初始值，如果当前日期有效
+                    if (formattedCurrentDate !== 'N/A' && formattedCurrentDate !== '无效日期' && formattedCurrentDate !== '解析错误') {
+                        dateInput.value = formattedCurrentDate;
+                    } else {
+                         // 如果日期无效或缺失，设置为今天的日期
+                         dateInput.value = new Date().toISOString().split('T')[0];
+                    }
+                    cellNewDate.appendChild(dateInput);
+                });
+
+                loadingMessage.style.display = 'none'; // 隐藏加载信息
+
+            } catch (error) {
+                console.error('加载或解析 metadata.json 时出错:', error);
+                loadingMessage.textContent = `错误: 无法加载或解析 metadata.json (${error.message})。请确保文件位于 '../html/metadata.json' 且格式正确。`;
+                loadingMessage.style.color = 'red';
+                generateJsonBtn.disabled = true; // 加载失败则禁用按钮
+            }
+        }
+
+        // 生成更新后的 JSON
+        generateJsonBtn.addEventListener('click', () => {
+            if (!originalMetadata || !originalMetadata.pages) {
+                showNotification('错误：原始元数据未加载！', 'error');
+                return;
+            }
+
+            const newPagesArray = [];
+            const dateInputs = pagesListBody.querySelectorAll('input[type="date"]');
+            let changesMade = false;
+            let invalidDateFound = false;
+
+            // 创建一个快速查找输入框的映射
+            const inputMap = new Map();
+            dateInputs.forEach(input => {
+                 if (input.dataset.pageId) {
+                     if (!input.value) { // 检查日期是否为空
+                         invalidDateFound = true;
+                         input.style.borderColor = '#e74c3c'; // 标记空日期输入框
+                     } else {
+                         input.style.borderColor = '#ccc'; // 重置边框颜色
+                     }
+                     inputMap.set(input.dataset.pageId, input.value);
+                 }
+            });
+
+            if (invalidDateFound) {
+                showNotification('错误：存在未设置的发布日期，请填写所有日期后再生成。', 'error');
+                return;
+            }
+
+
+            try {
+                originalMetadata.pages.forEach(originalPage => {
+                    const newPage = { ...originalPage }; // 复制原始对象
+                    const newDateValue = inputMap.get(originalPage.id);
+                    const originalDateValue = originalPage['publish-date'] || originalPage.publishDate || '';
+
+                    if (newDateValue && newDateValue !== originalDateValue) {
+                        // 如果输入了新日期且与旧日期不同，则更新
+                        newPage['publish-date'] = newDateValue;
+                        // 清理可能存在的旧冗余字段 (可选，保持数据干净)
+                        if ('publishDate' in newPage) {
+                            delete newPage.publishDate;
+                        }
+                        changesMade = true;
+                    } else if (newDateValue && newDateValue === originalDateValue) {
+                        // 日期未改变，确保使用的是 'publish-date'
+                         newPage['publish-date'] = newDateValue;
+                         if ('publishDate' in newPage && 'publish-date' in newPage) {
+                            delete newPage.publishDate;
+                         }
+                    } else {
+                         // 处理 newDateValue 为空的情况（理论上不应发生，因为前面有检查）
+                         console.warn(`页面 ${originalPage.id} 的日期输入值为空，已保留原值 ${originalDateValue}`);
+                         newPage['publish-date'] = originalDateValue;
+                         if ('publishDate' in newPage && 'publish-date' in newPage) {
+                            delete newPage.publishDate;
+                         }
+                    }
+
+                    newPagesArray.push(newPage);
+                });
+
+                // 按新的发布日期重新排序 (确保使用 'publish-date')
+                newPagesArray.sort((a, b) => {
+                    const dateA = new Date(a['publish-date']);
+                    const dateB = new Date(b['publish-date']);
+                    if (isNaN(dateA.getTime())) return 1; // 无效日期排后
+                    if (isNaN(dateB.getTime())) return -1;
+                    return dateB - dateA; // 日期降序
+                });
+
+                const updatedMetadata = {
+                    lastUpdated: new Date().toISOString(),
+                    pages: newPagesArray
+                };
+
+                const jsonString = JSON.stringify(updatedMetadata, null, 2);
+                outputJsonTextarea.value = jsonString;
+                copyJsonBtn.disabled = false; // 使复制按钮可用
+
+                if (changesMade) {
+                   showNotification('JSON 已生成！请复制并手动更新 metadata.json 文件。');
+                } else {
+                   showNotification('未检测到日期修改，生成了已排序的 JSON。', 'success'); // 可以用 info 类型
+                }
+
+            } catch (error) {
+                 console.error('生成 JSON 时出错:', error);
+                 showNotification(`生成 JSON 时出错: ${error.message}`, 'error');
+                 copyJsonBtn.disabled = true;
+            }
+        });
+
+        // 复制 JSON 到剪贴板
+        copyJsonBtn.addEventListener('click', () => {
+            if (!outputJsonTextarea.value) {
+                showNotification('没有 JSON 可复制。', 'error');
+                return;
+            }
+            navigator.clipboard.writeText(outputJsonTextarea.value)
+                .then(() => {
+                    showNotification('JSON 已成功复制到剪贴板！');
+                })
+                .catch(err => {
+                    console.error('无法复制到剪贴板:', err);
+                    showNotification(`无法复制到剪贴板: ${err.message}`, 'error');
+                });
+        });
+
+        // --- 初始化 ---
+        loadMetadata();
+
+    </script>
+</body>
+</html>

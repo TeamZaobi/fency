@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>凿壁项目代码结构分析报告</title>
+
+    <!-- Tailwind CSS via CDN -->
+    <link href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome via CDN -->
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- jQuery via CDN -->
+    <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
+    <!-- jsTree via CDN -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/jstree/3.3.12/themes/default/style.min.css" />
+    <script src="https://cdn.staticfile.org/jstree/3.3.12/jstree.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif; /* 优先使用 Noto Sans SC */
+        }
+        h1, h2, h3 {
+             font-family: 'Noto Serif SC', serif; /* 标题使用 Noto Serif SC */
+        }
+        .report-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #f9fafb; /* Tailwind gray-50 */
+            border-radius: 8px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .table-fixed th, .table-fixed td {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-all; /* Ensure long strings wrap */
+        }
+        #ast-tree-container {
+            max-height: 600px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb; /* Tailwind gray-200 */
+            padding: 1rem;
+            border-radius: 4px;
+            background-color: white;
+        }
+        /* jsTree Customization */
+        .jstree-default .jstree-node, .jstree-default .jstree-leaf {
+            line-height: 1.8; /* Increase line height for readability */
+        }
+        .jstree-default .jstree-anchor {
+            font-size: 0.95rem; /* Slightly larger font */
+        }
+        /* Highlight different node types */
+        .jstree-node[data-nodetype="FunctionDeclaration"] > .jstree-anchor > .jstree-icon { background-position: -260px -4px !important; } /* Use jsTree function icon */
+        .jstree-node[data-nodetype="VariableDeclarator"] > .jstree-anchor > .jstree-icon { background-position: -196px -68px !important; } /* Example icon change */
+        .jstree-node[data-nodetype="CallExpression"] > .jstree-anchor > .jstree-icon { background-position: -4px -68px !important; } /* Example icon change */
+    </style>
+
+    <!-- Embedded Data -->
+    <script id="astData" type="application/json">
+    [
+      {
+        "text": "Program (extract-metadata.js)",
+        "state": { "opened": true },
+        "data": { "nodetype": "Program", "loc": "1-226" },
+        "children": [
+          { "text": "Shebang: #!/usr/bin/env node", "data": { "nodetype": "InterpreterDirective", "loc": "1-1" } },
+          {
+            "text": "VariableDeclaration (const fs = require('fs'))",
+            "data": { "nodetype": "VariableDeclaration", "loc": "14-14" },
+            "children": [ { "text": "require('fs')", "data": { "nodetype": "CallExpression", "loc": "14-14" } } ]
+          },
+          {
+            "text": "VariableDeclaration (const path = require('path'))",
+            "data": { "nodetype": "VariableDeclaration", "loc": "15-15" },
+             "children": [ { "text": "require('path')", "data": { "nodetype": "CallExpression", "loc": "15-15" } } ]
+          },
+          {
+            "text": "VariableDeclaration (const { JSDOM } = require('jsdom'))",
+            "data": { "nodetype": "VariableDeclaration", "loc": "16-16" },
+            "children": [ { "text": "require('jsdom')", "data": { "nodetype": "CallExpression", "loc": "16-16" } } ]
+          },
+           {
+            "text": "VariableDeclaration (const chalk = require('chalk'))",
+            "data": { "nodetype": "VariableDeclaration", "loc": "17-17" },
+            "children": [ { "text": "require('chalk')", "data": { "nodetype": "CallExpression", "loc": "17-17" } } ]
+          },
+          {
+            "text": "VariableDeclaration (const CONFIG = { ... })",
+            "data": { "nodetype": "VariableDeclaration", "loc": "20-33" }
+          },
+          {
+            "text": "FunctionDeclaration: main()",
+            "data": { "nodetype": "FunctionDeclaration", "loc": "36-109" },
+            "children": [
+              { "text": "TryStatement", "data": {"nodetype": "TryStatement"},
+                "children": [
+                  { "text": "Call: console.log(...)", "data": { "nodetype": "CallExpression" } },
+                  { "text": "VariableDeclaration (htmlFiles = await findAllHtmlFiles(...))", "data": { "nodetype": "VariableDeclaration" },
+                    "children": [ { "text": "await findAllHtmlFiles()", "data": { "nodetype": "AwaitExpression"} } ]
+                  },
+                  { "text": "ForOfStatement (for const filePath of htmlFiles)", "data": { "nodetype": "ForOfStatement"},
+                    "children": [
+                        { "text": "TryStatement", "data": {"nodetype": "TryStatement"},
+                            "children": [
+                                 { "text": "VariableDeclaration (metadata = await extractMetadata(...))", "data": { "nodetype": "VariableDeclaration" },
+                                     "children": [ { "text": "await extractMetadata()", "data": { "nodetype": "AwaitExpression"} } ]
+                                 },
+                                 { "text": "VariableDeclaration (validationResult = validateMetadata(...))", "data": { "nodetype": "VariableDeclaration" } },
+                                 { "text": "IfStatement (!validationResult.valid)", "data": { "nodetype": "IfStatement" } }
+                            ]
+                        },
+                         { "text": "CatchClause (catch (err))", "data": { "nodetype": "CatchClause" } }
+                    ]
+                  },
+                  { "text": "Call: fs.writeFileSync(...)", "data": { "nodetype": "CallExpression" } },
+                  { "text": "IfStatement (errors.length > 0 && ...)", "data": { "nodetype": "IfStatement" } }
+                ]
+              },
+              { "text": "CatchClause (catch (err))", "data": { "nodetype": "CatchClause" } }
+            ]
+          },
+          {
+            "text": "FunctionDeclaration: findAllHtmlFiles()",
+            "data": { "nodetype": "FunctionDeclaration", "loc": "112-131" },
+            "children": [
+                { "text": "VariableDeclaration (const files = fs.readdirSync(...))", "data": { "nodetype": "VariableDeclaration"} },
+                { "text": "ForOfStatement (for const file of files)", "data": { "nodetype": "ForOfStatement"},
+                    "children": [
+                        { "text": "IfStatement (stat.isDirectory())", "data": { "nodetype": "IfStatement" },
+                            "children": [ { "text": "AssignmentExpression (htmlFiles = htmlFiles.concat(...))", "data": { "nodetype": "AssignmentExpression"}} ]
+                        },
+                        { "text": "ElseIfStatement (file.endsWith('.html'))", "data": { "nodetype": "IfStatement"} }
+                    ]
+                }
+            ]
+          },
+          {
+            "text": "FunctionDeclaration: extractMetadata()",
+            "data": { "nodetype": "FunctionDeclaration", "loc": "134-183" },
+             "children": [
+                 { "text": "VariableDeclaration (const html = fs.readFileSync(...))", "data": { "nodetype": "VariableDeclaration"} },
+                 { "text": "VariableDeclaration (const dom = new JSDOM(...))", "data": { "nodetype": "VariableDeclaration"} },
+                 { "text": "VariableDeclaration (metadata = { ... })", "data": { "nodetype": "VariableDeclaration"} },
+                 { "text": "Call: document.querySelectorAll('meta')", "data": { "nodetype": "CallExpression" } },
+                 { "text": "Call: metaTags.forEach(...)", "data": { "nodetype": "CallExpression" } },
+                 { "text": "TryStatement", "data": {"nodetype": "TryStatement"},
+                    "children": [
+                        { "text": "Call: bodyText.match(...)", "data": { "nodetype": "CallExpression"} }
+                    ]
+                 }
+             ]
+          },
+          {
+            "text": "FunctionDeclaration: validateMetadata()",
+            "data": { "nodetype": "FunctionDeclaration", "loc": "186-214" },
+            "children": [
+                 { "text": "ForOfStatement (for const requiredTag of CONFIG.requiredMetaTags)", "data": { "nodetype": "ForOfStatement"} },
+                 { "text": "IfStatement (metadata.metaTags.category && ...)", "data": { "nodetype": "IfStatement"} }
+            ]
+          },
+          {
+            "text": "IfStatement (require.main === module)",
+            "data": { "nodetype": "IfStatement", "loc": "217-222" },
+            "children": [
+              { "text": "Call: main().catch(...)", "data": { "nodetype": "CallExpression"} }
+            ]
+          },
+          {
+            "text": "ExpressionStatement (module.exports = { ... })",
+            "data": { "nodetype": "ExpressionStatement", "loc": "225-229" }
+          }
+        ]
+      }
+    ]
+    </script>
+    <script id="analysisReportData" type="application/json">
+    {
+      "summary": "本次分析对凿壁项目的代码结构进行了全面检查，涵盖了 JavaScript 工具脚本、TypeScript 前端逻辑、HTML 内容页面以及核心的 metadata.json 文件。利用 AST 和图数据库技术构建了项目的结构化知识图谱，并识别出元数据一致性、脚本交互、链接结构和元数据完整性方面的一些关键点和潜在问题。",
+      "metadataConsistency": [
+        {
+          "filePath": "pages/knowledge/cognitive-aging-research.html",
+          "discrepancy": {
+            "issue": "Entry exists twice in metadata.json (category 'knowledge' and 'research')",
+            "field": "Multiple Entries",
+            "jsonValue": "knowledge, research",
+            "htmlValue": "N/A"
+          }
+        },
+        {
+          "filePath": "pages/ai-tech/grok-vision.html",
+          "discrepancy": {
+            "issue": "Value mismatch (content may differ).",
+            "field": "description",
+            "jsonValue": "分析 Grok Vision 的功能...",
+            "htmlValue": ""
+          }
+        },
+         {
+          "filePath": "pages/research/llm-chatbot-development.html",
+          "discrepancy": {
+            "issue": "HTML file exists but not found in metadata.json",
+            "field": "Missing Entry",
+            "jsonValue": "N/A",
+            "htmlValue": "File exists"
+          }
+        },
+        {
+          "filePath": "pages/research/ai-essential-papers.html",
+          "discrepancy": {
+            "issue": "Value mismatch (content or order may differ).",
+            "field": "keywords",
+            "jsonValue": "AI必读论文,...",
+            "htmlValue": "AI,必读论文,..."
+          }
+        }
+      ],
+      "scriptInteraction": {
+        "script": "/var/www/scripts/metadata-processor.js",
+        "summary": "该脚本是元数据处理的核心，负责扫描HTML文件、检查元数据、并根据配置修复缺失或无效的元数据。",
+        "dependencies": ["fs", "path", "cheerio", "util"],
+        "definedFunctions": ["findHtmlFiles", "scanDirectory", "checkHtmlMetadata", "fixHtmlMetadata", "generateReport", "main"],
+        "externalCalls": [
+            {"caller": "checkHtmlMetadata", "callee": "readFile (fs)"},
+            {"caller": "checkHtmlMetadata", "callee": "load (cheerio)"},
+            {"caller": "fixHtmlMetadata", "callee": "copyFile (fs)"},
+            {"caller": "fixHtmlMetadata", "callee": "readFile (fs)"},
+            {"caller": "fixHtmlMetadata", "callee": "load (cheerio)"},
+            {"caller": "fixHtmlMetadata", "callee": "writeFile (fs)"},
+            {"caller": "main", "callee": "findHtmlFiles"},
+            {"caller": "main", "callee": "checkHtmlMetadata"},
+            {"caller": "main", "callee": "fixHtmlMetadata"},
+            {"caller": "main", "callee": "generateReport"}
+        ],
+        "fileInteractions": ["Reads HTML", "Writes HTML (if makeChanges=true)", "Reads Directory", "Writes Backup File (.bak)"]
+      },
+       "scriptInteractionLLM": {
+        "script": "/var/www/scripts/metadata-llm-integration.js",
+        "summary": "该脚本负责调用 OpenAI API 来生成缺失的元数据。",
+        "dependencies": ["openai"],
+        "definedFunctions": ["LLMFactory.createLLM", "OpenAILLM.constructor", "OpenAILLM.generateMetadata", "OpenAILLM.buildPrompt", "generateMetadataWithLLM", "generateFallbackMetadata"],
+        "externalCalls": [
+            {"caller": "OpenAILLM.generateMetadata", "callee": "chat.completions.create (openai)"},
+            {"caller": "OpenAILLM.generateMetadata", "callee": "JSON.parse"}
+        ],
+        "fileInteractions": ["Reads Configuration (implicit)", "Interacts with External API (OpenAI)"]
+      },
+       "scriptInteractionVerify": {
+        "script": "/var/www/tools/verify-metadata.js",
+        "summary": "该脚本用于对比 metadata.json 和实际 HTML 文件中的元数据，报告不一致之处。",
+        "dependencies": ["fs", "path"],
+        "definedFunctions": ["extractMetaContent"],
+        "externalCalls": [
+            {"caller": "main (implicit top-level)", "callee": "readFileSync (fs)"},
+            {"caller": "main (implicit top-level)", "callee": "JSON.parse"},
+            {"caller": "main (implicit top-level)", "callee": "existsSync (fs)"},
+            {"caller": "main (implicit top-level)", "callee": "extractMetaContent"}
+        ],
+        "fileInteractions": ["Reads JSON (metadata.json)", "Reads HTML"]
+      },
+      "linkAnalysis": {
+        "summary": "内容页面 (html/pages/) 之间的内部链接较少。大部分导航依赖于 index.html 的分类和可能的未来搜索功能。这表明页面相对独立，耦合度低，但也可能缺乏主题内的深入探索路径。",
+        "examples": []
+      },
+      "missingMetadata": [
+        { "filePath": "pages/ai-tech/grok-vision.html", "missingDesc": true, "missingKeywords": true },
+        { "filePath": "pages/research/llm-chatbot-development.html", "missingDesc": true, "missingKeywords": true },
+        { "filePath": "pages/info-upgrade/medical-ai-insights.html", "missingDesc": false, "missingKeywords": true }
+      ],
+      "fileSummary": {
+        "js": 5,
+        "ts": 2,
+        "html_pages": 30,
+        "html_root": 5,
+        "json": 1
+      }
+    }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-8">
+
+    <header class="mb-8 pb-4 border-b border-gray-300">
+        <h1 class="text-4xl font-bold text-blue-700">凿壁项目代码结构分析报告</h1>
+        <p class="text-lg text-gray-600 mt-2">基于 AST 与图数据库分析的结构化报告</p>
+    </header>
+
+    <div class="report-section">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">报告摘要</h2>
+        <p id="report-summary" class="text-gray-700 leading-relaxed"></p>
+    </div>
+
+    <div class="report-section">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">AST 结构可视化 (示例)</h2>
+        <p class="mb-4 text-gray-600">以下是 <code>/var/www/scripts/metadata/extract-metadata.js</code> 文件的抽象语法树 (AST) 结构。您可以展开节点查看详细结构。</p>
+        <div id="ast-tree-container">
+            <div id="ast-tree"></div>
+        </div>
+    </div>
+
+    <div class="report-section">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">元数据一致性检查</h2>
+        <p class="mb-4 text-gray-600">以下列表展示了 <code>metadata.json</code> 与对应 HTML 文件元数据之间的不一致项。</p>
+        <div class="overflow-x-auto">
+            <table id="metadata-consistency-table" class="min-w-full bg-white border border-gray-300 table-fixed">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="w-1/3 px-4 py-2 text-left text-sm font-semibold text-gray-700">文件路径</th>
+                        <th class="w-1/6 px-4 py-2 text-left text-sm font-semibold text-gray-700">问题字段/类型</th>
+                        <th class="w-1/4 px-4 py-2 text-left text-sm font-semibold text-gray-700">问题描述</th>
+                        <th class="w-1/4 px-4 py-2 text-left text-sm font-semibold text-gray-700">JSON 值 (或状态)</th>
+                        <th class="w-1/4 px-4 py-2 text-left text-sm font-semibold text-gray-700">HTML 值 (或状态)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div class="report-section col-span-1">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">脚本交互分析: Processor</h2>
+            <div id="script-interaction-processor">
+                <!-- Data will be populated by JS -->
+            </div>
+        </div>
+         <div class="report-section col-span-1">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">脚本交互分析: LLM</h2>
+            <div id="script-interaction-llm">
+                <!-- Data will be populated by JS -->
+            </div>
+        </div>
+         <div class="report-section col-span-1">
+            <h2 class="text-2xl font-semibold mb-4 text-gray-700">脚本交互分析: Verify</h2>
+            <div id="script-interaction-verify">
+                <!-- Data will be populated by JS -->
+            </div>
+        </div>
+    </div>
+
+
+    <div class="report-section">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">内容页面链接分析</h2>
+        <div id="link-analysis">
+             <!-- Data will be populated by JS -->
+        </div>
+    </div>
+
+    <div class="report-section">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">缺少关键元数据的页面</h2>
+        <p class="mb-4 text-gray-600">以下 HTML 页面缺少 <code>description</code> 或 <code>keywords</code> 元数据标签。</p>
+         <div class="overflow-x-auto">
+            <table id="missing-metadata-table" class="min-w-full bg-white border border-gray-300 table-fixed">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="w-2/3 px-4 py-2 text-left text-sm font-semibold text-gray-700">文件路径</th>
+                        <th class="w-1/6 px-4 py-2 text-left text-sm font-semibold text-gray-700">缺少 Description</th>
+                        <th class="w-1/6 px-4 py-2 text-left text-sm font-semibold text-gray-700">缺少 Keywords</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data will be populated by JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+     <div class="report-section">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-700">项目文件概览</h2>
+        <div id="file-summary">
+             <!-- Data will be populated by JS -->
+        </div>
+    </div>
+
+
+    <footer class="mt-12 text-center text-gray-500 text-sm">
+        报告生成时间: <span id="generation-time"></span>
+    </footer>
+
+    <script>
+        $(function () {
+            // --- Load Data ---
+            const astData = JSON.parse(document.getElementById('astData').textContent);
+            const reportData = JSON.parse(document.getElementById('analysisReportData').textContent);
+
+            // --- Initialize jsTree ---
+            $('#ast-tree').jstree({
+                'core': {
+                    'data': astData,
+                    'themes': {
+                        'name': 'default',
+                        'responsive': true,
+                        'stripes': true
+                    }
+                },
+                 "plugins" : [ "wholerow" ] // Optional: makes selection span the whole row
+            });
+
+             // Add node type data attribute for styling hooks
+            $('#ast-tree').on('ready.jstree', function (e, data) {
+                data.instance.get_container().find('li').each(function () {
+                    var node = data.instance.get_node(this.id);
+                    if (node && node.data && node.data.nodetype) {
+                         $(this).attr('data-nodetype', node.data.nodetype);
+                    }
+                });
+            });
+
+
+            // --- Populate Report Sections ---
+
+            // Summary
+            $('#report-summary').text(reportData.summary);
+
+            // Metadata Consistency Table
+            const consistencyTbody = $('#metadata-consistency-table tbody');
+            if (reportData.metadataConsistency.length > 0) {
+                reportData.metadataConsistency.forEach(item => {
+                    const discrepancy = item.discrepancy || {};
+                    const row = `
+                        <tr class="border-t border-gray-200 hover:bg-gray-50">
+                            <td class="px-4 py-2 text-sm text-gray-700">${item.filePath || 'N/A'}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${discrepancy.field || 'N/A'}</td>
+                            <td class="px-4 py-2 text-sm text-red-600">${discrepancy.issue || 'N/A'}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${discrepancy.jsonValue || 'N/A'}</td>
+                            <td class="px-4 py-2 text-sm text-gray-700">${discrepancy.htmlValue || 'N/A'}</td>
+                        </tr>`;
+                    consistencyTbody.append(row);
+                });
+            } else {
+                 consistencyTbody.append('<tr><td colspan="5" class="px-4 py-3 text-center text-gray-500">未发现元数据不一致项。</td></tr>');
+            }
+
+            // Script Interaction Analysis (Helper Function)
+            function populateScriptInteraction(elementId, data) {
+                const container = $(`#${elementId}`);
+                if (!data) {
+                     container.html('<p class="text-gray-500">无可用数据。</p>');
+                     return;
+                }
+                let content = `<p class="text-sm text-gray-600 mb-3">${data.summary || ''}</p>`;
+                content += '<h4 class="font-semibold text-gray-600 mb-1">依赖:</h4>';
+                content += `<ul class="list-disc list-inside text-sm text-gray-700 mb-3">${(data.dependencies || []).map(d => `<li>${d}</li>`).join('')}</ul>`;
+                content += '<h4 class="font-semibold text-gray-600 mb-1">定义函数:</h4>';
+                content += `<ul class="list-disc list-inside text-sm text-gray-700 mb-3">${(data.definedFunctions || []).map(f => `<li>${f}</li>`).join('')}</ul>`;
+                 content += '<h4 class="font-semibold text-gray-600 mb-1">外部调用 (示例):</h4>';
+                content += `<ul class="list-disc list-inside text-sm text-gray-700 mb-3">${(data.externalCalls || []).slice(0, 5).map(c => `<li>${c.caller || '?'} -> ${c.callee || '?'} ${c.calleeFile ? '('+c.calleeFile+')': ''}</li>`).join('')}</ul>`;
+                content += '<h4 class="font-semibold text-gray-600 mb-1">文件交互:</h4>';
+                content += `<ul class="list-disc list-inside text-sm text-gray-700">${(data.fileInteractions || []).map(i => `<li>${i}</li>`).join('')}</ul>`;
+                container.html(content);
+            }
+
+            populateScriptInteraction('script-interaction-processor', reportData.scriptInteraction);
+            populateScriptInteraction('script-interaction-llm', reportData.scriptInteractionLLM);
+            populateScriptInteraction('script-interaction-verify', reportData.scriptInteractionVerify);
+
+
+            // Link Analysis
+             $('#link-analysis').html(`<p class="text-sm text-gray-700">${reportData.linkAnalysis.summary || '无可用信息。'}</p>`);
+             // Optionally add link examples if needed
+
+            // Missing Metadata Table
+            const missingTbody = $('#missing-metadata-table tbody');
+             if (reportData.missingMetadata.length > 0) {
+                reportData.missingMetadata.forEach(item => {
+                    const row = `
+                        <tr class="border-t border-gray-200 hover:bg-gray-50">
+                            <td class="px-4 py-2 text-sm text-gray-700">${item.filePath}</td>
+                            <td class="px-4 py-2 text-sm text-center">${item.missingDesc ? '<i class="fas fa-times-circle text-red-500"></i>' : '<i class="fas fa-check-circle text-green-500"></i>'}</td>
+                            <td class="px-4 py-2 text-sm text-center">${item.missingKeywords ? '<i class="fas fa-times-circle text-red-500"></i>' : '<i class="fas fa-check-circle text-green-500"></i>'}</td>
+                        </tr>`;
+                    missingTbody.append(row);
+                });
+            } else {
+                 missingTbody.append('<tr><td colspan="3" class="px-4 py-3 text-center text-gray-500">未发现缺少关键元数据的页面。</td></tr>');
+            }
+
+            // File Summary
+            const summary = reportData.fileSummary;
+            $('#file-summary').html(`
+                <ul class="list-disc list-inside text-sm text-gray-700">
+                    <li>JavaScript 文件 (脚本): ${summary.js}</li>
+                    <li>TypeScript 文件 (前端): ${summary.ts}</li>
+                    <li>HTML 内容页面 (html/pages/): ~${summary.html_pages}</li>
+                    <li>HTML 核心文件 (html/): ${summary.html_root}</li>
+                    <li>JSON 元数据文件: ${summary.json}</li>
+                </ul>
+            `);
+
+
+            // Generation Time
+            $('#generation-time').text(new Date().toLocaleString('zh-CN'));
+        });
+    </script>
+
+</body>
+</html>

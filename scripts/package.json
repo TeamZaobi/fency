@@ -1,0 +1,23 @@
+{
+  "name": "zhaobi-metadata-tools",
+  "version": "1.0.0",
+  "description": "凿壁项目HTML元数据处理工具",
+  "main": "metadata-processor.js",
+  "scripts": {
+    "check": "node metadata-processor.js",
+    "check:knowledge": "node metadata-processor.js ../html/pages/knowledge",
+    "check:research": "node metadata-processor.js ../html/pages/research",
+    "check:ai-tech": "node metadata-processor.js ../html/pages/ai-tech",
+    "check:info-upgrade": "node metadata-processor.js ../html/pages/info-upgrade"
+  },
+  "keywords": ["html", "metadata", "automation"],
+  "author": "季晓康",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "openai": "^4.20.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+} 

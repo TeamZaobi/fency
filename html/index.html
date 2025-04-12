@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>凿壁 - 医学AI</title>
+    <meta name="description" content="一个由 LLM 辅助构建和维护的个人知识库，展示内容关联与知识图谱。">
+    <!-- Tailwind CSS via CDN -->
+    <link href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome via CDN -->
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply custom fonts */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+        }
+        /* Dark mode styles */
+        .dark body {
+            background-color: #1a202c; /* Tailwind gray-900 */
+            color: #e2e8f0; /* Tailwind gray-300 */
+        }
+        .dark .bg-white { background-color: #2d3748; /* Tailwind gray-800 */ }
+        .dark .text-gray-800 { color: #e2e8f0; /* Tailwind gray-300 */ }
+        .dark .text-gray-600 { color: #a0aec0; /* Tailwind gray-500 */ }
+        .dark .text-gray-500 { color: #cbd5e0; /* Tailwind gray-400 */ }
+        .dark .border-gray-200 { border-color: #4a5568; /* Tailwind gray-700 */ }
+        .dark .hover\:bg-gray-100:hover { background-color: #4a5568; /* Tailwind gray-700 */ }
+        .dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.15); }
+        .dark .tab-active {
+            border-color: #03cea4; /* Accent color */
+            color: #03cea4;
+        }
+        .dark .text-blue-600 { color: #63b3ed; /* Tailwind blue-400 */}
+        .dark .hover\:text-blue-800:hover { color: #90cdf4; /* Tailwind blue-300 */}
+        .dark .bg-gray-50 { background-color: #2d3748; /* Tailwind gray-800 */}
+
+        /* Banner styles */
+        .site-banner {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8, #3b82f6);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .site-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFFFFF' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            z-index: 0;
+        }
+        
+        .dark .site-banner {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af, #2563eb);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-icon {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            margin-right: 12px;
+            transform-style: preserve-3d;
+            transition: transform 0.3s ease;
+        }
+        
+        .logo-icon:hover {
+            transform: rotateY(180deg);
+        }
+        
+        .site-tagline {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 4px;
+        }
+        
+        .site-tagline::after {
+            content: '';
+            position: absolute;
+            left: 25%;
+            bottom: 0;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+        }
+        
+        .hero-shape {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .hero-shape-1 {
+            width: 300px;
+            height: 300px;
+            right: -150px;
+            top: -150px;
+        }
+        
+        .hero-shape-2 {
+            width: 200px;
+            height: 200px;
+            left: -100px;
+            bottom: -100px;
+        }
+
+        /* Tab styling */
+        .tab {
+            display: inline-block;
+            padding: 8px 16px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            background-color: #f3f4f6;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .tab:hover {
+            background-color: #e5e7eb;
+        }
+        
+        .tab-active {
+            background-color: #1e40af;
+            color: white;
+            border-color: #1e40af;
+        }
+        
+        .dark .tab {
+            background-color: #374151;
+            border-color: #4b5563;
+        }
+        
+        .dark .tab:hover {
+            background-color: #4b5563;
+        }
+        
+        .dark .tab-active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        /* Category Tab styling */
+        .category-tab {
+            transition: all 0.3s ease;
+        }
+        
+        .category-tab.active {
+            background-color: #e5e7eb !important;
+            font-weight: 500;
+        }
+        
+        .dark .category-tab.active {
+            background-color: #4b5563 !important;
+            color: #e2e8f0;
+        }
+
+        /* Card styling */
+        .content-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+    
+    <!-- 初始化深色/浅色模式 -->
+    <script>
+        // 在HTML解析前设置主题，避免闪烁
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <!-- 移除了导致错误的 Cytoscape JS 和 layout 扩展 -->
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white dark:bg-gray-800 shadow-md py-4 sticky top-0 z-10">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-hammer text-yellow-400"></i>
+                </div>
+                <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    凿壁
+                </h1>
+            </div>
+            <button id="theme-toggle" class="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white focus:outline-none text-xl p-2 rounded-full bg-gray-100 dark:bg-gray-700 transition-all duration-300">
+                <i class="fas fa-sun" id="theme-toggle-sun"></i>
+                <i class="fas fa-moon hidden" id="theme-toggle-moon"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="site-banner py-16 text-white relative">
+        <div class="hero-shape hero-shape-1"></div>
+        <div class="hero-shape hero-shape-2"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+                    <span class="text-yellow-300">凿</span><span class="text-white">壁</span>
+                </h1>
+                <p class="text-xl md:text-2xl font-light site-tagline opacity-80">凿开医学与人工智能之间的壁垒，突破大模型应用迷雾</p>
+                <div class="flex justify-center mt-8 gap-4">
+                    <a href="#content-container" class="px-6 py-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-full transition-all duration-300 flex items-center">
+                        <i class="fas fa-book-reader mr-2"></i> 浏览知识库
+                    </a>
+                    <a href="#" class="px-6 py-2 bg-blue-500 bg-opacity-80 hover:bg-opacity-100 rounded-full transition-all duration-300 flex items-center">
+                        <i class="fas fa-search mr-2"></i> 搜索
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Category Tabs -->
+        <div id="category-tabs" class="flex flex-wrap justify-center mb-8 gap-2">
+            <a href="#" data-category="all" class="category-tab px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200 active">全部</a>
+            <a href="#" data-category="info-upgrade" class="category-tab px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">信息化升级</a>
+            <a href="#" data-category="research" class="category-tab px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">科研辅助</a>
+            <a href="#" data-category="ai-tech" class="category-tab px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">AI技术与生态</a>
+            <a href="#" data-category="knowledge" class="category-tab px-4 py-2 rounded-full text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">知识报告</a>
+        </div>
+        
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="hidden text-center py-8">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            <p class="mt-2">加载中...</p>
+        </div>
+        
+        <!-- Error Message -->
+        <div id="error-message" class="hidden text-center py-8 text-red-500">
+            获取数据失败，请刷新页面重试。
+        </div>
+        
+        <!-- Content Container -->
+        <div id="content-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+        <!-- Knowledge Graph Placeholder (To be added later) -->
+        <!-- <div id="knowledge-graph" class="mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4">知识图谱 (建设中)</h2>
+             <p class="text-gray-600 dark:text-gray-400">概念关联可视化即将上线。</p>
+        </div> -->
+
+    </main>
+
+    <footer class="mt-12 py-6 bg-gray-100 dark:bg-gray-900 text-center text-gray-600 dark:text-gray-400 text-sm">
+        <p>作者: 季晓康 (jxk@sdu.edu.cn) | 角色: AI观察员, 认知中枢</p>
+        <p>微信公众号: 凿壁</p>
+        <p class="mt-2">&copy; <span id="copyright-year">2024</span> 国家健康医疗大数据研究院</p>
+    </footer>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('theme-toggle-sun');
+        const moonIcon = document.getElementById('theme-toggle-moon');
+        const copyrightYearSpan = document.getElementById('copyright-year');
+
+        // --- Dark Mode Logic ---
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        };
+
+        const toggleTheme = () => {
+            const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        };
+
+        // Apply theme on initial load
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // --- Dynamic Content Loading ---
+        const categoryTabsContainer = document.getElementById('category-tabs');
+        const contentSectionsContainer = document.getElementById('content-sections');
+        const loadingMessage = document.getElementById('loading-message');
+        const errorMessage = document.getElementById('error-message');
+
+        // Category definitions: data value to display name mapping
+        const categoryMapping = {
+            "info-upgrade": "信息化升级",
+            "research": "科研辅助",
+            "ai-tech": "AI技术与生态",
+            "knowledge": "知识报告",
+            "all": "全部"
+        };
+        
+        // Categories to display (using the actual category values from metadata.json)
+        const definedCategories = ["info-upgrade", "research", "ai-tech", "knowledge"];
+        let allPagesData = []; // To store fetched data
+
+        const createCard = (page) => {
+            const card = document.createElement('a');
+            card.href = page.path; // Assuming path is relative to index.html
+            card.className = "content-card block bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6 p-6 hover:shadow-xl dark:shadow-lg dark:hover:shadow-2xl";
+            card.dataset.category = page.category; // Add category data attribute for filtering
+
+            card.innerHTML = `
+                <h3 class="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">${page.title}</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-3 text-sm">${page.description || '暂无描述'}</p>
+                <div class="text-xs text-gray-500 dark:text-gray-500 flex justify-between items-center">
+                    <span><i class="fas fa-calendar-alt mr-1"></i> ${page["publish-date"] || '未知日期'}</span>
+                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs">${categoryMapping[page.category] || '未分类'}</span>
+                </div>
+            `;
+            return card;
+        };
+
+        // Handle tab clicks
+        function handleTabClick(event) {
+            event.preventDefault();
+            
+            // Get the clicked tab
+            const clickedTab = event.currentTarget;
+            const category = clickedTab.getAttribute('data-category');
+            
+            // Update UI for tabs - remove active class from all tabs
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            clickedTab.classList.add('active');
+            
+            // Filter items based on the selected category
+            filterItemsByCategory(category);
+        }
+        
+        // Filter items by category
+        function filterItemsByCategory(category) {
+            const contentContainer = document.getElementById('content-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Show loading indicator
+            contentContainer.innerHTML = '';
+            loadingIndicator.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            
+            // Fetch metadata.json - 修改为使用/html/metadata.json的绝对路径
+            fetch('/html/metadata.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    loadingIndicator.classList.add('hidden');
+                    
+                    // Ensure we're accessing the pages array in the metadata structure
+                    if (!data || !data.pages || !Array.isArray(data.pages)) {
+                        console.error('Invalid metadata format - expected pages array');
+                        errorMessage.textContent = '元数据格式错误，无法加载内容';
+                        errorMessage.classList.remove('hidden');
+                        return;
+                    }
+                    
+                    // Filter data based on the selected category
+                    let filteredData = data.pages;
+                    if (category !== 'all') {
+                        filteredData = data.pages.filter(item => {
+                            const itemCategory = item.category || '';
+                            return itemCategory === category;
+                        });
+                    }
+                    
+                    // 按发布日期降序排序（最新的内容在前面）
+                    filteredData.sort((a, b) => {
+                        const dateA = new Date(a["publish-date"] || a.publishDate || '');
+                        const dateB = new Date(b["publish-date"] || b.publishDate || '');
+                        return dateB - dateA; // 降序排序
+                    });
+                    
+                    // Render filtered data
+                    renderContent(filteredData, contentContainer);
+                })
+                .catch(error => {
+                    console.error('Error fetching metadata:', error);
+                    loadingIndicator.classList.add('hidden');
+                    errorMessage.classList.remove('hidden');
+                });
+        }
+        
+        // Initialize tabs
+        function initTabs() {
+            const tabsContainer = document.getElementById('category-tabs');
+            
+            // Get tabs
+            const tabs = tabsContainer.querySelectorAll('.category-tab');
+            
+            // Add click event listeners to each tab
+            tabs.forEach(tab => {
+                tab.addEventListener('click', handleTabClick);
+            });
+            
+            // Set 'All' tab as active by default and trigger content load
+            filterItemsByCategory('all');
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+        });
+
+        // Function to render content
+        function renderContent(data, container) {
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="text-center py-8 text-gray-500 dark:text-gray-400">该分类下暂无内容</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            data.forEach(item => {
+                const date = item["publish-date"] || item.publishDate || '';
+                const formattedDate = date ? new Date(date).toLocaleDateString('zh-CN') : '';
+                const categoryDisplay = categoryMapping[item.category] || item.category || '未分类';
+                
+                const card = document.createElement('a'); // Create as a link
+                card.href = item.path || '#'; // Link to page
+                card.className = "block bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 content-card mb-6";
+                
+                card.innerHTML = `
+                    <div class="p-6">
+                        <h3 class="text-xl font-semibold mb-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">${item.title || '无标题'}</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-3 text-sm">${item.description || '无描述'}</p>
+                        <div class="text-xs text-gray-500 dark:text-gray-500 flex justify-between items-center">
+                            <span><i class="fas fa-calendar-alt mr-1"></i> ${formattedDate || '未知日期'}</span>
+                            <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs">${categoryDisplay}</span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // --- Footer Year ---
+        copyrightYearSpan.textContent = new Date().getFullYear();
+
+    </script>
+
+</body>
+</html>

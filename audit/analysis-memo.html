@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="凿壁项目代码结构分析，使用AST和图数据库技术进行的深度代码分析">
+    <meta name="keywords" content="代码分析,AST,图数据库,技术债务,代码优化,软件工程">
+    <title>凿壁项目代码结构分析备忘录</title>
+    <link href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', 'Noto Sans SC', serif;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb-bg);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar-thumb-hover-bg);
+        }
+        /* Light theme scrollbar */
+        :root {
+            --scrollbar-track-bg: #f1f1f1;
+            --scrollbar-thumb-bg: #c1c1c1;
+            --scrollbar-thumb-hover-bg: #a8a8a8;
+        }
+        /* Dark theme scrollbar */
+        .dark {
+            --scrollbar-track-bg: #2d3748; /* gray-800 */
+            --scrollbar-thumb-bg: #4a5568; /* gray-600 */
+            --scrollbar-thumb-hover-bg: #718096; /* gray-500 */
+        }
+        /* Mermaid diagram styling */
+        .mermaid {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        /* Enhanced blockquote */
+        blockquote {
+            border-left-width: 4px;
+            padding-left: 1rem;
+            font-style: italic;
+            margin-left: 0;
+            margin-right: 0;
+        }
+        /* Responsive adjustments for Mermaid diagrams if needed */
+        @media (max-width: 768px) {
+            .mermaid svg {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        /* Basic prose styles for light/dark */
+        .prose { color: #374151; } /* text-gray-700 */
+        .dark .prose { color: #d1d5db; } /* dark:text-gray-300 */
+        .prose h2, .prose h2 { color: #111827; } /* text-gray-900 */
+        .dark .prose h2 { color: #f9fafb; } /* dark:text-gray-50 */
+        .prose a { color: #2563eb; } /* text-blue-600 */
+        .dark .prose a { color: #60a5fa; } /* dark:text-blue-400 */
+        .prose strong { color: #111827; } /* text-gray-900 */
+        .dark .prose strong { color: #f9fafb; } /* dark:text-gray-50 */
+        /* Code block styles */
+        code {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 0.1em 0.3em;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+        }
+        .dark code {
+            background-color: #1e293b;
+            color: #e2e8f0;
+        }
+        /* Animation for card hover */
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300 ease-in-out">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" type="button" class="fixed top-4 right-4 z-50 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-colors duration-200">
+        <i id="theme-toggle-dark-icon" class="fas fa-moon w-5 h-5 hidden"></i>
+        <i id="theme-toggle-light-icon" class="fas fa-sun w-5 h-5 hidden"></i>
+    </button>
+
+    <div class="container mx-auto max-w-4xl px-4 py-8 md:py-16">
+
+        <!-- Hero Section -->
+        <header class="mb-12 text-center border-b border-gray-200 dark:border-gray-700 pb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">凿壁项目代码结构分析备忘录</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-400">基于 AST 与图数据库的深度洞察</p>
+            <p class="text-sm text-gray-500 dark:text-gray-500 mt-2">分析日期: 2025-04-10</p>
+        </header>
+
+        <article class="prose max-w-none">
+
+            <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-binoculars mr-2 text-blue-500"></i>概述</h2>
+                <p>本备忘录总结了使用抽象语法树（AST）和图数据库技术对凿壁项目进行的代码结构分析工作。分析目的是识别项目结构特点、发现潜在问题并提出改进建议。</p>
+            </section>
+
+            <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-tools mr-2 text-green-500"></i>分析方法</h2>
+                <h3 class="text-xl font-medium mt-4 mb-2"><i class="fas fa-cogs mr-1 text-gray-600 dark:text-gray-400"></i>使用的技术和工具</h3>
+                <ul class="list-disc list-inside space-y-1">
+                    <li><strong>AST 解析</strong>：
+                        <ul class="list-disc list-inside ml-6 space-y-1">
+                            <li>JavaScript/TypeScript: <code>@babel/parser</code></li>
+                            <li>HTML: <code>htmlparser2</code></li>
+                            <li>JSON: 原生 JSON 解析</li>
+                        </ul>
+                    </li>
+                    <li><strong>图数据库</strong>：Neo4j (使用 Cypher 查询语言)</li>
+                    <li><strong>可视化</strong>：D3.js, Neo4j Bloom</li>
+                </ul>
+            </section>
+
+            <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-chart-pie mr-2 text-purple-500"></i>项目概况</h2>
+                <p>凿壁项目是一个基于 JavaScript/TypeScript 的 Web 应用。关键指标如下：</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-center">
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded">
+                        <div class="text-3xl font-bold text-blue-600 dark:text-blue-400">127</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">总文件数</div>
+                    </div>
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded">
+                        <div class="text-3xl font-bold text-green-600 dark:text-green-400">423</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">函数定义</div>
+                    </div>
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded">
+                        <div class="text-3xl font-bold text-yellow-600 dark:text-yellow-400">278</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">跨文件依赖</div>
+                    </div>
+                    <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded">
+                        <div class="text-3xl font-bold text-red-600 dark:text-red-400">14</div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">核心模块</div>
+                    </div>
+                </div>
+                <ul class="list-none mt-4 space-y-1 text-gray-700 dark:text-gray-300">
+                   <li><i class="fas fa-file-code mr-2 text-blue-500"></i>JS/TS 文件: <strong>87</strong></li>
+                   <li><i class="fab fa-html5 mr-2 text-orange-500"></i>HTML 文件: <strong>28</strong></li>
+                   <li><i class="fas fa-brackets-curly mr-2 text-yellow-500"></i>JSON 文件: <strong>12</strong></li>
+                   <li><i class="fas fa-code-branch mr-2 text-purple-500"></i>内部函数调用: <strong>92</strong></li>
+                </ul>
+            </section>
+
+            <section class="mb-12">
+                <h2 class="text-3xl font-semibold mb-6 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-search-plus mr-2 text-red-500"></i>主要发现</h2>
+
+                <div class="space-y-8">
+                    <!-- Finding 1: Metadata Management -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                        <h3 class="text-xl font-medium mb-3"><i class="fas fa-database mr-2 text-indigo-500"></i>1. 元数据管理问题</h3>
+                        <p><strong>发现</strong>：<code>metadata.json</code> 是核心数据源，被 <strong>19</strong> 个不同文件直接引用，缺乏统一访问接口。</p>
+                        <div class="mermaid">
+                        graph LR;
+                            A[metadata.json] --> B(文件 1);
+                            A --> C(文件 2);
+                            A --> D(...);
+                            A --> E(文件 19);
+                            style A fill:#f9f,stroke:#333,stroke-width:2px;
+                            classDef default fill:#eee,stroke:#555,color:#555;
+                        </div>
+                        <p class="font-semibold mt-4">问题:</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-600 dark:text-red-400">
+                            <li>访问模式不一致，解析逻辑分散</li>
+                            <li>结构变更影响范围广</li>
+                            <li>部分页面硬编码元数据</li>
+                        </ul>
+                    </div>
+
+                    <!-- Finding 2: Duplicate Utils -->
+                     <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                        <h3 class="text-xl font-medium mb-3"><i class="fas fa-copy mr-2 text-yellow-500"></i>2. 工具函数重复</h3>
+                        <p><strong>发现</strong>：识别出 <strong>12</strong> 组功能重复的工具函数，分布在 <strong>8</strong> 个不同文件中。</p>
+                        <p class="font-semibold mt-4">示例:</p>
+                        <ul class="list-none space-y-1 text-gray-700 dark:text-gray-300">
+                            <li><i class="far fa-calendar-alt mr-2 text-blue-400"></i>日期格式化: <code>util.js</code>, <code>date-helper.js</code>, <code>formatter.js</code></li>
+                            <li><i class="fas fa-link mr-2 text-green-400"></i>URL 解析: <code>router.js</code>, <code>link-helper.js</code></li>
+                        </ul>
+                         <p class="font-semibold mt-4">问题:</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-600 dark:text-red-400">
+                            <li>维护成本高</li>
+                            <li>Bug 修复不一致</li>
+                            <li>行为可能存在细微差异</li>
+                        </ul>
+                    </div>
+
+                    <!-- Finding 3: Inconsistent Error Handling -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                         <h3 class="text-xl font-medium mb-3"><i class="fas fa-exclamation-triangle mr-2 text-orange-500"></i>3. 错误处理不一致</h3>
+                        <p><strong>发现</strong>：存在 <strong>7</strong> 种不同的错误处理模式。</p>
+                        <div class="mermaid">
+                            pie title 错误处理模式分布
+                                "控制台输出" : 46
+                                "返回错误对象" : 24
+                                "抛出异常" : 20
+                                "返回空值/默认值" : 10
+                        </div>
+                        <p class="font-semibold mt-4">问题:</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-600 dark:text-red-400">
+                            <li>错误追踪困难</li>
+                            <li>用户体验不一致</li>
+                            <li>部分错误被忽略</li>
+                        </ul>
+                    </div>
+
+                     <!-- Finding 4: Large TS Files -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                         <h3 class="text-xl font-medium mb-3"><i class="fab fa-js-square mr-2 text-blue-400"></i>4. 大型 TypeScript 文件</h3>
+                        <p><strong>发现</strong>：<strong>6</strong> 个 TS 文件超过 1000 行。</p>
+                        <p class="font-semibold mt-2">热点文件:</p>
+                        <ul class="list-none space-y-1 text-gray-700 dark:text-gray-300">
+                            <li><i class="fas fa-file-alt mr-2 text-red-500"></i><code>manager.ts</code>: 2846 行 / 42 方法</li>
+                            <li><i class="fas fa-file-alt mr-2 text-orange-500"></i><code>controller.ts</code>: 1968 行 / 36 方法</li>
+                            <li><i class="fas fa-file-alt mr-2 text-yellow-500"></i><code>processor.ts</code>: 1521 行 / 28 方法</li>
+                        </ul>
+                         <p class="font-semibold mt-4">问题:</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-600 dark:text-red-400">
+                            <li>复杂度高，难以理解和维护</li>
+                            <li>职责不清</li>
+                            <li>高耦合，低重用</li>
+                        </ul>
+                    </div>
+
+                    <!-- Finding 5: Missing HTML Metadata -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                         <h3 class="text-xl font-medium mb-3"><i class="fab fa-html5 mr-2 text-orange-600"></i>5. HTML 元数据缺失</h3>
+                         <p><strong>发现</strong>：28 个 HTML 文件中有元数据缺失或不规范问题。</p>
+                        <ul class="list-none space-y-1 text-gray-700 dark:text-gray-300 mt-2">
+                            <li><i class="fas fa-times-circle mr-2 text-red-400"></i>缺少描述 (<code>&lt;meta name="description"&gt;</code>): <strong>9</strong> 个文件</li>
+                            <li><i class="fas fa-times-circle mr-2 text-red-400"></i>缺少关键词 (<code>&lt;meta name="keywords"&gt;</code>): <strong>12</strong> 个文件</li>
+                            <li><i class="fas fa-times-circle mr-2 text-yellow-400"></i>标题格式不一致 (<code>&lt;title&gt;</code>): <strong>6</strong> 个文件</li>
+                        </ul>
+                         <p class="font-semibold mt-4">问题:</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-600 dark:text-red-400">
+                            <li>影响 SEO</li>
+                            <li>内容索引不完整</li>
+                            <li>分享体验不佳</li>
+                        </ul>
+                    </div>
+
+                     <!-- Finding 6: Insufficient Internal Linking -->
+                    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                        <h3 class="text-xl font-medium mb-3"><i class="fas fa-link mr-2 text-cyan-500"></i>6. 内部链接不足</h3>
+                        <p><strong>发现</strong>：页面平均内部链接仅 <strong>2.4</strong> 个 (建议 5-7 个)。</p>
+                         <p class="font-semibold mt-2">链接分布:</p>
+                        <ul class="list-none space-y-1 text-gray-700 dark:text-gray-300">
+                             <li><i class="fas fa-chart-bar mr-2 text-blue-400"></i>0-2 链接: <strong>14</strong> 页面</li>
+                             <li><i class="fas fa-chart-bar mr-2 text-yellow-400"></i>3-5 链接: <strong>11</strong> 页面</li>
+                             <li><i class="fas fa-chart-bar mr-2 text-green-400"></i>6+ 链接: <strong>3</strong> 页面</li>
+                         </ul>
+                         <p class="font-semibold mt-4">问题:</p>
+                        <ul class="list-disc list-inside space-y-1 text-red-600 dark:text-red-400">
+                            <li>用户浏览受限</li>
+                            <li>内容发现率低</li>
+                            <li>影响搜索引擎爬取效率</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                 <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-project-diagram mr-2 text-teal-500"></i>图结构分析洞见</h2>
+
+                 <h3 class="text-xl font-medium mt-4 mb-2"><i class="fas fa-star mr-1 text-yellow-400"></i>中心度分析 (被依赖最多)</h3>
+                 <ol class="list-decimal list-inside space-y-1">
+                     <li><code>util.js</code> (被 31 个文件依赖)</li>
+                     <li><code>metadata.json</code> (被 19 个文件依赖)</li>
+                     <li><code>config.js</code> (被 17 个文件依赖)</li>
+                 </ol>
+                 <blockquote class="border-l-4 border-yellow-400 dark:border-yellow-500 bg-yellow-50 dark:bg-gray-700 p-4 my-4">
+                     这些是项目的核心基础设施，变更影响广泛。
+                 </blockquote>
+
+                 <h3 class="text-xl font-medium mt-6 mb-2"><i class="fas fa-users-cog mr-1 text-purple-400"></i>社区检测 (功能模块集群)</h3>
+                 <div class="mermaid">
+                    mindmap
+                      root((项目模块))
+                        (内容管理)
+                          ::icon(fa fa-folder-open)
+                          - 12 文件
+                          - 内容展示/管理
+                        (用户界面)
+                          ::icon(fa fa-desktop)
+                          - 18 文件
+                          - UI 组件/交互
+                        (数据处理)
+                          ::icon(fa fa-database)
+                          - 14 文件
+                          - 数据转换/存储
+                        (工具辅助)
+                          ::icon(fa fa-wrench)
+                          - 9 文件
+                          - 通用功能
+                 </div>
+
+                 <h3 class="text-xl font-medium mt-6 mb-2"><i class="fas fa-layer-group mr-1 text-red-400"></i>依赖深度</h3>
+                 <p>最长依赖链为 <strong>7</strong> 层 (理想 4-5 层)，增加变更复杂性。</p>
+                 <p class="mt-2 font-semibold">示例路径:</p>
+                 <div class="mermaid">
+                    graph LR
+                        A(index.html) --> B(main.js) --> C(app.js) --> D(controller.js) --> E(processor.js) --> F(adapter.js) --> G(util.js);
+                        style A fill:#f9f,stroke:#333,stroke-width:1px
+                        style G fill:#ccf,stroke:#333,stroke-width:1px
+                 </div>
+            </section>
+
+            <section class="mb-12 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                 <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-blue-300 dark:border-blue-600 text-blue-800 dark:text-blue-300"><i class="fas fa-lightbulb mr-2"></i>建议的改进方向</h2>
+                 <ol class="list-decimal list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                     <li><strong>创建元数据访问层</strong>: 开发统一 API，集中管理元数据逐辑。</li>
+                     <li><strong>工具函数整合</strong>: 整合重复函数到工具库。</li>
+                     <li><strong>标准化错误处理</strong>: 实现统一框架，确保一致日志和反馈。</li>
+                     <li><strong>模块化大型文件</strong>: 拆分大型 TS 文件为小型模块。</li>
+                     <li><strong>HTML 元数据标准化</strong>: 实现模板系统，确保元数据完整一致。</li>
+                     <li><strong>增强内部链接</strong>: 添加更多相关内容链接，改善导航。</li>
+                 </ol>
+             </section>
+
+             <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                 <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-tasks mr-2 text-green-500"></i>后续步骤</h2>
+                 <ul class="list-disc list-inside space-y-1">
+                     <li>分享分析结果与团队</li>
+                     <li>优先级排序改进建议</li>
+                     <li>创建实施计划 (时间表、责任人)</li>
+                     <li>开发自动化工具辅助实施和验证</li>
+                     <li>建立持续监控机制</li>
+                 </ul>
+             </section>
+
+             <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                 <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-book-open mr-2 text-purple-500"></i>进一步阅读</h2>
+                 <p class="mb-4 text-gray-600 dark:text-gray-400">以下是一些与本次分析相关的技术和概念的推荐阅读资源：</p>
+                 <ul class="list-none space-y-3">
+                     <li class="flex items-start">
+                         <i class="fas fa-link mt-1 mr-3 text-blue-500"></i>
+                         <div>
+                             <a href="https://arxiv.org/abs/2312.00413" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">[论文] Abstract Syntax Tree for Programming Language...</a>
+                             <p class="text-sm text-gray-600 dark:text-gray-400">介绍 AST 在代码表示学习中的应用。</p>
+                         </div>
+                     </li>
+                      <li class="flex items-start">
+                         <i class="fas fa-link mt-1 mr-3 text-blue-500"></i>
+                         <div>
+                             <a href="https://hannes-thaller.com/articles/benefits-and-drawbacks-of-representing-and-analyzing-source-code-and-software-engieneering-artifacts-with-graph-databases" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">[文章] Graph Databases for Source Code and Software Engineering Analysis</a>
+                             <p class="text-sm text-gray-600 dark:text-gray-400">探讨使用图数据库进行代码分析的优缺点。</p>
+                         </div>
+                     </li>
+                     <li class="flex items-start">
+                         <i class="fas fa-link mt-1 mr-3 text-blue-500"></i>
+                         <div>
+                             <a href="https://appmaster.io/blog/graph-databases-software-architecture" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">[文章] The Power of Graph Databases in Software Architecture</a>
+                              <p class="text-sm text-gray-600 dark:text-gray-400">解释图数据库在处理复杂软件架构关系中的重要性。</p>
+                         </div>
+                     </li>
+                      <li class="flex items-start">
+                         <i class="fas fa-link mt-1 mr-3 text-blue-500"></i>
+                         <div>
+                             <a href="https://www.amazon.com/Refactoring-Software-Design-Smells-Technical/dp/0128013974" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">[书籍] Refactoring for Software Design Smells: Managing Technical Debt</a>
+                             <p class="text-sm text-gray-600 dark:text-gray-400">关注通过重构来管理技术债。</p>
+                         </div>
+                     </li>
+                     <li class="flex items-start">
+                         <i class="fas fa-link mt-1 mr-3 text-blue-500"></i>
+                         <div>
+                              <a href="https://www.amazon.com/Managing-Technical-Debt-Development-Engineering/dp/013564593X" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline font-medium">[书籍] Managing Technical Debt: Reducing Friction in Software Development</a>
+                              <p class="text-sm text-gray-600 dark:text-gray-400">提供管理技术债的策略。</p>
+                         </div>
+                     </li>
+                 </ul>
+             </section>
+
+             <section class="mb-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 hover-lift">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2 border-gray-300 dark:border-gray-600"><i class="fas fa-paperclip mr-2 text-gray-500"></i>附录</h2>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>详细图分析结果可在 <code>analysis_report.html</code> 中查看 (注: 这是一个示例链接，实际文件未提供)</li>
+                    <li>完整的代码结构规则已在 <code>code-structure-rules.md</code> 中定义 (注: 这是一个示例链接，实际文件未提供)</li>
+                    <li>改进建议的详细实施方案将在后续文档中提供</li>
+                </ul>
+             </section>
+
+        </article>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-gray-300 dark:border-gray-700 text-center text-gray-600 dark:text-gray-400 text-sm">
+             <p class="mb-3">
+                 <i class="fas fa-user mr-1"></i> 作者: 季晓康
+             </p>
+             <p class="mb-3">
+                 <i class="fab fa-weixin mr-1"></i> 微信公众号: 凿壁
+             </p>
+             <p>
+                 &copy; <span id="current-year"></span> 国家健康医疗大数据研究院. All Rights Reserved.
+             </p>
+        </footer>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script>
+        // Mermaid Initialization
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'default',
+            flowchart: { curve: 'basis' },
+            securityLevel: 'loose',
+            fontFamily: '"Noto Sans SC", sans-serif'
+        });
+
+        // Dark/Light Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Check initial theme preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        // Listener for toggle button
+        themeToggleBtn.addEventListener('click', function() {
+            // Toggle icons
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            // Toggle theme class and save preference
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                    // We need to reload for mermaid to update its theme
+                    location.reload();
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                    location.reload();
+                }
+            } else {
+                // If not set via local storage, check current state
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                    location.reload();
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                    location.reload();
+                }
+            }
+        });
+
+        // Set current year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Add scroll reveal animation to sections
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('opacity-100');
+                        entry.target.classList.remove('opacity-0', 'translate-y-4');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            sections.forEach(section => {
+                section.classList.add('transition-all', 'duration-700', 'ease-out', 'opacity-0', 'translate-y-4');
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>

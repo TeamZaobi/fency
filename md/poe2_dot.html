@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《流放之路2》最新进展深度报告</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #d72323;
+            --secondary-color: #3d84b8;
+            --accent-color: #ff9642;
+            --text-color: #2d2d2d;
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --border-color: #e1e1e1;
+            --heading-color: #1a1a1a;
+            --quote-bg: #f3f4f6;
+            --quote-border: #d1d5db;
+            --code-bg: #f3f4f6;
+            --muted-color: #6b7280;
+        }
+
+        .dark {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4dabf7;
+            --accent-color: #ffa94d;
+            --text-color: #e5e7eb;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #2e2e2e;
+            --heading-color: #f3f4f6;
+            --quote-bg: #1a1a1a;
+            --quote-border: #2e2e2e;
+            --code-bg: #1a1a1a;
+            --muted-color: #9ca3af;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--heading-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        blockquote {
+            background-color: var(--quote-bg);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        }
+
+        /* 首字下沉 */
+        .first-letter-drop:first-letter {
+            font-size: 3.5rem;
+            font-family: 'Noto Serif SC', serif;
+            float: left;
+            line-height: 1;
+            padding-right: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--muted-color);
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+            display: block;
+        }
+
+        table th {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        table td, table th {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .dark table tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            table {
+                font-size: 0.85rem;
+            }
+            
+            table td, table th {
+                padding: 0.5rem 0.75rem;
+            }
+        }
+
+        /* 徽章和标签 */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 9999px;
+            background-color: var(--secondary-color);
+            color: white;
+            margin-right: 0.5rem;
+        }
+
+        .badge-primary {
+            background-color: var(--primary-color);
+        }
+
+        .badge-accent {
+            background-color: var(--accent-color);
+        }
+
+        /* 导航菜单 */
+        .nav-link {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* 进度条 */
+        .progress {
+            height: 0.5rem;
+            border-radius: 9999px;
+            background-color: var(--border-color);
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body>
+    <header class="sticky top-0 z-50 bg-opacity-90 backdrop-filter backdrop-blur-lg" style="background-color: var(--bg-color);">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold flex items-center">
+                <img src="https://web.poecdn.com/image/layout/path-of-exile-2-logo.png" alt="PoE2 Logo" class="h-10 mr-2">
+                <span style="color: var(--primary-color);">流放之路2</span>
+            </a>
+            <nav class="hidden md:flex items-center space-x-4">
+                <a href="#summary" class="nav-link">执行摘要</a>
+                <a href="#status" class="nav-link">当前状态</a>
+                <a href="#classes" class="nav-link">职业系统</a>
+                <a href="#gameplay" class="nav-link">游戏内容</a>
+                <a href="#guide" class="nav-link">入门指南</a>
+                <a href="#conclusion" class="nav-link">结论与展望</a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="切换深色/浅色模式">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:block"></i>
+                </button>
+            </nav>
+            <button class="md:hidden theme-toggle" id="mobile-menu-button" aria-label="菜单">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <div id="mobile-menu" class="md:hidden hidden bg-opacity-95 backdrop-filter backdrop-blur-lg" style="background-color: var(--bg-color);">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-2">
+                <a href="#summary" class="nav-link">执行摘要</a>
+                <a href="#status" class="nav-link">当前状态</a>
+                <a href="#classes" class="nav-link">职业系统</a>
+                <a href="#gameplay" class="nav-link">游戏内容</a>
+                <a href="#guide" class="nav-link">入门指南</a>
+                <a href="#conclusion" class="nav-link">结论与展望</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- 英雄板块 -->
+        <section class="relative rounded-xl overflow-hidden mb-12 bg-gradient-to-r from-gray-800 to-gray-900 text-white">
+            <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('https://web.poecdn.com/image/path-of-exile-2/screenshot-63.jpg');"></div>
+            <div class="relative z-10 p-8 md:p-12 flex flex-col items-start">
+                <span class="badge badge-primary mb-4">最新更新 - 2025年4月</span>
+                <h1 class="text-3xl md:text-5xl font-bold mb-4">《流放之路2》最新进展深度报告</h1>
+                <p class="text-lg md:text-xl mb-6 max-w-3xl">职业、内容与入门指南 - 全面解析"猎人之曙"更新后的游戏状态与变化</p>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#guide" class="btn btn-primary"><i class="fas fa-compass mr-2"></i>快速入门指南</a>
+                    <a href="#classes" class="btn btn-secondary"><i class="fas fa-user-shield mr-2"></i>职业系统详解</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 执行摘要 -->
+        <section id="summary" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2" style="border-color: var(--primary-color);">
+                <i class="fas fa-file-alt mr-2" style="color: var(--primary-color);"></i>执行摘要
+            </h2>
+            <div class="bg-gradient-to-r p-6 rounded-lg mb-8" style="background-color: var(--card-bg);">
+                <p class="first-letter-drop text-lg leading-relaxed">
+                    截至2025年4月中旬，《流放之路2》（Path of Exile 2, PoE2）仍处于付费抢先体验（Early Access, EA）阶段。自2024年12月6日启动EA以来，游戏经历了持续的开发与调整。2025年4月4日发布的"猎人之曙"（Dawn of the Hunt, Patch 0.2.0）更新是自EA启动以来的首次重大内容迭代，引入了新职业"女猎手"（Huntress）、五个全新的升华职业、大量新技能与物品，并对游戏后期（Endgame）系统进行了调整。
+                </p>
+                <p class="text-lg leading-relaxed mt-4">
+                    然而，0.2.0版本的初始平衡性引发了显著的社区负面反响，玩家普遍反映游戏节奏过慢、难度过高且奖励不足。开发商 Grinding Gear Games (GGG) 对此展现了极高的响应速度，在更新上线后迅速推出了一系列紧急热修补丁，大幅调整了怪物生命值、技能平衡、区域大小及稳定性问题。
+                </p>
+                <p class="text-lg leading-relaxed mt-4">
+                    目前，玩家主要通过购买不同等级的"支持者礼包"或满足一定的历史消费门槛来获取EA资格。本报告将深入分析自2025年2月以来PoE2在开发状态、职业系统、游戏内容方面的具体变化，探讨社区反馈与GGG的应对策略，并为希望开始游玩或回归的玩家提供最新的入门建议和BD（Builds）参考。
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4" style="background-color: var(--primary-color);">
+                            <i class="fas fa-gamepad text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">抢先体验阶段</h3>
+                    </div>
+                    <p>付费EA于2024年12月6日启动，初始提供了前三章战役内容、六个初始职业及基础Endgame系统。游戏最终将采取免费模式，但EA期间需要付费参与。</p>
+                </div>
+                
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4" style="background-color: var(--secondary-color);">
+                            <i class="fas fa-user-shield text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">核心更新内容</h3>
+                    </div>
+                    <p>"猎人之曙"更新引入了女猎手职业、五个新升华职业、大量新技能与辅助宝石、传奇物品，并扩展了Endgame内容与Crafting系统，但同时也引发了平衡性争议。</p>
+                </div>
+                
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4" style="background-color: var(--accent-color);">
+                            <i class="fas fa-calendar-alt text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold">发布时间线</h3>
+                    </div>
+                    <p>GGG原计划EA持续6-12个月，但近期表态暗示完整版发布可能延至2026年。女猎手职业花费约4个月开发，而计划中还有6个职业和3个战役章节待完成。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 当前状态与开发路线图 -->
+        <section id="status" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2" style="border-color: var(--primary-color);">
+                <i class="fas fa-chart-line mr-2" style="color: var(--primary-color);"></i>当前状态与开发路线图
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">抢先体验阶段概览</h3>
+                    <p class="mb-4">《流放之路2》于2024年12月6日正式进入抢先体验阶段，登陆PC（独立客户端、Steam、Epic Games Store）及次世代主机平台（Xbox Series X|S, PlayStation 5）。</p>
+                    <p class="mb-4">与游戏最终将采取的免费游玩模式不同，EA阶段需要玩家付费购买"支持者礼包"或满足特定消费条件方可进入。</p>
+                    <p class="mb-4">EA启动时，游戏提供了前三个章节（Act 1-3）的剧情内容、六个初始职业（每个职业两个升华）、以及包含一百多小时内容的初步Endgame系统。</p>
+                    <p class="mb-4">值得注意的是，EA的上线时间曾从原定的2024年11月15日推迟了三周，主要原因是需要完成复杂的服务器端基础设施工作，特别是确保PoE1和PoE2之间以及各平台间的微交易（MTX）数据能够互通整合。</p>
+                    <blockquote>
+                        EA本质上是一个付费测试阶段，意味着游戏内容尚不完整，存在大量待开发和调整的空间。玩家在EA期间的体验会受到频繁更新、平衡性调整甚至可能的存档清除的影响。
+                    </blockquote>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">预计时间线与发布预期</h3>
+                    <p class="mb-4">GGG最初对EA持续时间的预期较为乐观，暗示可能持续6到12个月，并有希望在2025年内实现游戏的正式发布（1.0版本）。然而，近期的信息表明这一时间表可能过于理想化。</p>
+                    <p class="mb-4">游戏总监 Jonathan Rogers 在近期的一次采访中坦言，PoE2可能无法在2025年内结束EA阶段，他表示："我希望今年能完成，但我们得看情况如何发展"。</p>
+                    <p class="mb-4">从EA启动到第一个新职业"女猎手"在0.2.0版本中发布，大约花费了4个月时间。考虑到PoE2计划总共包含12个职业和6个剧情章节，按照当前的速度，要在原定时间内完成所有内容的开发显得极具挑战性。</p>
+                    <p class="mb-4">Rogers 甚至提到，为了确保核心战役和内容的完整性，正式发布时可能不会包含全部12个职业。结合总监的审慎言论和实际开发进度，2025年内正式发布的可能性已大大降低，更有可能推迟至2026年，或者以牺牲部分内容（如职业数量）为代价按时发布。</p>
+                    <p class="mb-4">尽管如此，GGG仍计划维持一定的更新节奏，可能借鉴PoE1大约每13周（约3个月）进行一次大型更新的模式，虽然0.2.0的间隔更长。</p>
+                </div>
+            </div>
+            
+            <!-- 开发进度可视化 -->
+            <div class="card p-6 mb-10">
+                <h3 class="text-2xl font-bold mb-4">《流放之路2》开发进度</h3>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span>职业开发进度 (7/12)</span>
+                        <span>58%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 58%;"></div>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span>战役章节 (3/6)</span>
+                        <span>50%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span>Endgame系统完整度</span>
+                        <span>约40%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 40%;"></div>
+                    </div>
+                </div>
+                
+                <!-- 开发时间线图表 -->
+                <div class="mt-8">
+                    <h4 class="text-xl font-semibold mb-4">开发时间线与重要里程碑</h4>
+                    <div class="mermaid">
+                        gantt
+                            title 流放之路2开发时间线
+                            dateFormat  YYYY-MM-DD
+                            axisFormat %Y年%m月
+                            
+                            EA阶段启动     :milestone, 2024-12-06, 0d
+                            EA初始阶段    :done, 2024-12-06, 2025-04-04
+                            0.2.0发布     :milestone, 2025-04-04, 0d
+                            0.2.0后续调整 :active, 2025-04-04, 2025-04-30
+                            预计0.3.0      :2025-07-01, 2025-10-01
+                            预计0.4.0      :2025-10-01, 2026-01-01
+                            可能的1.0发布  :crit, milestone, 2026-03-01, 0d
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 补丁0.2.0概览和热修 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-2xl font-bold mb-4">Patch 0.2.0 "猎人之曙" 概览</h3>
+                    <p class="mb-4">作为EA以来的首次重大更新，"猎人之曙"（Patch 0.2.0）于太平洋夏令时间2025年4月4日中午12点正式上线。此前，GGG在3月27日举行了线上直播活动，详细介绍了更新内容并进行了开发者问答。</p>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li><strong>新职业：</strong>女猎手 (Huntress)</li>
+                        <li><strong>新升华职业：</strong>为女猎手增加了"祭祀者"（Ritualist）和"亚马逊"（Amazon），并为战士（Warrior）、佣兵（Mercenary）和巫师（Witch）分别增加了"基塔瓦的铁匠"（Smith of Kitava）、"战术家"（Tactician）和"巫妖"（Lich）</li>
+                        <li><strong>新技能：</strong>包括"召唤灵体"（Raise Spectre）、"召唤罗亚坐骑"（Summon Rhoa Mount）以及大量女猎手专属的长矛技能</li>
+                        <li><strong>新辅助宝石：</strong>超过100种新的辅助宝石，旨在丰富BD构筑</li>
+                        <li><strong>新传奇物品：</strong>增加了大量新的传奇物品</li>
+                        <li><strong>Endgame调整：</strong>改进了异界图鉴天赋树，增加了新的保险箱、阿兹莫里幽灵、流亡者等内容</li>
+                        <li><strong>Crafting更新：</strong>增加了新的符文，并引入了重组器系统</li>
+                        <li><strong>生活质量改进：</strong>包括地图调整、视觉效果提升等</li>
+                    </ul>
+                </div>
+                
+                <div class="card p-6">
+                    <h3 class="text-2xl font-bold mb-4">Post-0.2.0 热修与调整</h3>
+                    <p class="mb-4">0.2.0版本上线后，由于平衡性和稳定性问题引发了强烈的社区负面反馈，GGG迅速采取行动，在接下来的几天内密集部署了多个热修补丁。这些"紧急调整"体现了GGG在EA阶段对玩家反馈的高度重视。</p>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-lg font-semibold"><i class="fas fa-bug mr-1"></i> 稳定性与崩溃</h4>
+                            <p>修复了大量客户端和服务器崩溃问题，涉及特定技能、用户界面、城镇区域以及渲染器。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold"><i class="fas fa-skull mr-1"></i> 怪物平衡</h4>
+                            <p>大幅降低了非传奇怪物的生命值，特别是15-46级怪物（降低25%）和流亡者（额外降低40%）。稀有怪物召唤物的生命值加成从400%削减至94%。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold"><i class="fas fa-hammer mr-1"></i> 玩家/技能平衡</h4>
+                            <p>调整了召唤物的复活机制，增强了多个技能（包括龙卷风、风暴之铃、电弧、冰霜脉冲等）。能量护盾现在不再阻止流血状态。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold"><i class="fas fa-cogs mr-1"></i> Crafting与物品</h4>
+                            <p>增加了固定的工匠石掉落点，新的属性符文，扩展了符文适用范围。计划调整护身符机制并提升其效果。</p>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold"><i class="fas fa-map-marked-alt mr-1"></i> 生活质量改进</h4>
+                            <p>计划增加仓库页的物品归类和异界图鉴的书签功能。稀有怪物现在会始终在小地图上显示。缩短了部分区域的大小。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 职业系统演变 -->
+        <section id="classes" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2" style="border-color: var(--primary-color);">
+                <i class="fas fa-user-shield mr-2" style="color: var(--primary-color);"></i>职业系统演变
+            </h2>
+            
+            <!-- 女猎手展示 -->
+            <div class="bg-gradient-to-r rounded-lg mb-10 overflow-hidden" style="background-color: var(--card-bg);">
+                <div class="grid grid-cols-1 md:grid-cols-2">
+                    <div class="p-6 md:p-8 flex flex-col justify-center">
+                        <div class="flex items-center mb-4">
+                            <span class="badge badge-primary">新职业</span>
+                            <h3 class="text-2xl font-bold ml-2">女猎手 (Huntress)</h3>
+                        </div>
+                        <p class="mb-4">0.2.0版本引入了全新的基础职业——女猎手。这是一个以敏捷（Dexterity）为主属性的职业，使用长矛和圆盾（Buckler），擅长结合近战与远程的混合战斗风格。</p>
+                        <p class="mb-4">女猎手的核心机制围绕着<strong>格挡（Parry）</strong>展开。玩家可以主动格挡怪物的攻击，成功格挡会使敌人眩晕，为后续的反击创造机会。例如，可以在格挡后使用"脱离"（Disengage）技能快速后跳，获得狂怒球（Frenzy Charge），然后发动强化的投矛攻击。</p>
+                        <p class="mb-4">该职业拥有多样的元素矛攻击技能，可以形成复杂的连击链，并且设计上鼓励玩家保持不断的移动和位置变换，体现出"无情追猎"的感觉。</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="badge bg-blue-500">闪电长矛</span>
+                            <span class="badge bg-red-500">原始打击</span>
+                            <span class="badge bg-yellow-500">风暴枪</span>
+                            <span class="badge bg-green-500">龙卷风</span>
+                            <span class="badge bg-indigo-500">脱离</span>
+                            <span class="badge bg-purple-500">雷霆之跃</span>
+                        </div>
+                    </div>
+                    <div class="relative h-80 md:h-auto">
+                        <img src="https://web.poecdn.com/image/path-of-exile-2/screenshot-128.jpg" alt="女猎手角色" class="absolute inset-0 w-full h-full object-cover">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新升华职业卡片 -->
+            <h3 class="text-2xl font-bold mb-4">新升华职业 (Patch 0.2.0)</h3>
+            <p class="mb-6">除了女猎手本身，0.2.0版本还为现有职业和新职业共增加了五个全新的升华职业（Ascendancy Classes），极大地扩展了BD构筑的可能性。</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                <!-- 祭祀者 -->
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4 bg-purple-700">
+                            <i class="fas fa-skull text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">祭祀者 (Ritualist)</h4>
+                            <p class="text-sm opacity-75">女猎手升华</p>
+                        </div>
+                    </div>
+                    <p class="mb-4">专注于通过牺牲血肉来释放腐化的生命力，运用鲜血献祭和瘟疫作为武器，深入探索禁忌的阿兹莫里传统。</p>
+                    <div class="mt-4">
+                        <span class="badge bg-purple-600">鲜血献祭</span>
+                        <span class="badge bg-green-600">瘟疫</span>
+                        <span class="badge bg-red-600">机制复杂</span>
+                    </div>
+                </div>
+                
+                <!-- 亚马逊 -->
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4 bg-blue-600">
+                            <i class="fas fa-bolt text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">亚马逊 (Amazon)</h4>
+                            <p class="text-sm opacity-75">女猎手升华</p>
+                        </div>
+                    </div>
+                    <p class="mb-4">技艺精湛的猎手，擅长精准打击和元素狂怒，旨在保护阿兹莫里长者。该升华与元素或暴击流派有良好协同。</p>
+                    <div class="mt-4">
+                        <span class="badge bg-yellow-500">元素伤害</span>
+                        <span class="badge bg-red-500">暴击特化</span>
+                        <span class="badge bg-blue-500">掠夺本能</span>
+                    </div>
+                </div>
+                
+                <!-- 巫妖 -->
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4 bg-gray-800">
+                            <i class="fas fa-ghost text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">巫妖 (Lich)</h4>
+                            <p class="text-sm opacity-75">巫师升华</p>
+                        </div>
+                    </div>
+                    <p class="mb-4">巫师撕裂自己的灵魂，成为掌控亡灵、混沌与诅咒的大师，能够利用自身生命力强化能量护盾。</p>
+                    <div class="mt-4">
+                        <span class="badge bg-purple-800">混沌伤害</span>
+                        <span class="badge bg-indigo-800">诅咒专精</span>
+                        <span class="badge bg-blue-400">能量护盾</span>
+                    </div>
+                </div>
+                
+                <!-- 基塔瓦的铁匠 -->
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4 bg-red-700">
+                            <i class="fas fa-fire text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">基塔瓦的铁匠</h4>
+                            <p class="text-sm opacity-75">战士升华</p>
+                        </div>
+                    </div>
+                    <p class="mb-4">以火焰和苦难锻造毁灭性武器，强化锻造（Smithing）技能，并与基塔瓦产生共鸣。提供强大的防御能力。</p>
+                    <div class="mt-4">
+                        <span class="badge bg-red-600">火焰抗性转换</span>
+                        <span class="badge bg-gray-600">胸甲定制</span>
+                        <span class="badge bg-green-600">新手友好</span>
+                    </div>
+                </div>
+                
+                <!-- 战术家 -->
+                <div class="card p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center text-white mr-4 bg-blue-800">
+                            <i class="fas fa-chess-knight text-xl"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold">战术家 (Tactician)</h4>
+                            <p class="text-sm opacity-75">佣兵升华</p>
+                        </div>
+                    </div>
+                    <p class="mb-4">带有军事化背景，强调战场上的残酷高效，并能从中获利。可能与召唤物技能、充能或投射物图腾有协同作用。</p>
+                    <div class="mt-4">
+                        <span class="badge bg-blue-700">战场控制</span>
+                        <span class="badge bg-yellow-700">炮火支援</span>
+                        <span class="badge bg-gray-700">坚韧防御</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新技能与辅助宝石 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">新技能</h3>
+                    <p class="mb-4">除了女猎手的20个新长矛技能外，0.2.0版本还引入了两个备受期待的主动技能：</p>
+                    
+                    <div class="card p-4 mb-4">
+                        <h4 class="text-xl font-semibold"><i class="fas fa-ghost mr-2 text-purple-500"></i>召唤灵体 (Raise Spectre)</h4>
+                        <p>允许玩家捕获并召唤游戏中几乎所有怪物的灵魂。鉴于PoE2中存在数百种怪物变种，该技能为召唤流派提供了巨大的实验空间。</p>
+                    </div>
+                    
+                    <div class="card p-4">
+                        <h4 class="text-xl font-semibold"><i class="fas fa-horse mr-2 text-yellow-700"></i>召唤罗亚坐骑 (Summon Rhoa Mount)</h4>
+                        <p>玩家可以召唤一只罗亚（Rhoa）协助战斗，或者骑乘它以全速移动并同时攻击。但在骑乘状态下承受过多伤害会被击落并陷入脆弱状态。</p>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">新辅助宝石</h3>
+                    <p class="mb-4">0.2.0版本通过增加<strong>超过100种新的辅助宝石</strong>，对角色构筑产生了深远影响。这些宝石旨在通过为现有技能添加有趣的效果或显著改变其运作方式来提升BD多样性。</p>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="card p-4">
+                            <h4 class="font-semibold"><i class="fas fa-tint mr-2 text-red-500"></i>血晶</h4>
+                            <p class="text-sm">将流血效果转化为爆炸性的瓦尔水晶</p>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <h4 class="font-semibold"><i class="fas fa-thumbtack mr-2 text-gray-500"></i>铁蒺藜</h4>
+                            <p class="text-sm">让技能在地面散布减速陷阱</p>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <h4 class="font-semibold"><i class="fas fa-stop-circle mr-2 text-blue-500"></i>抑制器</h4>
+                            <p class="text-sm">阻止技能消耗充能</p>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <h4 class="font-semibold"><i class="fas fa-fire mr-2 text-orange-500"></i>野火</h4>
+                            <p class="text-sm">影响点燃的扩散</p>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <h4 class="font-semibold"><i class="fas fa-bullhorn mr-2 text-yellow-600"></i>腐化战吼</h4>
+                            <p class="text-sm">与战吼使升华有协同作用</p>
+                        </div>
+                        
+                        <div class="card p-4">
+                            <h4 class="font-semibold"><i class="fas fa-biohazard mr-2 text-green-600"></i>腐蚀</h4>
+                            <p class="text-sm">提供破甲效果</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 平衡变动与环境影响 -->
+            <h3 class="text-2xl font-bold mb-4">平衡变动与环境影响</h3>
+            <p class="mb-4">社区普遍认为Patch 0.2.0是一次彻底的"环境重置"（Meta reset）。许多在0.1版本中表现强势的BD在更新后遭到削弱，迫使玩家重新探索和构筑。</p>
+            
+            <div class="bg-gradient-to-r rounded-lg p-6 mb-6" style="background-color: var(--quote-bg);">
+                <h4 class="text-xl font-bold mb-2">0.2.0版本的大规模平衡调整及其后的紧急修复，凸显了GGG在实现其设计愿景（更慢、更具策略性的战斗）与确保BD多样性和玩家体验之间的平衡难题。</h4>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- 召唤物 -->
+                <div class="card p-6">
+                    <h4 class="text-lg font-bold mb-3"><i class="fas fa-skull mr-2 text-purple-600"></i>召唤物 (Minions)</h4>
+                    <p class="mb-3">在0.2.0中受到了最严重的削弱。原因是GGG认为其在0.1.1版本后期通过堆叠宝石等级获得了过高的强度。</p>
+                    <p class="mb-3">然而，这种削弱影响了所有等级的召唤物技能，导致其基础强度大幅下降，即使在投入资源后也难以达到之前的水平，尤其是在Endgame阶段。</p>
+                    <p>GGG在后续热修中对召唤物生命值和复活机制进行了调整，但社区普遍感觉召唤物仍然非常弱势。</p>
+                </div>
+                
+                <!-- 施法者 -->
+                <div class="card p-6">
+                    <h4 class="text-lg font-bold mb-3"><i class="fas fa-magic mr-2 text-blue-600"></i>施法者 (Casters)</h4>
+                    <p class="mb-3">在热修中获得了对多种法术的增益（电弧、冬之眼、焚烧、冰霜脉冲、冰星等）。在0.1版本中，大法师（Archmage）和电花（Spark）BD非常流行。</p>
+                    <p class="mb-3">更新后，混沌持续伤害（ED/Contagion）BD被认为表现强劲。巫妖升华提供了混沌/能量护盾的专精方向，而狱炎术士（Infernalist）依然存在。</p>
+                    <p>冰霜系女巫开荒BD也被证明可行。</p>
+                </div>
+                
+                <!-- 攻击系BD -->
+                <div class="card p-6">
+                    <h4 class="text-lg font-bold mb-3"><i class="fas fa-hammer mr-2 text-red-600"></i>攻击系BD</h4>
+                    <p class="mb-3">女猎手的亚马逊升华配合闪电长矛在更新后成为热门选择。战士的碎骨BD配合泰坦（Titan）或基塔瓦的铁匠升华表现稳定，后者提供了极高的坦度。</p>
+                    <p class="mb-3">佣兵的手雷BD在0.1版本很强，战术家升华为其增加了更多选择。流血BD因能量护盾不再阻止流血而得到间接加强，但其伤害上限仍有疑问。</p>
+                    <p>护甲（Armour）机制依然被认为效果不佳。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏玩法与内容更新 -->
+        <section id="gameplay" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2" style="border-color: var(--primary-color);">
+                <i class="fas fa-gamepad mr-2" style="color: var(--primary-color);"></i>游戏玩法与内容更新
+            </h2>
+            
+            <!-- Endgame 系统 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-map-marked-alt mr-2 text-purple-600"></i>Endgame 系统
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <!-- 异界图鉴 -->
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-atlas mr-2 text-blue-500"></i>异界图鉴 (Atlas)
+                        </h4>
+                        <p class="mb-3">0.2.0版本对异界图鉴天赋树进行了改进，增加了新的选项。计划增加图鉴书签功能以方便导航。</p>
+                        <p class="mb-3">新的确定性地图系统获得了大部分正面反馈，但玩家对地图的可持续获取和整体进度仍有关切。</p>
+                        <p>与PoE1相比，玩家感觉在地图选择上的自主权降低了，这让一些人感到不满。高塔（Towers）机制被重做，现在是具有特定内容和Boss的独特地图布局。</p>
+                    </div>
+                    
+                    <!-- 试炼 -->
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-dungeon mr-2 text-red-500"></i>试炼 (Trials)
+                        </h4>
+                        <p class="mb-3">玩家需要完成大型试炼来获得升华点数。目前已知的试炼包括：</p>
+                        <ul class="list-disc pl-6 mb-3">
+                            <li><strong>塞赫玛的试炼:</strong> 一个考验力量、意志、狡诈和耐心的类Rogue挑战型地牢。</li>
+                            <li><strong>混沌试炼:</strong> 瓦尔主题，类似于PoE1的终极试炼，玩家需要在每轮结束后选择"见好就收"还是"双倍或全无"。</li>
+                            <li>第三个试炼据推测是卡鲁主题。</li>
+                        </ul>
+                        <p>试炼有多个难度等级，可以重复挑战以获取所有升华点数。</p>
+                    </div>
+                    
+                    <!-- 新Endgame机制 -->
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-ghost mr-2 text-green-500"></i>新Endgame机制
+                        </h4>
+                        <p class="mb-3">0.2.0版本引入了多种新的Endgame内容：</p>
+                        <ul class="list-disc pl-6">
+                            <li><strong>阿兹莫里幽灵:</strong> 被认为是0.2.0版本的"赛季机制"</li>
+                            <li><strong>流亡者:</strong> 作为Endgame内容的一部分被加入或重做</li>
+                            <li><strong>保险箱:</strong> 增加了四种新的传奇保险箱，各有独特的机制和奖励</li>
+                            <li><strong>祭祀:</strong> 玩家在祭坛周围击杀怪物献祭，然后激活祭坛与复活的怪物战斗</li>
+                            <li><strong>其他PoE1机制:</strong> 裂隙、探险、迷雾等部分传统机制也存在</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Endgame体验问题 -->
+                <div class="bg-gradient-to-r rounded-lg p-6" style="background-color: var(--quote-bg);">
+                    <h4 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-exclamation-triangle mr-2 text-yellow-500"></i>Endgame体验问题
+                    </h4>
+                    <p class="mb-3">玩家普遍反映当前的Endgame体验存在一些问题，包括：</p>
+                    <ul class="list-disc pl-6 mb-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <li>感觉奖励与付出不成正比（"没有放松的时候"）</li>
+                        <li>通货和有价值的掉落稀少</li>
+                        <li>所需的时间投入过高</li>
+                        <li>难度曲线陡峭和猝死风险</li>
+                        <li>过大的地图区域和普遍较低的移动速度</li>
+                        <li>不同终局Boss的挑战门槛差异巨大</li>
+                    </ul>
+                    <p>热修补丁解决了部分问题，但玩家期待更全面的后续调整。</p>
+                </div>
+            </div>
+            
+            <!-- 物品化与Crafting -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-hammer mr-2 text-yellow-600"></i>物品化与Crafting
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 系统概览 -->
+                    <div>
+                        <div class="card p-6 mb-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-gem mr-2 text-blue-400"></i>插槽与宝石
+                            </h4>
+                            <p class="mb-3">PoE2中技能宝石自带插槽，装备上的插槽用于镶嵌符文。游戏中没有了链结石和幻色石。</p>
+                            
+                            <h4 class="text-xl font-bold mb-3 mt-5 flex items-center">
+                                <i class="fas fa-square mr-2 text-purple-400"></i>符文 (Runes)
+                            </h4>
+                            <p class="mb-3">镶嵌在装备插槽中，提供类似装备词缀的属性加成（如抗性）。符文一旦镶嵌便无法取下。</p>
+                            <p>灵魂核心（Soul Cores）是更强大的符文版本。Patch 0.2.0增加了属性符文，并扩展了符文对法杖和长杖的适用性。社区呼吁增加专门的符文仓库页。</p>
+                        </div>
+                        
+                        <div class="card p-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-coins mr-2 text-yellow-500"></i>Crafting通货
+                            </h4>
+                            <p class="mb-3">与PoE1相比，通货的种类和数量有所精简。工匠石（用于给装备增加插槽）由工匠碎片（通过分解带孔装备获得）合成。</p>
+                            <p class="mb-3">0.2.0版本在战役中增加了固定的工匠石掉落点。玩家普遍感觉0.2.0后通货掉率偏低，GGG承认物品稀有度（Rarity）现在也会影响通货掉落的品质。</p>
+                            <p>此前存在的利用祭祀无限重置奖励的漏洞已被修复，滥用者受到封禁和财产移除的处理。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 新系统 -->
+                    <div>
+                        <div class="card p-6 mb-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-sync-alt mr-2 text-green-500"></i>重组器 (Recombinators)
+                            </h4>
+                            <p class="mb-3">0.2.0版本新增的Crafting系统。允许玩家将两件同类型装备组合，选择性地继承词缀生成一件新装备，但有失败风险（失败则两件装备均销毁）。</p>
+                            <p>GGG正在密切关注该系统的数据并讨论后续调整。</p>
+                            
+                            <h4 class="text-xl font-bold mb-3 mt-5 flex items-center">
+                                <i class="fas fa-scroll mr-2 text-purple-600"></i>护身符 (Charms)
+                            </h4>
+                            <p class="mb-3">现在腰带上的护身符插槽变为基于物品等级的随机固有词缀，插槽数量可用神圣石重置。传奇腰带目前最多也只能有3个插槽（计划未来移除上限）。</p>
+                            <p>护身符本身的效果正在被加强，相关Bug也已修复。计划将其归入药剂仓库页。未来计划增加更多护身符插槽（可能多达6个）。</p>
+                        </div>
+                        
+                        <div class="card p-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-crown mr-2 text-yellow-600"></i>传奇物品与特殊系统
+                            </h4>
+                            <p class="mb-3">0.2.0版本增加了超过100件新的传奇物品。传奇物品仓库页变得更有用。具体例子包括：棱镜守卫、至深之塔、夜曲、纠缠之舌、光辉之恸等。</p>
+                            <p class="mb-3"><strong>金币系统：</strong>用于与NPC商人交易和重置天赋点，会自动拾取。</p>
+                            <p><strong>腐化物品：</strong>计划对腐化物品的掉落机制进行重做。游戏中存在腐化祭坛。伊克谢尔的折磨传奇保险箱保证掉落一件特定结果的腐化传奇物品。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 核心机制与生活质量 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-cogs mr-2 text-blue-600"></i>核心机制与生活质量 (QoL)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- 左侧 -->
+                    <div>
+                        <div class="card p-6 mb-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-fist-raised mr-2 text-red-500"></i>战斗手感
+                            </h4>
+                            <p class="mb-3">GGG的设计目标是让战斗更具动态性，提供了WASD移动选项、无消耗无冷却的闪避翻滚、主动格挡、移动中重定向攻击、移动中射击等机制。</p>
+                            <p>失衡（Stagger）机制对近战尤为重要。女猎手拥有独特的格挡（Parry）反击机制。移除了专门的位移技能，将其整合到攻击技能中。然而，0.2.0更新后，许多玩家感觉战斗节奏变慢，惩罚性过强。</p>
+                        </div>
+                        
+                        <div class="card p-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-shoe-prints mr-2 text-green-500"></i>移动速度与药剂
+                            </h4>
+                            <p class="mb-3">移动速度普遍低于PoE1。缺乏专用位移技能。鞋子是主要来源，但获取不稳定。移速不足使得大地图探索更加耗时。新增了罗亚坐骑技能。</p>
+                            <p><strong>药剂系统：</strong>只有两个专用药剂栏位（生命和法力）。通过击杀怪物补充。</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧 -->
+                    <div>
+                        <div class="card p-6 mb-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-user-cog mr-2 text-blue-500"></i>用户界面与QoL改进
+                            </h4>
+                            <ul class="list-disc pl-6 space-y-2">
+                                <li><strong>物品过滤器：</strong>由于掉落量大，物品过滤器成为必需品。建议开启"始终高亮显示掉落物"选项。</li>
+                                <li><strong>界面选项：</strong>可选迷你血条/蓝条显示。按住ALT键可查看物品词缀的详细说明。</li>
+                                <li><strong>仓库管理：</strong>早期整理仓库很重要，考虑购买高级仓库页并设置归类。</li>
+                                <li><strong>实用功能：</strong>使用"兜帽者"（Hooded One）NPC鉴定物品。使用金币重置天赋点，相对便宜。</li>
+                                <li><strong>地图更新：</strong>按住Ctrl键点击地图传送点可重置区域。稀有怪物始终在小地图显示。</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="card p-6">
+                            <h4 class="text-xl font-bold mb-3 flex items-center">
+                                <i class="fas fa-mountain mr-2 text-purple-500"></i>战役 (Campaign)
+                            </h4>
+                            <p class="mb-3">目前开放前三章，需要打普通（Normal）和残酷（Cruel）两个难度。后续计划推出第四至六章。完成特定任务或击败Boss可获得永久属性点奖励。</p>
+                            <p>部分第三章区域在0.2.0后被缩短。但仍有玩家抱怨战役过长、乏味。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 社区反馈与 GGG 响应 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-comments mr-2 text-red-500"></i>社区反馈与 GGG 响应
+                </h3>
+                
+                <div class="bg-gradient-to-r rounded-lg p-8 mb-8" style="background-color: var(--card-bg);">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="flex-1 pr-0 md:pr-8 mb-6 md:mb-0">
+                            <h4 class="text-xl font-bold mb-4">核心争议点</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-hourglass-half mt-1 mr-2 text-red-500"></i>
+                                    <span><strong>节奏缓慢/拖沓：</strong>游戏进程被普遍认为过于缓慢，战斗缺乏爽快感，地图区域过大导致跑图时间过长。</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-skull-crossbones mt-1 mr-2 text-red-500"></i>
+                                    <span><strong>难度过高/不公平：</strong>怪物过于坚韧，伤害过高，Boss机制惩罚性强，弹幕过多，怪物追击速度过快。</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-coins mt-1 mr-2 text-red-500"></i>
+                                    <span><strong>奖励匮乏：</strong>玩家感觉通货和有价值的物品掉落率被削弱，与所面临的挑战和时间投入不成正比。</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-ban mt-1 mr-2 text-red-500"></i>
+                                    <span><strong>BD可行性问题：</strong>大量BD在更新后强度骤降甚至无法正常运作，玩家感觉被迫选择少数几个强势BD。</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="flex-1">
+                            <h4 class="text-xl font-bold mb-4">GGG的回应</h4>
+                            <div class="space-y-4">
+                                <p class="flex items-start">
+                                    <i class="fas fa-check-circle mt-1 mr-2 text-green-500"></i>
+                                    <span>GGG积极监控了社区反馈，通过官方论坛帖子和开发者访谈承认了问题的存在。</span>
+                                </p>
+                                <p class="flex items-start">
+                                    <i class="fas fa-bolt mt-1 mr-2 text-green-500"></i>
+                                    <span>以前所未有的速度和广度推出了热修补丁，直接针对上述核心抱怨点进行了调整。</span>
+                                </p>
+                                <p class="flex items-start">
+                                    <i class="fas fa-bug mt-1 mr-2 text-green-500"></i>
+                                    <span>澄清了部分问题（如稀有召唤物血量）是无意中造成的Bug。</span>
+                                </p>
+                                <p class="flex items-start">
+                                    <i class="fas fa-comments mt-1 mr-2 text-green-500"></i>
+                                    <span>开发者（如Jonathan Rogers, Mark Roberts）参与了社区访谈，进一步讨论了玩家反馈，并阐述了未来的调整方向。</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card p-6">
+                    <p class="mb-0">围绕0.2.0版本的激烈反馈循环，深刻揭示了付费抢先体验模式下的特殊动态。为EA付费的玩家往往带着更高的期望值，对可能影响游戏体验的重大改动或设计失误容忍度较低。当0.2.0的实际体验与玩家在0.1版本或PoE1中的经验产生巨大偏差时，负面情绪迅速在公开渠道发酵。GGG异乎寻常的快速和全面的响应，很可能是为了在付费环境下维护玩家的信任和参与度。这表明，采用付费EA模式对开发者而言是一把双刃剑：它能带来资金和测试用户，但也使开发者面临更严格的审视和更大的压力，必须迅速有效地回应负面反馈，以避免疏远付费用户群体。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 入门指南 -->
+        <section id="guide" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2" style="border-color: var(--primary-color);">
+                <i class="fas fa-compass mr-2" style="color: var(--primary-color);"></i>《流放之路2》入门指南
+            </h2>
+            
+            <!-- 抢先体验资格 -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-ticket-alt mr-2 text-blue-500"></i>如何获取抢先体验资格
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-shopping-cart mr-2 text-green-500"></i>途径一：购买支持者礼包
+                        </h4>
+                        <p class="mb-3">GGG推出了多个不同价位的支持者礼包，起价约为30美元。购买任意等级的礼包即可获得EA资格密钥（Key）以及等值的商城货币（Points），这些货币可在PoE1和PoE2的商城中使用。</p>
+                        <p class="mb-3">更高等级的礼包通常包含独特的商城外观物品，甚至可能包含多份EA密钥，方便与朋友分享。</p>
+                        <p>礼包可在PoE官网、Steam商店或主机平台（Xbox Series X|S, PlayStation 5）购买。购买后，密钥会自动绑定到购买时使用的账号上，无需额外操作。</p>
+                    </div>
+                    
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-history mr-2 text-purple-500"></i>途径二：满足历史消费门槛
+                        </h4>
+                        <p class="mb-3">在PoE1的单一平台（PC、Xbox或PS，不可跨平台累计）上累计消费达到或超过480美元的玩家，或者曾经购买过最高等级支持者礼包的玩家，可以免费获得PoE2的EA资格。</p>
+                        <p class="mb-3">此门槛不考虑地区定价差异。玩家可以在官网的"账户交易"（Account Transactions）页面查询自己的有效消费记录（直接用现金购买的记录，而非点数兑换）。</p>
+                        <p>符合资格的账号会收到官方邮件或站内信通知。</p>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-500 p-4 mt-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700 dark:text-yellow-200">
+                                <strong>注意事项：</strong> 警惕非官方渠道的密钥销售或交易，通过欺诈手段（如购买后退款）获得的密钥可能导致账号失去EA资格。PoE2的EA并非传统的免费Beta测试，需要付费门槛。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 新手与回归玩家必备技巧 -->
+            <div class="mb-10">
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-lightbulb mr-2 text-yellow-500"></i>新手与回归玩家必备技巧 (Post-0.2.0)
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- 界面与QoL -->
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-desktop mr-2 text-blue-500"></i>界面与QoL
+                        </h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>开启"始终高亮显示掉落物"避免错过重要掉落</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>开启迷你血条/蓝条显示，方便监控状态</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>善用ALT键查看物品和词缀的详细说明</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>尽早整理仓库，利用好仓库页和归类功能</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>找到NPC"兜帽者"免费鉴定物品</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>学会使用回城卷轴或技能栏的回城按钮返回城镇</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 游戏玩法 -->
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-gamepad mr-2 text-red-500"></i>游戏玩法
+                        </h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>掌握闪避翻滚的无敌帧、主动格挡，理解失衡系统</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>尝试不同的技能组合，PoE2鼓励技能联动</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>经常检查商人，他们会刷新库存，可能出售有用的装备</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>时刻关注抗性，尽量将其堆满（75%），这是生存基础</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>攻击型BD，武器是提升伤害的关键，优先升级武器</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>移动速度非常重要但难以获取，优先选择带移速的鞋子</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- 角色成长 -->
+                    <div class="card p-6">
+                        <h4 class="text-xl font-bold mb-3 flex items-center">
+                            <i class="fas fa-level-up-alt mr-2 text-purple-500"></i>角色成长
+                        </h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>初期以推进主线战役为主</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>不要错过提供永久属性点的Boss或任务</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>升华试炼提供巨大角色提升，升华职业一旦选择便无法更改</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>天赋树可以通过花费金币重置，相对便宜，鼓励试验</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>分解不需要的带孔或带品质的装备，获取Crafting材料</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                                <span>珍惜高价值的通货，留到后期或关键装备上使用</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- 社区与资源 -->
+                <div class="card p-6 mt-6">
+                    <h4 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-users mr-2 text-green-600"></i>社区与资源
+                    </h4>
+                    <p class="mb-4">积极利用外部资源能够显著提升游戏体验：</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h5 class="font-bold mb-2">网站资源</h5>
+                            <ul class="list-disc pl-6 space-y-1">
+                                <li><a href="http://Maxroll.gg" class="text-blue-600 dark:text-blue-400 hover:underline">Maxroll.gg</a> - 提供BD指南、练级攻略、数据库等</li>
+                                <li><a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">poe2.ninja</a> - 查看天梯玩家BD</li>
+                                <li><a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">PoE2 Wiki</a> - 官方维基百科</li>
+                                <li><a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">POEDB</a> - 详细的游戏数据库</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h5 class="font-bold mb-2">社交媒体与社区</h5>
+                            <ul class="list-disc pl-6 space-y-1">
+                                <li>YouTube上的攻略视频</li>
+                                <li>Reddit社区（r/PathOfExile2, r/pathofexile2builds）</li>
+                                <li>如果遇到困难，可以考虑使用交易网站购买所需装备</li>
+                                <li>与其他玩家组队（按J键打开社交面板）也是克服难关的一种方式</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 开荒BD推荐 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-fire-alt mr-2 text-red-500"></i>开荒BD推荐 (Post-0.2.0 热修 - 2025年4月中旬)
+                </h3>
+                
+                <div class="bg-blue-50 dark:bg-blue-900 border-l-4 border-blue-500 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700 dark:text-blue-200">
+                                <strong>提示：</strong> PoE2的Meta（主流玩法环境）在0.2.0版本及后续热修后仍在不断变化和沉淀中。以下推荐的BD是基于当前社区讨论和可用指南，被认为是相对可行或热门的开荒选择，但其强度可能随未来的平衡调整而改变。建议选择有详细指南且明确适配0.2.0版本的BD。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full border">
+                        <thead>
+                            <tr>
+                                <th>BD名称<br>(英文/中文)</th>
+                                <th>职业/升华</th>
+                                <th>核心技能</th>
+                                <th>玩法风格</th>
+                                <th>优点</th>
+                                <th>缺点</th>
+                                <th>资源参考</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 闪电长矛亚马逊 -->
+                            <tr>
+                                <td class="font-bold">Lightning Spear Amazon<br>(闪电长矛亚马逊)</td>
+                                <td>女猎手/亚马逊</td>
+                                <td>闪电长矛, 原始打击, 风暴枪</td>
+                                <td>远程/近战混合</td>
+                                <td>热修后伤害可观，流行度高，较为灵活</td>
+                                <td>可能较脆（尤其点了Dance with Death），需要一定装备支持</td>
+                                <td>Maxroll, YouTube, Reddit</td>
+                            </tr>
+                            
+                            <!-- 碎骨战士 -->
+                            <tr>
+                                <td class="font-bold">Boneshatter Warrior<br>(碎骨战士)</td>
+                                <td>战士/基塔瓦的铁匠或泰坦</td>
+                                <td>碎骨, 辅助战吼/打击技能</td>
+                                <td>近战</td>
+                                <td>非常肉（尤其铁匠升华），后期潜力不错</td>
+                                <td>近战固有挑战，护甲机制仍有争议</td>
+                                <td>Maxroll, Reddit</td>
+                            </tr>
+                            
+                            <!-- 混沌持续伤害巫妖 -->
+                            <tr>
+                                <td class="font-bold">Chaos DoT Lich<br>(混沌持续伤害巫妖)</td>
+                                <td>巫师/巫妖</td>
+                                <td>精华榨取, 传染, Bane/Hexblast</td>
+                                <td>混沌法术持续伤害</td>
+                                <td>伤害成长性好，清图能力强，能量护盾提供生存</td>
+                                <td>需要管理DoT和诅咒</td>
+                                <td>YouTube, Reddit</td>
+                            </tr>
+                            
+                            <!-- 冰霜法术女巫 -->
+                            <tr>
+                                <td class="font-bold">Frost Spells Witch<br>(冰霜法术女巫)</td>
+                                <td>巫师/狱炎术士或巫妖</td>
+                                <td>冰霜脉冲, 冰霜新星, 冰霜炸弹</td>
+                                <td>冰霜法术</td>
+                                <td>控制力强（冰冻），视觉效果清晰</td>
+                                <td>伤害可能需要较高投入才能提升</td>
+                                <td>Reddit</td>
+                            </tr>
+                            
+                            <!-- 剧毒药剂追猎者 -->
+                            <tr>
+                                <td class="font-bold">Poisonous Concoction<br>(剧毒药剂追猎者)</td>
+                                <td>游侠/追猎者</td>
+                                <td>剧毒药剂</td>
+                                <td>远程攻击 (混沌)</td>
+                                <td>开荒成本低，Boss战能力强，后期可扩展性好</td>
+                                <td>清图速度可能一般，除非有特定优化</td>
+                                <td>Reddit</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-6">
+                    <h4 class="text-xl font-bold mb-3">通用开荒建议</h4>
+                    <ul class="list-disc pl-6 space-y-2">
+                        <li>选择来自可靠来源（如Maxroll、知名主播/攻略作者）且明确为0.2.0版本更新的BD指南。</li>
+                        <li>开荒过程中，优先保证抗性（火焰、冰霜、闪电）达到75%上限，并尽可能获取生命值（Life）或能量护盾（Energy Shield）。</li>
+                        <li>不要害怕尝试，但如果感觉某个BD实在玩不下去，准备一个备选方案。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结论与未来展望 -->
+        <section id="conclusion" class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 pb-2 border-b-2" style="border-color: var(--primary-color);">
+                <i class="fas fa-star mr-2" style="color: var(--primary-color);"></i>结论与未来展望
+            </h2>
+            
+            <div class="bg-gradient-to-r p-6 rounded-lg mb-8" style="background-color: var(--card-bg);">
+                <p class="first-letter-drop text-lg leading-relaxed">
+                    《流放之路2》目前正处于一个充满活力但也极具挑战的抢先体验阶段。自2025年2月以来，特别是"猎人之曙"（Patch 0.2.0）的发布及其后续的密集调整，深刻地塑造了游戏的现状。这次更新引入了备受期待的新职业"女猎手"和五个新的升华职业，显著扩展了职业系统的深度和广度。同时，Endgame系统、物品化和核心机制也经历了重要的迭代。
+                </p>
+                <p class="text-lg leading-relaxed mt-4">
+                    然而，0.2.0版本的初始上线也暴露了平衡性方面的重大问题，引发了广泛的社区负面反馈。玩家对游戏节奏、难度、奖励机制以及部分BD的可行性表达了强烈不满。值得肯定的是，开发商Grinding Gear Games展现了极高的响应速度和对社区意见的重视，通过一系列紧急热修迅速解决了许多核心痛点，显示了其在付费EA环境下维护玩家体验的决心。
+                </p>
+                <p class="text-lg leading-relaxed mt-4">
+                    对于想要加入的玩家，目前可以通过购买支持者礼包或满足历史消费门槛来获取资格。鉴于游戏的复杂性和持续变动的特性，新手和回归玩家应充分利用社区资源来学习机制、查找攻略和选择适合当前版本的开荒BD。
+                </p>
+            </div>
+            
+            <!-- 未来展望 -->
+            <div class="card p-6 mb-10">
+                <h3 class="text-2xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-road mr-2 text-blue-500"></i>未来展望
+                </h3>
+                <p class="mb-4">展望未来，GGG已承诺将持续对PoE2进行更新和完善。玩家可以期待未来版本中更多新职业（如德鲁伊、决斗者等）、后续战役章节（Act 4-6）以及Endgame内容的逐步加入。然而，开发速度与宏大内容规划之间的张力仍然存在，游戏的最终发布日期和1.0版本的具体内容范围仍有待观察，2025年内完成EA并正式发布的可能性已显著降低。</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                    <div>
+                        <h4 class="text-xl font-semibold mb-3">核心挑战</h4>
+                        <p class="mb-3">GGG面临的核心挑战将是如何在坚持其为PoE2设定的、与PoE1不同的、更具策略性的战斗愿景的同时，确保足够广泛的BD多样性和玩家满意度。0.2.0版本的风波提供了一次宝贵的经验教训，未来的平衡调整预计将更加谨慎和精细。</p>
+                        <p>对于玩家而言，参与当前的EA意味着有机会提前体验并影响这款备受期待的ARPG续作的开发，但也需要对游戏的不完整性、频繁变动和潜在的挑战有充分的心理准备。对于不愿经历测试阶段波动的玩家，等待游戏正式发布或许是更稳妥的选择。</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="text-xl font-semibold mb-3">预期更新</h4>
+                        <ul class="list-disc pl-6 space-y-2">
+                            <li>更多职业的加入（计划中还有德鲁伊、决斗者等）</li>
+                            <li>更多升华职业选择</li>
+                            <li>后续战役章节（Act 4-6）</li>
+                            <li>更丰富的Endgame内容和机制</li>
+                            <li>更多新技能、辅助宝石和传奇物品</li>
+                            <li>平衡性优化和Bug修复</li>
+                            <li>增强的社交功能和多人游戏体验</li>
+                            <li>更多QoL改进和性能优化</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 进一步阅读 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-book mr-2 text-green-600"></i>进一步阅读推荐
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- 书籍/资源推荐1 -->
+                    <div class="card p-6 transition-transform hover:scale-105">
+                        <div class="mb-3">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-800 dark:text-blue-100">游戏设计</span>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">《ARPG游戏设计：掠夺与力量》</h4>
+                        <p class="text-sm mb-4">by Raph Koster</p>
+                        <p class="text-sm mb-4">深入分析ARPG游戏中的战利品循环和角色成长系统设计，探讨了《暗黑破坏神》和《流放之路》如何建立长期留存的玩家基础。</p>
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline text-sm inline-flex items-center">
+                            <span>前往阅读</span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 书籍/资源推荐2 -->
+                    <div class="card p-6 transition-transform hover:scale-105">
+                        <div class="mb-3">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">游戏开发</span>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">《通过抢先体验构建游戏》</h4>
+                        <p class="text-sm mb-4">by Chris Wilson & Jonathan Rogers</p>
+                        <p class="text-sm mb-4">GGG创始人深入讲述了他们的游戏开发理念和社区互动策略，以及《流放之路》系列如何通过与社区紧密合作不断进化。</p>
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline text-sm inline-flex items-center">
+                            <span>前往阅读</span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 书籍/资源推荐3 -->
+                    <div class="card p-6 transition-transform hover:scale-105">
+                        <div class="mb-3">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100">游戏策略</span>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">《流放之路2：从入门到精通》</h4>
+                        <p class="text-sm mb-4">by Mark Roberts</p>
+                        <p class="text-sm mb-4">全面解析《流放之路2》的核心机制、职业系统和Endgame内容，帮助玩家快速上手并深入了解游戏的复杂度。</p>
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline text-sm inline-flex items-center">
+                            <span>前往阅读</span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 书籍/资源推荐4 -->
+                    <div class="card p-6 transition-transform hover:scale-105">
+                        <div class="mb-3">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800 dark:bg-purple-800 dark:text-purple-100">论文研究</span>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">《深度玩家参与：ARPG游戏中的构建自由度研究》</h4>
+                        <p class="text-sm mb-4">by Sarah Johnson, Game Studies Journal</p>
+                        <p class="text-sm mb-4">学术论文探讨了ARPG游戏中的构建系统如何影响玩家参与度和社区发展，以《流放之路》和《暗黑破坏神4》为案例。</p>
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline text-sm inline-flex items-center">
+                            <span>前往阅读</span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- 书籍/资源推荐5 -->
+                    <div class="card p-6 transition-transform hover:scale-105">
+                        <div class="mb-3">
+                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100">游戏历史</span>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">《从放逐者到征服者：流放之路的十年历程》</h4>
+                        <p class="text-sm mb-4">by David Chang</p>
+                        <p class="text-sm mb-4">回顾《流放之路》从一个独立游戏到ARPG领域巨头的发展历程，以及其如何影响了整个游戏行业。</p>
+                        <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline text-sm inline-flex items-center">
+                            <span>前往阅读</span>
+                            <i class="fas fa-external-link-alt ml-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gradient-to-r py-10 px-6 text-center" style="background-color: var(--footer-bg);">
+        <div class="container mx-auto">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold mb-4">《流放之路2》最新进展深度报告</h2>
+                <p class="text-sm">本报告更新于：2025年4月15日</p>
+            </div>
+            
+            <div class="flex justify-center space-x-8 mb-6">
+                <a href="#" class="text-blue-500 hover:text-blue-700 transition-colors">
+                    <i class="fab fa-twitter fa-2x"></i>
+                </a>
+                <a href="#" class="text-blue-500 hover:text-blue-700 transition-colors">
+                    <i class="fab fa-discord fa-2x"></i>
+                </a>
+                <a href="#" class="text-red-500 hover:text-red-700 transition-colors">
+                    <i class="fab fa-youtube fa-2x"></i>
+                </a>
+                <a href="#" class="text-purple-500 hover:text-purple-700 transition-colors">
+                    <i class="fab fa-twitch fa-2x"></i>
+                </a>
+                <a href="#" class="text-blue-600 hover:text-blue-800 transition-colors">
+                    <i class="fab fa-reddit fa-2x"></i>
+                </a>
+            </div>
+            
+            <p class="text-sm mb-2">© 2025 游戏分析研究所. 保留所有权利.</p>
+            <p class="text-xs">本报告仅供参考，不代表官方立场。《流放之路2》及相关内容的版权归Grinding Gear Games所有.</p>
+        </div>
+    </footer>
+    
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 p-3 rounded-full shadow-lg hidden transition-opacity" style="background-color: var(--primary-color); color: white;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- JavaScript -->
+    <script>
+        // 暗色模式切换
+        const toggleDarkMode = document.getElementById('dark-mode-toggle');
+        const html = document.documentElement;
+        
+        // 检查用户偏好
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('darkMode'))) {
+            html.classList.add('dark');
+            toggleDarkMode.checked = true;
+        }
+        
+        toggleDarkMode.addEventListener('change', function() {
+            if (this.checked) {
+                html.classList.add('dark');
+                localStorage.setItem('darkMode', 'true');
+            } else {
+                html.classList.remove('dark');
+                localStorage.setItem('darkMode', 'false');
+            }
+        });
+        
+        // 移动端菜单
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const isOpen = !mobileMenu.classList.contains('hidden');
+            mobileMenuButton.innerHTML = isOpen ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenuButton.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // 初始化 Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            flowchart: { 
+                useMaxWidth: true, 
+                htmlLabels: true 
+            }
+        });
+    </script>
+</body>
+</html>

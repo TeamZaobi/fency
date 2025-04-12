@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布日期修正工具</title>
+    <style>
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #345995;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        .filter-dropdown {
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: white;
+            margin-right: 10px;
+        }
+        .action-btn {
+            background-color: #345995;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .action-btn:hover {
+            background-color: #2a477a;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        thead {
+            background-color: #345995;
+            color: white;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .date-input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 140px;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .json-output {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .category-btn {
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            transition: background-color 0.3s;
+        }
+        .category-btn.active {
+            background-color: #345995;
+            color: white;
+        }
+        .bulk-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
+            border: 1px solid #b8daff;
+        }
+        .bulk-section h3 {
+            margin-top: 0;
+            color: #345995;
+        }
+        .info-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        .date-input-container {
+            position: relative;
+            display: inline-block;
+        }
+        .custom-date-input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 140px;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>发布日期修正工具</h1>
+        
+        <div class="info-line">
+            <span>总文件数: <span id="total-count">0</span></span>
+            <span>ai-tech: <span id="ai-tech-count">0</span></span>
+            <span>info-upgrade: <span id="info-upgrade-count">0</span></span>
+            <span>knowledge: <span id="knowledge-count">0</span></span>
+            <span>research: <span id="research-count">0</span></span>
+        </div>
+
+        <div class="controls">
+            <div>
+                <input type="text" id="search" placeholder="搜索文件名或标题..." class="search-box">
+                <select id="filter" class="filter-dropdown">
+                    <option value="all">所有分类</option>
+                    <option value="ai-tech">AI技术与生态</option>
+                    <option value="info-upgrade">信息化升级</option>
+                    <option value="knowledge">知识报告</option>
+                    <option value="research">科研辅助</option>
+                </select>
+            </div>
+            <div>
+                <button id="load-btn" class="action-btn">加载元数据</button>
+                <button id="generate-btn" class="action-btn" disabled>生成JSON</button>
+                <button id="copy-btn" class="action-btn" disabled>复制到剪贴板</button>
+            </div>
+        </div>
+
+        <div class="categories">
+            <button class="category-btn active" data-category="all">全部</button>
+            <button class="category-btn" data-category="ai-tech">AI技术与生态</button>
+            <button class="category-btn" data-category="info-upgrade">信息化升级</button>
+            <button class="category-btn" data-category="knowledge">知识报告</button>
+            <button class="category-btn" data-category="research">科研辅助</button>
+        </div>
+
+        <div class="bulk-section">
+            <h3>批量日期设置</h3>
+            <p>为选定类别的所有文件设置发布日期范围：</p>
+            <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                <label style="margin-right: 10px;">起始日期：</label>
+                <div class="date-input-container">
+                    <input type="text" id="bulk-start-date" class="custom-date-input" placeholder="YYYY-MM-DD">
+                </div>
+                <label style="margin: 0 10px;">结束日期：</label>
+                <div class="date-input-container">
+                    <input type="text" id="bulk-end-date" class="custom-date-input" placeholder="YYYY-MM-DD">
+                </div>
+                <label style="margin: 0 10px;">分类：</label>
+                <select id="bulk-category" class="filter-dropdown">
+                    <option value="all">所有分类</option>
+                    <option value="ai-tech">AI技术与生态</option>
+                    <option value="info-upgrade">信息化升级</option>
+                    <option value="knowledge">知识报告</option>
+                    <option value="research">科研辅助</option>
+                </select>
+                <button id="apply-bulk-dates" class="action-btn" style="margin-left: 10px;">应用</button>
+            </div>
+        </div>
+
+        <table id="metadata-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%">#</th>
+                    <th style="width: 30%">文件路径</th>
+                    <th style="width: 25%">标题</th>
+                    <th style="width: 10%">分类</th>
+                    <th style="width: 15%">当前发布日期</th>
+                    <th style="width: 15%">新发布日期</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 数据将通过JavaScript动态填充 -->
+            </tbody>
+        </table>
+
+        <h3>生成的JSON：</h3>
+        <div id="json-output" class="json-output">
+            请先加载元数据并设置日期修正...
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // 全局变量
+        let metadataJson = null;
+
+        // DOM 元素
+        const loadBtn = document.getElementById('load-btn');
+        const generateBtn = document.getElementById('generate-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const metadataTable = document.getElementById('metadata-table').querySelector('tbody');
+        const jsonOutput = document.getElementById('json-output');
+        const searchInput = document.getElementById('search');
+        const filterSelect = document.getElementById('filter');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const bulkStartDate = document.getElementById('bulk-start-date');
+        const bulkEndDate = document.getElementById('bulk-end-date');
+        const bulkCategory = document.getElementById('bulk-category');
+        const applyBulkDates = document.getElementById('apply-bulk-dates');
+        
+        // 计数器元素
+        const totalCount = document.getElementById('total-count');
+        const aiTechCount = document.getElementById('ai-tech-count');
+        const infoUpgradeCount = document.getElementById('info-upgrade-count');
+        const knowledgeCount = document.getElementById('knowledge-count');
+        const researchCount = document.getElementById('research-count');
+
+        // 显示通知
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // 格式化日期
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            
+            try {
+                // 正则表达式匹配各种可能的日期格式
+                const dateRegex = /(\d{4,})[-\/](\d{1,2})[-\/](\d{1,2})/;
+                const match = dateStr.match(dateRegex);
+                
+                if (match) {
+                    // 提取年月日
+                    let year = match[1];
+                    const month = match[2].padStart(2, '0');
+                    const day = match[3].padStart(2, '0');
+                    
+                    // 年份修正 - 只保留最后4位
+                    if (year.length > 4) {
+                        year = year.substr(year.length - 4);
+                    }
+                    
+                    // 返回标准格式
+                    return `${year}-${month}-${day}`;
+                }
+                
+                // 尝试使用Date对象处理
+                const date = new Date(dateStr);
+                if (!isNaN(date.getTime())) {
+                    const year = String(date.getFullYear()).slice(-4);
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+                
+                return '';
+            } catch (e) {
+                console.error("日期格式化错误:", e, dateStr);
+                return '';
+            }
+        }
+
+        // 日期有效性验证
+        function isValidDate(dateStr) {
+            if (!dateStr) return false;
+            
+            // 检查格式是否为YYYY-MM-DD
+            const regex = /^(\d{4})-(\d{2})-(\d{2})$/;
+            const match = dateStr.match(regex);
+            
+            if (!match) return false;
+            
+            // 提取年月日并验证
+            const year = parseInt(match[1], 10);
+            const month = parseInt(match[2], 10) - 1; // JS月份从0开始
+            const day = parseInt(match[3], 10);
+            
+            // 创建日期对象并验证
+            const date = new Date(year, month, day);
+            
+            return date.getFullYear() === year &&
+                   date.getMonth() === month &&
+                   date.getDate() === day;
+        }
+
+        // 格式化日期输入
+        function formatDateInput(value) {
+            // 移除所有非数字和非连字符字符
+            value = value.replace(/[^\d-]/g, '');
+            
+            // 自动添加连字符以改善用户体验
+            if (value.length === 4 && !value.includes('-')) {
+                // 输入了4位年份，自动添加连字符
+                return value + '-';
+            } else if (value.length === 7 && value.indexOf('-') === 4 && value.lastIndexOf('-') === 4) {
+                // 输入了年份和2位月份，自动添加连字符
+                return value + '-';
+            } else if (value.match(/^\d{4}$/)) {
+                // 有4位数字但没有连字符，添加连字符
+                return value + '-';
+            } else if (value.match(/^\d{4}-\d{2}$/)) {
+                // 年份-月份格式，添加另一个连字符
+                return value + '-';
+            }
+            
+            // 如果输入长度超过10（YYYY-MM-DD格式的长度），截断
+            if (value.length > 10) {
+                return value.substring(0, 10);
+            }
+            
+            // 尝试匹配各种格式并标准化完整日期
+            const dateRegex = /(\d{4,})[-\/]?(\d{1,2})[-\/]?(\d{1,2})/;
+            const match = value.match(dateRegex);
+            
+            if (match && match[1].length >= 4 && match[2].length >= 2 && match[3].length >= 2) {
+                let year = match[1];
+                // 年份修正 - 只保留后4位
+                if (year.length > 4) {
+                    year = year.substr(year.length - 4);
+                }
+                
+                const month = match[2].padStart(2, '0');
+                const day = match[3].padStart(2, '0');
+                
+                return `${year}-${month}-${day}`;
+            }
+            
+            return value;
+        }
+
+        // 修改setupDateInputValidation函数，增强输入交互
+        function setupDateInputValidation() {
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('custom-date-input')) {
+                    const cursorPos = e.target.selectionStart;
+                    const oldValue = e.target.value;
+                    const newValue = formatDateInput(oldValue);
+                    
+                    // 如果格式化改变了值，需要维持合适的光标位置
+                    if (oldValue !== newValue) {
+                        e.target.value = newValue;
+                        
+                        // 如果我们刚刚添加了连字符，将光标移到新连字符后面
+                        if (newValue.length === 5 && oldValue.length === 4) {
+                            e.target.selectionStart = 5;
+                            e.target.selectionEnd = 5;
+                        } else if (newValue.length === 8 && oldValue.length === 7) {
+                            e.target.selectionStart = 8;
+                            e.target.selectionEnd = 8;
+                        } else {
+                            // 否则尝试保持原始光标位置
+                            e.target.selectionStart = cursorPos;
+                            e.target.selectionEnd = cursorPos;
+                        }
+                    }
+                }
+            });
+            
+            document.addEventListener('blur', function(e) {
+                if (e.target.classList.contains('custom-date-input')) {
+                    const value = e.target.value.trim();
+                    if (value && !isValidDate(value)) {
+                        e.target.value = '';
+                        showNotification('请输入有效的日期格式：YYYY-MM-DD');
+                    }
+                }
+            });
+            
+            // 添加键盘事件处理，支持Tab和方向键导航
+            document.addEventListener('keydown', function(e) {
+                if (e.target.classList.contains('custom-date-input')) {
+                    const input = e.target;
+                    const value = input.value;
+                    
+                    // Tab键在年份后或月份后自动添加连字符并移动到下一位置
+                    if (e.key === 'Tab' && !e.shiftKey) {
+                        if (value.length === 4 && !value.includes('-')) {
+                            e.preventDefault();
+                            input.value = value + '-';
+                            input.selectionStart = 5;
+                            input.selectionEnd = 5;
+                        } else if (value.match(/^\d{4}-\d{2}$/) && value.indexOf('-') === 4) {
+                            e.preventDefault();
+                            input.value = value + '-';
+                            input.selectionStart = 8;
+                            input.selectionEnd = 8;
+                        }
+                    }
+                }
+            });
+        }
+
+        // 加载元数据
+        loadBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('../html/metadata.json');
+                metadataJson = await response.json();
+                
+                // 更新UI状态
+                generateBtn.disabled = false;
+                
+                // 更新计数器
+                updateCounters(metadataJson.pages);
+                
+                // 显示数据
+                displayMetadata(metadataJson.pages);
+                
+                showNotification('元数据加载成功');
+            } catch (error) {
+                showNotification('加载失败: ' + error.message);
+                console.error('加载错误:', error);
+            }
+        });
+
+        // 更新计数器
+        function updateCounters(pages) {
+            const counts = {
+                total: pages.length,
+                'ai-tech': 0,
+                'info-upgrade': 0,
+                knowledge: 0,
+                research: 0
+            };
+            
+            pages.forEach(page => {
+                if (counts[page.category] !== undefined) {
+                    counts[page.category]++;
+                }
+            });
+            
+            totalCount.textContent = counts.total;
+            aiTechCount.textContent = counts['ai-tech'];
+            infoUpgradeCount.textContent = counts['info-upgrade'];
+            knowledgeCount.textContent = counts.knowledge;
+            researchCount.textContent = counts.research;
+        }
+
+        // 显示元数据
+        function displayMetadata(pages, filter = 'all', searchTerm = '') {
+            metadataTable.innerHTML = '';
+            
+            let filteredPages = pages;
+            
+            // 应用分类筛选
+            if (filter !== 'all') {
+                filteredPages = filteredPages.filter(page => page.category === filter);
+            }
+            
+            // 应用搜索筛选
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                filteredPages = filteredPages.filter(page => 
+                    page.path.toLowerCase().includes(term) || 
+                    page.title.toLowerCase().includes(term)
+                );
+            }
+            
+            // 创建表格行
+            filteredPages.forEach((page, index) => {
+                const tr = document.createElement('tr');
+                
+                // 获取发布日期，优先使用publish-date字段
+                const publishDate = page['publish-date'] || page.publishDate || '';
+                
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td title="${page.path}">${page.path}</td>
+                    <td title="${page.title}">${page.title}</td>
+                    <td>${page.category}</td>
+                    <td>${publishDate}</td>
+                    <td>
+                        <div class="date-input-container">
+                            <input type="text" class="custom-date-input" data-path="${page.path}" 
+                                   value="${formatDate(publishDate)}" placeholder="YYYY-MM-DD">
+                        </div>
+                    </td>
+                `;
+                
+                metadataTable.appendChild(tr);
+            });
+        }
+
+        // 生成更新后的JSON
+        generateBtn.addEventListener('click', () => {
+            if (!metadataJson) {
+                showNotification('请先加载元数据');
+                return;
+            }
+            
+            // 获取所有日期输入
+            const dateInputs = document.querySelectorAll('.custom-date-input[data-path]');
+            const dateMap = new Map();
+            
+            dateInputs.forEach(input => {
+                const path = input.getAttribute('data-path');
+                let newDate = input.value.trim();
+                
+                if (newDate && isValidDate(newDate)) {
+                    dateMap.set(path, newDate);
+                } else if (newDate) {
+                    showNotification(`警告: "${path}" 的日期格式无效，将被忽略`);
+                }
+            });
+            
+            // 更新JSON
+            const updatedPages = metadataJson.pages.map(page => {
+                if (dateMap.has(page.path)) {
+                    return {
+                        ...page,
+                        'publish-date': dateMap.get(page.path)
+                    };
+                }
+                return page;
+            });
+            
+            const updatedJson = {
+                lastUpdated: new Date().toISOString(),
+                pages: updatedPages
+            };
+            
+            // 显示更新后的JSON
+            jsonOutput.textContent = JSON.stringify(updatedJson, null, 2);
+            copyBtn.disabled = false;
+            
+            showNotification('JSON已生成');
+        });
+
+        // 复制到剪贴板
+        copyBtn.addEventListener('click', () => {
+            const textToCopy = jsonOutput.textContent;
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    showNotification('已复制到剪贴板');
+                })
+                .catch(err => {
+                    showNotification('复制失败: ' + err.message);
+                    console.error('复制错误:', err);
+                });
+        });
+
+        // 搜索和筛选事件
+        searchInput.addEventListener('input', () => {
+            if (metadataJson) {
+                displayMetadata(
+                    metadataJson.pages, 
+                    filterSelect.value, 
+                    searchInput.value
+                );
+            }
+        });
+
+        filterSelect.addEventListener('change', () => {
+            if (metadataJson) {
+                displayMetadata(
+                    metadataJson.pages, 
+                    filterSelect.value, 
+                    searchInput.value
+                );
+            }
+        });
+
+        // 分类按钮切换
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 移除所有活跃状态
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                
+                // 添加当前按钮的活跃状态
+                btn.classList.add('active');
+                
+                // 更新过滤器并显示
+                const category = btn.getAttribute('data-category');
+                filterSelect.value = category;
+                
+                if (metadataJson) {
+                    displayMetadata(
+                        metadataJson.pages, 
+                        category, 
+                        searchInput.value
+                    );
+                }
+            });
+        });
+
+        // 批量设置日期
+        applyBulkDates.addEventListener('click', () => {
+            if (!metadataJson) {
+                showNotification('请先加载元数据');
+                return;
+            }
+            
+            const startDateValue = bulkStartDate.value.trim();
+            const endDateValue = bulkEndDate.value.trim();
+            
+            if (!startDateValue || !endDateValue) {
+                showNotification('请设置起始和结束日期');
+                return;
+            }
+            
+            if (!isValidDate(startDateValue) || !isValidDate(endDateValue)) {
+                showNotification('请输入有效的日期格式：YYYY-MM-DD');
+                return;
+            }
+            
+            const startDate = new Date(startDateValue);
+            const endDate = new Date(endDateValue);
+            
+            if (startDate > endDate) {
+                showNotification('起始日期不能晚于结束日期');
+                return;
+            }
+            
+            // 获取符合条件的页面
+            const category = bulkCategory.value;
+            let targetPages = [];
+            if (category === 'all') {
+                targetPages = [...metadataJson.pages];
+            } else {
+                targetPages = metadataJson.pages.filter(page => page.category === category);
+            }
+            
+            if (targetPages.length === 0) {
+                showNotification('没有找到符合条件的页面');
+                return;
+            }
+            
+            // 计算日期范围内的天数
+            const daysDiff = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
+            
+            // 为每个页面分配一个日期
+            targetPages.forEach((page, index) => {
+                let daysToAdd;
+                if (targetPages.length === 1) {
+                    daysToAdd = 0;
+                } else {
+                    daysToAdd = Math.floor((index / (targetPages.length - 1)) * daysDiff);
+                }
+                
+                const newDate = new Date(startDate);
+                newDate.setDate(startDate.getDate() + daysToAdd);
+                
+                const formattedDate = formatDate(newDate.toISOString());
+                
+                // 更新输入框
+                const input = document.querySelector(`.custom-date-input[data-path="${page.path}"]`);
+                if (input) {
+                    input.value = formattedDate;
+                }
+            });
+            
+            showNotification(`已为${targetPages.length}个页面设置日期范围`);
+        });
+
+        // 设置当前日期
+        const today = new Date();
+        const lastMonth = new Date(today);
+        lastMonth.setMonth(today.getMonth() - 1);
+        
+        bulkStartDate.value = formatDate(lastMonth.toISOString());
+        bulkEndDate.value = formatDate(today.toISOString());
+
+        // 初始化日期输入验证
+        setupDateInputValidation();
+    </script>
+</body>
+</html> 

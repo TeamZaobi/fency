@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基于AST与图数据库的代码重构工作方案</title>
+    <link href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 基本字体设置，优先使用 Noto Sans/Serif SC，然后回退到用户提供的系统字体栈 */
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+            @apply bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300;
+        }
+        /* 主要内容区域使用 Noto Serif SC 提升阅读体验 */
+        .content-serif {
+            font-family: 'Noto Serif SC', 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+        }
+        /* 标题和UI元素使用 Noto Sans SC */
+        h1, h2, h3, h4, h5, h6, button, .ui-sans {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+        }
+        /* Mermaid 图表样式 */
+        .mermaid svg {
+            display: block;
+            margin: auto;
+            max-width: 100%;
+            height: auto;
+        }
+        /* 深色模式下的 Mermaid 样式 */
+        html.dark .mermaid svg {
+            /* 可以根据需要调整深色模式下的颜色 */
+        }
+        /* 自定义滚动条 (可选，增加精致感) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        html.dark ::-webkit-scrollbar-track {
+            background: #2d3748; /* dark:bg-gray-700 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        html.dark ::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        html.dark ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+
+        /* 首字下沉效果 */
+        .first-letter-drop::first-letter {
+          font-size: 3em; /* 调整大小 */
+          float: left;
+          line-height: 0.8;
+          margin-right: 0.05em;
+          font-weight: bold;
+          color: #4f46e5; /* 强调色 - indigo-600 */
+        }
+        html.dark .first-letter-drop::first-letter {
+            color: #818cf8; /* 强调色 - indigo-400 */
+        }
+
+        /* 增加文章内容区域的行间距和段落间距 */
+        .prose-custom {
+            line-height: 1.8; /* 更大的行距 */
+        }
+        .prose-custom p {
+            margin-bottom: 1.5em; /* 更大的段落间距 */
+        }
+        .prose-custom h2 {
+            margin-top: 2em;
+            margin-bottom: 1em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #e5e7eb; /* light:border-gray-200 */
+        }
+        html.dark .prose-custom h2 {
+             border-bottom-color: #4b5563; /* dark:border-gray-600 */
+        }
+         .prose-custom h3 {
+            margin-top: 1.5em;
+            margin-bottom: 0.8em;
+        }
+        .prose-custom ul, .prose-custom ol {
+            margin-left: 1.5em;
+            margin-bottom: 1em;
+        }
+        .prose-custom li {
+            margin-bottom: 0.5em;
+        }
+        .prose-custom code {
+            @apply bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded text-sm font-mono text-indigo-600 dark:text-indigo-400;
+        }
+        .prose-custom strong {
+             @apply font-semibold text-gray-900 dark:text-gray-100;
+        }
+        .prose-custom a {
+            @apply text-indigo-600 dark:text-indigo-400 hover:underline;
+        }
+
+        /* 卡片样式 */
+        .info-card {
+            @apply bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl;
+        }
+        .info-card h3 {
+             @apply text-lg font-semibold mb-3 text-indigo-700 dark:text-indigo-400 border-b-0; /* 移除卡片内标题的下划线 */
+             margin-top: 0; /* 移除卡片内标题的上边距 */
+        }
+
+        /* 按钮样式 */
+        .theme-toggle-button {
+            @apply fixed bottom-5 right-5 z-50 p-3 rounded-full bg-indigo-600 dark:bg-yellow-400 text-white dark:text-gray-900 shadow-lg hover:bg-indigo-700 dark:hover:bg-yellow-500 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-yellow-300 dark:focus:ring-offset-gray-900;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle" type="button" class="theme-toggle-button" aria-label="切换主题">
+        <i class="fas fa-sun theme-icon-light"></i>
+        <i class="fas fa-moon theme-icon-dark hidden"></i>
+    </button>
+
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-800 dark:to-purple-800 text-white py-16 md:py-24 px-4 text-center relative overflow-hidden">
+        <div class="absolute inset-0 bg-black opacity-20"></div> <div class="relative z-10 max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
+                <i class="fas fa-project-diagram mr-2"></i> 基于AST与图数据库的代码重构新范式
+            </h1>
+            <p class="text-lg md:text-xl lg:text-2xl font-light text-indigo-100 dark:text-indigo-200">
+                利用结构化分析克服大型代码库重构挑战，提升代码质量与可维护性
+            </p>
+        </div>
+         <div class="absolute inset-0 z-0 opacity-10 dark:opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </header>
+
+    <article class="max-w-4xl mx-auto px-4 py-8 md:py-12 content-serif prose-custom">
+
+        <section id="background">
+            <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-exclamation-circle mr-3 text-red-500 dark:text-red-400"></i>背景与问题</h2>
+            <p class="first-letter-drop">随着软件项目规模的不断扩大，代码库往往变得日益庞大和复杂。代码重构作为保持代码质量、提升可维护性和可扩展性的关键实践活动，其重要性不言而喻。然而，传统的<strong class="font-semibold">手动重构</strong>方式不仅耗时耗力，而且极易在过程中引入新的错误。</p>
+            <p>近年来，尽管大型语言模型（LLM）已被尝试应用于辅助代码重构任务，但在处理大型、复杂的代码库时，它们仍面临着显著的挑战：</p>
+            <ul class="list-disc list-outside space-y-2 pl-5">
+                <li><strong class="font-semibold">上下文窗口限制：</strong> LLM 的输入长度有限，这使得它们难以一次性理解和处理整个大型代码库的完整结构及其错综复杂的依赖关系。</li>
+                <li><strong class="font-semibold">结构理解不足：</strong> LLM 主要基于文本进行处理，对于代码的精确语法结构、类型信息以及复杂的函数调用链等深层语义理解不够深入，这可能导致重构建议的错误或不够精确。</li>
+            </ul>
+            <p>为了有效克服这些限制，本方案提出了一种创新的方法，即<strong class="font-semibold">结合抽象语法树（AST）和图数据库（如 Neo4j）</strong>，旨在以一种更精确、更可控的方式来实施大规模的代码重构。</p>
+        </section>
+
+        <section id="principle">
+            <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-lightbulb mr-3 text-yellow-500 dark:text-yellow-400"></i>核心原理</h2>
+            <p>本方案的核心思想在于：将原本非结构化的源代码文本，转换为一个<strong class="font-semibold">结构化的、可查询的数据模型</strong>。随后，所有的分析和操作都在这个精确的模型之上进行，而非直接操作原始文本。</p>
+            <div class="grid md:grid-cols-2 gap-6 my-6">
+                <div class="info-card">
+                    <h3 class="flex items-center"><i class="fas fa-sitemap mr-2"></i>抽象语法树 (AST)</h3>
+                    <p>AST 是源代码语法结构的树状表示形式。它精确地捕捉了代码的核心组成部分（例如类、函数、变量、表达式）及其相互之间的层级关系，同时忽略了空格、注释、括号等非结构性元素。这为以编程方式进行代码分析和修改奠定了坚实的基础。</p>
+                </div>
+                <div class="info-card">
+                    <h3 class="flex items-center"><i class="fas fa-database mr-2"></i>图数据库 (Graph Database)</h3>
+                    <p>图数据库（如 Neo4j）天然适合存储和查询包含复杂关系的数据。我们将 AST 转换为图结构进行存储，其中：</p>
+                    <ul class="list-disc list-outside space-y-1 pl-5 text-sm mt-2">
+                        <li><strong class="font-semibold">节点 (Nodes):</strong> 代表代码元素（类、方法、变量、调用点等），可包含名称、类型、位置、错误信息等属性。</li>
+                        <li><strong class="font-semibold">边 (Edges):</strong> 代表代码元素间的关系（调用、继承、实现、包含、引用等）。</li>
+                    </ul>
+                    <p class="mt-2 text-sm">通过这种方式，我们可以利用图查询语言（如 Cypher）进行复杂的结构分析、依赖追踪和模式匹配，实现对代码的深度理解和精确操控。</p>
+                </div>
+            </div>
+             <figure class="my-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+                 <pre class="mermaid" aria-label="核心原理示意图：展示代码如何通过AST转换为图数据库结构">
+                    graph LR
+                        A["源代码文件 .ext"] -->|"解析器 (Parser)"| B("抽象语法树 AST");
+                        B -->|"结构化转换"| C(("图数据库 Neo4j"));
+                        C -->|"Cypher 查询"| D{"深度分析 & 精确操作"};
+                 </pre>
+                 <figcaption class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2 italic">图1: 核心原理示意图</figcaption>
+            </figure>
+        </section>
+
+        <section id="workflow">
+            <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-tasks mr-3 text-blue-500 dark:text-blue-400"></i>详细工作流程与操作技巧</h2>
+            <p>整个重构过程可以分解为以下几个关键步骤，每个步骤都包含一些实用的操作技巧：</p>
+
+            <figure class="my-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
+                <pre class="mermaid" aria-label="详细工作流程图：展示从代码解析到验证确认的完整步骤">
+                    graph TD
+                        subgraph "准备阶段"
+                            A["1. 代码解析与AST生成"] --> B("选择/构建解析器");
+                            B --> C{"执行解析"};
+                            C --> D(("处理解析错误"));
+                            C --> E(("可选: 运行Linter/静态分析"));
+                        end
+
+                        subgraph "数据构建阶段"
+                           F["2. AST结构化与图存储"] --> G("设计图模型 Schema");
+                           G --> H{"遍历AST并转换"};
+                           H --> I(("使用批量导入/事务"));
+                           H --> J("存储图数据至 Neo4j");
+                        end
+
+                        subgraph "分析与决策阶段"
+                            K["3. 可视化、分析与目标选择"] --> L("使用可视化工具探索");
+                            L --> M{"执行复杂Cypher查询分析"};
+                            M --> N(("识别问题/模式"));
+                            M --> O("Pruning: 选择重构子图");
+                        end
+
+                        subgraph "执行阶段"
+                            P["4. 执行重构"] --> Q{"选择重构策略"};
+                            Q -- "基于规则" --> R("直接更新图/代码");
+                            Q -- "ASTGrep" --> S("结构化搜索与替换");
+                            Q -- "算法驱动" --> T("执行特定重构算法");
+                            R --> U("执行修改");
+                            S --> U;
+                            T --> U;
+                            U --> V(("备份原始代码"));
+                            U --> W(("使用格式化工具"));
+                        end
+
+                        subgraph "验证阶段"
+                            X["5. 验证与确认"] --> Y("代码差异比较 Diff View");
+                            Y --> Z("运行测试套件");
+                            Z --> AA("人工审查");
+                            AA --> BB(("完成/迭代"));
+                        end
+
+                        A --> F --> K --> P --> X;
+                </pre>
+                <figcaption class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2 italic">图2: 详细工作流程图</figcaption>
+            </figure>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-xl font-semibold mb-2"><i class="fas fa-code mr-2"></i>步骤一：代码解析与 AST 生成</h3>
+                    <ul class="list-decimal list-inside space-y-2 pl-5">
+                        <li><strong>选择/构建解析器:</strong> 针对目标语言（如 JavaScript、Python、Java）选择合适的库（如 <code>esprima</code>, <code>ast</code>, <code>JavaParser</code>）。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>确保解析器能提供含位置信息（行/列号）的AST，支持最新语言特性。</li>
+                        <li><strong>执行解析:</strong> 遍历代码库，将每个文件解析成AST。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>妥善处理语法错误，记录并决定跳过或尝试修复。</li>
+                        <li><strong>(可选) 运行静态分析/Linter:</strong> 运行 ESLint, Pylint 等工具，将问题信息附加到AST节点。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>有助于在重构前定位问题区域。</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-2"><i class="fas fa-project-diagram mr-2"></i>步骤二：AST 结构化与图数据库存储</h3>
+                     <ul class="list-decimal list-inside space-y-2 pl-5">
+                        <li><strong>设计图模型 (Schema):</strong> 定义节点标签（如 <code>:Class</code>, <code>:Method</code>）、属性（<code>name</code>, <code>filePath</code>）和边类型（<code>CALLS</code>, <code>INHERITS_FROM</code>）。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>平衡信息完整性与查询效率，不必存储所有AST细节。</li>
+                        <li><strong>遍历 AST 并转换:</strong> 编写脚本遍历AST，在Neo4j中创建对应的图节点和边。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>使用批量导入或事务提高性能，确保节点有唯一标识符（如路径+名称/位置）。</li>
+                        <li><strong>存储数据:</strong> 将转换后的图数据导入 Neo4j。</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-semibold mb-2"><i class="fas fa-search-plus mr-2"></i>步骤三：可视化、分析与目标选择</h3>
+                     <ul class="list-decimal list-inside space-y-2 pl-5">
+                        <li><strong>可视化:</strong> 使用 Neo4j Browser 或 Gephi 等工具连接数据库，编写 Cypher 查询探索代码结构（如查找函数调用、显示继承链）。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>利用可视化直观理解依赖，识别复杂模块或循环依赖。</li>
+                        <li><strong>分析:</strong> 执行更复杂的 Cypher 查询进行代码分析（如查找未使用代码、高扇入/扇出模块、特定错误关联节点）。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>Cypher 的模式匹配能力可用于识别代码坏味道。</li>
+                        <li><strong>目标选择 (Pruning):</strong> (开发中) 提供界面让用户在图上选择重构子图。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>选择操作应转换为图查询，精确确定范围。</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-semibold mb-2"><i class="fas fa-wrench mr-2"></i>步骤四：执行重构</h3>
+                     <ul class="list-decimal list-inside space-y-2 pl-5">
+                        <li><strong>选择重构策略:</strong>
+                            <ul class="list-disc list-outside pl-6 mt-1 space-y-1">
+                                <li><strong>基于规则:</strong> 简单重构（如重命名），直接更新图节点属性和源代码。</li>
+                                <li><strong>结构化搜索与替换 (ASTGrep):</strong> 使用代码模式查找和替换AST结构。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>比文本替换更安全，理解代码结构。</li>
+                                <li><strong>算法驱动:</strong> 复杂重构（如提取方法），开发特定算法遍历图并生成修改。</li>
+                            </ul>
+                        </li>
+                         <li><strong>执行修改:</strong> 根据策略修改AST或源代码文件。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>务必备份！小心处理格式和注释，可使用 Prettier 等工具自动格式化。</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-semibold mb-2"><i class="fas fa-check-circle mr-2"></i>步骤五：验证与确认</h3>
+                     <ul class="list-decimal list-inside space-y-2 pl-5">
+                        <li><strong>代码差异比较 (Diff View):</strong> (开发中) 生成重构前后代码差异视图。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>清晰展示修改，方便审查。</li>
+                        <li><strong>测试:</strong> 运行单元测试、集成测试、端到端测试。<strong class="text-indigo-600 dark:text-indigo-400">技巧：</strong>完善的测试是安全重构的基石。</li>
+                        <li><strong>人工审查:</strong> 对重构后的代码进行人工复核。</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="tech-stack">
+             <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-cogs mr-3 text-gray-500 dark:text-gray-400"></i>关键技术栈总结</h2>
+             <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-center">
+                 <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+                     <i class="fas fa-file-code text-2xl text-blue-500 mb-2"></i>
+                     <p class="font-medium">编程语言解析器</p>
+                     <p class="text-sm text-gray-600 dark:text-gray-400">(Esprima, Acorn, ast, JavaParser等)</p>
+                 </div>
+                  <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+                     <i class="fas fa-database text-2xl text-green-500 mb-2"></i>
+                     <p class="font-medium">图数据库</p>
+                     <p class="text-sm text-gray-600 dark:text-gray-400">(Neo4j + Cypher)</p>
+                 </div>
+                  <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+                     <i class="fas fa-search text-2xl text-purple-500 mb-2"></i>
+                     <p class="font-medium">结构化搜索/替换</p>
+                     <p class="text-sm text-gray-600 dark:text-gray-400">(ASTGrep)</p>
+                 </div>
+                   <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+                     <i class="fas fa-chart-bar text-2xl text-yellow-500 mb-2"></i>
+                     <p class="font-medium">可视化工具</p>
+                     <p class="text-sm text-gray-600 dark:text-gray-400">(Neo4j Browser, Gephi, Cytoscape.js)</p>
+                 </div>
+                  <div class="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-sm">
+                     <i class="fab fa-python text-2xl text-teal-500 mb-2"></i> <i class="fab fa-js text-2xl text-teal-500 mb-2"></i>
+                     <p class="font-medium">编程语言</p>
+                     <p class="text-sm text-gray-600 dark:text-gray-400">(Python, JavaScript/Node.js等)</p>
+                 </div>
+             </div>
+        </section>
+
+        <section id="benefits">
+            <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-thumbs-up mr-3 text-green-500 dark:text-green-400"></i>优势与益处</h2>
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="flex items-start space-x-3 p-4 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700">
+                    <i class="fas fa-brain text-xl text-green-600 dark:text-green-400 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-green-800 dark:text-green-300">深度理解</h4>
+                        <p class="text-sm text-green-700 dark:text-green-400">超越文本层面，深入理解代码的真实结构和复杂关系。</p>
+                    </div>
+                </div>
+                 <div class="flex items-start space-x-3 p-4 rounded-lg bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700">
+                    <i class="fas fa-crosshairs text-xl text-blue-600 dark:text-blue-400 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-blue-800 dark:text-blue-300">精确操作</h4>
+                        <p class="text-sm text-blue-700 dark:text-blue-400">基于精确的结构信息进行查找和修改，显著减少引入错误的风险。</p>
+                    </div>
+                </div>
+                 <div class="flex items-start space-x-3 p-4 rounded-lg bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700">
+                    <i class="fas fa-window-maximize text-xl text-purple-600 dark:text-purple-400 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-purple-800 dark:text-purple-300">上下文管理</h4>
+                        <p class="text-sm text-purple-700 dark:text-purple-400">通过图的遍历有效管理大型代码库的上下文，克服LLM的窗口限制。</p>
+                    </div>
+                </div>
+                 <div class="flex items-start space-x-3 p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700">
+                    <i class="fas fa-search-dollar text-xl text-yellow-600 dark:text-yellow-400 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-yellow-800 dark:text-yellow-300">复杂查询</h4>
+                        <p class="text-sm text-yellow-700 dark:text-yellow-400">利用图数据库强大的查询能力进行复杂的代码分析和模式识别。</p>
+                    </div>
+                </div>
+                 <div class="flex items-start space-x-3 p-4 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700">
+                    <i class="fas fa-robot text-xl text-red-600 dark:text-red-400 mt-1"></i>
+                    <div>
+                        <h4 class="font-semibold text-red-800 dark:text-red-300">自动化潜力</h4>
+                        <p class="text-sm text-red-700 dark:text-red-400">为实现自动化和半自动化的复杂重构任务奠定坚实的基础。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="future-work">
+            <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-forward mr-3 text-purple-500 dark:text-purple-400"></i>未来工作与考虑</h2>
+            <ul class="list-disc list-outside space-y-2 pl-5">
+                <li><strong class="font-semibold">增量更新:</strong> 实现对代码变更的增量分析和图数据库更新，避免全量处理的开销。</li>
+                <li><strong class="font-semibold">多语言支持:</strong> 扩展框架以兼容更多主流编程语言。</li>
+                <li><strong class="font-semibold">与 LLM 结合:</strong> 探索如何将此结构化方法与 LLM 结合，例如用图分析结果指导 LLM 生成更精确的重构建议。</li>
+                <li><strong class="font-semibold">性能优化:</strong> 针对超大型代码库，持续关注解析和图数据库操作的性能瓶颈。</li>
+            </ul>
+             <p class="mt-4 italic text-gray-600 dark:text-gray-400">该方案提供了一个系统化的方法，通过利用 AST 和图数据库的优势，来应对大规模代码重构的挑战，有望显著提高重构的效率和准确性。</p>
+        </section>
+
+        <section id="further-reading">
+             <h2 class="text-3xl font-semibold mb-6 flex items-center"><i class="fas fa-book-open mr-3 text-teal-500 dark:text-teal-400"></i>进一步阅读</h2>
+             <p class="mb-4">如果您希望深入了解相关技术，以下是一些推荐的书籍和论文资源：</p>
+             <ol class="list-decimal list-inside space-y-3 pl-5">
+                 <li>
+                     <strong>《重构：改善既有代码的设计》（第2版）</strong> by Martin Fowler.
+                     <br>
+                     <span class="text-sm text-gray-600 dark:text-gray-400">简介：代码重构领域的经典之作，详细介绍了各种重构手法和原则。虽然不直接涉及AST或图数据库，但为理解重构目标和实践提供了基础。</span>
+                     <br>
+                     <a href="https://book.douban.com/subject/30468597/" target="_blank" rel="noopener noreferrer" class="text-sm inline-flex items-center">豆瓣读书 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                 </li>
+                 <li>
+                     <strong>"Parsing Techniques: A Practical Guide"</strong> by Dick Grune and Ceriel J.H. Jacobs.
+                     <br>
+                     <span class="text-sm text-gray-600 dark:text-gray-400">简介：深入讲解编译器前端的解析技术，有助于理解AST的生成原理和不同解析算法。</span>
+                     <br>
+                      <a href="https://link.springer.com/book/10.1007/978-0-387-68954-8" target="_blank" rel="noopener noreferrer" class="text-sm inline-flex items-center">Springer Link <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                 </li>
+                  <li>
+                     <strong>"Graph Databases: New Opportunities for Connected Data"</strong> by Ian Robinson, Jim Webber, and Emil Eifrem.
+                     <br>
+                     <span class="text-sm text-gray-600 dark:text-gray-400">简介：介绍了图数据库的基本概念、应用场景和查询语言（以Neo4j为例），有助于理解如何利用图模型存储和分析代码结构。</span>
+                     <br>
+                     <a href="https://www.oreilly.com/library/view/graph-databases-2nd/9781491930874/" target="_blank" rel="noopener noreferrer" class="text-sm inline-flex items-center">O'Reilly <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                 </li>
+                  <li>
+                     <strong>"Using Graph-Based Code Representation and Analysis for Software Engineering Tasks"</strong> (各种学术论文).
+                     <br>
+                     <span class="text-sm text-gray-600 dark:text-gray-400">简介：在 Google Scholar, ACM Digital Library, IEEE Xplore 等学术数据库中搜索相关关键词，可以找到大量关于利用图数据库进行代码分析、缺陷检测、克隆检测等研究的最新论文。例如，搜索 "code analysis graph database" 或 "program dependence graph neo4j"。</span>
+                     <br>
+                     <a href="https://scholar.google.com/scholar?q=code+analysis+graph+database+AST" target="_blank" rel="noopener noreferrer" class="text-sm inline-flex items-center">Google Scholar 搜索 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                 </li>
+                  <li>
+                     <strong>AST Explorer (astexplorer.net)</strong>
+                     <br>
+                     <span class="text-sm text-gray-600 dark:text-gray-400">简介：一个在线工具，可以让你输入代码并实时查看不同解析器生成的AST结构。是学习和理解AST非常有用的工具。</span>
+                     <br>
+                     <a href="https://astexplorer.net/" target="_blank" rel="noopener noreferrer" class="text-sm inline-flex items-center">访问 AST Explorer <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                 </li>
+             </ol>
+        </section>
+
+    </article>
+
+    <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12 py-8 px-4">
+        <div class="max-w-4xl mx-auto text-center text-gray-600 dark:text-gray-400 text-sm">
+            <div class="mb-4">
+                <p><i class="fas fa-user mr-1"></i> 作者: 季晓康</p>
+                <p><i class="fab fa-weixin mr-1"></i> 微信公众号: 凿壁</p>
+                 <p><i class="fas fa-building mr-1"></i> 版权信息: 国家健康医疗大数据研究院</p>
+            </div>
+            <p>&copy; <span id="current-year"></span> 保留所有权利。</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default', // Set initial theme based on dark mode
+            // You can customize themes further if needed
+             themeVariables: {
+                // Example: Customize dark theme colors
+                // darkMode: true, // Force dark mode if needed
+                // background: '#1f2937', // dark:bg-gray-800
+                // primaryColor: '#374151', // dark:bg-gray-700
+                // primaryTextColor: '#f3f4f6', // dark:text-gray-100
+                // nodeBorder: '#6b7280', // dark:border-gray-500
+                // lineTextColor: '#d1d5db', // dark:text-gray-300
+                // ... more variables
+            },
+            // Use 'base' theme for better compatibility with Tailwind styling if needed
+            // theme: 'base',
+            // themeVariables: {
+            //    primaryColor: '#e5e7eb', // light:bg-gray-200
+            //    primaryTextColor: '#111827', // light:text-gray-900
+            //    primaryBorderColor: '#d1d5db', // light:border-gray-300
+            //    lineColor: '#6b7280', // text-gray-500
+            //    textColor: '#374151', // text-gray-700
+            // }
+        });
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIconLight = document.querySelector('.theme-icon-light');
+        const themeIconDark = document.querySelector('.theme-icon-dark');
+
+        // Function to apply theme
+        const applyTheme = (theme) => {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                themeIconLight.classList.add('hidden');
+                themeIconDark.classList.remove('hidden');
+                // Update Mermaid theme if necessary (Mermaid might auto-detect with 'dark' class, but explicit update is safer)
+                // Note: Re-initializing or directly manipulating SVG styles might be needed for complex theme changes after load.
+                // For simplicity, we rely on initial load detection and CSS targeting html.dark .mermaid
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIconLight.classList.remove('hidden');
+                themeIconDark.classList.add('hidden');
+                // Update Mermaid theme if necessary
+            }
+        };
+
+        // Check for saved theme in localStorage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            applyTheme(prefersDark ? 'dark' : 'light');
+        }
+
+        // Toggle theme on button click
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+            // Force Mermaid re-render or style update if theme doesn't change automatically
+             // Simple approach: reload mermaid diagrams (might cause flicker)
+             document.querySelectorAll('.mermaid').forEach(el => {
+                const graphDefinition = el.textContent || el.innerText;
+                 // Ensure mermaid can reprocess the element
+                 el.removeAttribute('data-processed');
+                 el.innerHTML = graphDefinition; // Reset content to original definition
+             });
+             // Re-initialize mermaid with the correct theme after DOM update
+             mermaid.initialize({
+                 startOnLoad: false, // Don't restart everything, just run on specific nodes
+                 theme: newTheme === 'dark' ? 'dark' : 'default'
+             });
+             mermaid.run({ nodes: document.querySelectorAll('.mermaid') }); // Re-run mermaid on the updated nodes
+        });
+
+
+        // Update year in footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Optional: Add smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                try {
+                   document.querySelector(this.getAttribute('href')).scrollIntoView({
+                       behavior: 'smooth'
+                   });
+                } catch (error) {
+                    console.error("Smooth scroll target not found:", this.getAttribute('href'));
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>
