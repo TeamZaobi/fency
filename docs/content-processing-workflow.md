@@ -64,7 +64,7 @@
 1. **验证/添加返回首页链接**：
    * 检查页面是否在明显位置（通常是页面顶部导航或页面底部）包含返回首页的链接：
      ```html
-     <a href="../../index.html">返回首页</a>  <!-- 路径根据文件所在子目录层级调整 -->
+     <a href="../../html/index.html">返回首页</a>  <!-- 路径根据文件所在子目录层级调整 -->
      ```
    * 如果缺少，则在适当位置（如页面顶部导航栏）添加
 
@@ -110,8 +110,8 @@
 
 **重要：** 项目当前采用手动维护索引的模式，因此在内容处理工作流完成后，还需要：
 
-1. 提醒项目维护者手动更新 `index.html` 文件：
-   * 在 `index.html` 中找到对应分类的区域 (`<div id="分类ID">`)
+1. 元数据已自动更新到 `html/metadata.json` 文件：
+   * `html/index.html` 将自动加载并显示新内容
    * 在该区域的内容卡片列表中添加一个新的文章卡片，包含：
      - 标题（来自 `<title>` 或可能略有修改）
      - 摘要（来自 `<meta name="description">` 内容）
@@ -202,7 +202,7 @@
      // 扫描目录下所有HTML文件
      async function processDirectory(directoryPath) {
        const files = fs.readdirSync(directoryPath);
-       
+
        for (const file of files) {
          if (file.endsWith('.html')) {
            await processHTMLFile(path.join(directoryPath, file));
@@ -217,21 +217,21 @@
        console.log(`处理文件: ${filePath}`);
        const content = fs.readFileSync(filePath, 'utf8');
        const $ = cheerio.load(content);
-       
+
        // 检查元数据
        const missingMeta = checkMetadata($);
-       
+
        if (missingMeta.length > 0) {
          // 提取文本内容用于LLM分析
          const title = $('title').text();
          const bodyText = $('body').text().substring(0, 5000); // 限制长度
-         
+
          // 调用LLM生成缺失的元数据
          const generatedMeta = await generateMetadata(title, bodyText, missingMeta);
-         
+
          // 应用生成的元数据
          applyMetadata($, generatedMeta);
-         
+
          // 保存修改
          fs.writeFileSync(filePath, $.html());
          console.log(`已更新文件: ${filePath}`);
@@ -242,24 +242,24 @@
      function checkMetadata($) {
        const requiredMeta = ['category', 'description', 'publish-date', 'keywords'];
        const missing = [];
-       
+
        for (const meta of requiredMeta) {
          if ($(`meta[name="${meta}"]`).length === 0) {
            missing.push(meta);
          }
        }
-       
+
        return missing;
      }
 
      // 调用LLM生成元数据
      async function generateMetadata(title, bodyText, missingMeta) {
        const prompt = `作为内容分析专家，请根据以下HTML页面的标题和内容样本，生成这些缺失的元数据：${missingMeta.join(', ')}。
-     
+
      标题：${title}
-     
+
      内容样本：${bodyText}
-     
+
      请按以下JSON格式返回结果：
      {
        "category": "选择最匹配的类别[信息化升级|科研辅助|AI技术与生态|知识报告]",
@@ -267,15 +267,15 @@
        "publish-date": "YYYY-MM-DD格式的日期",
        "keywords": "逗号分隔的5-10个关键词"
      }
-     
+
      只返回缺失项的JSON。`;
-       
+
        const response = await openai.createCompletion({
          model: "gpt-4", // 或其他适合的模型
          prompt: prompt,
          max_tokens: 500
        });
-       
+
        try {
          return JSON.parse(response.data.choices[0].text.trim());
        } catch (e) {
@@ -339,10 +339,10 @@
      async function safeProcessFile(filePath, maxRetries = 3) {
        let attempts = 0;
        let backupPath = filePath + '.bak';
-       
+
        // 创建备份
        fs.copyFileSync(filePath, backupPath);
-       
+
        while (attempts < maxRetries) {
          try {
            await processHTMLFile(filePath);
@@ -352,17 +352,17 @@
          } catch (error) {
            attempts++;
            console.error(`处理文件 ${filePath} 失败，尝试 ${attempts}/${maxRetries}`, error);
-           
+
            if (attempts >= maxRetries) {
              console.error(`达到最大重试次数，恢复备份`);
              fs.copyFileSync(backupPath, filePath);
              fs.unlinkSync(backupPath);
-             
+
              // 发送通知给维护者
              notifyMaintainer(filePath, error);
              return false;
            }
-           
+
            // 等待一段时间后重试
            await new Promise(resolve => setTimeout(resolve, 1000 * attempts));
          }
@@ -396,7 +396,7 @@
    ```
    新HTML文件 -> 读取内容 -> 分析结构和主题 -> 补充元数据 ->
    检查/添加返回链接 -> 检查/添加可见元信息 -> 检查/添加页脚 ->
-   保存修改 -> 验证HTML -> 提醒更新 index.html
+   保存修改 -> 验证HTML -> 自动更新 metadata.json
    ```
 
 2. **发现潜在重复页面处理**：
@@ -479,4 +479,4 @@
    * 根据元数据分类正确放置文件到相应子目录
    * 新添加的文件需要及时在索引页面中更新引用
 
-这些经验和最佳实践为下一步开发自动化脚本提供了重要参考，也可作为团队成员处理新内容的指南。 
+这些经验和最佳实践为下一步开发自动化脚本提供了重要参考，也可作为团队成员处理新内容的指南。
