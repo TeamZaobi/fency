@@ -8,8 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 // ---- Global Variables ----
-// Use declare to inform TypeScript about the global variable from CDN
-let cy = null;
 let currentTheme = 'light'; // Track current theme
 /**
  * Display error message on the page
@@ -109,7 +107,7 @@ function renderCard(page) {
                 <p class="text-sm text-gray-600 dark:text-gray-400 flex-grow">${page.description}</p>
             </div>
             <div class="px-6 pb-4 pt-2 border-t border-gray-200 dark:border-gray-700 mt-auto">
-                <a href="${page.path}" target="_blank" rel="noopener noreferrer" 
+                <a href="${page.path}" target="_blank" rel="noopener noreferrer"
                    class="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium">
                     阅读全文 &rarr;
                 </a>
@@ -209,199 +207,7 @@ function renderAllCards(pages) {
         displayError('渲染内容卡片时出错。');
     }
 }
-// ---- Knowledge Graph Functions ----
-function buildGraphData(pages) {
-    console.log('[DEBUG] Building graph data...');
-    const elements = [];
-    const keywordMap = {};
-    pages.forEach(page => {
-        const nodeData = {
-            id: page.id, label: page.title, category: page.category, path: page.path,
-        };
-        elements.push({ group: 'nodes', data: nodeData });
-        page.keywords.forEach(keyword => {
-            const lowerKeyword = keyword.toLowerCase().trim();
-            if (lowerKeyword) {
-                if (!keywordMap[lowerKeyword])
-                    keywordMap[lowerKeyword] = [];
-                if (!keywordMap[lowerKeyword].includes(page.id))
-                    keywordMap[lowerKeyword].push(page.id);
-            }
-        });
-    });
-    const addedEdges = new Set();
-    Object.entries(keywordMap).forEach(([keyword, pageIds]) => {
-        if (pageIds.length >= 2) {
-            for (let i = 0; i < pageIds.length; i++) {
-                for (let j = i + 1; j < pageIds.length; j++) {
-                    const sourceId = pageIds[i];
-                    const targetId = pageIds[j];
-                    const edgeIdSorted = [sourceId, targetId].sort().join('---');
-                    const edgeId = `edge-${edgeIdSorted}-${keyword}`;
-                    if (!addedEdges.has(edgeId)) {
-                        const edgeData = { id: edgeId, source: sourceId, target: targetId, keyword: keyword };
-                        elements.push({ group: 'edges', data: edgeData });
-                        addedEdges.add(edgeId);
-                    }
-                }
-            }
-        }
-    });
-    console.log(`[DEBUG] Graph data built: ${pages.length} nodes, ${elements.length - pages.length} edges.`);
-    return elements;
-}
-function initKnowledgeGraph(elements) {
-    console.log('[DEBUG] Initializing knowledge graph with fcose layout (explicit registration attempt)...'); // Updated log
-    const container = document.getElementById('knowledge-graph');
-    if (!container) {
-        console.error('[DEBUG] Knowledge graph container #knowledge-graph not found!');
-        return;
-    }
-    container.innerHTML = ''; // Clear loading message
-    try {
-        // Restore explicit registration attempt
-        if (cytoscape && cytoscapeFcose) {
-            cytoscape.use(cytoscapeFcose);
-            console.log('[DEBUG] Explicitly registered fcose layout extension using cytoscapeFcose.');
-        }
-        else {
-            console.error('[DEBUG] Cannot explicitly register fcose: cytoscape or cytoscapeFcose global not found!');
-            displayError('知识图谱布局扩展加载失败。');
-            return; // Stop initialization if extension not loaded
-        }
-        cy = cytoscape({
-            container: container,
-            elements: elements,
-            style: [
-                {
-                    selector: 'node',
-                    style: {
-                        // Base node style (slightly adjusted)
-                        'background-color': '#666',
-                        'label': 'data(label)',
-                        'width': 25, // Slightly smaller nodes
-                        'height': 25,
-                        'font-size': '9px', // Smaller font
-                        'text-valign': 'bottom',
-                        'text-halign': 'center',
-                        'text-margin-y': 4,
-                        'color': '#fff', // Default label color
-                        'text-outline-width': 2,
-                        'text-outline-color': '#888', // Default outline
-                        'transition-property': 'background-color, border-color, border-width, opacity', // Added opacity
-                        'transition-duration': '0.2s'
-                    }
-                },
-                {
-                    selector: 'edge',
-                    style: {
-                        // Base edge style (slightly adjusted)
-                        'width': 1.5, // Slightly thinner edges
-                        'line-color': '#ccc',
-                        'target-arrow-color': '#ccc',
-                        'target-arrow-shape': 'triangle',
-                        'curve-style': 'bezier',
-                        'opacity': 0.6, // Default lower opacity for edges
-                        'transition-property': 'line-color, target-arrow-color, opacity',
-                        'transition-duration': '0.2s'
-                    }
-                },
-                // Category colors (kept the same for now)
-                {
-                    selector: 'node[category="ai-tech"]',
-                    style: { 'background-color': '#03cea4' }
-                },
-                {
-                    selector: 'node[category="info-upgrade"]',
-                    style: { 'background-color': '#a463f2' }
-                },
-                {
-                    selector: 'node[category="knowledge"]',
-                    style: { 'background-color': '#facc15' }
-                },
-                {
-                    selector: 'node[category="research"]',
-                    style: { 'background-color': '#fb4d3d' }
-                },
-                // Styles for neighbor highlighting
-                {
-                    selector: '.neighbor-highlight', // Highlighted nodes and edges
-                    style: {
-                        'opacity': 1,
-                        'border-width': 2,
-                        'border-color': '#fff', // White border for highlighted nodes
-                        'line-color': '#ff5722', // Orange for highlighted edges
-                        'target-arrow-color': '#ff5722',
-                        'z-index': 10 // Bring highlighted elements to front
-                    }
-                },
-                {
-                    selector: 'node.neighbor-highlight',
-                    style: {
-                        'background-color': '#ff5722', // Orange background for highlighted nodes
-                        'text-outline-color': '#ff5722' // Orange outline for highlighted node labels
-                    }
-                },
-                {
-                    selector: '.non-highlight', // Dimmed elements
-                    style: {
-                        'opacity': 0.2
-                    }
-                }
-            ],
-            layout: {
-                name: 'fcose',
-                animate: false,
-                padding: 50,
-                randomize: true,
-            },
-            // Zoom control options
-            wheelSensitivity: 0.2,
-            minZoom: 0.2, // Minimum zoom level
-            maxZoom: 2.5 // Maximum zoom level
-        });
-        if (!cy) {
-            console.error('[DEBUG] Cytoscape instance is null after initialization attempt.');
-            displayError('知识图谱实例创建失败。');
-            return;
-        }
-        // **Apply initial theme AFTER graph is initialized** 
-        updateGraphTheme(currentTheme);
-        // Click event to open page
-        cy.on('tap', 'node', (evt) => {
-            const node = evt.target;
-            const path = node.data('path');
-            if (path)
-                window.open(path, '_blank');
-        });
-        // Mouseover/Mouseout for neighbor highlighting
-        cy.on('mouseover', 'node', (evt) => {
-            if (!cy)
-                return; // Add null check
-            const node = evt.target;
-            const neighborhood = node.neighborhood().add(node); // Node itself + neighbors
-            cy.elements().addClass('non-highlight'); // Dim everything first
-            neighborhood.removeClass('non-highlight').addClass('neighbor-highlight'); // Highlight neighborhood
-        });
-        cy.on('mouseout', 'node', (evt) => {
-            if (!cy)
-                return; // Add null check
-            // Remove all highlight/dim classes on mouseout
-            cy.elements().removeClass('non-highlight neighbor-highlight');
-        });
-        console.log('[DEBUG] Knowledge graph initialized successfully with enhanced features.');
-    }
-    catch (error) {
-        console.error('[DEBUG] Failed to initialize Cytoscape:', error);
-        let errorMessage = '知识图谱渲染失败。';
-        if (error instanceof Error) {
-            errorMessage += ` 错误详情: ${error.message}`;
-        }
-        displayError(errorMessage);
-        if (container)
-            container.innerHTML = `<p class="p-4 text-center text-red-500">${errorMessage}</p>`;
-    }
-}
+// Knowledge Graph Functions removed
 // ---- Theme Switching ----
 const themeToggleBtn = document.getElementById('theme-toggle');
 const htmlElement = document.documentElement;
@@ -418,26 +224,7 @@ function updateToggleButtonIcon() {
         moonIcon === null || moonIcon === void 0 ? void 0 : moonIcon.classList.add('hidden');
     }
 }
-function updateGraphTheme(theme) {
-    if (!cy) {
-        console.warn('[DEBUG] updateGraphTheme called but cy instance is not ready.');
-        return;
-    }
-    console.log('[DEBUG] Updating graph theme to:', theme);
-    const nodeColor = theme === 'dark' ? '#ccc' : '#fff';
-    const nodeOutline = theme === 'dark' ? '#555' : '#888';
-    const edgeColor = theme === 'dark' ? '#555' : '#ccc';
-    cy.batch(() => {
-        cy.nodes().style({
-            'color': nodeColor,
-            'text-outline-color': nodeOutline
-        });
-        cy.edges().style({
-            'line-color': edgeColor,
-            'target-arrow-color': edgeColor
-        });
-    });
-}
+
 function setTheme(theme) {
     console.log('[DEBUG] Setting theme to:', theme);
     currentTheme = theme; // Update global theme state
@@ -450,7 +237,6 @@ function setTheme(theme) {
         localStorage.setItem('theme', 'light');
     }
     updateToggleButtonIcon();
-    updateGraphTheme(theme); // Update graph style AFTER theme is set
 }
 function initTheme() {
     console.log('[DEBUG] Initializing theme...');
@@ -528,7 +314,7 @@ function init() {
             console.log('[DEBUG] Theme initialized.');
             const metadata = yield loadMetadata();
             // ---- DEBUG: Log the loaded metadata ---- (This log is now moved inside loadMetadata)
-            // console.log('[DEBUG] Raw metadata loaded:', JSON.stringify(metadata, null, 2)); 
+            // console.log('[DEBUG] Raw metadata loaded:', JSON.stringify(metadata, null, 2));
             // ---- END DEBUG ----
             if (!metadata) {
                 console.error('[DEBUG] Initialization stopped: Metadata loading failed.');
@@ -537,10 +323,7 @@ function init() {
             console.log('[DEBUG] Metadata loaded.');
             renderAllCards(metadata.pages);
             console.log('[DEBUG] Card rendering finished attempt.');
-            const graphElements = buildGraphData(metadata.pages);
-            console.log('[DEBUG] Graph data built.');
-            initKnowledgeGraph(graphElements); // Initializes graph AND applies initial theme style inside
-            console.log('[DEBUG] Graph initialization attempt finished.');
+            // Knowledge graph initialization removed
             initTabs(); // Initialize tab switching functionality AFTER cards are rendered
             console.log('[DEBUG] Tabs initialized.');
             console.log('---- [DEBUG] Knowledge base initialization nominally complete ----');
