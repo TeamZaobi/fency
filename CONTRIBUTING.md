@@ -25,11 +25,12 @@
 
 凿壁项目采用 Git Flow 工作流模型，包含以下分支类型：
 
-- **master**：稳定的生产环境代码，只接受来自 release 和 hotfix 分支的合并
+- **main**：稳定的生产环境代码，只接受来自 release 和 hotfix 分支的合并
 - **develop**：开发主分支，包含最新的开发代码
 - **feature/***：新功能开发分支，从 develop 分支创建，完成后合并回 develop
-- **release/***：发布准备分支，从 develop 分支创建，完成后合并到 master 和 develop
-- **hotfix/***：紧急修复分支，从 master 分支创建，完成后合并到 master 和 develop
+- **release/***：发布准备分支，从 develop 分支创建，完成后合并到 main 和 develop
+- **hotfix/***：紧急修复分支，从 main 分支创建，完成后合并到 main 和 develop
+- **backup**：备份分支，保存原始代码的备份，仅作为历史记录
 
 ### 分支命名规范
 
@@ -114,6 +115,19 @@ Closes #123
 - 使用场景和用户价值
 - 可能的实现方案
 - 相关参考资料或示例
+
+## 代理设置
+
+由于网络环境的限制，在与 GitHub 交互时需要使用代理。我们已经配置了 Xray 代理服务，可以通过以下方式使用：
+
+```bash
+# 设置 Git 使用代理
+export https_proxy=socks5://127.0.0.1:7911
+export http_proxy=socks5://127.0.0.1:7911
+
+# 或者在命令前临时使用代理
+https_proxy=socks5://127.0.0.1:7911 git pull
+```
 
 ---
 
