@@ -1,0 +1,25 @@
+# 排除 nmn 和 md 文件夹
+/nmn/
+/md/
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 缓存目录
+cache/
+.cache/
+
+# 配置文件（可能包含敏感信息）
+config.php
+.env
+
+# 备份文件
+*.bak
+backup/

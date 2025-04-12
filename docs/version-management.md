@@ -25,11 +25,12 @@
 
 凿壁项目采用 Git Flow 工作流模型，包含以下分支类型：
 
-- **master**：稳定的生产环境代码，只接受来自 release 和 hotfix 分支的合并
+- **main**：稳定的生产环境代码，只接受来自 release 和 hotfix 分支的合并
 - **develop**：开发主分支，包含最新的开发代码
 - **feature/***：新功能开发分支，从 develop 分支创建，完成后合并回 develop
-- **release/***：发布准备分支，从 develop 分支创建，完成后合并到 master 和 develop
-- **hotfix/***：紧急修复分支，从 master 分支创建，完成后合并到 master 和 develop
+- **release/***：发布准备分支，从 develop 分支创建，完成后合并到 main 和 develop
+- **hotfix/***：紧急修复分支，从 main 分支创建，完成后合并到 main 和 develop
+- **backup**：备份分支，保存原始代码的备份，仅作为历史记录
 
 ### 3.1 分支命名规范
 
@@ -129,8 +130,8 @@
    - 发布决策：由产品负责人和技术负责人共同决定是否发布
 
 3. **正式发布**
-   - 将 release 分支合并到 master 分支
-   - 在 master 分支上创建版本标签
+   - 将 release 分支合并到 main 分支
+   - 在 main 分支上创建版本标签
    - 将 release 分支合并回 develop 分支
    - 删除 release 分支
 
@@ -142,11 +143,11 @@
 
 ### 6.3 热修复流程
 
-1. 从 master 分支创建 hotfix 分支
+1. 从 main 分支创建 hotfix 分支
 2. 在 hotfix 分支上修复问题
 3. 更新版本号和更新日志
-4. 将 hotfix 分支合并到 master 和 develop 分支
-5. 在 master 分支上创建版本标签
+4. 将 hotfix 分支合并到 main 和 develop 分支
+5. 在 main 分支上创建版本标签
 6. 删除 hotfix 分支
 
 ## 7. 版本文档管理
@@ -240,13 +241,35 @@
 - **QA团队**：负责版本测试和验证
 - **DevOps团队**：负责自动化部署和环境管理
 
-## 11. 相关文档
+## 11. 代理设置
+
+由于网络环境的限制，在与 GitHub 交互时需要使用代理。我们已经配置了 Xray 代理服务，可以通过以下方式使用：
+
+```bash
+# 设置 Git 使用代理
+export https_proxy=socks5://127.0.0.1:7911
+export http_proxy=socks5://127.0.0.1:7911
+
+# 或者在命令前临时使用代理
+https_proxy=socks5://127.0.0.1:7911 git pull
+```
+
+## 12. 自动化脚本
+
+我们已经创建了以下自动化脚本来辅助版本管理：
+
+- **/var/www/scripts/version-control.sh**: 版本控制脚本，用于管理网站代码的版本
+- **/var/www/scripts/backup.sh**: 备份脚本，用于创建网站文件的备份
+- **/var/www/scripts/restore.sh**: 恢复脚本，用于从备份恢复网站
+- **/var/www/scripts/setup-cron.sh**: 设置 cron 任务脚本，用于配置自动版本控制和备份
+
+## 13. 相关文档
 
 - [CHANGELOG.md](../CHANGELOG.md) - 详细的变更日志
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - 包含分支策略和提交规范的贡献指南
 
 ---
 
-*版本: 1.0.0*  
-*最后更新: 2023-11-15*  
+*版本: 1.1.0*
+*最后更新: 2024-04-12*
 *作者: 凿壁团队*
