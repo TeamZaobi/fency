@@ -9,15 +9,15 @@ alwaysApply: true
 
 网站采用单页面生成模式，主要包含：
 
-- 主索引页 [html/index.html](mdc:html/index.html) - 动态读取元数据展示内容卡片
-- 元数据索引 [html/metadata.json](mdc:html/metadata.json) - 所有页面的元数据
+- 主索引页 [index.html](mdc:index.html) - 动态读取元数据展示内容卡片
+- 元数据索引 [metadata.json](mdc:metadata.json) - 所有页面的元数据
 - 分发版本 [dist/metadata.json](mdc:dist/metadata.json) - 部署用的元数据副本
 
 内容页面按分类存放在以下目录：
-- [html/pages/ai-tech/](mdc:html/pages/ai-tech) - AI技术与生态
-- [html/pages/info-upgrade/](mdc:html/pages/info-upgrade) - 信息化升级
-- [html/pages/knowledge/](mdc:html/pages/knowledge) - 知识报告
-- [html/pages/research/](mdc:html/pages/research) - 科研辅助
+- [pages/ai-tech/](mdc:pages/ai-tech) - AI技术与生态
+- [pages/info-upgrade/](mdc:pages/info-upgrade) - 信息化升级
+- [pages/knowledge/](mdc:pages/knowledge) - 知识报告
+- [pages/research/](mdc:pages/research) - 科研辅助
 
 ## 元数据规范
 

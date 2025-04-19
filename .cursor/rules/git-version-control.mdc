@@ -159,7 +159,7 @@ BREAKING CHANGE: 之前的手动元数据结构已废弃
 
 ### 5.3 页面分类迁移流程
 
-当需要将HTML页面从一个分类目录移动到另一个时：
+当需要将 HTML 页面从一个分类目录移动到另一个时：
 
 1. 创建feature分支处理迁移
    ```bash
@@ -173,7 +173,7 @@ BREAKING CHANGE: 之前的手动元数据结构已废弃
 
 3. 移动文件到新的分类目录
    ```bash
-   git mv html/pages/旧分类/页面名称.html html/pages/新分类/页面名称.html
+   git mv pages/旧分类/页面名称.html pages/新分类/页面名称.html
    ```
 
 4. 更新metadata.json中的相关条目
