@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
-<head>
+<!DOCTYPE html><html lang="zh-CN" class="scroll-smooth"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>基于AST与图数据库的代码重构工作方案</title>
@@ -12,8 +10,8 @@
     <link href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
     <style>
         /* 基本字体设置，优先使用 Noto Sans/Serif SC，然后回退到用户提供的系统字体栈 */
         body {
@@ -146,8 +144,8 @@
                 利用结构化分析克服大型代码库重构挑战，提升代码质量与可维护性
             </p>
             <div class="flex justify-center items-center space-x-4 text-sm text-indigo-200">
-                <span><i class="fas fa-calendar-alt mr-1"></i> 发布日期: 2025-04-07</span>
-                <span class="px-3 py-1 bg-indigo-700 dark:bg-indigo-900 rounded-full"><i class="fas fa-tag mr-1"></i> 分类: 知识报告</span>
+                <span> 发布日期: 2025-04-07</span>
+                <span class="px-3 py-1 bg-indigo-700 dark:bg-indigo-900 rounded-full"> 分类: knowledge</span>
             </div>
         </div>
          <div class="absolute inset-0 z-0 opacity-10 dark:opacity-5" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
@@ -185,11 +183,10 @@
                 </div>
             </div>
              <figure class="my-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
-                 <pre class="mermaid" aria-label="核心原理示意图：展示代码如何通过AST转换为图数据库结构">
-                    graph LR
-                        A["源代码文件 .ext"] -->|"解析器 (Parser)"| B("抽象语法树 AST");
-                        B -->|"结构化转换"| C(("图数据库 Neo4j"));
-                        C -->|"Cypher 查询"| D{"深度分析 & 精确操作"};
+                 <pre class="mermaid" aria-label="核心原理示意图：展示代码如何通过AST转换为图数据库结构">                    graph LR
+                        A["源代码文件 .ext"] --&gt;|"解析器 (Parser)"| B("抽象语法树 AST");
+                        B --&gt;|"结构化转换"| C(("图数据库 Neo4j"));
+                        C --&gt;|"Cypher 查询"| D{"深度分析 &amp; 精确操作"};
                  </pre>
                  <figcaption class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2 italic">图1: 核心原理示意图</figcaption>
             </figure>
@@ -200,49 +197,48 @@
             <p>整个重构过程可以分解为以下几个关键步骤，每个步骤都包含一些实用的操作技巧：</p>
 
             <figure class="my-8 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
-                <pre class="mermaid" aria-label="详细工作流程图：展示从代码解析到验证确认的完整步骤">
-                    graph TD
+                <pre class="mermaid" aria-label="详细工作流程图：展示从代码解析到验证确认的完整步骤">                    graph TD
                         subgraph "准备阶段"
-                            A["1. 代码解析与AST生成"] --> B("选择/构建解析器");
-                            B --> C{"执行解析"};
-                            C --> D(("处理解析错误"));
-                            C --> E(("可选: 运行Linter/静态分析"));
+                            A["1. 代码解析与AST生成"] --&gt; B("选择/构建解析器");
+                            B --&gt; C{"执行解析"};
+                            C --&gt; D(("处理解析错误"));
+                            C --&gt; E(("可选: 运行Linter/静态分析"));
                         end
 
                         subgraph "数据构建阶段"
-                           F["2. AST结构化与图存储"] --> G("设计图模型 Schema");
-                           G --> H{"遍历AST并转换"};
-                           H --> I(("使用批量导入/事务"));
-                           H --> J("存储图数据至 Neo4j");
+                           F["2. AST结构化与图存储"] --&gt; G("设计图模型 Schema");
+                           G --&gt; H{"遍历AST并转换"};
+                           H --&gt; I(("使用批量导入/事务"));
+                           H --&gt; J("存储图数据至 Neo4j");
                         end
 
                         subgraph "分析与决策阶段"
-                            K["3. 可视化、分析与目标选择"] --> L("使用可视化工具探索");
-                            L --> M{"执行复杂Cypher查询分析"};
-                            M --> N(("识别问题/模式"));
-                            M --> O("Pruning: 选择重构子图");
+                            K["3. 可视化、分析与目标选择"] --&gt; L("使用可视化工具探索");
+                            L --&gt; M{"执行复杂Cypher查询分析"};
+                            M --&gt; N(("识别问题/模式"));
+                            M --&gt; O("Pruning: 选择重构子图");
                         end
 
                         subgraph "执行阶段"
-                            P["4. 执行重构"] --> Q{"选择重构策略"};
-                            Q -- "基于规则" --> R("直接更新图/代码");
-                            Q -- "ASTGrep" --> S("结构化搜索与替换");
-                            Q -- "算法驱动" --> T("执行特定重构算法");
-                            R --> U("执行修改");
-                            S --> U;
-                            T --> U;
-                            U --> V(("备份原始代码"));
-                            U --> W(("使用格式化工具"));
+                            P["4. 执行重构"] --&gt; Q{"选择重构策略"};
+                            Q -- "基于规则" --&gt; R("直接更新图/代码");
+                            Q -- "ASTGrep" --&gt; S("结构化搜索与替换");
+                            Q -- "算法驱动" --&gt; T("执行特定重构算法");
+                            R --&gt; U("执行修改");
+                            S --&gt; U;
+                            T --&gt; U;
+                            U --&gt; V(("备份原始代码"));
+                            U --&gt; W(("使用格式化工具"));
                         end
 
                         subgraph "验证阶段"
-                            X["5. 验证与确认"] --> Y("代码差异比较 Diff View");
-                            Y --> Z("运行测试套件");
-                            Z --> AA("人工审查");
-                            AA --> BB(("完成/迭代"));
+                            X["5. 验证与确认"] --&gt; Y("代码差异比较 Diff View");
+                            Y --&gt; Z("运行测试套件");
+                            Z --&gt; AA("人工审查");
+                            AA --&gt; BB(("完成/迭代"));
                         end
 
-                        A --> F --> K --> P --> X;
+                        A --&gt; F --&gt; K --&gt; P --&gt; X;
                 </pre>
                 <figcaption class="text-center text-sm text-gray-600 dark:text-gray-400 mt-2 italic">图2: 详细工作流程图</figcaption>
             </figure>
@@ -430,7 +426,7 @@
                 <p><i class="fab fa-weixin mr-1"></i> 微信公众号: 凿壁</p>
                  <p><i class="fas fa-building mr-1"></i> 版权信息: 国家健康医疗大数据研究院</p>
             </div>
-            <p>&copy; <span id="current-year"></span> 保留所有权利。</p>
+            <p>© <span id="current-year"></span> 保留所有权利。</p>
         </div>
     </footer>
 
@@ -535,5 +531,5 @@
         });
 
     </script>
-</body>
-</html> 
+
+ </body></html>

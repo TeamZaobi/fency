@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zapier MCP: AI 助手的"App Store"时刻</title>
     <meta name="category" content="ai-tech">
     <meta name="description" content="Zapier的Multi-Core Processor (MCP)技术将如何通过AI驱动的应用生态系统彻底改变我们与工作和数据交互的方式。">
     <meta name="publish-date" content="2025-04-01">
-    <meta name="keywords" content="Zapier, MCP, Multi-Core Processor, AI助手, 自动化, 应用生态, AI代理, 工作流, 生产力工具, 应用程序">
+    <meta name="keywords" content="Zapier,MCP,Multi-Core Processor,AI助手,自动化,应用生态,AI代理,工作流,生产力工具,应用程序">
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
     <style>
         :root {
@@ -256,11 +254,9 @@
     <!-- 可见元数据 -->
     <div class="container mx-auto px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
         <span class="inline-flex items-center mr-6">
-            <i class="fas fa-calendar-alt mr-2"></i> 发布日期: 2025-04-01
-        </span>
+             发布日期: 2025-04-01</span>
         <span class="inline-flex items-center">
-            <i class="fas fa-folder mr-2"></i> 分类: AI技术与生态
-        </span>
+             分类: ai-tech</span>
     </div>
 
     <header class="relative overflow-hidden">
@@ -436,16 +432,15 @@
                 </h2>
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
                     <div class="mermaid-diagram">
-                        <pre class="mermaid">
-flowchart LR
-    A[AI 助手/MCP 主机] -->|请求| B[MCP 客户端]
-    B -->|转发请求| C[MCP 服务器]
-    C -->|身份验证| D{Zapier MCP}
-    D -->|连接| E[7,000+ 应用程序]
-    E -->|执行| F[30,000+ 操作]
-    F -->|结果| C
-    C -->|返回数据| B
-    B -->|响应| A
+                        <pre class="mermaid">flowchart LR
+    A[AI 助手/MCP 主机] --&gt;|请求| B[MCP 客户端]
+    B --&gt;|转发请求| C[MCP 服务器]
+    C --&gt;|身份验证| D{Zapier MCP}
+    D --&gt;|连接| E[7,000+ 应用程序]
+    E --&gt;|执行| F[30,000+ 操作]
+    F --&gt;|结果| C
+    C --&gt;|返回数据| B
+    B --&gt;|响应| A
                         </pre>
                     </div>
                 </div>
@@ -694,8 +689,8 @@ flowchart LR
                     <div class="flex justify-center mt-8">
                         <div class="relative">
                             <svg class="progress-ring" width="160" height="160">
-                                <circle class="progress-ring__track" stroke-width="8" fill="transparent" r="70" cx="80" cy="80"/>
-                                <circle class="progress-ring__circle" stroke-width="8" fill="transparent" r="70" cx="80" cy="80" stroke-dasharray="439.6" stroke-dashoffset="109.9"/>
+                                <circle class="progress-ring__track" stroke-width="8" fill="transparent" r="70" cx="80" cy="80"></circle>
+                                <circle class="progress-ring__circle" stroke-width="8" fill="transparent" r="70" cx="80" cy="80" stroke-dasharray="439.6" stroke-dashoffset="109.9"></circle>
                             </svg>
                             <div class="absolute inset-0 flex items-center justify-center flex-col">
                                 <div class="text-2xl font-bold text-blue-600 dark:text-blue-400">75%</div>
@@ -755,8 +750,7 @@ flowchart LR
                                 <li>添加以下 JSON 配置，将占位符 URL 替换为 MCP 设置中的 MCP URL：</li>
                             </ol>
                             <div class="bg-gray-800 text-white p-4 rounded-md mb-3 relative">
-                                <pre class="text-xs overflow-x-auto">
-{
+                                <pre class="text-xs overflow-x-auto">{
   "mcpServers": {
     "Zapier MCP": {
       "url": "https://actions.zapier.com/mcp/YOUR_MCP_KEY/sse"
@@ -774,7 +768,7 @@ flowchart LR
                         </div>
                         
                         <div class="bg-blue-50 dark:bg-blue-900 p-6 rounded-lg">
-                            <h3 class="text-lg font-bold mb-3">Cursor 版本 < 0.46</h3>
+                            <h3 class="text-lg font-bold mb-3">Cursor 版本 &lt; 0.46</h3>
                             <p class="mb-3 text-sm">
                                 在较旧版本的 Cursor 中，您可以通过直接粘贴 MCP URL 来设置 Zapier AI Actions：
                             </p>
@@ -982,7 +976,7 @@ flowchart LR
                     </div>
                 </div>
                 <div class="text-center text-sm text-gray-600 dark:text-gray-400 pt-8 border-t border-gray-200 dark:border-gray-700">
-                    <p>&copy; 2025 国家健康医疗大数据研究院. 保留所有权利.</p>
+                    <p>© 2025 国家健康医疗大数据研究院. 保留所有权利.</p>
                 </div>
             </div>
         </div>
@@ -1058,5 +1052,5 @@ flowchart LR
             }
         });
     </script>
-</body>
-</html>
+
+</body></html>

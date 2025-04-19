@@ -1,0 +1,100 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# 凿壁项目元数据文件结构规范
+
+## metadata.json 结构
+
+网站使用 [html/metadata.json](mdc:html/metadata.json) 和 [dist/metadata.json](mdc:dist/metadata.json) 两个元数据文件，它们应保持同步。核心结构如下：
+
+```json
+{
+  "lastUpdated": "YYYY-MM-DDTHH:MM:SS.sssZ", // 最后更新时间
+  "pages": [                                 // 页面数组
+    {
+      "id": "pages/分类目录/文件名.html",      // 唯一标识符
+      "path": "pages/分类目录/文件名.html",    // 文件路径
+      "title": "页面标题 | 凿壁",              // 页面标题
+      "lastModifiedDate": "YYYY-MM-DDTHH:MM:SS.sssZ", // 最后修改时间
+      "category": "分类名称",                 // 分类名称
+      "description": "页面内容简短描述...",    // 简短描述
+      "keywords": [                          // 关键词数组
+        "关键词1",
+        "关键词2",
+        "..."
+      ],
+      "publish-date": "YYYY-MM-DD"          // 发布日期
+    },
+    // 更多页面...
+  ]
+}
+```
+
+## 分类映射
+
+元数据中的分类与目录对应关系：
+
+| category值 | 对应目录 | 中文显示名称 |
+|------------|---------|------------|
+| ai-tech | html/pages/ai-tech/ | AI技术与生态 |
+| info-upgrade | html/pages/info-upgrade/ | 信息化升级 |
+| knowledge | html/pages/knowledge/ | 知识报告 |
+| research | html/pages/research/ | 科研辅助 |
+
+## 元数据操作规范
+
+### 添加新页面
+添加新页面到元数据时，需要：
+
+1. 提取HTML文件中的元数据（title, description, publish-date, category, keywords）
+2. 构造新的JSON对象，包含所有必要字段
+3. 设置`id`和`path`为HTML文件的相对路径
+4. 设置`lastModifiedDate`为文件的最后修改时间
+5. 将新对象添加到`pages`数组
+6. 更新`lastUpdated`为当前时间
+
+### 更新现有页面
+更新页面元数据时，需要：
+
+1. 基于`id`或`path`字段查找要更新的条目
+2. 更新相应字段（title, description, keywords等）
+3. 更新`lastModifiedDate`为当前时间
+4. 更新根级`lastUpdated`为当前时间
+
+### 移动页面（更改分类）
+移动页面到不同分类时，需要：
+
+1. 基于原路径查找要更新的条目
+2. 更新`id`和`path`字段为新路径
+3. 更新`category`字段为新分类名称
+4. 更新`lastModifiedDate`为当前时间
+5. 更新根级`lastUpdated`为当前时间
+
+## 元数据同步
+
+对`html/metadata.json`的任何更改都应同步到`dist/metadata.json`：
+
+```bash
+cp html/metadata.json dist/metadata.json
+```
+
+## 元数据验证
+
+每次更新后，应验证JSON格式的有效性，可使用以下命令：
+
+```bash
+jq . html/metadata.json > /dev/null && echo "Valid JSON"
+```
+
+或使用在线JSON验证工具。
+
+## 关键注意事项
+
+1. `id`和`path`字段通常相同，用作唯一标识符
+2. `category`值必须与HTML文件中的元标签一致
+3. `path`必须与文件的实际位置一致
+4. 每次更新都应更新`lastModifiedDate`和`lastUpdated`
+5. 更新`metadata.json`后必须验证JSON格式
+6. 所有日期和时间使用ISO标准格式

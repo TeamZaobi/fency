@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="category" content="knowledge">
     <meta name="description" content="深入分析Yann LeCun对自回归大型语言模型的批评观点，探讨其认知架构研究方向以及AI发展的可能路径和替代方案。">
-    <meta name="publish-date" content="2024-04-04">
-    <meta name="keywords" content="Yann LeCun, 自回归模型, 大型语言模型, AI发展路径, 认知架构, 人工智能批评, 预测学习, 世界模型">
+    <meta name="publish-date" content="2025-04-02">
+    <meta name="keywords" content="Yann LeCun,自回归模型,大型语言模型,AI发展路径,认知架构,人工智能批评,预测学习,世界模型">
     <title>Yann LeCun批评自回归大型语言模型 | AI趋势分析</title>
     
     <!-- External CSS -->
     <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap">
     
     <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
     
@@ -513,11 +511,11 @@
             <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-white transform -translate-x-1/2 translate-y-1/2"></div>
             <svg class="absolute bottom-0 right-0 transform translate-x-1/3 translate-y-1/3" width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g opacity="0.5">
-                    <path d="M40 40L160 40L160 160L40 160L40 40Z" stroke="white" stroke-width="2"/>
-                    <path d="M70 70L130 70L130 130L70 130L70 70Z" stroke="white" stroke-width="2"/>
-                    <path d="M100 40L100 160" stroke="white" stroke-width="2"/>
-                    <path d="M40 100L160 100" stroke="white" stroke-width="2"/>
-                    <circle cx="100" cy="100" r="50" stroke="white" stroke-width="2"/>
+                    <path d="M40 40L160 40L160 160L40 160L40 40Z" stroke="white" stroke-width="2"></path>
+                    <path d="M70 70L130 70L130 130L70 130L70 70Z" stroke="white" stroke-width="2"></path>
+                    <path d="M100 40L100 160" stroke="white" stroke-width="2"></path>
+                    <path d="M40 100L160 100" stroke="white" stroke-width="2"></path>
+                    <circle cx="100" cy="100" r="50" stroke="white" stroke-width="2"></circle>
                 </g>
             </svg>
         </div>
@@ -550,13 +548,11 @@
     <!-- 可见的元数据信息 -->
     <div class="container mx-auto py-3 mt-4 flex items-center text-sm text-gray-600 dark:text-gray-400">
         <span class="flex items-center mr-6">
-            <i class="fas fa-calendar-alt mr-2"></i>
-            发布日期: 2024-04-04
-        </span>
+            
+            发布日期: 2025-04-02</span>
         <span class="flex items-center">
-            <i class="fas fa-folder mr-2"></i>
-            分类: 知识报告
-        </span>
+            
+            分类: knowledge</span>
     </div>
     
     <div class="container py-12">
@@ -668,17 +664,17 @@
                             <div class="absolute top-0 right-0 w-32 h-32 opacity-10">
                                 <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g opacity="0.5">
-                                        <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="2" class="text-purple-500"/>
-                                        <path d="M30 50H70" stroke="currentColor" stroke-width="2" class="text-purple-500"/>
-                                        <path d="M50 30V70" stroke="currentColor" stroke-width="2" class="text-purple-500"/>
+                                        <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="2" class="text-purple-500"></circle>
+                                        <path d="M30 50H70" stroke="currentColor" stroke-width="2" class="text-purple-500"></path>
+                                        <path d="M50 30V70" stroke="currentColor" stroke-width="2" class="text-purple-500"></path>
                                     </g>
                                 </svg>
                             </div>
                             <div class="absolute bottom-0 left-0 w-32 h-32 opacity-10">
                                 <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <g opacity="0.5">
-                                        <rect x="20" y="20" width="60" height="60" stroke="currentColor" stroke-width="2" class="text-blue-500"/>
-                                        <circle cx="50" cy="50" r="20" stroke="currentColor" stroke-width="2" class="text-blue-500"/>
+                                        <rect x="20" y="20" width="60" height="60" stroke="currentColor" stroke-width="2" class="text-blue-500"></rect>
+                                        <circle cx="50" cy="50" r="20" stroke="currentColor" stroke-width="2" class="text-blue-500"></circle>
                                     </g>
                                 </svg>
                             </div>
@@ -704,19 +700,19 @@
                         <h3 class="text-xl font-semibold mb-4 text-center">自回归生成模型的局限性</h3>
                         <div class="mermaid">
 flowchart TB
-    A[自回归LLMs] --> B[仅生成离散标记]
-    A --> C[缺乏物理世界理解]
-    A --> D[没有持续记忆]
-    A --> E[推理能力有限]
-    A --> F[复杂规划能力不足]
+    A[自回归LLMs] --&gt; B[仅生成离散标记]
+    A --&gt; C[缺乏物理世界理解]
+    A --&gt; D[没有持续记忆]
+    A --&gt; E[推理能力有限]
+    A --&gt; F[复杂规划能力不足]
     
-    B --> G[错误累积问题]
-    G --> H[生成长文本时<br>错误指数增长]
+    B --&gt; G[错误累积问题]
+    G --&gt; H[生成长文本时<br>错误指数增长]
     
-    C --> I[无法理解因果关系]
-    D --> J[无法长期存储信息]
-    E --> K[难以解决复杂推理任务]
-    F --> L[难以进行长期规划]
+    C --&gt; I[无法理解因果关系]
+    D --&gt; J[无法长期存储信息]
+    E --&gt; K[难以解决复杂推理任务]
+    F --&gt; L[难以进行长期规划]
     
     style A fill:#3B82F6,stroke:#2563EB,color:white
     style B fill:#60A5FA,stroke:#3B82F6,color:white
@@ -1126,7 +1122,7 @@ pie
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold">Rethinking Deep Learning: Neural Architectures beyond the Limitations</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Geoffrey Hinton & Yoshua Bengio (2024)</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Geoffrey Hinton &amp; Yoshua Bengio (2024)</p>
                                 <p class="mt-2">这本重要著作探讨了当前神经网络架构的局限性，并提出了可能的替代方案，包括更接近人类认知的模型。</p>
                                 <a href="https://research.google/pubs/" class="inline-block mt-2 text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener">
                                     <i class="fas fa-external-link-alt mr-1"></i> 查看出版物
@@ -1154,7 +1150,7 @@ pie
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold">Beyond Autoregression: The Next Generation of AI Models</h3>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">Andrej Karpathy & Ilya Sutskever (2024)</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Andrej Karpathy &amp; Ilya Sutskever (2024)</p>
                                 <p class="mt-2">本书探讨了自回归模型之外的AI架构，包括非自回归生成、混合架构以及多模态学习方法。</p>
                                 <a href="https://stanford.edu/~karpathy/" class="inline-block mt-2 text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener">
                                     <i class="fas fa-external-link-alt mr-1"></i> 了解作者研究
@@ -1328,5 +1324,5 @@ pie
             observer.observe(element);
         });
     </script>
-</body>
-</html>
+
+</body></html>

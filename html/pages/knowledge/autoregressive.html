@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="category" content="knowledge">
   <meta name="description" content="深入对比自回归模型与扩散模型两种多模态AI范式的技术原理、架构特点、训练方法和应用优势，包括GPT-4o与Janus-pro的实际表现分析。">
-  <meta name="publish-date" content="2024-04-05">
-  <meta name="keywords" content="自回归模型, 扩散模型, 多模态AI, GPT-4o, Janus-pro, 深度学习, 模型对比, AI架构, 技术范式">
+  <meta name="publish-date" content="2025-03-30">
+  <meta name="keywords" content="自回归模型,扩散模型,多模态AI,GPT-4o,Janus-pro,深度学习,模型对比,AI架构,技术范式">
   <title>自回归模型与扩散模型对比分析 | 深度研究</title>
   <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
   <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
   <style>
     :root {
@@ -237,10 +235,10 @@
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
         <defs>
           <pattern id="pattern" width="100" height="100" patternUnits="userSpaceOnUse">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="2"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="2"></circle>
           </pattern>
         </defs>
-        <rect width="100%" height="100%" fill="url(#pattern)"/>
+        <rect width="100%" height="100%" fill="url(#pattern)"></rect>
       </svg>
     </div>
     
@@ -263,13 +261,11 @@
   <!-- 可见的元数据信息 -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 mt-4 flex items-center text-sm" style="color: var(--text);">
     <span class="flex items-center mr-6">
-      <i class="fas fa-calendar-alt mr-2"></i>
-      发布日期: 2024-04-05
-    </span>
+      
+      发布日期: 2025-03-30</span>
     <span class="flex items-center">
-      <i class="fas fa-folder mr-2"></i>
-      分类: 知识报告
-    </span>
+      
+      分类: knowledge</span>
   </div>
 
   <!-- Main Content -->
@@ -460,12 +456,12 @@
                 <h3 class="text-xl font-bold mb-4 text-center">自回归模型工作流程</h3>
                 <div class="mermaid">
                   graph TD
-                    A[输入文本/图像] --> B[Encoder编码]
-                    B --> C[自回归Decoder]
-                    C --> D{已完成?}
-                    D -->|否| E[预测下一个元素]
-                    E --> C
-                    D -->|是| F[完整输出]
+                    A[输入文本/图像] --&gt; B[Encoder编码]
+                    B --&gt; C[自回归Decoder]
+                    C --&gt; D{已完成?}
+                    D --&gt;|否| E[预测下一个元素]
+                    E --&gt; C
+                    D --&gt;|是| F[完整输出]
                     
                     style A fill:#f9d5e5,stroke:#333,stroke-width:1px
                     style B fill:#eeac99,stroke:#333,stroke-width:1px
@@ -481,13 +477,13 @@
                 <h3 class="text-xl font-bold mb-4 text-center">扩散模型工作流程</h3>
                 <div class="mermaid">
                   graph TD
-                    A[输入提示] --> B[提示编码]
-                    Z[随机噪声] --> C[逐步去噪过程]
-                    B --> C
-                    C --> D[单步去噪]
-                    D --> E{去噪完成?}
-                    E -->|否| C
-                    E -->|是| F[生成图像]
+                    A[输入提示] --&gt; B[提示编码]
+                    Z[随机噪声] --&gt; C[逐步去噪过程]
+                    B --&gt; C
+                    C --&gt; D[单步去噪]
+                    D --&gt; E{去噪完成?}
+                    E --&gt;|否| C
+                    E --&gt;|是| F[生成图像]
                     
                     style A fill:#d6e5fa,stroke:#333,stroke-width:1px
                     style B fill:#5b9aa0,stroke:#333,stroke-width:1px
@@ -899,5 +895,5 @@
       updateActiveTocLink();
     });
   </script>
-</body>
-</html>
+
+</body></html>

@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html lang="zh-CN" class="scroll-smooth">
-<head>
+<!DOCTYPE html><html lang="zh-CN" class="scroll-smooth"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI驱动的健康追踪工具分析 | 凿壁</title>
     <meta name="category" content="ai-tech">
     <meta name="description" content="分析由AI Coding Agent快速构建的健康与锻炼追踪工具，探讨其技术架构、实现路径、潜在挑战与未来发展潜力。">
-    <meta name="publish-date" content="2024-04-01">
-    <meta name="keywords" content="AI编程, Coding Agent, 健康追踪, 锻炼分析, React, Node.js, MongoDB, LLM, Whoop, Garmin, Apple Health, AI应用">
+    <meta name="publish-date" content="2025-03-29">
+    <meta name="keywords" content="AI编程,Coding Agent,健康追踪,锻炼分析,React,Node.js,MongoDB,LLM,Whoop,Garmin,Apple Health,AI应用">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💡</text></svg>">
 
@@ -16,8 +14,8 @@
     <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap" rel="stylesheet">
 
     <style>
         /* Define custom font families */
@@ -76,11 +74,9 @@
     <!-- 可见元数据 -->
     <div class="container mx-auto px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
         <span class="inline-flex items-center mr-6">
-            <i class="fas fa-calendar-alt mr-2"></i> 发布日期: 2024-04-01
-        </span>
+             发布日期: 2025-03-29</span>
         <span class="inline-flex items-center">
-            <i class="fas fa-folder mr-2"></i> 分类: AI技术与生态
-        </span>
+             分类: ai-tech</span>
     </div>
 
     <div class="container mx-auto px-4 py-8 md:py-16 max-w-5xl">
@@ -138,7 +134,7 @@
                  <span class="text-gray-300 dark:text-gray-600">+</span>
                 <span title="Garmin"><i class="fas fa-satellite-dish text-xl"></i> Garmin</span>
                 <span class="text-gray-300 dark:text-gray-600">→</span>
-                <span title="AI Analysis"><i class="fas fa-brain text-xl text-accent"></i> AI 分析 & 建议</span>
+                <span title="AI Analysis"><i class="fas fa-brain text-xl text-accent"></i> AI 分析 &amp; 建议</span>
              </div>
         </section>
 
@@ -209,20 +205,20 @@
                  <h3 class="text-xl font-semibold mb-4 text-center text-gray-800 dark:text-gray-100"><i class="fas fa-sitemap mr-2"></i>开发流程示意图</h3>
                 <div class="mermaid text-center text-sm md:text-base text-gray-800 dark:text-gray-200">
 graph LR
-    A[<i class='fas fa-user'></i> 用户 @tisoga] -- 1. 提供高层次需求 --> B(<i class='fas fa-robot'></i> AI Agent @devv_ai);
-    B -- 2. 设计系统架构 --> C{系统架构};
-    B -- 3. 生成代码 --> D[<i class='fas fa-code'></i> 前端代码 React];
-    B -- 3. 生成代码 --> E[<i class='fas fa-server'></i> 后端代码 Node.js];
-    B -- 3. 生成代码 --> F[<i class='fas fa-database'></i> 数据库 MongoDB];
-    B -- 3. 生成代码 --> G[<i class='fas fa-plug'></i> API 集成];
-    B -- 3. 生成代码 --> H[<i class='fas fa-brain'></i> AI 组件 LLM];
-    C --> D; C --> E; C --> F; C --> G; C --> H;
-    I[<i class='fas fa-tasks'></i> 健康追踪应用] --> J{<i class='fas fa-bug'></i> Bug?};
-    D & E & F & G & H --> I;
-    A -- 4. 测试应用 --> J;
-    J -- Yes --> K[<i class='fas fa-tools'></i> AI 自动修复];
-    K --> I;
-    J -- No --> L[<i class='fas fa-cloud-upload-alt'></i> 部署与开源];
+    A[<i class="fas fa-user"></i> 用户 @tisoga] -- 1. 提供高层次需求 --&gt; B(<i class="fas fa-robot"></i> AI Agent @devv_ai);
+    B -- 2. 设计系统架构 --&gt; C{系统架构};
+    B -- 3. 生成代码 --&gt; D[<i class="fas fa-code"></i> 前端代码 React];
+    B -- 3. 生成代码 --&gt; E[<i class="fas fa-server"></i> 后端代码 Node.js];
+    B -- 3. 生成代码 --&gt; F[<i class="fas fa-database"></i> 数据库 MongoDB];
+    B -- 3. 生成代码 --&gt; G[<i class="fas fa-plug"></i> API 集成];
+    B -- 3. 生成代码 --&gt; H[<i class="fas fa-brain"></i> AI 组件 LLM];
+    C --&gt; D; C --&gt; E; C --&gt; F; C --&gt; G; C --&gt; H;
+    I[<i class="fas fa-tasks"></i> 健康追踪应用] --&gt; J{<i class="fas fa-bug"></i> Bug?};
+    D &amp; E &amp; F &amp; G &amp; H --&gt; I;
+    A -- 4. 测试应用 --&gt; J;
+    J -- Yes --&gt; K[<i class="fas fa-tools"></i> AI 自动修复];
+    K --&gt; I;
+    J -- No --&gt; L[<i class="fas fa-cloud-upload-alt"></i> 部署与开源];
 
     %% Styling
     classDef default fill:#f9f9f9,stroke:#333,stroke-width:2px, color:#333;
@@ -267,35 +263,35 @@ graph LR
             <ul class="space-y-4">
                 <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200">
                     <i class="fas fa-book mr-2 text-accent"></i>
-                    <a href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noopener" rel="noopener noreferrer" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    <a href="https://arxiv.org/abs/2303.08774" target="_blank" rel="noopener" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                         Sparks of Artificial General Intelligence: Early experiments with GPT-4
                     </a>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">探讨 GPT-4 在各种任务（包括编码）中展现出的早期通用人工智能迹象，有助于理解 LLM 的能力边界。</p>
                 </li>
                 <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200">
                      <i class="fas fa-book mr-2 text-accent"></i>
-                    <a href="https://dl.acm.org/doi/10.1145/3491102.3501880" target="_blank" rel="noopener" rel="noopener noreferrer" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    <a href="https://dl.acm.org/doi/10.1145/3491102.3501880" target="_blank" rel="noopener" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                         Human–AI Collaboration in Designing AI Systems
                     </a>
                      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">研究人与 AI 如何在设计过程中协作，对于理解 <code class="text-xs">@devv_ai</code> 这类工具的工作模式很有启发。</p>
                 </li>
                 <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200">
                     <i class="fas fa-file-alt mr-2 text-accent"></i>
-                    <a href="https://www.mongodb.com/basics/mongodb-vs-sql" target="_blank" rel="noopener" rel="noopener noreferrer" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    <a href="https://www.mongodb.com/basics/mongodb-vs-sql" target="_blank" rel="noopener" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                        MongoDB 与 SQL 数据库比较
                     </a>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">了解 NoSQL 数据库（如 MongoDB）的特点，及其为何常用于需要灵活数据模型的现代 Web 应用。</p>
                 </li>
                 <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200">
                     <i class="fas fa-file-alt mr-2 text-accent"></i>
-                     <a href="https://react.dev/" target="_blank" rel="noopener" rel="noopener noreferrer" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                     <a href="https://react.dev/" target="_blank" rel="noopener" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                        React 官方文档
                     </a>
                     <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">深入学习 React 框架，理解其组件化、状态管理等核心概念，有助于把握现代前端开发。</p>
                 </li>
                  <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200">
                     <i class="fas fa-link mr-2 text-accent"></i>
-                    <a href="https://dev.fitbit.com/build/reference/web-api/" target="_blank" rel="noopener" rel="noopener noreferrer" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                    <a href="https://dev.fitbit.com/build/reference/web-api/" target="_blank" rel="noopener" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
                        (示例) Fitbit Web API 文档
                     </a>
                      <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">通过查阅类似 Fitbit、Garmin 或 Whoop 的开发者 API 文档，了解健康数据如何通过 OAuth 和 API 进行集成。（注意：Whoop/Garmin API 可能需要开发者账户访问）</p>
@@ -306,7 +302,7 @@ graph LR
         <footer class="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-500 dark:text-gray-400">
             <p>作者：季晓康</p>
             <p>微信公众号：凿壁 (ID: zaobich)</p> 
-            <p class="mt-2">&copy; 2025 国家健康医疗大数据研究院. All Rights Reserved.</p>
+            <p class="mt-2">© 2025 国家健康医疗大数据研究院. All Rights Reserved.</p>
             <p class="mt-1">页面生成时间: <span id="generation-time"></span></p>
         </footer>
 
@@ -386,5 +382,6 @@ graph LR
 
     </script>
 
-</body>
-</html>
+
+
+</body></html>
