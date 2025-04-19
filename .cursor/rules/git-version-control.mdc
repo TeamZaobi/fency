@@ -1,0 +1,234 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 凿壁项目Git版本控制规范
+
+## 1. 版本管理概述
+
+凿壁项目采用**功能驱动**的版本管理策略，而非固定时间周期的发布模式。这意味着我们的版本发布由功能完成度和产品路线图驱动，确保每个版本都提供有意义的用户价值，同时保持高质量标准。
+
+### 1.1 核心原则
+
+- **功能驱动**：版本发布基于功能完成度和产品路线图，而非固定时间表
+- **质量优先**：版本发布必须满足预定义的质量标准
+- **语义化版本**：遵循语义化版本控制规范，清晰传达变更的性质和影响
+- **透明沟通**：通过详细的更新日志和版本说明，清晰传达每个版本的变更内容
+
+## 2. 版本号规范
+
+凿壁项目采用语义化版本控制（Semantic Versioning）规范：
+
+- **格式**：`主版本号.次版本号.修订号`（例如：1.2.3）
+- **主版本号**：当进行不兼容的API更改或重大功能重构时递增
+- **次版本号**：当添加功能但保持向后兼容性时递增
+- **修订号**：当进行向后兼容的错误修复时递增
+- **预发布版本**：可使用后缀标识，如 `1.0.0-alpha.1`、`1.0.0-beta.2`
+
+## 3. 分支策略
+
+凿壁项目采用 Git Flow 工作流模型，包含以下分支类型：
+
+- **main**：稳定的生产环境代码，只接受来自 release 和 hotfix 分支的合并
+- **develop**：开发主分支，包含最新的开发代码
+- **feature/***：新功能开发分支，从 develop 分支创建，完成后合并回 develop
+- **release/***：发布准备分支，从 develop 分支创建，完成后合并到 main 和 develop
+- **hotfix/***：紧急修复分支，从 main 分支创建，完成后合并到 main 和 develop
+- **backup**：备份分支，保存原始代码的备份，仅作为历史记录
+
+### 3.1 分支命名规范
+
+- **feature分支**：`feature/功能名称`（例如：`feature/user-authentication`）
+- **release分支**：`release/版本号`（例如：`release/1.2.0`）
+- **hotfix分支**：`hotfix/版本号`（例如：`hotfix/1.2.1`）
+
+### 3.2 分支操作流程
+
+#### 3.2.1 功能开发流程
+
+1. 从 develop 分支创建 feature 分支
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feature/功能名称
+   ```
+
+2. 在 feature 分支上进行开发
+   ```bash
+   # 进行开发工作...
+   git add .
+   git commit -m "feat: 添加XXX功能"
+   ```
+
+3. 将 develop 分支最新更改合并到 feature 分支
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout feature/功能名称
+   git merge develop
+   # 解决冲突（如有）
+   ```
+
+4. 功能完成后，合并回 develop 分支
+   ```bash
+   git checkout develop
+   git merge feature/功能名称
+   git push origin develop
+   ```
+
+#### 3.2.2 发布流程
+
+1. 从 develop 分支创建 release 分支
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b release/版本号
+   ```
+
+2. 在 release 分支上进行测试和修复
+   ```bash
+   # 测试和修复问题...
+   git add .
+   git commit -m "fix: 修复XXX问题"
+   ```
+
+3. 发布准备完成后，合并到 main 和 develop 分支
+   ```bash
+   # 合并到 main
+   git checkout main
+   git merge release/版本号
+   git tag -a v版本号 -m "版本说明"
+   git push origin main --tags
+   
+   # 合并到 develop
+   git checkout develop
+   git merge release/版本号
+   git push origin develop
+   ```
+
+## 4. 提交消息规范
+
+凿壁项目采用 Conventional Commits 规范：
+```
+<类型>[可选作用域]: <描述>
+[可选正文]
+[可选脚注]
+```
+
+### 4.1 提交类型
+
+- **feat**: 新功能
+- **fix**: 错误修复
+- **docs**: 文档更改
+- **style**: 不影响代码含义的更改（空格、格式等）
+- **refactor**: 既不修复错误也不添加功能的代码更改
+- **perf**: 提高性能的代码更改
+- **test**: 添加或修正测试
+- **build**: 影响构建系统或外部依赖的更改
+- **ci**: 对CI配置文件和脚本的更改
+- **chore**: 其他不修改src或test文件的更改
+
+### 4.2 提交示例
+
+```
+feat(metadata): 添加文章元数据自动提取功能
+添加了通过HTML解析自动提取页面元数据的功能，包括：
+标题提取
+描述提取
+关键词提取
+BREAKING CHANGE: 之前的手动元数据结构已废弃
+```
+
+## 5. 内容更新与发布流程
+
+### 5.1 新页面发布流程
+
+1. 通过feature分支开发新的HTML页面
+2. 确保页面符合元数据和结构规范
+3. 完成后合并到develop分支
+4. 通过release分支进行发布准备
+5. 测试通过后合并到main分支发布
+
+### 5.2 现有页面更新流程  
+
+1. 对于小改动，可直接在develop分支进行修改
+2. 对于重大改动，应创建feature分支进行修改
+3. 确保更新metadata.json并同步到dist/metadata.json
+4. 合并回develop分支并推送
+
+### 5.3 页面分类迁移流程
+
+当需要将HTML页面从一个分类目录移动到另一个时：
+
+1. 创建feature分支处理迁移
+   ```bash
+   git checkout -b feature/移动页面名称
+   ```
+
+2. 修改HTML文件中的category元标签
+   ```html
+   <meta name="category" content="新分类名">
+   ```
+
+3. 移动文件到新的分类目录
+   ```bash
+   git mv html/pages/旧分类/页面名称.html html/pages/新分类/页面名称.html
+   ```
+
+4. 更新metadata.json中的相关条目
+   ```bash
+   # 修改metadata.json文件，更新id、path和category字段
+   ```
+
+5. 提交更改并推送
+   ```bash
+   git add .
+   git commit -m "refactor: 将页面从旧分类移动到新分类"
+   git push origin feature/移动页面名称
+   ```
+
+6. 按常规流程合并到develop分支
+
+## 6. Git代理设置
+
+由于网络环境的限制，与GitHub交互时可能需要设置代理：
+
+```bash
+# 设置Git使用代理
+export https_proxy=socks5://127.0.0.1:7911
+```
+
+## 7. 常见问题与解决方案
+
+### 7.1 合并冲突
+
+解决合并冲突的步骤：
+1. 使用`git status`查看冲突文件
+2. 编辑冲突文件，选择保留的版本
+3. 使用`git add`标记冲突已解决
+4. 使用`git commit`完成合并
+
+### 7.2 撤销本地更改
+
+撤销未提交的更改：
+```bash
+git checkout -- <文件路径>  # 撤销单个文件的更改
+git reset --hard HEAD       # 撤销所有更改
+```
+
+### 7.3 版本回退
+
+回退到特定版本：
+```bash
+git reset --hard <commit-id>  # 本地回退
+git push -f origin <branch>   # 强制推送(谨慎使用)
+```
+
+## 8. 协作最佳实践
+
+1. 经常拉取最新代码，保持本地代码与远程同步
+2. 在提交前检查修改内容，确保不包含敏感信息和调试代码
+3. 编写清晰、具体的提交消息，帮助团队成员理解变更
+4. 完成功能后及时合并和删除feature分支，保持仓库整洁
+5. 使用`git pull --rebase`代替普通的`git pull`，减少不必要的合并提交

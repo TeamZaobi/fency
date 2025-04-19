@@ -1,0 +1,1767 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="publish-date" content="2025-04-15">
+    <meta name="category" content="ai-tech">
+    <meta name="description" content="Vanna AI是一个基于Python的开源RAG框架，能够将自然语言查询转换为精确的SQL语句，简化用户与数据库的交互。本报告详细分析了其功能、性能、社区生态以及部署方案。">
+    <meta name="keywords" content="Vanna AI,RAG,文本到SQL,数据库查询,检索增强生成,开源框架,数据分析">
+    <title>Vanna AI 技术分析报告 - 打造高质量文本到SQL转换的开源框架</title>
+    
+    <!-- 引入外部资源 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    
+    <!-- 添加修复性能指标进度条的样式 -->
+    <style>
+        /* 性能指标修复 */
+        .performance-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #0ea5e9;
+            transition: width 0.5s ease;
+        }
+        
+        .dark .performance-bar {
+            background-color: #0ea5e9;
+        }
+    </style>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            200: '#ddd6fe',
+                            300: '#c4b5fd',
+                            400: '#a78bfa',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            800: '#5b21b6',
+                            900: '#4c1d95',
+                        },
+                        dark: {
+                            100: '#222222',
+                            200: '#1a1a1a',
+                            300: '#121212',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* 基础样式 */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* 暗色模式预设 */
+        .dark {
+            background-color: #121212;
+            color: #f3f4f6;
+        }
+        
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(155, 155, 155, 0.5);
+            border-radius: 20px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(155, 155, 155, 0.8);
+        }
+        
+        /* 首字下沉效果 */
+        .first-letter::first-letter {
+            font-size: 3.5em;
+            font-weight: 700;
+            float: left;
+            line-height: 1;
+            margin-right: 0.1em;
+            margin-top: 0.1em;
+        }
+        
+        /* 动画类 */
+        .animate-fade-in {
+            opacity: 0;
+        }
+        
+        .animate-slide-up {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        
+        .animate-slide-right {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        
+        /* 动画类 - 确保初始可见 */
+        .animate-fade-in, .animate-slide-up, .animate-slide-right {
+            animation: none; /* 关闭动画触发前的效果 */
+            opacity: 1; /* 默认可见 */
+            transform: none; /* 默认不位移 */
+        }
+        
+        /* 图表和可视化容器 */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        
+        /* 引用样式 */
+        blockquote {
+            position: relative;
+            font-style: italic;
+        }
+        
+        blockquote::before {
+            content: '"';
+            font-size: 3em;
+            position: absolute;
+            left: -20px;
+            top: -20px;
+            opacity: 0.2;
+        }
+        
+        /* 卡片悬停效果 */
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 进度条动画 */
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+        
+        /* 进度条修正 - 完全移除动画效果 */
+        .progress-bar {
+            animation: none !important; /* 确保没有动画 */
+            width: var(--progress-width, 0%); /* 默认值为0，通过内联样式覆盖 */
+        }
+        
+        /* 进度条修正 - 简化CSS */
+        .progress-bar {
+            animation: none !important; /* 确保没有动画 */
+            width: auto; /* 让内联样式完全控制宽度 */
+        }
+        
+        /* 导航链接悬停效果 */
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: currentColor;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-800 dark:bg-dark-300 dark:text-gray-100">
+    <!-- 顶部导航栏 -->
+    <header class="fixed w-full bg-white/80 dark:bg-dark-200/80 backdrop-blur-md z-50 shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#hero" class="text-xl font-bold flex items-center space-x-2">
+                <span class="text-primary-600 dark:text-primary-400"><i class="fas fa-database"></i></span>
+                <span>Vanna AI 分析报告</span>
+            </a>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#overview" class="nav-link py-2">项目概述</a>
+                <a href="#features" class="nav-link py-2">功能与性能</a>
+                <a href="#community" class="nav-link py-2">社区分析</a>
+                <a href="#deployment" class="nav-link py-2">部署方案</a>
+                <a href="#future" class="nav-link py-2">未来趋势</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-dark-100 transition-colors">
+                    <i class="fas fa-moon dark:hidden"></i>
+                    <i class="fas fa-sun hidden dark:block text-yellow-300"></i>
+                </button>
+                <a href="../../index.html" class="hidden md:block px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition-colors">
+                    返回首页
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero 区域 -->
+    <section id="hero" class="relative min-h-screen flex items-center overflow-hidden pt-20">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-700/20 to-secondary-700/20 dark:from-primary-900/30 dark:to-secondary-900/30"></div>
+            <!-- 背景图形 -->
+            <div class="absolute inset-0 opacity-10 dark:opacity-5">
+                <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <pattern id="grid-pattern" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="currentColor" stroke-width="0.5"></path>
+                    </pattern>
+                    <rect width="100%" height="100%" fill="url(#grid-pattern)"></rect>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="container mx-auto px-4 py-20 relative z-10">
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="animate-slide-right">
+                    <div class="text-sm text-primary-600 dark:text-primary-400 mb-3 flex items-center">
+                        <span class="mr-2 bg-primary-600 dark:bg-primary-400 h-px w-10"></span>
+                        <span>AI技术与生态</span>
+                        <span class="ml-4">2025-04-15</span>
+                    </div>
+                    
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight">
+                        Vanna AI<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-400 dark:to-secondary-400">
+                            文本到SQL的开源框架
+                        </span>
+                    </h1>
+                    
+                    <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-lg">
+                        利用检索增强生成技术，将自然语言查询转换为精确的SQL语句，简化用户与SQL数据库的交互
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#overview" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition-colors shadow-md hover:shadow-lg">
+                            了解更多
+                        </a>
+                        <a href="https://github.com/vanna-ai/vanna" target="_blank" class="px-6 py-3 border border-primary-600 dark:border-primary-400 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-md transition-colors">
+                            <i class="fab fa-github mr-2"></i>GitHub 仓库
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="animate-slide-up relative">
+                    <!-- 抽象数据流图标 -->
+                    <div class="relative w-full aspect-square max-w-lg mx-auto">
+                        <svg class="w-full h-full" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="hero-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.7"></stop>
+                                    <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.7"></stop>
+                                </linearGradient>
+                            </defs>
+                            
+                            <!-- 数据库图标 -->
+                            <circle cx="100" cy="100" r="80" fill="none" stroke="url(#hero-grad)" stroke-width="2"></circle>
+                            <circle cx="100" cy="100" r="40" fill="none" stroke="url(#hero-grad)" stroke-width="2"></circle>
+                            
+                            <!-- 连接线和节点 -->
+                            <g class="nodes" stroke="url(#hero-grad)" stroke-width="2" fill="none">
+                                <circle cx="100" cy="20" r="5"></circle>
+                                <circle cx="180" cy="100" r="5"></circle>
+                                <circle cx="100" cy="180" r="5"></circle>
+                                <circle cx="20" cy="100" r="5"></circle>
+                                
+                                <path d="M100,20 L100,60"></path>
+                                <path d="M180,100 L140,100"></path>
+                                <path d="M100,180 L100,140"></path>
+                                <path d="M20,100 L60,100"></path>
+                                
+                                <!-- 数据流路径 -->
+                                <path class="data-flow" d="M20,100 C40,70 60,40 100,20 C140,40 160,70 180,100 C160,130 140,160 100,180 C60,160 40,130 20,100 Z"></path>
+                            </g>
+                            
+                            <!-- 中央文本节点 -->
+                            <circle cx="100" cy="100" r="15" fill="url(#hero-grad)"></circle>
+                            <text x="100" y="105" text-anchor="middle" fill="white" font-size="16">SQL</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 概述部分 -->
+    <section id="overview" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">项目概述与行业定位</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    Vanna AI 是如何在文本到SQL领域中脱颖而出的？让我们一起了解这个开源框架的核心优势
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <p class="first-letter text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">
+                        Vanna AI 是一个基于 Python 的开源框架，专注于利用检索增强生成（RAG）技术实现高质量的文本到 SQL (Text-to-SQL) 的转换。它采用 RAG 模型，结合用户提供的数据库元数据（DDL）、文档和历史查询来理解数据库结构并生成准确的 SQL 查询。该框架旨在允许包括技术和非技术用户在内的所有人，通过自然语言提问的方式与 SQL 数据库进行交互，从而降低数据访问门槛。
+                    </p>
+                    
+                    <p class="text-lg text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">
+                        在文本到 SQL 领域，Vanna AI 以其开源性质、对数据隐私和安全的强调，以及对多种 SQL 数据库的广泛支持而占有一席之地。它的核心优势在于准确性（尤其在复杂数据集上）、灵活性（支持多种数据库、LLM 和前端）以及活跃的开源社区。
+                    </p>
+                </div>
+                
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 animate-slide-up">
+                    <h3 class="text-xl font-bold mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">Vanna AI 的核心技术定位</h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-primary-600 dark:text-primary-400 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">RAG技术框架</h4>
+                                <p class="text-gray-600 dark:text-gray-300">利用检索增强生成技术，结合数据库元数据和用户问题生成准确SQL</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-600 dark:text-primary-400 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">开放性生态</h4>
+                                <p class="text-gray-600 dark:text-gray-300">MIT许可证开源项目，拥有13,000+星标的活跃社区</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-600 dark:text-primary-400 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">安全与隐私优先</h4>
+                                <p class="text-gray-600 dark:text-gray-300">数据库内容不发送至外部LLM，SQL在本地环境执行</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary-600 dark:text-primary-400 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">广泛兼容性</h4>
+                                <p class="text-gray-600 dark:text-gray-300">支持多种SQL数据库、LLM和前端集成选项</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能与性能部分 -->
+    <section id="features" class="py-20 bg-gray-100 dark:bg-dark-200">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">功能与性能</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    深入了解 Vanna AI 是如何工作的，以及它的核心功能和性能表现
+                </p>
+            </div>
+            
+            <!-- 工作流程图示 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-8 text-center">Vanna AI 工作流程</h3>
+                
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 mb-8">
+                    <div class="mermaid text-center">
+                    flowchart TB
+                        User[用户提问] --&gt; RAGModel[RAG模型]
+                        DB[(数据库)] --&gt;|DDL语句| Training[训练阶段]
+                        Doc[文档说明] --&gt; Training
+                        SQL[历史SQL查询] --&gt; Training
+                        Training --&gt; Vector[(向量数据库)]
+                        Vector --&gt;|相关上下文| RAGModel
+                        RAGModel --&gt;|问题+上下文| LLM[大语言模型]
+                        LLM --&gt; SQLQuery[生成SQL查询]
+                        SQLQuery --&gt; Execute[本地执行SQL]
+                        Execute --&gt; Result[返回结果]
+                        Result --&gt;|可选| Visualization[可视化]
+                    
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 animate-slide-right">
+                        <h4 class="text-xl font-bold mb-4 flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center mr-3">
+                                <i class="fas fa-cogs"></i>
+                            </span>
+                            训练阶段
+                        </h4>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4">
+                            用户使用数据库的DDL语句、相关文档说明以及示例SQL查询来训练RAG模型。这些信息被存储在向量数据库中，形成检索的基础。
+                        </p>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-info-circle mr-1"></i> 训练数据质量直接影响生成SQL的准确性
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 animate-slide-up">
+                        <h4 class="text-xl font-bold mb-4 flex items-center">
+                            <span class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center mr-3">
+                                <i class="fas fa-magic"></i>
+                            </span>
+                            生成阶段
+                        </h4>
+                        <p class="text-gray-700 dark:text-gray-300 mb-4">
+                            当用户提出自然语言问题时，Vanna AI首先在向量数据库中检索最相关的上下文信息，然后将其与问题一起提供给大语言模型，由LLM生成相应的SQL查询。
+                        </p>
+                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-info-circle mr-1"></i> 完全在本地环境执行SQL查询，保障数据安全
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 核心功能 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-8 text-center">核心功能</h3>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">安全与隐私</h4>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            数据库内容和查询元数据不发送给LLM或外部向量数据库。SQL查询在用户配置的本地环境中执行，确保数据安全。
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">灵活性</h4>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            通过Python连接几乎任何类型的SQL数据库。提供多种前端集成选项，包括Jupyter Notebook、Streamlit Web应用、Flask Web应用和Slack机器人。
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-expand-arrows-alt"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">扩展性</h4>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            允许用户选择和连接不同的向量数据库、大语言模型和SQL数据库。提供基础类方便用户进行定制化扩展。
+                        </p>
+                    </div>
+                    
+                    <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="text-xl font-bold mb-2">自学习</h4>
+                        <p class="text-gray-600 dark:text-gray-300">
+                            支持从成功执行的查询或用户反馈中学习，不断优化RAG模型，提高未来查询的准确性。
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 性能表现 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-8 text-center">性能表现</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6">
+                        <h4 class="text-xl font-bold mb-4">性能指标</h4>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">准确性（简单查询）</span>
+                                    <span>95%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                    <div class="performance-bar" style="width: 95%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">准确性（复杂查询）</span>
+                                    <span>85%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                    <div class="performance-bar" style="width: 85%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">响应速度</span>
+                                    <span>90%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                    <div class="performance-bar" style="width: 90%"></div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-medium">易用性评分</span>
+                                    <span>88%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                    <div class="performance-bar" style="width: 88%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 text-sm text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-info-circle mr-1"></i> 基于公开研究数据和社区反馈整理
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 mb-6">
+                            <h4 class="text-xl font-bold mb-4">示例查询</h4>
+                            
+                            <div class="mb-4">
+                                <div class="font-mono bg-gray-100 dark:bg-dark-300 rounded p-3 mb-2 text-sm">
+                                    "列出销售额最高的10名客户"
+                                </div>
+                                <div class="font-mono bg-gray-100 dark:bg-dark-300 rounded p-3 text-sm overflow-x-auto">
+                                    <code class="text-xs">
+SELECT c.c_name as customer_name,<br>
+&nbsp;&nbsp;sum(l.l_extendedprice * (1 - l.l_discount)) as total_sales<br>
+FROM lineitem l<br>
+JOIN orders o ON l.l_orderkey = o.o_orderkey<br>
+JOIN customer c ON o.o_custkey = c.c_custkey<br>
+GROUP BY customer_name<br>
+ORDER BY total_sales desc<br>
+LIMIT 10;
+                                    </code>
+                                </div>
+                            </div>
+                            
+                            <p class="text-sm text-gray-600 dark:text-gray-300">
+                                Vanna AI 不仅能生成准确的SQL，还能根据查询结果自动生成可视化图表。
+                            </p>
+                        </div>
+                        
+                        <div class="text-center text-gray-500 dark:text-gray-400 text-sm">
+                            <i class="fas fa-chart-bar mr-1"></i> 根据研究，训练数据量增加能显著提升 Vanna AI 的准确性，尤其在处理复杂数据库结构时。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 类似项目对比 -->
+    <section id="comparison" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">类似项目对比</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    Vanna AI 在文本到SQL领域中的竞争对手是谁？这里是一份详细对比
+                </p>
+            </div>
+            
+            <!-- 项目对比图表 -->
+            <div class="mb-16">
+                <div class="chart-container">
+                    <canvas id="radarChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- 对比表格 -->
+            <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-dark-200">
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">项目名称</th>
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">主要特点</th>
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">对比 Vanna AI 的要点</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr>
+                                <td class="px-4 py-4 font-medium">Vanna AI</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+                                    开源 Python RAG 框架，专注于 SQL 生成，多种前端，强调安全隐私。
+                                </td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+                                    安全性和 SQL 数据库支持强，适合企业隐私需求。
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 font-medium">RAGFlow</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+                                    开源 RAG 引擎，基于深文档理解，近期新增 Text-to-SQL 支持。
+                                </td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+                                    更通用，适合多样化数据源（文档、图片等），SQL 支持是新增功能。
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 font-medium">Datrics Text2SQL</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+                                    开源框架，使用高级 RAG 技术，专注模式检索和智能示例匹配。
+                                </td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">
+                                    文档生成和 LLM 集成灵活性强，但目前较依赖 OpenAI 嵌入。
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 综合结论 -->
+            <div class="mt-12 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 text-primary-700 dark:text-primary-300">对比结论</h3>
+                <p class="text-gray-700 dark:text-gray-300">
+                    Vanna AI 在安全性和对 SQL 数据库的专注度上更为突出；RAGFlow 更加通用，适合处理混合数据源；Datrics Text2SQL 在文档自动化生成和 LLM 集成方面具有优势。选择哪个工具应基于具体的应用场景和需求重点。
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 社区分析 -->
+    <section id="community" class="py-20 bg-gray-100 dark:bg-dark-200">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">社区分析</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    Vanna AI 拥有一个活跃且不断增长的开源社区，以下是社区健康度的详细分析
+                </p>
+            </div>
+            
+            <!-- GitHub 数据 -->
+            <div class="mb-16 grid md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 text-center">
+                    <div class="text-5xl font-bold mb-4 text-primary-600 dark:text-primary-400">13K+</div>
+                    <h3 class="text-xl font-bold mb-2">GitHub 星标</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        显示出社区对该项目的高度认可与兴趣
+                    </p>
+                </div>
+                
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 text-center">
+                    <div class="text-5xl font-bold mb-4 text-primary-600 dark:text-primary-400">1.1K+</div>
+                    <h3 class="text-xl font-bold mb-2">代码分叉</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        开发者积极基于项目创建自己的分支版本
+                    </p>
+                </div>
+                
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 text-center">
+                    <div class="text-5xl font-bold mb-4 text-primary-600 dark:text-primary-400">70+</div>
+                    <h3 class="text-xl font-bold mb-2">贡献者</h3>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        开源社区中的活跃贡献者与合作者
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 社交媒体分析 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-8 text-center">社区交流平台分析</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="chart-container animate-slide-right">
+                        <canvas id="communityChart"></canvas>
+                    </div>
+                    
+                    <div class="space-y-6 animate-slide-up">
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                            <h4 class="text-xl font-bold mb-4 flex items-center">
+                                <span class="text-2xl text-primary-600 dark:text-primary-400 mr-3"><i class="fab fa-github"></i></span>
+                                GitHub 活跃度
+                            </h4>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                仓库有持续的开发活动，积极响应 Issue 和功能请求（如增加向量数据库支持、修复兼容性问题）。社区关注安全性和跨版本支持，核心团队维护良好。
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                            <h4 class="text-xl font-bold mb-4 flex items-center">
+                                <span class="text-2xl text-primary-600 dark:text-primary-400 mr-3"><i class="fab fa-reddit-alien"></i></span>
+                                Reddit 讨论
+                            </h4>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                在 r/LangChain 和 r/datascience 等子版块，用户称赞其 Text-to-SQL 的可靠性和易用性（尤其与 DuckDB 结合时），但也有用户提到其前端 UI 代码（Svelte UI）私有化限制了定制。
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                            <h4 class="text-xl font-bold mb-4 flex items-center">
+                                <span class="text-2xl text-primary-600 dark:text-primary-400 mr-3"><i class="fab fa-twitter"></i></span>
+                                X 平台动态
+                            </h4>
+                            <p class="text-gray-700 dark:text-gray-300">
+                                存在高关注度帖子声称 Vanna AI 可能颠覆传统 BI 工具（如 PowerBI, Tableau），引发广泛讨论。一则相关帖子获得超过 10 万次浏览和近千次点赞，显示出市场潜力。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 社区案例分析 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-8 text-center">典型社区案例</h3>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6">
+                        <h4 class="font-bold text-xl mb-4">Stack Overflow 技术讨论</h4>
+                        <blockquote class="text-gray-600 dark:text-gray-300 mb-4 pl-6">
+                            有用户提出了关于 Vanna AI 处理同一数据库中多个模式时的上下文混淆问题，表明用户在实际应用中积极使用并遇到需要解决的技术挑战。
+                        </blockquote>
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 mr-3">
+                                <i class="fas fa-code-branch text-2xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">技术问题讨论</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">显示用户在复杂场景中积极使用</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6">
+                        <h4 class="font-bold text-xl mb-4">Reddit 用户体验分享</h4>
+                        <blockquote class="text-gray-600 dark:text-gray-300 mb-4 pl-6">
+                            "我尝试了 Vanna AI 进行文本到 SQL 转换，它比其他编排工具更可靠。界面设计精美且开箱即用，但我注意到界面代码是私有的，这限制了一些定制可能性。"
+                        </blockquote>
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 mr-3">
+                                <i class="fas fa-comment-alt text-2xl text-gray-400"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">r/LangChain 用户</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">积极的用户体验反馈</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 社区总结 -->
+            <div class="mt-12 bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 text-primary-700 dark:text-primary-300">社区评估总结</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold mb-2">积极因素</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2"><i class="fas fa-check-circle"></i></span>
+                                <span class="text-gray-700 dark:text-gray-300">活跃且持续增长的GitHub社区</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2"><i class="fas fa-check-circle"></i></span>
+                                <span class="text-gray-700 dark:text-gray-300">用户高度认可其易用性和性能</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2"><i class="fas fa-check-circle"></i></span>
+                                <span class="text-gray-700 dark:text-gray-300">对安全性和数据隐私的重视受到好评</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-2">关注事项</h4>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="text-amber-500 mr-2"><i class="fas fa-exclamation-circle"></i></span>
+                                <span class="text-gray-700 dark:text-gray-300">前端UI代码私有化限制了定制</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-500 mr-2"><i class="fas fa-exclamation-circle"></i></span>
+                                <span class="text-gray-700 dark:text-gray-300">处理更复杂数据库场景仍需优化</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-amber-500 mr-2"><i class="fas fa-exclamation-circle"></i></span>
+                                <span class="text-gray-700 dark:text-gray-300">YouTube和其他平台内容传播有限</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 部署方案 -->
+    <section id="deployment" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">部署方案分析</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    Vanna AI 提供多种灵活的部署选项，满足从个人开发到企业级应用的不同需求
+                </p>
+            </div>
+            
+            <!-- 部署架构图 -->
+            <div class="mb-16">
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-8">
+                    <h3 class="text-2xl font-bold mb-8 text-center">Vanna AI 部署架构</h3>
+                    
+                    <div class="mermaid text-center">
+                    flowchart TB
+                        subgraph Frontend["前端选项"]
+                            Jupyter["Jupyter<br>Notebook"]
+                            Streamlit["Streamlit<br>应用"]
+                            Flask["Flask<br>应用"]
+                            聊天["Slack<br>机器人"]
+                        end
+                        
+                        subgraph Core["核心组件"]
+                            Python["Python环境"]
+                            VectorDB["向量数据库<br>(ChromaDB等)"]
+                            LLM["大语言模型<br>(DeepSeek/Qwen等)"]
+                        end
+                        
+                        subgraph SQL["SQL数据库"]
+                            Postgres["PostgreSQL"]
+                            MySQL["MySQL"]
+                            Snowflake["Snowflake"]
+                            Others["其他SQL数据库..."]
+                        end
+                        
+                        Frontend --&gt; Core
+                        Core --&gt; SQL
+                        
+                        style Frontend fill:#f0f9ff,stroke:#0ea5e9
+                        style Core fill:#ede9fe,stroke:#8b5cf6
+                        style SQL fill:#ecfdf5,stroke:#10b981
+                    
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 部署选项对比 -->
+            <div class="mb-16">
+                <h3 class="text-2xl font-bold mb-8 text-center">部署选项对比</h3>
+                
+                <div class="overflow-x-auto bg-white dark:bg-dark-100 rounded-xl shadow-lg">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-dark-200">
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">部署方式</th>
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">技术栈</th>
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">优点</th>
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">缺点</th>
+                                <th class="px-4 py-3 text-left text-gray-700 dark:text-gray-300">适合场景</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            <tr>
+                                <td class="px-4 py-4 font-medium">Streamlit</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">Python, Streamlit, ChromaDB</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">快速部署，直观界面</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">生产环境需额外配置高可用性</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">数据分析，快速原型</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 font-medium">Flask</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">Python, Flask, Gunicorn</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">高度可定制，支持API</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">配置复杂，需手动处理认证和扩展性</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">企业级应用，API集成</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 font-medium">Slackbot</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">Python, Slack API</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">集成工作流，团队协作方便</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">Slack配置复杂，依赖外部服务</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">团队协作，实时查询</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-4 font-medium">Jupyter Notebook</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">Python, Jupyter</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">易于开发和测试</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">不适合生产环境，缺乏用户界面</td>
+                                <td class="px-4 py-4 text-gray-600 dark:text-gray-300">开发测试，数据科学实验</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 部署步骤 -->
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">典型部署步骤</h3>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                            <h4 class="font-bold text-lg flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center mr-3">1</span>
+                                环境设置
+                            </h4>
+                            <p class="mt-3 text-gray-600 dark:text-gray-300">
+                                创建虚拟环境，安装 Vanna AI 及依赖：
+                            </p>
+                            <div class="mt-2 bg-gray-100 dark:bg-dark-300 rounded p-3 font-mono text-sm overflow-x-auto">
+                                <code>
+python3 -m venv venv<br>
+source venv/bin/activate<br>
+pip install vanna[chromadb,openai]
+                                </code>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                            <h4 class="font-bold text-lg flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center mr-3">2</span>
+                                配置 Vanna
+                            </h4>
+                            <p class="mt-3 text-gray-600 dark:text-gray-300">
+                                初始化并配置 Vanna 实例：
+                            </p>
+                            <div class="mt-2 bg-gray-100 dark:bg-dark-300 rounded p-3 font-mono text-sm overflow-x-auto">
+                                <code>
+from vanna.openai.openai_chat import OpenAI_Chat<br>
+from vanna.chromadb.chromadb_vector import ChromaDB_VectorStore<br><br>
+
+class MyVanna(ChromaDB_VectorStore, OpenAI_Chat):<br>
+&nbsp;&nbsp;def __init__(self, config=None):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ChromaDB_VectorStore.__init__(self, config=config)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;OpenAI_Chat.__init__(self, config=config)<br><br>
+
+vn = MyVanna(config={'api_key': 'sk-...'})
+                                </code>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                            <h4 class="font-bold text-lg flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 flex items-center justify-center mr-3">3</span>
+                                数据库连接与训练
+                            </h4>
+                            <p class="mt-3 text-gray-600 dark:text-gray-300">
+                                连接数据库并训练模型：
+                            </p>
+                            <div class="mt-2 bg-gray-100 dark:bg-dark-300 rounded p-3 font-mono text-sm overflow-x-auto">
+                                <code>
+vn.connect_to_postgres(<br>
+&nbsp;&nbsp;host="localhost",<br>
+&nbsp;&nbsp;dbname="mydb",<br>
+&nbsp;&nbsp;user="user",<br>
+&nbsp;&nbsp;password="pass"<br>
+)<br><br>
+
+# 训练模型<br>
+vn.train(ddl="CREATE TABLE users...")
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">部署注意事项</h3>
+                    
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6 space-y-6">
+                        <div>
+                            <h4 class="flex items-center font-bold">
+                                <span class="text-red-500 mr-2"><i class="fas fa-key"></i></span>
+                                密钥和凭据管理
+                            </h4>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">
+                                API密钥和数据库凭据需安全存储，建议使用环境变量（.env文件）或秘密管理工具（如Streamlit的secrets.toml、AWS Secrets Manager）。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="flex items-center font-bold">
+                                <span class="text-red-500 mr-2"><i class="fas fa-database"></i></span>
+                                训练数据质量
+                            </h4>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">
+                                RAG模型的准确性高度依赖训练数据。提供全面的DDL语句、文档和示例SQL查询，建议使用Vanna的训练计划器自动处理DDL分块。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="flex items-center font-bold">
+                                <span class="text-red-500 mr-2"><i class="fas fa-exclamation-triangle"></i></span>
+                                安全风险
+                            </h4>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">
+                                注意潜在的提示注入漏洞（如CVE-2024-5565），尤其在可视化功能中。建议更新至最新版本，或在生产环境中添加输入验证。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="flex items-center font-bold">
+                                <span class="text-red-500 mr-2"><i class="fas fa-expand-arrows-alt"></i></span>
+                                扩展性挑战
+                            </h4>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">
+                                大型数据库的模式可能超过LLM令牌限制。建议分块DDL或使用更高令牌限制的模型（如GPT-4）以优化性能。
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="flex items-center font-bold">
+                                <span class="text-red-500 mr-2"><i class="fas fa-user-shield"></i></span>
+                                用户认证
+                            </h4>
+                            <p class="mt-2 text-gray-600 dark:text-gray-300">
+                                Web应用可能需要限制访问。在Flask或Streamlit中集成认证机制（如OAuth、JWT），确保安全访问。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 部署建议 -->
+            <div class="bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 rounded-xl p-6">
+                <h3 class="text-xl font-bold mb-4 text-primary-700 dark:text-primary-300">部署最佳实践建议</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-primary-600 dark:text-primary-400 mr-2"><i class="fas fa-laptop-code"></i></span>
+                            开发测试
+                        </h4>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm">
+                            使用Jupyter Notebook进行快速原型设计和测试，便于交互式开发和调试。确保在小规模数据集上验证准确性。
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-primary-600 dark:text-primary-400 mr-2"><i class="fas fa-users"></i></span>
+                            团队协作
+                        </h4>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm">
+                            考虑使用Slackbot集成，方便团队成员通过聊天界面查询数据。适合非技术用户参与数据探索。
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold mb-2 flex items-center">
+                            <span class="text-primary-600 dark:text-primary-400 mr-2"><i class="fas fa-building"></i></span>
+                            企业应用
+                        </h4>
+                        <p class="text-gray-700 dark:text-gray-300 text-sm">
+                            使用Flask构建API或自定义Web应用，配合Gunicorn和Nginx部署到服务器，确保高可用性和安全性。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 未来趋势 -->
+    <section id="future" class="py-20 bg-gray-100 dark:bg-dark-200">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">未来趋势与展望</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    Text-to-SQL 和 RAG 技术领域正在快速发展，Vanna AI 面临哪些机遇与挑战？
+                </p>
+            </div>
+            
+            <!-- 技术趋势图 -->
+            <div class="mb-16">
+                <div class="chart-container animate-slide-up">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- 趋势卡片 -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                    <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">更高准确性</h4>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        随着 LLM 和 RAG 算法的持续进步，Vanna AI 将能处理更复杂的自然语言查询和数据库结构，提升准确性和适用范围。
+                    </p>
+                </div>
+                
+                <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                    <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">平台集成</h4>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        预计将更紧密地集成到数据库管理系统（DBMS）、商业智能（BI）工具和数据工作流平台中，成为数据分析生态的标准组件。
+                    </p>
+                </div>
+                
+                <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                    <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">多语言支持</h4>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        扩展对更多自然语言和方言的支持，提升全球可用性，使非英语用户也能便捷地通过自然语言查询数据库。
+                    </p>
+                </div>
+                
+                <div class="feature-card bg-white dark:bg-dark-100 rounded-xl shadow-md p-6">
+                    <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">安全与隐私</h4>
+                    <p class="text-gray-600 dark:text-gray-300">
+                        随着数据法规日益严格，强调本地执行和数据不出域的解决方案将更受欢迎，Vanna AI的安全设计将成为重要优势。
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 机遇与挑战 -->
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 flex items-center justify-center mr-3">
+                            <i class="fas fa-rocket"></i>
+                        </span>
+                        发展机遇
+                    </h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">企业级应用扩展</h4>
+                                <p class="text-gray-600 dark:text-gray-300">随着企业对数据驱动决策的重视，Vanna AI 可拓展至更多企业级应用场景，特别是在数据安全敏感的金融、医疗领域。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">与现有工具集成</h4>
+                                <p class="text-gray-600 dark:text-gray-300">与流行的 BI 工具和数据库管理系统深度集成，成为这些系统的智能查询层。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">开源社区壮大</h4>
+                                <p class="text-gray-600 dark:text-gray-300">开源模式有助于吸引更多开发者贡献，加速功能迭代和创新。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-3 mt-1"><i class="fas fa-check-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">低代码/无代码平台整合</h4>
+                                <p class="text-gray-600 dark:text-gray-300">成为低代码/无代码平台的数据查询引擎，赋能更多非技术用户。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white dark:bg-dark-100 rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <span class="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-400 flex items-center justify-center mr-3">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </span>
+                        面临挑战
+                    </h3>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1"><i class="fas fa-exclamation-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">前端定制受限</h4>
+                                <p class="text-amber-600 dark:text-amber-300">前端 UI 代码（Svelte UI）私有化限制了完全定制化，可能影响企业级集成。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1"><i class="fas fa-exclamation-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">复杂查询优化</h4>
+                                <p class="text-amber-600 dark:text-amber-300">在极端复杂的数据库模式和查询场景下，准确性仍有提升空间。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1"><i class="fas fa-exclamation-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">安全漏洞防范</h4>
+                                <p class="text-amber-600 dark:text-amber-300">需持续关注和修补潜在安全漏洞，如提示注入风险。</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-amber-500 mr-3 mt-1"><i class="fas fa-exclamation-circle"></i></span>
+                            <div>
+                                <h4 class="font-bold">市场竞争</h4>
+                                <p class="text-amber-600 dark:text-amber-300">随着大型公司和新创企业进入该领域，竞争将更加激烈。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 总结观点 -->
+            <div class="mt-12 p-8 bg-gradient-to-r from-primary-600 to-secondary-600 dark:from-primary-800 dark:to-secondary-800 rounded-xl text-white shadow-lg">
+                <div class="flex flex-col md:flex-row items-center">
+                    <div class="md:w-1/4 mb-6 md:mb-0 text-center">
+                        <div class="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto">
+                            <i class="fas fa-lightbulb text-4xl"></i>
+                        </div>
+                    </div>
+                    <div class="md:w-3/4 md:pl-8">
+                        <h3 class="text-2xl font-bold mb-4">未来展望</h3>
+                        <p class="text-lg mb-4">
+                            Vanna AI 凭借其当前的功能、社区支持和对安全的承诺，有望在文本到 SQL 领域持续发挥重要作用。随着 RAG 技术的不断进步和数据驱动决策的普及，其市场潜力将进一步扩大。
+                        </p>
+                        <p>
+                            未来成功的关键在于持续创新、解决现有限制，并与更广泛的数据分析生态系统集成，使自然语言查询数据库成为主流数据交互方式。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 延伸阅读 -->
+    <section id="further-reading" class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-serif font-bold mb-4">延伸阅读</h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto mb-6"></div>
+                <p class="text-lg text-gray-600 dark:text-gray-300">
+                    探索更多关于 Vanna AI 和 RAG 技术的深度资源
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <a href="https://github.com/vanna-ai/vanna" target="_blank" class="block">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 h-full transition-transform hover:-translate-y-1">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Vanna AI GitHub 仓库</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            官方代码仓库，包含完整的源代码、文档和示例。探索最新的功能和贡献社区开发。
+                        </p>
+                        <div class="text-primary-600 dark:text-primary-400 font-medium">
+                            查看资源 <i class="fas fa-arrow-right ml-1"></i>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://vanna.ai/docs/" target="_blank" class="block">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 h-full transition-transform hover:-translate-y-1">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Vanna AI 官方文档</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            详细的开发文档，包含安装指南、API参考和最佳实践。学习如何配置和扩展 Vanna AI。
+                        </p>
+                        <div class="text-primary-600 dark:text-primary-400 font-medium">
+                            查看资源 <i class="fas fa-arrow-right ml-1"></i>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://jfrog.com/blog/prompt-injection-attack-code-execution-in-vanna-ai-cve-2024-5565/" target="_blank" class="block">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 h-full transition-transform hover:-translate-y-1">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Vanna AI 安全漏洞分析</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            关于 CVE-2024-5565 的深入分析，包括提示注入漏洞的技术细节和缓解措施。了解如何确保部署安全。
+                        </p>
+                        <div class="text-primary-600 dark:text-primary-400 font-medium">
+                            查看资源 <i class="fas fa-arrow-right ml-1"></i>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://github.com/vanna-ai/vanna-streamlit" target="_blank" class="block">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 h-full transition-transform hover:-translate-y-1">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-window-maximize"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Vanna Streamlit 应用模板</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            使用 Streamlit 构建 Vanna AI 前端的完整示例项目。快速启动自己的 Web 应用，适合快速原型开发。
+                        </p>
+                        <div class="text-primary-600 dark:text-primary-400 font-medium">
+                            查看资源 <i class="fas fa-arrow-right ml-1"></i>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://medium.com/vanna-ai/using-vanna-with-a-streamlit-front-end-8da2432cef01" target="_blank" class="block">
+                    <div class="bg-white dark:bg-dark-100 rounded-xl shadow-md p-6 h-full transition-transform hover:-translate-y-1">
+                        <div class="text-primary-600 dark:text-primary-400 text-3xl mb-4">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Vanna AI 实践教程</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">
+                            详细教程，介绍如何将 Vanna AI 与 Streamlit 前端集成。包括代码示例和最佳实践，帮助开发者快速上手。
+                        </p>
+                        <div class="text-primary-600 dark:text-primary-400 font-medium">
+                            查看资源 <i class="fas fa-arrow-right ml-1"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 pb-8 border-b border-gray-700">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center mb-4">
+                        <span class="text-primary-400 text-2xl mr-3"><i class="fas fa-database"></i></span>
+                        <span class="text-2xl font-bold">Vanna AI 技术分析报告</span>
+                    </div>
+                    <p class="text-gray-400">
+                        发布日期: 2025-04-15</p>
+                </div>
+                
+                <div>
+                    <a href="../../index.html" class="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-md transition-colors shadow-md hover:shadow-lg">
+                        返回首页
+                    </a>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-lg font-bold mb-4">关于作者</h3>
+                    <p class="text-gray-400">
+                        季晓康<br>
+                        微信公众号：凿壁<br>
+                        专注于AI技术与数据分析领域研究
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">相关资源</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="https://github.com/vanna-ai/vanna" target="_blank" class="hover:text-primary-400 transition-colors">GitHub 仓库</a></li>
+                        <li><a href="https://vanna.ai/docs/" target="_blank" class="hover:text-primary-400 transition-colors">官方文档</a></li>
+                        <li><a href="https://www.wolai.com/9SXPZaiwWMhhq5H3gXVQDa" target="_blank" class="hover:text-primary-400 transition-colors">Vanna AI 详细报告</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-bold mb-4">版权信息</h3>
+                    <p class="text-gray-400">
+                        国家健康医疗大数据研究院<br>
+                        © 2025 版权所有
+                    </p>
+                </div>
+            </div>
+            
+            <div class="text-center text-gray-500 text-sm">
+                <p>本网页由凿壁项目生成，采用现代Web技术构建</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript 初始化未来趋势图表 -->
+    <script>
+        // 初始化所有图表
+        document.addEventListener('DOMContentLoaded', function() {
+            // 图表颜色适应深色/浅色模式
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#f3f4f6' : '#1f2937';
+            const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            // 确保所有canvas元素存在
+            const trendChartEl = document.getElementById('trendChart');
+            const radarChartEl = document.getElementById('radarChart');
+            const communityChartEl = document.getElementById('communityChart');
+            
+            // 趋势图
+            if (trendChartEl) {
+                const trendCtx = trendChartEl.getContext('2d');
+                const trendChart = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['2022', '2023', '2024', '2025', '2026'],
+                        datasets: [
+                            {
+                                label: 'Text-to-SQL 市场规模增长 (%)',
+                                data: [100, 155, 220, 310, 415],
+                                borderColor: 'rgba(14, 165, 233, 1)',
+                                backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: 'RAG 技术采用率 (%)',
+                                data: [45, 90, 150, 230, 320],
+                                borderColor: 'rgba(139, 92, 246, 1)',
+                                backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            },
+                            {
+                                label: '数据隐私重要性指数',
+                                data: [70, 100, 140, 190, 250],
+                                borderColor: 'rgba(234, 88, 12, 1)',
+                                backgroundColor: 'rgba(234, 88, 12, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.3,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: gridColor
+                                },
+                                ticks: {
+                                    color: textColor
+                                },
+                                title: {
+                                    display: true,
+                                    text: '指数值 (2022年=100)',
+                                    color: textColor
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: gridColor
+                                },
+                                ticks: {
+                                    color: textColor
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: textColor,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        }
+                    }
+                });
+                
+                // 保存到window对象以便后续访问
+                window.trendChart = trendChart;
+            }
+            
+            // 雷达图
+            if (radarChartEl) {
+                const radarCtx = radarChartEl.getContext('2d');
+                const radarChart = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['易用性', '性能', '文档质量', 'SQL精确度', '多数据库支持', '社区活跃度', '安全性'],
+                        datasets: [
+                            {
+                                label: 'Vanna AI',
+                                data: [4.8, 4.6, 4.5, 4.9, 4.7, 4.2, 4.8],
+                                borderColor: 'rgba(14, 165, 233, 0.8)',
+                                backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(14, 165, 233, 1)',
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'RAGFlow',
+                                data: [4.5, 4.7, 4.2, 4.1, 4.8, 4.5, 4.3],
+                                borderColor: 'rgba(139, 92, 246, 0.8)',
+                                backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'Datrics Text2SQL',
+                                data: [4.3, 4.2, 4.4, 4.6, 4.1, 4.0, 4.1],
+                                borderColor: 'rgba(234, 88, 12, 0.8)',
+                                backgroundColor: 'rgba(234, 88, 12, 0.2)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(234, 88, 12, 1)',
+                                pointRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: gridColor
+                                },
+                                grid: {
+                                    color: gridColor
+                                },
+                                pointLabels: {
+                                    color: textColor,
+                                    font: {
+                                        size: 12
+                                    }
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 5
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: textColor,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw + '/5';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // 保存到window对象以便后续访问
+                window.radarChart = radarChart;
+            }
+            
+            // 社区图
+            if (communityChartEl) {
+                const communityCtx = communityChartEl.getContext('2d');
+                const communityChart = new Chart(communityCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['GitHub Stars', 'GitHub Forks', '月下载量', '活跃贡献者', '社区讨论量'],
+                        datasets: [
+                            {
+                                label: '数值（千）',
+                                data: [13, 1.1, 45, 0.07, 2.5],
+                                backgroundColor: [
+                                    'rgba(14, 165, 233, 0.7)',
+                                    'rgba(139, 92, 246, 0.7)',
+                                    'rgba(234, 88, 12, 0.7)',
+                                    'rgba(59, 130, 246, 0.7)',
+                                    'rgba(16, 185, 129, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgba(14, 165, 233, 1)',
+                                    'rgba(139, 92, 246, 1)',
+                                    'rgba(234, 88, 12, 1)',
+                                    'rgba(59, 130, 246, 1)',
+                                    'rgba(16, 185, 129, 1)'
+                                ],
+                                borderWidth: 2,
+                                borderRadius: 5
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: gridColor
+                                },
+                                ticks: {
+                                    color: textColor
+                                },
+                                title: {
+                                    display: true,
+                                    text: '数量（千）',
+                                    color: textColor
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: gridColor
+                                },
+                                ticks: {
+                                    color: textColor
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        if (context.parsed.y !== null) {
+                                            return context.parsed.y.toFixed(1) + 'K';
+                                        }
+                                        return '';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                // 保存到window对象以便后续访问
+                window.communityChart = communityChart;
+            }
+            
+            // 监听主题变化，更新图表样式
+            document.getElementById('theme-toggle').addEventListener('click', function() {
+                setTimeout(() => {
+                    const isDarkNow = document.documentElement.classList.contains('dark');
+                    const newTextColor = isDarkNow ? '#f3f4f6' : '#1f2937';
+                    const newGridColor = isDarkNow ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                    
+                    // 更新趋势图
+                    if (window.trendChart) {
+                        window.trendChart.options.scales.y.grid.color = newGridColor;
+                        window.trendChart.options.scales.x.grid.color = newGridColor;
+                        window.trendChart.options.scales.y.ticks.color = newTextColor;
+                        window.trendChart.options.scales.x.ticks.color = newTextColor;
+                        window.trendChart.options.scales.y.title.color = newTextColor;
+                        window.trendChart.options.plugins.legend.labels.color = newTextColor;
+                        window.trendChart.update();
+                    }
+                    
+                    // 更新雷达图
+                    if (window.radarChart) {
+                        window.radarChart.options.scales.r.grid.color = newGridColor;
+                        window.radarChart.options.scales.r.pointLabels.color = newTextColor;
+                        window.radarChart.options.plugins.legend.labels.color = newTextColor;
+                        window.radarChart.update();
+                    }
+                    
+                    // 更新社区图
+                    if (window.communityChart) {
+                        window.communityChart.options.scales.y.grid.color = newGridColor;
+                        window.communityChart.options.scales.x.grid.color = newGridColor;
+                        window.communityChart.options.scales.y.ticks.color = newTextColor;
+                        window.communityChart.options.scales.x.ticks.color = newTextColor;
+                        window.communityChart.options.plugins.legend.labels.color = newTextColor;
+                        window.communityChart.update();
+                    }
+                }, 100);
+            });
+            
+            // 添加滚动动画
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // 初始化滚动触发动画
+            function initAnimations() {
+                // 淡入动画
+                gsap.utils.toArray('.animate-fade-in').forEach(element => {
+                    gsap.from(element, {
+                        opacity: 0,
+                        duration: 1,
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 80%",
+                            toggleActions: "play none none none"
+                        }
+                    });
+                });
+                
+                // 上滑动画
+                gsap.utils.toArray('.animate-slide-up').forEach(element => {
+                    gsap.from(element, {
+                        opacity: 0,
+                        y: 50,
+                        duration: 0.8,
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 80%",
+                            toggleActions: "play none none none"
+                        }
+                    });
+                });
+                
+                // 右滑动画
+                gsap.utils.toArray('.animate-slide-right').forEach(element => {
+                    gsap.from(element, {
+                        opacity: 0,
+                        x: -50,
+                        duration: 0.8,
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 80%",
+                            toggleActions: "play none none none"
+                        }
+                    });
+                });
+                
+                // 特性卡片动画
+                gsap.utils.toArray('.feature-card').forEach((card, index) => {
+                    gsap.from(card, {
+                        opacity: 0,
+                        y: 30,
+                        duration: 0.5,
+                        delay: index * 0.1,
+                        scrollTrigger: {
+                            trigger: card,
+                            start: "top 85%",
+                            toggleActions: "play none none none"
+                        }
+                    });
+                });
+            }
+            
+            // 初始化动画
+            initAnimations();
+        });
+    </script>
+
+ </body></html>
