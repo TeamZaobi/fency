@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-04-19T07:03:35.372Z",
+  "lastUpdated": "2025-04-18T11:07:46.770Z",
   "pages": [
     {
       "id": "pages/ai-tech/ai-model-capability-analysis.html",
@@ -24,7 +24,7 @@
         "LLM",
         "AI评测"
       ],
-      "publish-date": "2025-03-27"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/cursor-strategies.html",
@@ -46,7 +46,7 @@
         "软件工程",
         "编程技巧"
       ],
-      "publish-date": "2025-03-26"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/cursor_project_rules.html",
@@ -68,7 +68,7 @@
         "文件管理",
         "AI编程"
       ],
-      "publish-date": "2025-03-30"
+      "publish-date": "2024-04-02"
     },
     {
       "id": "pages/ai-tech/deepresearch_by_gemini_2.5.html",
@@ -130,7 +130,7 @@
         "Gemini 2.0",
         "Flash模型"
       ],
-      "publish-date": "2025-04-02"
+      "publish-date": "2025-03-25"
     },
     {
       "id": "pages/ai-tech/gemini2.5pro.html",
@@ -152,7 +152,7 @@
         "大型语言模型",
         "生成式AI"
       ],
-      "publish-date": "2025-03-29"
+      "publish-date": "2024-04-02"
     },
     {
       "id": "pages/ai-tech/gemini25pro-coding.html",
@@ -176,7 +176,7 @@
         "Apple Health",
         "AI应用"
       ],
-      "publish-date": "2025-03-29"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/gpt-4o.html",
@@ -198,7 +198,7 @@
         "人工智能",
         "深度学习"
       ],
-      "publish-date": "2025-03-30"
+      "publish-date": "2025-03-22"
     },
     {
       "id": "pages/ai-tech/gpt-o3-benchmark.html",
@@ -237,7 +237,7 @@
         "人机交互",
         "AI局限性"
       ],
-      "publish-date": "2025-03-17"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/jupyter-mcp-server-report.html",
@@ -264,11 +264,11 @@
     {
       "id": "pages/ai-tech/mcpstore.html",
       "path": "pages/ai-tech/mcpstore.html",
-      "title": "阿里云百炼平台全生命周期MCP服务解析",
+      "title": "MCP-商店来了：阿里云百炼平台全生命周期MCP服务解析",
       "lastModifiedDate": "2025-04-09T11:25:15.164Z",
       "publishDate": "",
       "category": "ai-tech",
-      "description": "阿里云百炼平台推出的全生命周期MCP（模型连接协议）服务，简化AI智能体开发流程，提供50多种MCP服务，降低AI应用开发门槛。",
+      "description": "MCP-商店来了：阿里云百炼平台全生命周期MCP服务解析",
       "keywords": [
         "MCP",
         "模型连接协议",
@@ -297,7 +297,7 @@
         "社区反馈",
         "评测报告"
       ],
-      "publish-date": "2025-03-27"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/project-intro.html",
@@ -334,7 +334,7 @@
         "视觉语言模型",
         "AI应用"
       ],
-      "publish-date": "2025-03-27"
+      "publish-date": "2024-04-02"
     },
     {
       "id": "pages/ai-tech/rag-vibe-coding.html",
@@ -356,7 +356,7 @@
         "氛围编程",
         "软件开发"
       ],
-      "publish-date": "2025-03-25"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/vanna-ai-report.html",
@@ -397,7 +397,7 @@
         "用户中心设计",
         "情感共鸣"
       ],
-      "publish-date": "2025-03-25"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/ai-tech/vibe-coding-report.html",
@@ -419,7 +419,7 @@
         "GitHub Copilot",
         "Codeium"
       ],
-      "publish-date": "2025-03-28"
+      "publish-date": "2024-04-02"
     },
     {
       "id": "pages/ai-tech/zapier-mcp.html",
@@ -460,7 +460,7 @@
         "数据安全",
         "信息化升级"
       ],
-      "publish-date": "2025-03-15"
+      "publish-date": "2024-04-10"
     },
     {
       "id": "pages/info-upgrade/hospital-it-team-training.html",
@@ -480,7 +480,7 @@
         "AI",
         "医疗IT"
       ],
-      "publish-date": "2025-03-22"
+      "publish-date": "2024-01-01"
     },
     {
       "id": "pages/info-upgrade/hospital-it-upgrade-2025.html",
@@ -498,7 +498,7 @@
         "数据要素",
         "2025规划"
       ],
-      "publish-date": "2025-03-21"
+      "publish-date": "2024-04-01"
     },
     {
       "id": "pages/info-upgrade/hospital-it-upgrade-service-model.html",
@@ -518,7 +518,7 @@
         "医疗转型",
         "市场分析"
       ],
-      "publish-date": "2025-03-21"
+      "publish-date": "2024-01-01"
     },
     {
       "id": "pages/info-upgrade/hospital-it-workflow.html",
@@ -558,7 +558,7 @@
         "风险管理",
         "AI"
       ],
-      "publish-date": "2025-03-15"
+      "publish-date": "2024-01-01"
     },
     {
       "id": "pages/info-upgrade/medical-ai-insights.html",
@@ -567,18 +567,15 @@
       "lastModifiedDate": "2025-04-09T05:14:40.972Z",
       "publishDate": "",
       "category": "info-upgrade",
-      "description": "探讨医疗数据与AI认知共同体的五大洞见，分析语境、人机关系、知识化、隐性逻辑和认知互联对医疗信息化未来发展的影响。",
+      "description": "探讨医疗数据与AI认知共同体的五大洞见，分析语境、人机关系、知识化、隐性逻辑和认知互联。",
       "keywords": [
         "医疗数据",
         "AI",
         "认知共同体",
-        "数据语境",
         "人机协作",
-        "数据知识化",
-        "医疗信息化",
-        "Agent"
+        "医疗信息化"
       ],
-      "publish-date": "2025-03-15"
+      "publish-date": "2024-08-14"
     },
     {
       "id": "pages/info-upgrade/medical-insurance-qa.html",
@@ -598,7 +595,7 @@
         "知识库",
         "用户支持"
       ],
-      "publish-date": "2025-04-01"
+      "publish-date": "2025-03-10"
     },
     {
       "id": "pages/knowledge/ai-emotion-management.html",
@@ -640,7 +637,7 @@
         "AI内部机制",
         "机器学习研究"
       ],
-      "publish-date": "2025-04-01"
+      "publish-date": "2024-04-05"
     },
     {
       "id": "pages/knowledge/autoregressive.html",
@@ -661,7 +658,7 @@
         "AI架构",
         "技术范式"
       ],
-      "publish-date": "2025-03-30"
+      "publish-date": "2024-04-05"
     },
     {
       "id": "pages/knowledge/cognitive-aging-research.html",
@@ -680,7 +677,7 @@
         "认知干预",
         "知识报告"
       ],
-      "publish-date": "2025-03-31"
+      "publish-date": "2024-04-03"
     },
     {
       "id": "pages/knowledge/creative.html",
@@ -700,7 +697,7 @@
         "价值评估",
         "创造力测量"
       ],
-      "publish-date": "2025-03-19"
+      "publish-date": "2024-04-04"
     },
     {
       "id": "pages/knowledge/lecun-autoregressive.html",
@@ -720,7 +717,7 @@
         "预测学习",
         "世界模型"
       ],
-      "publish-date": "2025-04-02"
+      "publish-date": "2024-04-04"
     },
     {
       "id": "pages/knowledge/meaning.html",
@@ -740,7 +737,7 @@
         "大脑机制",
         "认知过程"
       ],
-      "publish-date": "2025-04-01"
+      "publish-date": "2024-04-03"
     },
     {
       "id": "pages/knowledge/pantone-2025.html",
@@ -762,7 +759,7 @@
         "色彩搭配",
         "色彩应用"
       ],
-      "publish-date": "2025-03-31"
+      "publish-date": "2024-04-05"
     },
     {
       "id": "pages/knowledge/refactor-by-ast-graph.html",
@@ -801,7 +798,7 @@
         "科研方法",
         "知识报告"
       ],
-      "publish-date": "2025-03-28"
+      "publish-date": "2024-04-05"
     },
     {
       "id": "pages/knowledge/student-confidence-restoration.html",
@@ -821,7 +818,7 @@
         "挫折应对",
         "学习辅导"
       ],
-      "publish-date": "2025-03-10"
+      "publish-date": "2024-04-06"
     },
     {
       "id": "pages/research/ai-essential-papers.html",
@@ -843,7 +840,7 @@
         "大语言模型",
         "推理框架"
       ],
-      "publish-date": "2025-03-29"
+      "publish-date": "2025-02-13"
     },
     {
       "id": "pages/research/clinical-research-topic-selection.html",
@@ -863,7 +860,7 @@
         "AI",
         "选题策略"
       ],
-      "publish-date": "2025-03-28"
+      "publish-date": "2024-04-02"
     },
     {
       "id": "pages/research/cognitive-aging-research.html",
@@ -882,7 +879,7 @@
         "生活方式干预",
         "神经可塑性"
       ],
-      "publish-date": "2025-04-01"
+      "publish-date": "2024-04-03"
     },
     {
       "id": "pages/research/llm-chatbot-development.html",
@@ -902,7 +899,7 @@
         "实施步骤",
         "科研辅助"
       ],
-      "publish-date": "2025-03-20"
+      "publish-date": "2024-03-20"
     },
     {
       "id": "pages/research/llm-medical-research-workflow.html",
@@ -924,26 +921,7 @@
         "论文写作",
         "科研伦理"
       ],
-      "publish-date": "2025-03-25"
-    },
-    {
-      "id": "pages/info-upgrade/halicin.html",
-      "path": "pages/info-upgrade/halicin.html",
-      "title": "Halicin: AI发现的广谱抗生素研发现状 | 凿壁",
-      "lastModifiedDate": "2025-04-19T06:41:55.131Z",
-      "publishDate": "",
-      "category": "info-upgrade",
-      "description": "详细探讨通过人工智能发现的抗生素halicin的研发历程、作用机制、临床前研究进展以及未来发展前景，呈现AI技术在药物研发领域的突破性应用。",
-      "keywords": [
-        "halicin",
-        "人工智能",
-        "抗生素",
-        "药物发现",
-        "耐药菌",
-        "临床前研究",
-        "AI药物研发"
-      ],
-      "publish-date": "2025-04-18"
+      "publish-date": "2024-04-04"
     }
   ]
 }

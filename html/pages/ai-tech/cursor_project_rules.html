@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cursor 项目规则详解 | 凿壁</title>
     <meta name="category" content="ai-tech">
     <meta name="description" content="详细解读凿壁项目中使用Cursor AI工具的协作规则，涵盖通用AI协作、网页开发核心原则、设计规范、技术要求和文件管理等。">
-    <meta name="publish-date" content="2024-04-02">
-    <meta name="keywords" content="Cursor, AI协作, 凿壁项目, 网页开发, LLM, 项目规则, 设计规范, 技术要求, 文件管理, AI编程">
+    <meta name="publish-date" content="2025-03-30">
+    <meta name="keywords" content="Cursor,AI协作,凿壁项目,网页开发,LLM,项目规则,设计规范,技术要求,文件管理,AI编程">
     
     <!-- 样式表 -->
     <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&amp;family=Noto+Sans+SC:wght@300;400;500;700&amp;display=swap">
     
     <!-- Mermaid JS -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
@@ -342,11 +340,9 @@
     <!-- 可见元数据 -->
     <div class="container mx-auto px-4 py-4 text-sm text-gray-600 dark:text-gray-400">
         <span class="inline-flex items-center mr-6">
-            <i class="fas fa-calendar-alt mr-2"></i> 发布日期: 2024-04-02
-        </span>
+             发布日期: 2025-03-30</span>
         <span class="inline-flex items-center">
-            <i class="fas fa-folder mr-2"></i> 分类: AI技术与生态
-        </span>
+             分类: ai-tech</span>
     </div>
 
     <!-- Header -->
@@ -465,7 +461,7 @@
                                 <i class="fas fa-globe-asia text-green-500 mr-2"></i>
                                 全局规则 (Global Rules)
                             </h4>
-                            <p class="ml-7 text-gray-700 dark:text-gray-300">在 Cursor 设置中的"General">"Rules for AI"部分设置，适用于所有项目，非常适合个人编码偏好和保持一致的 AI 行为。</p>
+                            <p class="ml-7 text-gray-700 dark:text-gray-300">在 Cursor 设置中的"General"&gt;"Rules for AI"部分设置，适用于所有项目，非常适合个人编码偏好和保持一致的 AI 行为。</p>
                         </div>
                         <div>
                             <h4 class="font-medium text-lg mb-2 flex items-center">
@@ -487,7 +483,7 @@
                     <h4 class="font-medium mb-3">配置全局规则</h4>
                     <ol class="list-decimal pl-6 mb-6 space-y-2 text-gray-700 dark:text-gray-300">
                         <li>打开 Cursor 设置</li>
-                        <li>导航到"General">"Rules for AI"</li>
+                        <li>导航到"General"&gt;"Rules for AI"</li>
                         <li>在提供的文本区域中输入您的自定义指令</li>
                         <li>点击"Save"保存全局规则</li>
                         <li>记得启用"include .cursorrules file"以应用项目特定规则</li>
@@ -495,7 +491,7 @@
                     
                     <h4 class="font-medium mb-3">配置项目规则（推荐方式）</h4>
                     <ol class="list-decimal pl-6 mb-6 space-y-2 text-gray-700 dark:text-gray-300">
-                        <li>进入 Cursor 设置 > General > Project Rules</li>
+                        <li>进入 Cursor 设置 &gt; General &gt; Project Rules</li>
                         <li>点击"Add Rule"创建新的 .mdc 文件</li>
                         <li>编辑描述（帮助代理选择规则）和文件模式（如 *.tsx 用于自动包含规则）</li>
                         <li>在 .mdc 文件中编写规则内容</li>
@@ -514,8 +510,7 @@
                 <div class="bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 border-l-4 border-blue-500 p-5 rounded mb-8">
                     <h3 class="text-lg font-medium text-blue-800 dark:text-blue-200 mb-3">规则示例</h3>
                     <div class="code-block relative bg-gray-100 dark:bg-gray-800 p-4 rounded text-sm mb-4">
-                        <pre class="text-gray-800 dark:text-gray-200">
-# 全局规则示例 (在 Cursor 设置 > Rules for AI)
+                        <pre class="text-gray-800 dark:text-gray-200"># 全局规则示例 (在 Cursor 设置 &gt; Rules for AI)
 
 1. Bug Fixes:
    - 在提出修复之前彻底分析问题
@@ -536,8 +531,7 @@
                     </div>
                     
                     <div class="code-block relative bg-gray-100 dark:bg-gray-800 p-4 rounded text-sm">
-                        <pre class="text-gray-800 dark:text-gray-200">
-# 项目规则示例 (.mdc 文件或 .cursorrules)
+                        <pre class="text-gray-800 dark:text-gray-200"># 项目规则示例 (.mdc 文件或 .cursorrules)
 
 你是 TypeScript、Node.js、Next.js App Router、React、Shadcn UI、Radix UI 和 Tailwind 专家。
   
@@ -610,8 +604,7 @@ TypeScript 使用
             <h2 class="text-3xl font-bold mb-8 text-center">Cursor 项目规则原文</h2>
             <div class="code-block relative">
                 <button class="copy-button" id="copy-rules">复制代码</button>
-                <pre class="language-markdown text-sm text-gray-800 dark:text-gray-200">
-## Rules正文
+                <pre class="language-markdown text-sm text-gray-800 dark:text-gray-200">## Rules正文
 
 ```Markdown
 Use 'cursor_project_rules' as the Knowledge Base: Always refer to cursor_project_rules' to understand the context of the project. Do not code anything outside of the context provided in the 'cursor_project_rules' folder. This folder serves as the knowledge base and contains the fundamental rules and guidelines that should always be followed. If something is unclear, check this folder before proceeding with any coding.  
@@ -1004,24 +997,24 @@ flowchart TB
                 <div class="mermaid-container">
                     <div class="mermaid">
 graph TD
-    A[知识库] --> B[代码生成]
-    A --> C[问题分析]
-    A --> D[需求理解]
+    A[知识库] --&gt; B[代码生成]
+    A --&gt; C[问题分析]
+    A --&gt; D[需求理解]
     
-    E[实施计划] --> F[功能开发]
-    F --> G[逐文件修改]
-    G --> H[整块修改]
+    E[实施计划] --&gt; F[功能开发]
+    F --&gt; G[逐文件修改]
+    G --&gt; H[整块修改]
     
-    I[编码规范] --> J[代码质量]
-    J --> K[可读性]
-    J --> L[性能]
-    J --> M[安全性]
-    J --> N[可维护性]
-    J --> O[可测试性]
+    I[编码规范] --&gt; J[代码质量]
+    J --&gt; K[可读性]
+    J --&gt; L[性能]
+    J --&gt; M[安全性]
+    J --&gt; N[可维护性]
+    J --&gt; O[可测试性]
     
-    P[交互规则] --> Q[高效沟通]
-    Q --> R[减少噪音]
-    Q --> S[专注于任务]
+    P[交互规则] --&gt; Q[高效沟通]
+    Q --&gt; R[减少噪音]
+    Q --&gt; S[专注于任务]
                     </div>
                 </div>
             </div>
@@ -1037,16 +1030,16 @@ sequenceDiagram
     participant 知识库
     participant 代码库
     
-    用户->>Cursor AI: 提出请求/问题
-    Cursor AI->>知识库: 查询相关规则
-    知识库-->>Cursor AI: 返回规则和约束
-    Cursor AI->>代码库: 检查现有实现
-    代码库-->>Cursor AI: 返回代码内容
-    Cursor AI->>Cursor AI: 分析并验证信息
-    Cursor AI->>用户: 提供符合规则的回应
-    用户->>Cursor AI: 确认或要求修改
-    Cursor AI->>代码库: 按规则执行修改
-    Cursor AI->>用户: 展示修改结果
+    用户-&gt;&gt;Cursor AI: 提出请求/问题
+    Cursor AI-&gt;&gt;知识库: 查询相关规则
+    知识库--&gt;&gt;Cursor AI: 返回规则和约束
+    Cursor AI-&gt;&gt;代码库: 检查现有实现
+    代码库--&gt;&gt;Cursor AI: 返回代码内容
+    Cursor AI-&gt;&gt;Cursor AI: 分析并验证信息
+    Cursor AI-&gt;&gt;用户: 提供符合规则的回应
+    用户-&gt;&gt;Cursor AI: 确认或要求修改
+    Cursor AI-&gt;&gt;代码库: 按规则执行修改
+    Cursor AI-&gt;&gt;用户: 展示修改结果
                     </div>
                 </div>
             </div>
@@ -1076,7 +1069,7 @@ sequenceDiagram
                     <!-- 阅读项目 2 -->
                     <div class="further-reading-item bg-white dark:bg-gray-700 p-5 rounded-lg shadow-sm">
                         <h3 class="text-xl font-semibold mb-2">《The Pragmatic Programmer: Your Journey to Mastery》</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3">Andrew Hunt & David Thomas</p>
+                        <p class="text-gray-600 dark:text-gray-300 mb-3">Andrew Hunt &amp; David Thomas</p>
                         <p class="mb-4">这本经典著作包含了许多实用的编程原则和实践，涵盖了模块化设计、错误处理和边界情况处理等 Cursor 规则中提到的重要主题。</p>
                         <a href="https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 flex items-center">
                             <span>了解更多</span>
@@ -1087,7 +1080,7 @@ sequenceDiagram
                     <!-- 阅读项目 3 -->
                     <div class="further-reading-item bg-white dark:bg-gray-700 p-5 rounded-lg shadow-sm">
                         <h3 class="text-xl font-semibold mb-2">《Software Engineering at Google》</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-3">Titus Winters, Tom Manshreck & Hyrum Wright</p>
+                        <p class="text-gray-600 dark:text-gray-300 mb-3">Titus Winters, Tom Manshreck &amp; Hyrum Wright</p>
                         <p class="mb-4">Google 的软件工程实践，特别是关于代码审查、测试覆盖和版本兼容性的章节，对深入理解 Cursor 规则背后的工程原则非常有价值。</p>
                         <a href="https://www.oreilly.com/library/view/software-engineering-at/9781492082781/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 flex items-center">
                             <span>了解更多</span>
@@ -1129,7 +1122,7 @@ sequenceDiagram
                     <h3 class="text-lg font-semibold mb-2">作者信息</h3>
                     <p class="text-gray-600 dark:text-gray-400">作者：季晓康</p>
                     <p class="text-gray-600 dark:text-gray-400">微信公众号：凿壁</p>
-                    <p class="text-sm">&copy; 2025 国家健康医疗大数据研究院. 保留所有权利.</p>
+                    <p class="text-sm">© 2025 国家健康医疗大数据研究院. 保留所有权利.</p>
                 </div>
                 
                 <div class="flex flex-col items-center md:items-end">
@@ -1259,5 +1252,5 @@ sequenceDiagram
             }
         });
     </script>
-</body>
-</html>
+
+</body></html>
