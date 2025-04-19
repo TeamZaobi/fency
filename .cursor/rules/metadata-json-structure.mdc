@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## metadata.json 结构
 
-网站使用 [html/metadata.json](mdc:html/metadata.json) 和 [dist/metadata.json](mdc:dist/metadata.json) 两个元数据文件，它们应保持同步。核心结构如下：
+网站使用 [metadata.json](mdc:metadata.json) 和 [dist/metadata.json](mdc:dist/metadata.json) 两个元数据文件，它们应保持同步。核心结构如下：
 
 ```json
 {
@@ -38,10 +38,10 @@ alwaysApply: true
 
 | category值 | 对应目录 | 中文显示名称 |
 |------------|---------|------------|
-| ai-tech | html/pages/ai-tech/ | AI技术与生态 |
-| info-upgrade | html/pages/info-upgrade/ | 信息化升级 |
-| knowledge | html/pages/knowledge/ | 知识报告 |
-| research | html/pages/research/ | 科研辅助 |
+| ai-tech | pages/ai-tech/ | AI技术与生态 |
+| info-upgrade | pages/info-upgrade/ | 信息化升级 |
+| knowledge | pages/knowledge/ | 知识报告 |
+| research | pages/research/ | 科研辅助 |
 
 ## 元数据操作规范
 
@@ -74,10 +74,10 @@ alwaysApply: true
 
 ## 元数据同步
 
-对`html/metadata.json`的任何更改都应同步到`dist/metadata.json`：
+对`metadata.json`的任何更改都应同步到`dist/metadata.json`：
 
 ```bash
-cp html/metadata.json dist/metadata.json
+cp metadata.json dist/metadata.json
 ```
 
 ## 元数据验证
@@ -85,7 +85,7 @@ cp html/metadata.json dist/metadata.json
 每次更新后，应验证JSON格式的有效性，可使用以下命令：
 
 ```bash
-jq . html/metadata.json > /dev/null && echo "Valid JSON"
+jq . metadata.json > /dev/null && echo "Valid JSON"
 ```
 
 或使用在线JSON验证工具。

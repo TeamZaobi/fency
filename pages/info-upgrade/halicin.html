@@ -1,0 +1,1594 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="publish-date" content="2025-04-18">
+    <meta name="category" content="信息化升级">
+    <meta name="description" content="详细探讨通过人工智能发现的抗生素halicin的研发历程、作用机制、临床前研究进展以及未来发展前景，呈现AI技术在药物研发领域的突破性应用。">
+    <meta name="keywords" content="halicin,人工智能,抗生素,药物发现,耐药菌,临床前研究,AI药物研发">
+    <title>Halicin: AI发现的广谱抗生素研发现状 | 凿壁</title>
+    
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome图标 -->
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- 引入GSAP动画库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <!-- 引入Charts.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入Mermaid.js -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <!-- 引入Google字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    
+    <script>
+        // 在文档加载完成后初始化Tailwind配置
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                    },
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        /* 自定义样式 */
+        :root {
+            --primary-color: #0ea5e9;
+            --secondary-color: #3b82f6;
+            --text-color: #1f2937;
+            --bg-color: #ffffff;
+            --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
+            --highlight-color: #f59e0b;
+        }
+        
+        .dark {
+            --primary-color: #38bdf8;
+            --secondary-color: #60a5fa;
+            --text-color: #f9fafb;
+            --bg-color: #111827;
+            --bg-secondary: #1f2937;
+            --border-color: #374151;
+            --highlight-color: #fbbf24;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .highlight-text {
+            color: var(--highlight-color);
+        }
+        
+        .molecule-svg {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .container {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen flex flex-col">
+        <!-- 顶部导航 -->
+        <header class="sticky top-0 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-between items-center py-4">
+                    <a href="index.html" class="flex items-center space-x-2">
+                        <span class="text-xl font-bold text-gray-800 dark:text-white font-serif">凿壁</span>
+                    </a>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600 dark:text-gray-300 hidden md:inline-block">
+                             发布日期: 2025-04-18</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-300 hidden md:inline-block">
+                             分类: 信息化升级</span>
+                        <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none">
+                            <i id="theme-toggle-dark-icon" class="hidden fas fa-moon text-gray-600 dark:text-gray-300"></i>
+                            <i id="theme-toggle-light-icon" class="hidden fas fa-sun text-gray-600 dark:text-gray-300"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero 区域 -->
+        <section class="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-900">
+            <div class="absolute inset-0" id="hero-bg">
+                <!-- SVG分子结构背景 -->
+                <svg class="w-full h-full opacity-10 dark:opacity-20" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+                    <g class="molecule-structure" stroke="currentColor" stroke-width="2" fill="none">
+                        <circle cx="400" cy="300" r="8" fill="currentColor" class="text-primary-500"></circle>
+                        <circle cx="320" cy="250" r="6" fill="currentColor" class="text-primary-400"></circle>
+                        <circle cx="480" cy="250" r="6" fill="currentColor" class="text-primary-400"></circle>
+                        <circle cx="350" cy="400" r="6" fill="currentColor" class="text-primary-400"></circle>
+                        <circle cx="450" cy="400" r="6" fill="currentColor" class="text-primary-400"></circle>
+                        <circle cx="260" cy="190" r="4" fill="currentColor" class="text-secondary-500"></circle>
+                        <circle cx="540" cy="190" r="4" fill="currentColor" class="text-secondary-500"></circle>
+                        <circle cx="280" cy="450" r="4" fill="currentColor" class="text-secondary-500"></circle>
+                        <circle cx="520" cy="450" r="4" fill="currentColor" class="text-secondary-500"></circle>
+                        
+                        <line x1="400" y1="300" x2="320" y2="250"></line>
+                        <line x1="400" y1="300" x2="480" y2="250"></line>
+                        <line x1="400" y1="300" x2="350" y2="400"></line>
+                        <line x1="400" y1="300" x2="450" y2="400"></line>
+                        <line x1="320" y1="250" x2="260" y2="190"></line>
+                        <line x1="480" y1="250" x2="540" y2="190"></line>
+                        <line x1="350" y1="400" x2="280" y2="450"></line>
+                        <line x1="450" y1="400" x2="520" y2="450"></line>
+                    </g>
+                </svg>
+            </div>
+            
+            <div class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-900 dark:text-white font-serif tracking-tight">
+                        <span class="block opacity-0 translate-y-8" id="title-part-1">Halicin:</span>
+                        <span class="text-gradient bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 inline-block opacity-0 translate-y-8" id="title-part-2">AI发现的广谱抗生素</span>
+                        <span class="block text-2xl md:text-3xl lg:text-4xl mt-2 text-gray-700 dark:text-gray-300 opacity-0 translate-y-8" id="title-part-3">研发现状与未来展望</span>
+                    </h1>
+                    
+                    <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-8 opacity-0" id="hero-description">
+                        一种由人工智能首次发现的实验性抗生素，展现出对多重耐药菌的广谱抗菌活性，代表了抗生素研发的范式转变
+                    </p>
+                    
+                    <div class="flex flex-wrap justify-center gap-4 opacity-0" id="hero-tags">
+                        <span class="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-sm font-medium">
+                            <i class="fas fa-microscope mr-1"></i> 药物研发
+                        </span>
+                        <span class="px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 text-sm font-medium">
+                            <i class="fas fa-robot mr-1"></i> 人工智能
+                        </span>
+                        <span class="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-sm font-medium">
+                            <i class="fas fa-pills mr-1"></i> 抗生素
+                        </span>
+                        <span class="px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 text-sm font-medium">
+                            <i class="fas fa-chart-line mr-1"></i> 研究前沿
+                        </span>
+                    </div>
+                    
+                    <div class="mt-12 opacity-0" id="hero-cta">
+                        <a href="#content" class="inline-flex items-center justify-center p-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 animate-bounce">
+                            <i class="fas fa-chevron-down text-xl p-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主要内容区域 -->
+        <main class="flex-grow" id="content">
+            <div class="container mx-auto px-4 py-12">
+                <!-- 目录导航 -->
+                <div class="max-w-5xl mx-auto mb-12 p-6 card">
+                    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white font-serif">
+                        <i class="fas fa-list-ul mr-2 text-primary-500"></i> 目录
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="#section-1" class="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 text-sm">1</span>
+                                        发现背景与意义
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#section-2" class="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 text-sm">2</span>
+                                        作用机制与抗菌特性
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#section-3" class="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 text-sm">3</span>
+                                        临床前研究进展
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <ul class="space-y-2">
+                                <li>
+                                    <a href="#section-4" class="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 text-sm">4</span>
+                                        研发挑战与产业化进展
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#section-5" class="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 text-sm">5</span>
+                                        未来发展方向
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#section-6" class="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400">
+                                        <span class="inline-flex items-center justify-center w-6 h-6 mr-2 rounded-full bg-primary-100 dark:bg-primary-900 text-primary-600 dark:text-primary-400 text-sm">6</span>
+                                        AI模型分析与对比
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 简介 -->
+                <div class="max-w-3xl mx-auto mb-16">
+                    <div class="p-6 card bg-blue-50 dark:bg-blue-900/30">
+                        <h2 class="text-xl font-bold mb-4 text-gray-800 dark:text-white font-serif">研究概览</h2>
+                        <p class="text-gray-700 dark:text-gray-300 mb-3">
+                            研究表明，抗生素halicin目前仍处于<strong class="text-primary-600 dark:text-primary-400">临床前研究阶段</strong>，主要在实验室和动物模型中测试其疗效和安全性，尚未进入人体临床试验。
+                        </p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-3">
+                            halicin是一种通过人工智能发现的实验性抗生素，最初用于研究糖尿病治疗，但因效果不佳而中止。2019年，它被发现对多种细菌，包括耐药菌株，具有抗菌活性。
+                        </p>
+                        <p class="text-gray-700 dark:text-gray-300 mb-3">
+                            目前，halicin的开发停留在临床前阶段，涉及实验室测试和动物模型研究，以评估其对肠道感染等疾病的潜在用途。近期研究（截至2025年4月）仍聚焦于其在动物模型中的有效性和安全性，没有证据显示已开始人体临床试验。
+                        </p>
+                        <p class="text-gray-700 dark:text-gray-300">
+                            虽然halicin显示出对耐药菌的潜力，但其临床应用仍需进一步研究和测试，可能需要数年才能进入临床试验阶段。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 第一部分：发现背景与意义 -->
+                <section id="section-1" class="max-w-4xl mx-auto mb-20 scroll-mt-20">
+                    <div class="opacity-0 transform translate-y-8" id="section1-content">
+                        <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white font-serif">
+                            <span class="inline-block mr-3 text-primary-500">01</span>
+                            <span class="border-b-2 border-primary-500 pb-1">发现背景与意义</span>
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                            <div>
+                                <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                    Halicin是一种由人工智能首次发现的抗生素，原本被研究用于治疗糖尿病的c-Jun N-末端激酶(JNK)抑制剂（SU-3327），后来被麻省理工学院（MIT）科学家通过深度学习算法识别出具有抗菌特性。研究人员以《2001太空漫游》中的人工智能HAL命名了这种分子。
+                                </p>
+                                <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                    这一发现代表了抗生素研发的范式转变，是AI首次完全独立从零开始发现全新抗生素分子。MIT团队通过训练深度神经网络，从超过1.07亿个分子库中筛选出halicin，并在实验室和小鼠模型中验证了其广谱抗菌能力。
+                                </p>
+                                <div class="mt-6">
+                                    <div class="flex items-center mb-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
+                                            <i class="fas fa-calendar-alt text-blue-600 dark:text-blue-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">首次发现时间</h4>
+                                            <p class="text-gray-600 dark:text-gray-400">2019年</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center mb-3">
+                                        <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mr-3">
+                                            <i class="fas fa-university text-indigo-600 dark:text-indigo-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">研究机构</h4>
+                                            <p class="text-gray-600 dark:text-gray-400">麻省理工学院（MIT）</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-3">
+                                            <i class="fas fa-user-graduate text-purple-600 dark:text-purple-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">主要研究者</h4>
+                                            <p class="text-gray-600 dark:text-gray-400">James Collins教授团队</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <!-- SVG分子结构 -->
+                                <div class="card p-6 h-full flex items-center justify-center">
+                                    <svg class="molecule-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                                        <g class="molecule" fill="none" stroke="currentColor" stroke-width="2">
+                                            <!-- 简化的Halicin分子结构 -->
+                                            <circle cx="200" cy="100" r="20" fill="rgba(14, 165, 233, 0.2)" stroke="#0ea5e9" stroke-width="2"></circle>
+                                            <circle cx="150" cy="150" r="15" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="2"></circle>
+                                            <circle cx="250" cy="150" r="15" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="2"></circle>
+                                            <circle cx="200" cy="200" r="15" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="2"></circle>
+                                            <circle cx="130" cy="200" r="10" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="1.5"></circle>
+                                            <circle cx="270" cy="200" r="10" fill="rgba(99, 102, 241, 0.2)" stroke="#6366f1" stroke-width="1.5"></circle>
+                                            
+                                            <line x1="200" y1="100" x2="150" y2="150"></line>
+                                            <line x1="200" y1="100" x2="250" y2="150"></line>
+                                            <line x1="150" y1="150" x2="200" y2="200"></line>
+                                            <line x1="250" y1="150" x2="200" y2="200"></line>
+                                            <line x1="150" y1="150" x2="130" y2="200"></line>
+                                            <line x1="250" y1="150" x2="270" y2="200"></line>
+                                            
+                                            <text x="200" y="250" text-anchor="middle" font-family="sans-serif" font-size="14" fill="currentColor" class="text-gray-800 dark:text-gray-200">Halicin (SU-3327)</text>
+                                        </g>
+                                    </svg>
+                                </div>
+                                <div class="mt-4 text-sm text-gray-600 dark:text-gray-400 text-center">
+                                    Halicin分子结构简化示意图，原名SU-3327
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/30 mb-6">
+                            <h3 class="text-xl font-semibold mb-3 text-gray-800 dark:text-white font-serif">Halicin的发现历程</h3>
+                            <div class="relative">
+                                <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-blue-300 dark:bg-blue-700 ml-3"></div>
+                                <div class="space-y-6">
+                                    <div class="relative pl-10">
+                                        <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-white">
+                                            <i class="fas fa-flask"></i>
+                                        </div>
+                                        <h4 class="font-medium text-gray-800 dark:text-white">2009年</h4>
+                                        <p class="text-gray-700 dark:text-gray-300">美国Burnham医学研究所开发SU-3327，旨在治疗糖尿病，但因效果不佳而中止开发</p>
+                                    </div>
+                                    <div class="relative pl-10">
+                                        <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-white">
+                                            <i class="fas fa-brain"></i>
+                                        </div>
+                                        <h4 class="font-medium text-gray-800 dark:text-white">2019年</h4>
+                                        <p class="text-gray-700 dark:text-gray-300">MIT的James Collins教授团队利用深度学习模型从药物再利用中心的6000多种化合物中识别出halicin</p>
+                                    </div>
+                                    <div class="relative pl-10">
+                                        <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-white">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                        <h4 class="font-medium text-gray-800 dark:text-white">2020年</h4>
+                                        <p class="text-gray-700 dark:text-gray-300">研究发表在《Cell》杂志上，标志着AI在抗生素发现中的突破</p>
+                                    </div>
+                                    <div class="relative pl-10">
+                                        <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-blue-500 dark:bg-blue-600 flex items-center justify-center text-white">
+                                            <i class="fas fa-building"></i>
+                                        </div>
+                                        <h4 class="font-medium text-gray-800 dark:text-white">2020年12月</h4>
+                                        <p class="text-gray-700 dark:text-gray-300">成立Phare Bio公司，采用"非营利早期+商业后期"模式，专注AI抗生素平台</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 dark:text-gray-300">
+                            Halicin的命名灵感来源于科幻电影《2001太空漫游》中的人工智能系统HAL，体现了其AI驱动的发现过程。其独特的作用机制涉及干扰细菌细胞膜的电化学梯度，特别是在铁离子复合物形成方面，这与传统抗生素不同，可能降低细菌产生耐药性的可能性。
+                        </p>
+                    </div>
+                </section>
+                
+                <!-- 第二部分：作用机制与抗菌特性 -->
+                <section id="section-2" class="max-w-4xl mx-auto mb-20 scroll-mt-20">
+                    <div class="opacity-0 transform translate-y-8" id="section2-content">
+                        <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white font-serif">
+                            <span class="inline-block mr-3 text-primary-500">02</span>
+                            <span class="border-b-2 border-primary-500 pb-1">作用机制与抗菌特性</span>
+                        </h2>
+                        
+                        <!-- 作用机制 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">2.1 作用机制</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
+                                <div class="md:col-span-3">
+                                    <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                        Halicin的抗菌机制与传统抗生素截然不同，其通过破坏细菌细胞膜的电化学梯度（质子动力势），导致细菌无法生成ATP而死亡。具体而言，halicin通过螯合Fe³⁺破坏细菌跨膜质子梯度(ΔpH)，快速耗散质子动力势并阻断ATP生成。
+                                    </p>
+                                    <p class="text-gray-700 dark:text-gray-300">
+                                        这种<span class="text-primary-600 dark:text-primary-400 font-medium">多靶点作用</span>（同时干扰细胞膜功能、代谢和DNA复制）赋予了halicin独特的优势，使细菌难以产生耐药性。
+                                    </p>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <!-- 作用机制示意图 -->
+                                    <div class="card p-4 h-full">
+                                        <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-full flex items-center justify-center">
+                                            <div class="text-center p-4">
+                                                <i class="fas fa-bacterium text-4xl mb-2 text-primary-500"></i>
+                                                <p class="text-gray-700 dark:text-gray-300 font-medium">质子动力势破坏</p>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">通过螯合Fe³⁺影响细胞膜功能</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 抗菌谱与有效性 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">2.2 抗菌谱与有效性</h3>
+                            
+                            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                                Halicin展现出广谱抗菌活性，对多种重要病原菌均有效。在体外实验中，halicin对40余种耐药革兰氏阳性菌的MIC（最小抑菌浓度）低至8-16 μg/mL。
+                            </p>
+                            
+                            <div class="mb-10">
+                                <div class="card p-6">
+                                    <h4 class="text-lg font-medium mb-4 text-gray-800 dark:text-white">
+                                        <i class="fas fa-chart-bar mr-2 text-primary-500"></i> Halicin抗菌活性数据分析
+                                    </h4>
+                                    <div class="h-80">
+                                        <canvas id="antibacterialChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div class="card p-5 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20">
+                                    <h4 class="font-medium mb-3 text-gray-800 dark:text-white flex items-center">
+                                        <i class="fas fa-virus-slash text-red-500 mr-2"></i> WHO优先级病原菌
+                                    </h4>
+                                    <ul class="space-y-2 ml-6 list-disc text-gray-700 dark:text-gray-300">
+                                        <li>鲍曼不动杆菌（最高优先级病原体）</li>
+                                        <li>艰难梭菌和肠杆菌科细菌</li>
+                                        <li>耐甲氧西林金黄色葡萄球菌(MRSA)</li>
+                                    </ul>
+                                </div>
+                                <div class="card p-5 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+                                    <h4 class="font-medium mb-3 text-gray-800 dark:text-white flex items-center">
+                                        <i class="fas fa-shield-virus text-green-500 mr-2"></i> 其他重要病原菌
+                                    </h4>
+                                    <ul class="space-y-2 ml-6 list-disc text-gray-700 dark:text-gray-300">
+                                        <li>结核分枝杆菌（部分菌株）</li>
+                                        <li>碳青霉烯耐药肠杆菌科(CRE)</li>
+                                        <li>产气荚膜梭菌(C. perfringens)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 低耐药性特点 -->
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">2.3 低耐药性特点</h3>
+                            
+                            <div class="card p-6 mb-6">
+                                <div class="flex flex-col md:flex-row">
+                                    <div class="md:w-2/3 pr-0 md:pr-6 mb-6 md:mb-0">
+                                        <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                            一项关键优势是细菌难以对halicin产生耐药性。在大肠杆菌连续暴露30天的实验中未检测到明显耐药性，而常规抗生素（如环丙沙星）在1-3天内即出现耐药性，30天后耐药性增强200倍。
+                                        </p>
+                                        <p class="text-gray-700 dark:text-gray-300">
+                                            Halicin的多靶点作用机制使细菌难以通过单一突变获得耐药性，这一特性对于应对当前全球抗生素耐药危机具有重要意义。
+                                        </p>
+                                    </div>
+                                    <div class="md:w-1/3">
+                                        <div class="h-full flex items-center justify-center">
+                                            <div class="text-center">
+                                                <div class="inline-flex items-center justify-center w-28 h-28 rounded-full bg-green-100 dark:bg-green-900/30 text-center mb-3">
+                                                    <div>
+                                                        <div class="text-4xl font-bold text-green-600 dark:text-green-400">30+</div>
+                                                        <div class="text-sm text-green-800 dark:text-green-300">天</div>
+                                                    </div>
+                                                </div>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">大肠杆菌连续暴露<br>未产生明显耐药性</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="card p-6 bg-gray-50 dark:bg-gray-800/50">
+                                <h4 class="text-lg font-medium mb-4 text-gray-800 dark:text-white flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i> 抗生素耐药性与halicin优势
+                                </h4>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                        <thead>
+                                            <tr>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">抗生素类型</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">耐药性出现时间</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">30天后耐药性增强</th>
+                                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">作用机制</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                            <tr>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">环丙沙星</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">1-3天</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">约200倍</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">单靶点（DNA复制）</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">万古霉素</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">7-14天</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">5-20倍</td>
+                                                <td class="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">单靶点（细胞壁合成）</td>
+                                            </tr>
+                                            <tr class="bg-green-50 dark:bg-green-900/20">
+                                                <td class="px-4 py-3 text-sm font-medium text-green-700 dark:text-green-300">Halicin</td>
+                                                <td class="px-4 py-3 text-sm font-medium text-green-700 dark:text-green-300">未检测到</td>
+                                                <td class="px-4 py-3 text-sm font-medium text-green-700 dark:text-green-300">无明显增强</td>
+                                                <td class="px-4 py-3 text-sm font-medium text-green-700 dark:text-green-300">多靶点（质子动力势）</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 第三部分：临床前研究进展 -->
+                <section id="section-3" class="max-w-4xl mx-auto mb-20 scroll-mt-20">
+                    <div class="opacity-0 transform translate-y-8" id="section3-content">
+                        <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white font-serif">
+                            <span class="inline-block mr-3 text-primary-500">03</span>
+                            <span class="border-b-2 border-primary-500 pb-1">临床前研究进展</span>
+                        </h2>
+                        
+                        <!-- 动物模型研究 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">3.1 动物模型研究</h3>
+                            
+                            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                                Halicin在多种动物模型中显示出显著疗效，表明其在实验环境下对多种感染有良好的治疗潜力。
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div class="card p-5 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-800 flex items-center justify-center mr-4">
+                                            <i class="fas fa-mouse text-xl text-blue-600 dark:text-blue-300"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-medium mb-2 text-gray-800 dark:text-white">皮肤感染模型</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">
+                                                在小鼠皮肤感染模型中，1% Halicin局部涂抹24小时可使MRSA菌负荷降低1.2 log，效果与一线药物夫西地酸相当
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-indigo-200 dark:bg-indigo-800 flex items-center justify-center mr-4">
+                                            <i class="fas fa-syringe text-xl text-indigo-600 dark:text-indigo-300"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-medium mb-2 text-gray-800 dark:text-white">全身感染模型</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">
+                                                腹腔注射80 mg/kg Halicin可使大腿组织菌量减少1.2 log，优于万古霉素对照组
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-green-200 dark:bg-green-800 flex items-center justify-center mr-4">
+                                            <i class="fas fa-bacteria text-xl text-green-600 dark:text-green-300"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-medium mb-2 text-gray-800 dark:text-white">鲍曼不动杆菌感染</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">
+                                                在感染鲍曼不动杆菌的小鼠模型中，含halicin的软膏在24小时内彻底清除感染
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-800 flex items-center justify-center mr-4">
+                                            <i class="fas fa-lungs text-xl text-purple-600 dark:text-purple-300"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="text-lg font-medium mb-2 text-gray-800 dark:text-white">呼吸道感染模型</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">
+                                                对呼吸道嗜肺军团菌感染的小鼠也显示出良好治疗效果
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 动物模型研究的流程图 -->
+                            <div class="mb-6">
+                                <div class="card p-6">
+                                    <h4 class="text-lg font-medium mb-4 text-gray-800 dark:text-white">
+                                        <i class="fas fa-project-diagram mr-2 text-primary-500"></i> 动物模型研究流程
+                                    </h4>
+                                    <div class="relative overflow-hidden">
+                                        <div class="mermaid text-center" id="animal-model-flow">
+                                            graph LR
+                                            A[细菌培养] --&gt; B[感染动物模型]
+                                            B --&gt; C[Halicin处理组]
+                                            B --&gt; D[对照组]
+                                            C --&gt; E[评估治疗效果]
+                                            D --&gt; E
+                                            E --&gt; F[药效与安全性分析]
+                                            F --&gt; G[确定有效剂量]
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 生物膜抑制研究 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">3.2 生物膜抑制研究</h3>
+                            
+                            <div class="mb-8">
+                                <div class="card p-6">
+                                    <div class="flex flex-col md:flex-row">
+                                        <div class="md:w-2/3 pr-0 md:pr-6 mb-6 md:mb-0">
+                                            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                                Halicin在4倍MIC浓度下可显著抑制金黄色葡萄球菌生物膜形成（生物膜总量减少53%），但对已形成的生物膜清除效果有限。2023年研究表明，单剂量25 mg/kg即可清除&gt;99%的鲍曼不动杆菌生物膜。
+                                            </p>
+                                            <p class="text-gray-700 dark:text-gray-300">
+                                                生物膜相关感染是临床中的一大挑战，因为生物膜中的细菌通常对传统抗生素具有高度耐药性。Halicin对生物膜形成的抑制作用表明其在治疗慢性感染、植入物相关感染等领域有潜在应用价值。
+                                            </p>
+                                        </div>
+                                        <div class="md:w-1/3">
+                                            <div class="h-full flex items-center justify-center">
+                                                <div class="text-center">
+                                                    <div class="inline-flex items-center justify-center w-32 h-32 rounded-full bg-primary-100 dark:bg-primary-900/30 text-center mb-3">
+                                                        <div>
+                                                            <div class="text-4xl font-bold text-primary-600 dark:text-primary-400">53%</div>
+                                                            <div class="text-sm text-primary-800 dark:text-primary-300">生物膜减少</div>
+                                                        </div>
+                                                    </div>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">金黄色葡萄球菌生物膜<br>在4倍MIC浓度下</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 安全性评估 -->
+                        <div class="mb-6">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">3.3 安全性评估</h3>
+                            
+                            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                                目前的临床前安全性研究显示Halicin具有相对良好的安全性特征，但仍有一些需要优化的方面。
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div class="card p-5">
+                                    <h4 class="font-medium mb-3 text-gray-800 dark:text-white flex items-center">
+                                        <i class="fas fa-check-circle text-green-500 mr-2"></i> 积极发现
+                                    </h4>
+                                    <ul class="space-y-2 ml-6 list-disc">
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">急性毒性低：</span>大鼠口服LD50为2018.3 mg/kg，属于低毒化合物
+                                        </li>
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">遗传毒性阴性：</span>Ames、微核、染色体畸变等测试均为阴性
+                                        </li>
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">溶血率低：</span>128 mg/L浓度下溶血率低于10%，细胞毒性低
+                                        </li>
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">治疗窗口较宽：</span>IC50/MIC比值＞8
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card p-5">
+                                    <h4 class="font-medium mb-3 text-gray-800 dark:text-white flex items-center">
+                                        <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i> 需要优化的方面
+                                    </h4>
+                                    <ul class="space-y-2 ml-6 list-disc">
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">亚慢性毒性问题：</span>高剂量（201.8 mg/kg）下大鼠出现体重减轻和轻微肾炎症
+                                        </li>
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">剂量优化需求：</span>需进一步确定最佳治疗剂量与安全窗口
+                                        </li>
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">长期安全性：</span>需要更长期的安全性评估数据
+                                        </li>
+                                        <li class="text-gray-700 dark:text-gray-300">
+                                            <span class="font-medium">特殊人群安全性：</span>孕妇、儿童、老年人等特殊人群安全性数据缺乏
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- 安全性研究进展图表 -->
+                            <div class="card p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                                <h4 class="text-lg font-medium mb-4 text-gray-800 dark:text-white">
+                                    <i class="fas fa-flask mr-2 text-primary-500"></i> 关键安全性研究进展
+                                </h4>
+                                <div class="relative">
+                                    <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-primary-300 dark:bg-primary-700 ml-3"></div>
+                                    <div class="space-y-8">
+                                        <div class="relative pl-10">
+                                            <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-primary-500 dark:bg-primary-600 flex items-center justify-center text-white">
+                                                <i class="fas fa-vial"></i>
+                                            </div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">2020年</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">初步细胞毒性研究，确认对哺乳动物细胞毒性低</p>
+                                        </div>
+                                        <div class="relative pl-10">
+                                            <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-primary-500 dark:bg-primary-600 flex items-center justify-center text-white">
+                                                <i class="fas fa-microscope"></i>
+                                            </div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">2021-2022年</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">急性毒性和遗传毒性测试，确认LD50值和基本安全特性</p>
+                                        </div>
+                                        <div class="relative pl-10">
+                                            <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-primary-500 dark:bg-primary-600 flex items-center justify-center text-white">
+                                                <i class="fas fa-heartbeat"></i>
+                                            </div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">2023年</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">28天亚慢性毒性研究，发现高剂量下存在肾脏炎症</p>
+                                        </div>
+                                        <div class="relative pl-10">
+                                            <div class="absolute left-0 top-0 w-7 h-7 rounded-full bg-primary-500 dark:bg-primary-600 flex items-center justify-center text-white">
+                                                <i class="fas fa-clipboard-check"></i>
+                                            </div>
+                                            <h4 class="font-medium text-gray-800 dark:text-white">2024-2025年</h4>
+                                            <p class="text-gray-700 dark:text-gray-300">针对口服和局部用药的安全窗口优化研究；肠道感染安全浓度确定为50.5 mg/kg</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 第四部分：研发挑战与产业化进展 -->
+                <section id="section-4" class="max-w-4xl mx-auto mb-20 scroll-mt-20">
+                    <div class="opacity-0 transform translate-y-8" id="section4-content">
+                        <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white font-serif">
+                            <span class="inline-block mr-3 text-primary-500">04</span>
+                            <span class="border-b-2 border-primary-500 pb-1">研发挑战与产业化进展</span>
+                        </h2>
+                        
+                        <!-- 主要挑战 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">4.1 主要挑战</h3>
+                            
+                            <p class="text-gray-700 dark:text-gray-300 mb-6">
+                                尽管Halicin表现出强大的抗菌潜力，但从实验室发现到临床应用仍面临多重挑战，这些挑战需要在继续开发过程中得到解决。
+                            </p>
+                            
+                            <div class="card p-6 mb-8 relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 opacity-10 z-0">
+                                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M50,5 L95,50 L50,95 L5,50 Z" fill="currentColor" class="text-red-500"></path>
+                                    </svg>
+                                </div>
+                                
+                                <h4 class="text-lg font-medium mb-4 text-gray-800 dark:text-white relative z-10">
+                                    <i class="fas fa-exclamation-circle text-red-500 mr-2"></i> 核心开发挑战
+                                </h4>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                                    <div>
+                                        <div class="flex items-start mb-4">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                                                <i class="fas fa-flask text-red-600 dark:text-red-400"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-medium text-gray-800 dark:text-white mb-1">药代动力学优化</h5>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm">
+                                                    需改善其口服生物利用度、化学稳定性及体内代谢特性
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                                                <i class="fas fa-industry text-red-600 dark:text-red-400"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-medium text-gray-800 dark:text-white mb-1">规模化生产</h5>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm">
+                                                    AI筛选的分子可能存在合成复杂性，需开发高效生产工艺
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-start mb-4">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                                                <i class="fas fa-tint text-red-600 dark:text-red-400"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-medium text-gray-800 dark:text-white mb-1">溶解度与稳定性问题</h5>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm">
+                                                    易溶于DMSO，水中溶解度&lt;1 mg/mL；需改良给药系统
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start">
+                                            <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mr-4">
+                                                <i class="fas fa-heartbeat text-red-600 dark:text-red-400"></i>
+                                            </div>
+                                            <div>
+                                                <h5 class="font-medium text-gray-800 dark:text-white mb-1">亚慢性毒性</h5>
+                                                <p class="text-gray-700 dark:text-gray-300 text-sm">
+                                                    需解决高剂量下的毒性问题，可能通过结构修饰或给药途径调整
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 第五部分：未来发展方向 -->
+                <section id="section-5" class="max-w-4xl mx-auto mb-20 scroll-mt-20">
+                    <div class="opacity-0 transform translate-y-8" id="section5-content">
+                        <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white font-serif">
+                            <span class="inline-block mr-3 text-primary-500">05</span>
+                            <span class="border-b-2 border-primary-500 pb-1">未来发展方向</span>
+                        </h2>
+                        
+                        <!-- 临床应用前景 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">5.1 临床应用前景</h3>
+                            
+                            <p class="text-gray-700 dark:text-gray-300 mb-8">
+                                基于目前的研究进展，Halicin在未来临床应用中有多个潜在方向。研究团队已将首要适应症锁定为耐药菌感染，特别是在皮肤和软组织感染领域。
+                            </p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <div class="flex flex-col h-full">
+                                        <div class="mb-4">
+                                            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-3">
+                                                <i class="fas fa-band-aid text-xl text-blue-600 dark:text-blue-400"></i>
+                                            </div>
+                                            <h4 class="text-lg font-medium text-gray-800 dark:text-white">局部治疗</h4>
+                                        </div>
+                                        <p class="text-gray-700 dark:text-gray-300 text-sm flex-grow">
+                                            多重耐药菌感染（如CRAB、MRSA）的局部治疗，如伤口、皮肤感染的软膏剂型
+                                        </p>
+                                        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                                            优先考虑，动物模型数据充分
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <div class="flex flex-col h-full">
+                                        <div class="mb-4">
+                                            <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mb-3">
+                                                <i class="fas fa-capsules text-xl text-green-600 dark:text-green-400"></i>
+                                            </div>
+                                            <h4 class="text-lg font-medium text-gray-800 dark:text-white">肠道感染</h4>
+                                        </div>
+                                        <p class="text-gray-700 dark:text-gray-300 text-sm flex-grow">
+                                            针对艰难梭菌、产气荚膜梭菌等肠道感染的口服制剂开发，需解决口服生物利用度问题
+                                        </p>
+                                        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                                            已进行安全浓度研究
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <div class="flex flex-col h-full">
+                                        <div class="mb-4">
+                                            <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mb-3">
+                                                <i class="fas fa-syringe text-xl text-purple-600 dark:text-purple-400"></i>
+                                            </div>
+                                            <h4 class="text-lg font-medium text-gray-800 dark:text-white">广谱应用</h4>
+                                        </div>
+                                        <p class="text-gray-700 dark:text-gray-300 text-sm flex-grow">
+                                            潜在的广谱抗感染应用，2025年研究甚至发现其对SARS-CoV-2 3CLpro有抑制作用（IC₅₀ 1.3 µM）
+                                        </p>
+                                        <div class="mt-4 text-xs text-gray-500 dark:text-gray-400">
+                                            需更多研究验证
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI技术在抗生素领域的拓展 -->
+                        <div class="mb-12">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">5.2 AI技术在抗生素领域的拓展</h3>
+                            
+                            <div class="card p-6 mb-8">
+                                <div class="flex flex-col md:flex-row">
+                                    <div class="md:w-3/5 mb-6 md:mb-0 md:pr-6">
+                                        <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                            Halicin的成功发现推动了AI在抗生素研发中的应用，开创了药物发现的新范式。基于同一AI模型，研究团队已筛选出23种结构新颖的潜在抗菌分子。
+                                        </p>
+                                        <p class="text-gray-700 dark:text-gray-300 mb-4">
+                                            新型AI模型（如SyntheMol）正用于设计优化新抗生素结构，结合蛋白质结构数据优化深度学习模型，进一步提升分子设计的精准度与效率。
+                                        </p>
+                                        <p class="text-gray-700 dark:text-gray-300">
+                                            MIT团队的研究表明，未来5-10年内，AI驱动的药物发现可能彻底改变抗生素研发的传统流程，显著缩短发现周期，提高成功率。
+                                        </p>
+                                    </div>
+                                    <div class="md:w-2/5">
+                                        <div class="h-64 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/30 dark:to-blue-900/30 rounded-lg p-6 flex items-center justify-center relative overflow-hidden">
+                                            <div class="z-10 text-center">
+                                                <i class="fas fa-brain text-5xl mb-4 text-indigo-500 dark:text-indigo-400"></i>
+                                                <h4 class="text-xl font-medium text-gray-800 dark:text-white mb-2">AI驱动的药物发现</h4>
+                                                <p class="text-sm text-gray-600 dark:text-gray-400">从1.07亿个分子中发现Halicin</p>
+                                            </div>
+                                            <div class="absolute inset-0 opacity-10 z-0">
+                                                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                                                    <path fill="currentColor" d="M45.5,-51.6C59.9,-41.3,73.2,-27.9,77.6,-11.7C82,4.6,77.5,23.8,66.4,36.8C55.3,49.9,37.6,56.9,19.5,62.8C1.3,68.7,-17.3,73.5,-32.4,67.5C-47.5,61.5,-59.1,44.7,-67.5,25.5C-75.9,6.3,-81.2,-15.2,-74.9,-32.2C-68.5,-49.1,-50.6,-61.4,-33.7,-70.9C-16.7,-80.4,-0.6,-87,13.5,-81.6C27.5,-76.2,31.2,-61.8,45.5,-51.6Z" transform="translate(100 100)" class="text-indigo-500"></path>
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI模型分析小节 -->
+                        <div class="mb-8">
+                            <h3 class="text-2xl font-semibold mb-6 text-gray-800 dark:text-white font-serif">
+                                <i class="fas fa-robot mr-2 text-gray-500 dark:text-gray-400"></i> AI模型分析
+                            </h3>
+                            
+                            <div class="card p-6 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+                                <h4 class="text-lg font-medium mb-6 text-gray-800 dark:text-white">10种大语言模型Halicin报告分析对比</h4>
+                                
+                                <!-- 模型贡献度分析 -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                                    <div>
+                                        <h5 class="text-base font-medium mb-4 text-gray-700 dark:text-gray-300">各模型贡献度占比</h5>
+                                        <div class="h-64">
+                                            <canvas id="contributionChart"></canvas>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h5 class="text-base font-medium mb-4 text-gray-700 dark:text-gray-300">各模型主要贡献领域</h5>
+                                        <div class="space-y-3 h-64 overflow-y-auto pr-2">
+                                            <div class="flex items-start">
+                                                <div class="w-3 h-3 rounded-full bg-sky-500 mt-1.5 mr-2 flex-shrink-0"></div>
+                                                <div>
+                                                    <span class="font-medium text-gray-800 dark:text-white">GPT (28%)</span>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">提供了最全面的产业化进展、监管路线和预期时间表信息</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="w-3 h-3 rounded-full bg-purple-500 mt-1.5 mr-2 flex-shrink-0"></div>
+                                                <div>
+                                                    <span class="font-medium text-gray-800 dark:text-white">Doubao (15%)</span>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">提供了详细的临床转化瓶颈与挑战分析</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="w-3 h-3 rounded-full bg-amber-500 mt-1.5 mr-2 flex-shrink-0"></div>
+                                                <div>
+                                                    <span class="font-medium text-gray-800 dark:text-white">Metaso (12%)</span>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">对作用机制和应用前景分析最为深入</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="w-3 h-3 rounded-full bg-emerald-500 mt-1.5 mr-2 flex-shrink-0"></div>
+                                                <div>
+                                                    <span class="font-medium text-gray-800 dark:text-white">Yuanbao (12%)</span>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">提供了最详尽的动物模型疗效数据</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="w-3 h-3 rounded-full bg-blue-500 mt-1.5 mr-2 flex-shrink-0"></div>
+                                                <div>
+                                                    <span class="font-medium text-gray-800 dark:text-white">Grok (10%)</span>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">提供了全面的历史发现背景与学术文献引用</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="w-3 h-3 rounded-full bg-indigo-500 mt-1.5 mr-2 flex-shrink-0"></div>
+                                                <div>
+                                                    <span class="font-medium text-gray-800 dark:text-white">其他模型 (23%)</span>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">Deepseek, Perplexity, Kimi, Claude, Gemini各自贡献了特定领域的补充信息</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 模型能力对比 -->
+                                <h5 class="text-base font-medium mb-4 text-gray-700 dark:text-gray-300">各模型能力维度对比</h5>
+                                <div class="overflow-x-auto mb-6">
+                                    <canvas id="modelComparisonChart" height="250"></canvas>
+                                </div>
+                                
+                                <p class="text-sm text-gray-600 dark:text-gray-400 italic text-center">
+                                    基于对各模型输出的综合评分，GPT、Doubao和Metaso在全面性、准确性和深度方面表现最佳
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- 推荐阅读资源 -->
+                        <div class="mt-16">
+                            <h3 class="text-xl font-semibold mb-6 text-gray-800 dark:text-white font-serif flex items-center">
+                                <i class="fas fa-book-open mr-3 text-primary-500"></i> 延伸阅读
+                            </h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <h4 class="font-medium text-gray-800 dark:text-white mb-2">
+                                        <a href="https://pubmed.ncbi.nlm.nih.gov/32084340/" target="_blank" rel="noopener" class="hover:text-primary-600 dark:hover:text-primary-400 flex items-center">
+                                            <i class="fas fa-external-link-alt mr-2 text-sm"></i>
+                                            A Deep Learning Approach to Antibiotic Discovery
+                                        </a>
+                                    </h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        Cell杂志上发表的Halicin原始发现论文，详细描述了AI辅助药物发现的方法学与技术细节
+                                    </p>
+                                    <div class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                                        <i class="far fa-calendar-alt mr-1"></i> 2020 ·
+                                        <i class="far fa-user mr-1"></i> Collins等 ·
+                                        <i class="far fa-file-alt mr-1"></i> Cell
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <h4 class="font-medium text-gray-800 dark:text-white mb-2">
+                                        <a href="https://pubmed.ncbi.nlm.nih.gov/36327678/" target="_blank" rel="noopener" class="hover:text-primary-600 dark:hover:text-primary-400 flex items-center">
+                                            <i class="fas fa-external-link-alt mr-2 text-sm"></i>
+                                            AI-guided discovery of the antibiotic halicin
+                                        </a>
+                                    </h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        Nature Reviews Drug Discovery综述文章，全面分析Halicin发现的意义与AI药物发现的未来方向
+                                    </p>
+                                    <div class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                                        <i class="far fa-calendar-alt mr-1"></i> 2022 ·
+                                        <i class="far fa-user mr-1"></i> Stokes等 ·
+                                        <i class="far fa-file-alt mr-1"></i> Nature Reviews
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <h4 class="font-medium text-gray-800 dark:text-white mb-2">
+                                        <a href="https://www.science.org/doi/10.1126/science.aam7908" target="_blank" rel="noopener" class="hover:text-primary-600 dark:hover:text-primary-400 flex items-center">
+                                            <i class="fas fa-external-link-alt mr-2 text-sm"></i>
+                                            Antibiotic resistance: the need for global solutions
+                                        </a>
+                                    </h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        Science杂志深入探讨全球抗生素耐药性危机，为何类似Halicin的新型抗生素开发对全球公共卫生至关重要
+                                    </p>
+                                    <div class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                                        <i class="far fa-calendar-alt mr-1"></i> 2021 ·
+                                        <i class="far fa-user mr-1"></i> WHO专家组 ·
+                                        <i class="far fa-file-alt mr-1"></i> Science
+                                    </div>
+                                </div>
+                                
+                                <div class="card p-5 hover:shadow-lg transition-shadow duration-300">
+                                    <h4 class="font-medium text-gray-800 dark:text-white mb-2">
+                                        <a href="https://www.cell.com/trends/pharmacological-sciences/fulltext/S0165-6147(22)00174-X" target="_blank" rel="noopener" class="hover:text-primary-600 dark:hover:text-primary-400 flex items-center">
+                                            <i class="fas fa-external-link-alt mr-2 text-sm"></i>
+                                            From AI to clinical trials: the future of antibiotic drug discovery
+                                        </a>
+                                    </h4>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                        Trends in Pharmacological Sciences前瞻性分析，探讨从AI发现到临床转化的完整路径，解析Halicin类药物面临的机遇与挑战
+                                    </p>
+                                    <div class="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                                        <i class="far fa-calendar-alt mr-1"></i> 2023 ·
+                                        <i class="far fa-user mr-1"></i> Melo等 ·
+                                        <i class="far fa-file-alt mr-1"></i> Trends
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- 更多部分将在后续步骤添加 -->
+            </div>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="bg-gray-100 dark:bg-gray-800 py-8 mt-16">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="mb-4 md:mb-0">
+                        <p class="text-gray-700 dark:text-gray-300">作者: 季晓康</p>
+                        <p class="text-gray-700 dark:text-gray-300">微信公众号：凿壁</p>
+                    </div>
+                    <div class="text-gray-700 dark:text-gray-300">
+                        <p>版权信息：国家健康医疗大数据研究院</p>
+                        <p class="text-sm mt-2">© 2025 All Rights Reserved</p>
+                    </div>
+                    <div class="mt-4 md:mt-0">
+                        <a href="index.html" class="flex items-center text-primary-600 dark:text-primary-400 hover:underline">
+                            <i class="fas fa-home mr-2"></i> 返回首页
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 主题切换功能
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            
+            // 根据系统设置或本地存储初始化主题
+            if (localStorage.getItem('color-theme') === 'dark' || 
+                (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                themeToggleLightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggleDarkIcon.classList.remove('hidden');
+            }
+            
+            // 主题切换按钮事件
+            themeToggleBtn.addEventListener('click', function() {
+                let isDark = document.documentElement.classList.toggle('dark');
+                
+                // 更新图标
+                themeToggleDarkIcon.classList.toggle('hidden', isDark);
+                themeToggleLightIcon.classList.toggle('hidden', !isDark);
+                
+                // 存储设置
+                localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+                
+                // 更新图表和mermaid图
+                setTimeout(() => {
+                    initChart();
+                    updateMermaidTheme();
+                }, 100);
+            });
+            
+            // 初始化GSAP动画
+            gsap.registerPlugin(ScrollTrigger);
+
+            /* --------------------------------------------------
+             * 通用安全封装：safeGsapFrom
+             * 1. 先查后动：仅当元素真实存在时才执行动画
+             * 2. from 动画收尾：在 onComplete 回调中清理内联样式
+             * 3. 卡片独立动画：默认对每个元素单独执行动画
+             * --------------------------------------------------*/
+            function safeGsapFrom(selectorOrElements, vars = {}) {
+                let elements = [];
+                if (typeof selectorOrElements === 'string') {
+                    elements = Array.from(document.querySelectorAll(selectorOrElements));
+                } else if (selectorOrElements instanceof Element) {
+                    elements = [selectorOrElements];
+                } else if (selectorOrElements instanceof NodeList || Array.isArray(selectorOrElements)) {
+                    elements = Array.from(selectorOrElements);
+                }
+                if (!elements.length) return; // 先查后动
+
+                elements.forEach((el, idx) => {
+                    const cfg = { ...vars };
+                    // 若未显式设置 delay，则为每个元素叠加 0.1s 级联延迟
+                    if (typeof cfg.delay === 'undefined') {
+                        cfg.delay = 0.1 * idx;
+                    }
+                    cfg.onComplete = () => {
+                        gsap.set(el, { clearProps: 'all' });
+                        el.style.opacity = '1';
+                        el.style.transform = 'none';
+                    };
+                    gsap.from(el, cfg);
+                });
+            }
+
+            /* ------------------------
+             * 区块动画初始化函数
+             * ----------------------*/
+
+            // 1. Hero 区域动画
+            function initHeroAnimation() {
+                const title1 = document.getElementById('title-part-1');
+                const title2 = document.getElementById('title-part-2');
+                const title3 = document.getElementById('title-part-3');
+                const desc   = document.getElementById('hero-description');
+                const tags   = document.getElementById('hero-tags');
+                const cta    = document.getElementById('hero-cta');
+
+                // 选择器必验证 & 先查后动
+                const tl = gsap.timeline();
+                if (title1) tl.to(title1, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.0);
+                if (title2) tl.to(title2, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.3);
+                if (title3) tl.to(title3, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.6);
+                if (desc)   tl.to(desc,   { opacity: 1,            duration: 1.0, ease: 'power2.out'     }, 0.9);
+                if (tags)   tl.to(tags,   { opacity: 1,            duration: 1.0, ease: 'power2.out'     }, 1.2);
+                if (cta)    tl.to(cta,    { opacity: 1,            duration: 1.0, ease: 'power2.out'     }, 1.5);
+            }
+
+            // 2. 分子背景动画
+            function initMoleculeAnimation() {
+                const circles = document.querySelectorAll('.molecule-structure circle');
+                if (!circles.length) return;
+                gsap.to(circles, {
+                    scale: 1.2,
+                    duration: 4,
+                    repeat: -1,
+                    yoyo: true,
+                    ease: 'sine.inOut',
+                    stagger: 0.2
+                });
+            }
+
+            // 3. 内容区块动画（含卡片独立动画）
+            function initSectionAnimations() {
+                const sectionIds = [
+                    'section1-content',
+                    'section2-content',
+                    'section3-content',
+                    'section4-content',
+                    'section5-content'
+                ];
+
+                sectionIds.forEach((id) => {
+                    const sectionEl = document.getElementById(id);
+                    if (!sectionEl) return;
+
+                    // Section 整体入场动画
+                    safeGsapFrom(sectionEl, {
+                        scrollTrigger: {
+                            trigger: sectionEl,
+                            start: 'top 80%',
+                            toggleActions: 'play none none none'
+                        },
+                        opacity: 0,
+                        y: 50,
+                        duration: 1,
+                        ease: 'power3.out'
+                    });
+
+                    // 卡片独立动画
+                    const cards = sectionEl.querySelectorAll('.card');
+                    cards.forEach((card, idx) => {
+                        safeGsapFrom(card, {
+                            scrollTrigger: {
+                                trigger: card,
+                                start: 'top 90%',
+                                toggleActions: 'play none none none'
+                            },
+                            opacity: 0,
+                            y: 30,
+                            duration: 0.6,
+                            ease: 'power3.out',
+                            delay: idx * 0.1
+                        });
+                    });
+                });
+            }
+
+            /* ------------------------
+             * 执行动画初始化
+             * ----------------------*/
+            initHeroAnimation();
+            initMoleculeAnimation();
+            initSectionAnimations();
+
+            // 抗菌活性图表初始化
+            const ctx = document.getElementById('antibacterialChart').getContext('2d');
+            let antibacterialChart;
+            
+            function initChart() {
+                const isDarkMode = document.documentElement.classList.contains('dark');
+                const textColor = isDarkMode ? '#e5e7eb' : '#4b5563';
+                const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                
+                if (antibacterialChart) {
+                    antibacterialChart.destroy();
+                }
+                
+                antibacterialChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['MRSA', '大肠杆菌', '鲍曼不动杆菌', '艰难梭菌', '肺炎克雷伯菌', '绿脓杆菌'],
+                        datasets: [
+                            {
+                                label: 'Halicin (μg/mL)',
+                                data: [16, 8, 2, 4, 8, 32],
+                                backgroundColor: 'rgba(14, 165, 233, 0.6)',
+                                borderColor: 'rgba(14, 165, 233, 1)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: '传统抗生素 (μg/mL)',
+                                data: [64, 32, 128, 16, 64, 128],
+                                backgroundColor: 'rgba(245, 158, 11, 0.6)',
+                                borderColor: 'rgba(245, 158, 11, 1)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: '最小抑菌浓度 (MIC) 比较 - 数值越低效果越好',
+                                color: textColor
+                            },
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: textColor
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.raw + ' μg/mL';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: '最小抑菌浓度 (μg/mL)',
+                                    color: textColor
+                                },
+                                ticks: {
+                                    color: textColor
+                                },
+                                grid: {
+                                    color: gridColor
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: textColor
+                                },
+                                grid: {
+                                    color: gridColor
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 初始化图表
+            initChart();
+            
+            // 初始化Mermaid.js
+            function updateMermaidTheme() {
+                mermaid.initialize({
+                    startOnLoad: true,
+                    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+                    securityLevel: 'loose',
+                    flowchart: {
+                        useMaxWidth: true,
+                        htmlLabels: true,
+                        curve: 'basis'
+                    }
+                });
+                mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+            }
+            
+            // 初始化Mermaid
+            updateMermaidTheme();
+            
+            // Halicin分子结构动画
+            gsap.to(".molecule circle", {
+                scale: 1.2,
+                duration: 3,
+                repeat: -1,
+                yoyo: true,
+                stagger: 0.2,
+                ease: "sine.inOut"
+            });
+            
+            // 共享变量 - 主题颜色设置
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#e5e7eb' : '#4b5563';
+            const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+            
+            // 模型贡献度图表
+            const contributionCtx = document.getElementById('contributionChart').getContext('2d');
+            
+            const contributionChart = new Chart(contributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['GPT', 'Doubao', 'Metaso', 'Yuanbao', 'Grok', '其他模型'],
+                    datasets: [{
+                        data: [28, 15, 12, 12, 10, 23],
+                        backgroundColor: [
+                            'rgba(14, 165, 233, 0.8)',  // 蓝
+                            'rgba(168, 85, 247, 0.8)',  // 紫
+                            'rgba(245, 158, 11, 0.8)',  // 橙
+                            'rgba(16, 185, 129, 0.8)',  // 绿
+                            'rgba(59, 130, 246, 0.8)',  // 浅蓝
+                            'rgba(99, 102, 241, 0.8)'   // 靛蓝
+                        ],
+                        borderWidth: 1,
+                        borderColor: isDarkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: textColor,
+                                padding: 15,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 1500
+                    }
+                }
+            });
+            
+            // 模型比较图表
+            const modelCtx = document.getElementById('modelComparisonChart').getContext('2d');
+            
+            const modelComparisonChart = new Chart(modelCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['内容全面性', '结构组织', '数据精确性', '独特信息', '表达清晰度'],
+                    datasets: [
+                        {
+                            label: 'GPT',
+                            data: [5, 5, 5, 5, 4],
+                            backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                            borderColor: 'rgba(14, 165, 233, 0.8)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(14, 165, 233, 1)'
+                        },
+                        {
+                            label: 'Doubao',
+                            data: [5, 4, 4, 4, 4],
+                            backgroundColor: 'rgba(168, 85, 247, 0.2)',
+                            borderColor: 'rgba(168, 85, 247, 0.8)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(168, 85, 247, 1)'
+                        },
+                        {
+                            label: 'Metaso',
+                            data: [4, 5, 4, 4, 5],
+                            backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                            borderColor: 'rgba(245, 158, 11, 0.8)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(245, 158, 11, 1)'
+                        },
+                        {
+                            label: 'Claude',
+                            data: [2, 3, 3, 2, 4],
+                            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                            borderColor: 'rgba(16, 185, 129, 0.8)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(16, 185, 129, 1)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            pointLabels: {
+                                color: textColor
+                            },
+                            grid: {
+                                color: gridColor
+                            },
+                            angleLines: {
+                                color: gridColor
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 5
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 主题切换时更新模型比较图表
+            themeToggleBtn.addEventListener('click', function() {
+                setTimeout(() => {
+                    const isDarkMode = document.documentElement.classList.contains('dark');
+                    const textColor = isDarkMode ? '#e5e7eb' : '#4b5563';
+                    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                    
+                    modelComparisonChart.options.scales.r.pointLabels.color = textColor;
+                    modelComparisonChart.options.scales.r.grid.color = gridColor;
+                    modelComparisonChart.options.scales.r.angleLines.color = gridColor;
+                    modelComparisonChart.options.plugins.legend.labels.color = textColor;
+                    
+                    modelComparisonChart.update();
+                    
+                    // 更新贡献度饼图颜色
+                    contributionChart.data.datasets[0].borderColor = isDarkMode ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+                    contributionChart.options.plugins.legend.labels.color = textColor;
+                    contributionChart.update();
+                }, 100);
+            });
+        });
+    </script>
+
+ </body></html>
