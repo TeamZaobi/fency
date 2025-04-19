@@ -1,18 +1,19 @@
 {
-  "name": "zhaobi-metadata-tools",
+  "name": "metadata-tools",
   "version": "1.0.0",
-  "description": "凿壁项目HTML元数据处理工具",
+  "description": "Tools for managing metadata in the zaobi project",
   "main": "metadata-processor.js",
   "scripts": {
-    "check": "node metadata-processor.js",
-    "check:knowledge": "node metadata-processor.js ../html/pages/knowledge",
-    "check:research": "node metadata-processor.js ../html/pages/research",
-    "check:ai-tech": "node metadata-processor.js ../html/pages/ai-tech",
-    "check:info-upgrade": "node metadata-processor.js ../html/pages/info-upgrade"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "check:knowledge": "node metadata-processor.js ../pages/knowledge",
+    "check:research": "node metadata-processor.js ../pages/research",
+    "check:ai-tech": "node metadata-processor.js ../pages/ai-tech",
+    "check:info-upgrade": "node metadata-processor.js ../pages/info-upgrade",
+    "check:all": "node metadata-processor.js ../pages"
   },
-  "keywords": ["html", "metadata", "automation"],
-  "author": "季晓康",
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "openai": "^4.20.0"

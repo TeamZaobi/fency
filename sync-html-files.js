@@ -8,7 +8,7 @@ const writeFile = promisify(fs.writeFile);
 const stat = promisify(fs.stat);
 
 // --- 配置 ---
-const metadataPath = path.resolve(process.cwd(), 'html/metadata.json');
+const metadataPath = path.resolve(process.cwd(), 'metadata.json');
 // ---
 
 async function syncHtmlFiles() {
@@ -29,8 +29,8 @@ async function syncHtmlFiles() {
     
     for (const page of metadata.pages) {
       try {
-        // 构建HTML文件的完整路径 - 添加html/前缀
-        const htmlPath = path.resolve(process.cwd(), 'html', page.path);
+        // 构建HTML文件的完整路径 - 现在直接使用根目录的路径
+        const htmlPath = path.resolve(process.cwd(), page.path);
         
         // 检查文件是否存在
         try {
