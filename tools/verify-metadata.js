@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-const metadataFilePath = path.join(__dirname, '../html/metadata.json');
-const pagesBasePath = path.join(__dirname, '../html'); // Base path for HTML files
+const metadataFilePath = path.join(__dirname, '../metadata.json');
+const pagesBasePath = path.join(__dirname, '..'); // Base path for HTML files (now root directory)
 
 console.log(`[INFO] Starting metadata verification...`);
 console.log(`[INFO] Reading metadata file: ${metadataFilePath}`);
