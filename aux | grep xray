@@ -1,0 +1,21 @@
+[0;1;32m●[0m xray.service - Xray Service
+     Loaded: loaded (]8;;file://iZ2ze8rfljgi78if8cv4dbZ/etc/systemd/system/xray.service/etc/systemd/system/xray.service]8;;; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;32mactive (running)[0m since Sat 2025-04-12 20:09:24 CST; 6 days ago
+       Docs: ]8;;https://github.com/XTLS/Xray-corehttps://github.com/XTLS/Xray-core]8;;
+   Main PID: 961 (xray)
+      Tasks: 8 (limit: 1938)
+     Memory: 9.1M (peak: 61.6M)
+        CPU: 11.977s
+     CGroup: /system.slice/xray.service
+             └─[0;38;5;245m961 /home/jxkcook/xray/xray run -c /home/jxkcook/xray/config.json[0m
+
+Apr 12 20:09:25 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:09:25 [Info] infra/conf/serial: Reading config: /home/jxkcook/xray/config.json
+Apr 12 20:09:25 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:09:25 [Warning] core: Xray 1.8.6 started
+Apr 12 20:20:11 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:20:11 tcp:127.0.0.1:33158 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:20:22 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:20:22 tcp:127.0.0.1:53344 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:20:24 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:20:24 tcp:127.0.0.1:46946 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:20:36 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:20:36 tcp:127.0.0.1:50320 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:20:38 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:20:38 tcp:127.0.0.1:50326 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:28:43 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:28:43 tcp:127.0.0.1:53422 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:29:01 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:29:01 tcp:127.0.0.1:47896 accepted tcp:20.205.243.166:443 [proxy]
+Apr 12 20:29:02 iZ2ze8rfljgi78if8cv4dbZ xray[961]: 2025/04/12 20:29:02 tcp:127.0.0.1:40564 accepted tcp:20.205.243.166:443 [proxy]
