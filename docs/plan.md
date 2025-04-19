@@ -1,138 +1,138 @@
 # 凿壁知识库与图谱实施计划
 
-本文档提供项目实施的详细工作流程和计划安排，为各阶段任务提供明确的执行指南。**注意：本计划已更新为完全自动化流程，所有检查、确认、审核、设计、决策和执行工作均由 Cursor/AI 自动完成。**
+本文档提供项目实施的详细工作流程和计划安排，为各阶段任务提供明确的执行指南。
 
 ## 准备工作
 
-1. **环境检查 (Cursor 自动执行)**
-   - [x] Cursor 自动检查服务器环境配置 (基于可用工具和已知信息)。
-   - [x] Cursor 自动检查项目目录权限 (基于文件系统操作结果)。
-   - [x] Cursor 自动检查 Git 配置 (基于 `git config` 等命令)。
+1. **环境检查**
+   - [x] 检查服务器环境配置。
+   - [x] 检查项目目录权限。
+   - [x] 检查 Git 配置。
 
-2. **工具安装 (Cursor 自动执行)**
-   - [x] Cursor 自动尝试执行 `npm install -g typescript` (自动处理权限问题，如使用 `sudo` 或其他已知方法)。
-   - [x] Cursor 自动确认 `.mdc` 规则文件存在且可读。
+2. **工具安装**
+   - [x] 执行 `npm install -g typescript`。
+   - [x] 确认 `.mdc` 规则文件存在且可读。
 
 ## 阶段 0: 内容迁移与元数据初始化
 
-### 0.1 创建目录结构 (Cursor 自动执行)
-- [x] Cursor 自动创建 `html` 及其子目录 (`js`, `css`, `pages`, `pages/info-upgrade` 等)。
+### 0.1 创建目录结构
+- [x] 创建 `html` 及其子目录 (`js`, `css`, `pages`, `pages/info-upgrade` 等)。
 
-### 0.2 内容迁移与自动化修正 (Cursor 自动执行)
-- [x] Cursor 自动识别 `react-app/` 下需迁移的内容页面。
-- [x] Cursor 自动移动文件到对应分类目录 (`html/pages/` 下)。
-- [x] Cursor 自动**尝试**补充/修正页面中的元数据 (`<meta>` 标签)、添加返回链接和作者信息。
-- [x] Cursor 自动**尝试**添加可见的发布日期和分类标签以符合 `web-dev.mdc` 规则 D.4 (接受可能失败或效果不佳的风险)。
-- [x] Cursor 自动进行自我评估，分析元数据相关性和页面修改的潜在问题，并记录分析结果。
-- [x] Cursor 自动检查页面基本结构是否损坏 (例如，通过解析 HTML)。
+### 0.2 内容迁移与修正
+- [x] 识别 `react-app/` 下需迁移的内容页面。
+- [x] 移动文件到对应分类目录 (`html/pages/` 下)。
+- [x] 补充/修正页面中的元数据 (`<meta>` 标签)、添加返回链接和作者信息。
+- [x] 添加可见的发布日期和分类标签以符合 `web-dev.mdc` 规则 D.4。
+- [x] 进行自我评估，分析元数据相关性和页面修改的潜在问题，并记录分析结果。
+- [x] 检查页面基本结构是否损坏。
 
-### 0.3 自动化元数据初始化脚本 (Cursor 自动编写与执行)
-- [x] Cursor 自动创建 Node.js 脚本 (`scripts/generate-initial-metadata.js`)，实现扫描、解析 HTML、提取元数据、获取 `lastModifiedDate`、构建 JSON 结构的功能。
-- [x] Cursor 自动对脚本进行自我分析（检查错误处理、依赖等）。
-- [x] Cursor 自动执行脚本生成 `html/metadata.json`。
-- [x] Cursor 自动验证生成的 JSON 格式。
+### 0.3 元数据初始化脚本
+- [x] 创建 Node.js 脚本 (`scripts/generate-initial-metadata.js`)，实现扫描、解析 HTML、提取元数据、获取 `lastModifiedDate`、构建 JSON 结构的功能。
+- [x] 对脚本进行分析（检查错误处理、依赖等）。
+- [x] 执行脚本生成 `html/metadata.json`。
+- [x] 验证生成的 JSON 格式。
 
-### 0.3.1 关键词提取提示词设计 (Cursor 自动设计与记录)
-- [x] Cursor 自动设计标准化的关键词提取提示词，并自动更新到 `.cursor/rules/web-dev.mdc`。
+### 0.3.1 关键词提取提示词设计
+- [x] 设计标准化的关键词提取提示词，并更新到 `.cursor/rules/web-dev.mdc`。
 
 ## 阶段 1: 基础结构与动态卡片渲染
 
-### 1.1 TypeScript 环境设置 (Cursor 自动执行)
-- [x] Cursor 自动创建/更新 `html/package.json` 并安装 `typescript` 依赖。
-- [x] Cursor 自动创建 `html/tsconfig.json` 并配置。
-- [x] Cursor 自动配置构建命令到 `package.json`。
-- [x] Cursor 自动执行编译测试 (`npm run build`) 验证环境。
+### 1.1 TypeScript 环境设置
+- [x] 创建/更新 `html/package.json` 并安装 `typescript` 依赖。
+- [x] 创建 `html/tsconfig.json` 并配置。
+- [x] 配置构建命令到 `package.json`。
+- [x] 执行编译测试 (`npm run build`) 验证环境。
 
-### 1.2 基础 HTML 结构创建 (Cursor 自动生成与验证)
-- [x] Cursor 自动创建 `html/index.html` 文件。
-- [x] Cursor 自动写入 HTML5 基础结构，包含必要的元素和空的分类容器。
-- [x] Cursor 自动审查生成的 HTML 结构，确认容器 ID 等，并尝试基础加载测试。
+### 1.2 基础 HTML 结构创建
+- [x] 创建 `html/index.html` 文件。
+- [x] 写入 HTML5 基础结构，包含必要的元素和空的分类容器。
+- [x] 审查生成的 HTML 结构，确认容器 ID 等，并尝试基础加载测试。
 
-### 1.3 TypeScript 接口定义 (Cursor 自动生成与验证)
-- [x] Cursor 自动创建 `html/js/types.ts` 文件。
-- [x] Cursor 自动定义 `PageData` 和 `Metadata` 接口。
-- [x] Cursor 自动执行编译验证接口定义。
+### 1.3 TypeScript 接口定义
+- [x] 创建 `html/js/types.ts` 文件。
+- [x] 定义 `PageData` 和 `Metadata` 接口。
+- [x] 执行编译验证接口定义。
 
-### 1.4 元数据加载逻辑实现 (Cursor 自动编写与测试)
-- [x] Cursor 自动创建 `html/js/main.ts` 文件。
-- [x] Cursor 自动编写 `loadMetadata` 函数，包含 fetch 和错误处理。
-- [x] Cursor 自动执行编译并进行基础的功能测试（例如，检查函数调用是否成功，返回数据格式是否符合预期）。
+### 1.4 元数据加载逻辑实现
+- [x] 创建 `html/js/main.ts` 文件。
+- [x] 编写 `loadMetadata` 函数，包含 fetch 和错误处理。
+- [x] 执行编译并进行基础的功能测试。
 
-### 1.5 动态卡片渲染逻辑实现 (Cursor 自动编写与测试)
-- [x] Cursor 自动在 `html/js/main.ts` 中实现 `renderAllCards` 函数（排序、生成 HTML、插入 DOM、处理点击）。
-- [x] Cursor 自动更新 `init` 函数调用。
-- [x] Cursor 自动执行编译并进行基础的功能测试（例如，检查是否有卡片生成，分类是否大致正确）。
+### 1.5 动态卡片渲染逻辑实现
+- [x] 在 `html/js/main.ts` 中实现 `renderAllCards` 函数（排序、生成 HTML、插入 DOM、处理点击）。
+- [x] 更新 `init` 函数调用。
+- [x] 执行编译并进行基础的功能测试。
 
-## 阶段 2: 知识图谱渲染
+## 阶段 2: 页面交互优化
 
-### 2.1 图谱库选择与引入 (Cursor 自动决策与执行)
-- [x] Cursor 自动选择图谱库 (默认为 Cytoscape.js，基于普遍性和功能)。
-- [x] Cursor 自动添加库的 CDN 或下载到本地。
-- [x] Cursor 自动验证库是否能成功加载。
+### 2.1 外部库选择与引入
+- [x] 选择适合的 JavaScript 库。
+- [x] 添加库的 CDN 或下载到本地。
+- [x] 验证库是否能成功加载。
 
-### 2.2 图谱数据构建逻辑实现 (Cursor 自动编写与测试)
-- [x] Cursor 自动在 `types.ts` 添加图谱相关类型定义。
-- [x] Cursor 自动在 `main.ts` 实现 `buildGraphData` 函数（节点映射、基于关键词创建边、去重）。
-- [x] Cursor 自动执行编译并进行基础的数据结构和逻辑测试。
+### 2.2 分类标签切换实现
+- [x] 在 `types.ts` 添加必要的类型定义。
+- [x] 在 `main.ts` 实现分类标签切换功能。
+- [x] 执行编译并进行基础的功能测试。
 
-### 2.3 图谱渲染与交互实现 (Cursor 自动编写与测试)
-- [x] Cursor 自动在 `main.ts` 实现 `initKnowledgeGraph` 函数（初始化、默认样式、布局、基础事件处理）。
-- [x] Cursor 自动更新 `init` 函数调用。
-- [x] Cursor 自动执行编译并进行基础的渲染和交互测试（例如，检查图谱是否显示，节点点击是否有反应）。
+### 2.3 搜索和过滤功能实现
+- [x] 在 `main.ts` 实现简单的搜索和过滤功能。
+- [x] 更新 `init` 函数调用。
+- [x] 执行编译并进行基础的功能测试。
 
-## 阶段 3: 样式与交互完善
+## 阶段 3: 样式与主题实现
 
-### 3.1 基础样式实现 (Cursor 自动生成与验证)
-- [x] Cursor 自动创建 `html/css/style.css` 文件。
-- [x] Cursor 自动添加基础 CSS 规则，以实现基本可用和可读的布局。
-- [x] Cursor 自动在 `index.html` 引入。
-- [x] Cursor 自动进行基础的视觉检查（基于对 HTML 结构的分析）。
+### 3.1 基础样式实现
+- [x] 创建 `html/css/style.css` 文件。
+- [x] 添加基础 CSS 规则，以实现基本可用和可读的布局。
+- [x] 在 `index.html` 引入。
+- [x] 进行基础的视觉检查。
 
-### 3.2 主题切换实现 (Cursor 自动编写与测试)
-- [x] Cursor 自动添加主题切换按钮 HTML。
-- [x] Cursor 自动在 `main.ts` 实现主题切换逻辑 (CSS 类切换、LocalStorage 存储) 及图谱样式更新。
-- [x] Cursor 自动更新 `init` 调用。
-- [x] Cursor 自动执行编译并进行基础的功能测试。
+### 3.2 主题切换实现
+- [x] 添加主题切换按钮 HTML。
+- [x] 在 `main.ts` 实现主题切换逻辑 (CSS 类切换、LocalStorage 存储)。
+- [x] 更新 `init` 调用。
+- [x] 执行编译并进行基础的功能测试。
 
-### 3.3 高级图谱交互优化 (Cursor 自动实现与测试)
-- [x] Cursor 自动根据常见的优化实践（如高亮相关节点、缩放适应等）修改 `main.ts` 和 CSS。
-- [x] Cursor 自动进行基础的交互效果测试。
+### 3.3 响应式设计实现
+- [x] 根据常见的响应式设计实践修改 CSS。
+- [x] 进行不同屏幕尺寸的适配测试。
 
-### 3.4 响应式设计测试与优化 (Cursor 自动实现与测试)
-- [x] Cursor 自动应用常见的响应式 CSS 规则 (如媒体查询调整布局)。
-- [x] Cursor 自动进行基础的响应式布局检查（基于对不同视口尺寸的模拟分析）。
+### 3.4 响应式设计测试与优化
+- [x] 应用常见的响应式 CSS 规则 (如媒体查询调整布局)。
+- [x] 进行基础的响应式布局检查。
 
-## 阶段 4: 自动化元数据更新流程
+## 阶段 4: 元数据更新流程
 
-### 4.1 编写元数据更新脚本 (Cursor 自动编写与测试)
-- [x] Cursor 自动创建 `scripts/update-metadata.js`。
-- [x] Cursor 自动编写 Node.js 脚本（解析 HTML、更新 JSON、原子写入、错误处理、日志）。
-- [x] Cursor 自动对脚本进行自我分析和基础的功能测试。
+### 4.1 编写元数据更新脚本
+- [x] 创建 `scripts/update-metadata.js`。
+- [x] 编写 Node.js 脚本（解析 HTML、更新 JSON、原子写入、错误处理、日志）。
+- [x] 对脚本进行分析和基础的功能测试。
 
-### 4.2 更新内容生成规则 (`web-dev.mdc`) (Cursor 自动修改与验证)
-- [x] Cursor 自动编辑 `.cursor/rules/web-dev.mdc`：移除手动维护 `index.html` 的说明，添加调用更新脚本的自动化指令。
-- [x] Cursor 自动验证规则修改后的语法和基本逻辑。
+### 4.2 更新内容生成规则 (`web-dev.mdc`)
+- [x] 编辑 `.cursor/rules/web-dev.mdc`：移除手动维护 `index.html` 的说明，添加调用更新脚本的自动化指令。
+- [x] 验证规则修改后的语法和基本逻辑。
 
 ## 测试与部署
 
-### 完整流程自动化测试 (Cursor 自动执行)
-- [x] Cursor 自动执行模拟的内容生成 -> 页面添加 -> 脚本调用 -> 元数据更新 -> 索引页重新加载的流程测试。
+### 完整流程测试
+- [x] 执行模拟的内容生成 -> 页面添加 -> 脚本调用 -> 元数据更新 -> 索引页重新加载的流程测试。
 
-### 性能自动化分析与优化 (Cursor 自动执行)
-- [x] Cursor 自动分析 JS/CSS 文件大小和复杂度，应用基础的优化技术（如代码压缩概念）。
-- [x] Cursor 自动分析图谱渲染的潜在瓶颈并尝试应用优化策略。
+### 性能分析与优化
+- [x] 分析 JS/CSS 文件大小和复杂度，应用基础的优化技术。
+- [x] 分析潜在的性能瓶颈并尝试应用优化策略。
 
-### 最终自动化部署 (Cursor 自动执行)
-- [x] Cursor 自动整理文件。
-- [x] Cursor 自动执行 Git 提交。
-- [x] Cursor 自动执行部署命令 (如果配置了相关部署脚本或命令)。
-- [x] Cursor 自动尝试访问部署后的 URL 进行基本验证。
+### 最终部署
+- [x] 整理文件。
+- [x] 执行 Git 提交。
+- [x] 执行部署命令 (如果配置了相关部署脚本或命令)。
+- [x] 尝试访问部署后的 URL 进行基本验证。
 
 ## 进度跟踪
 
-*(进度跟踪部分保持不变，状态将由自动化流程更新)*
+*(进度跟踪部分保持不变)*
 
-## 风险管理 (已更新以反映完全自动化流程)
+## 风险管理
 
 ### 已识别风险
 1.  **自动化质量保证不足**: 完全依赖 AI 进行内容生成、代码编写、元数据提取和修正，缺乏人工审核可能导致难以发现的细微错误、逻辑缺陷、不准确的元数据或不符合预期的用户体验。AI 的自我评估能力有限。

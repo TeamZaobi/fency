@@ -1,0 +1,74 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# 凿壁项目网站维护规则
+
+## 网站结构
+
+网站采用单页面生成模式，主要包含：
+
+- 主索引页 [html/index.html](mdc:html/index.html) - 动态读取元数据展示内容卡片
+- 元数据索引 [html/metadata.json](mdc:html/metadata.json) - 所有页面的元数据
+- 分发版本 [dist/metadata.json](mdc:dist/metadata.json) - 部署用的元数据副本
+
+内容页面按分类存放在以下目录：
+- [html/pages/ai-tech/](mdc:html/pages/ai-tech) - AI技术与生态
+- [html/pages/info-upgrade/](mdc:html/pages/info-upgrade) - 信息化升级
+- [html/pages/knowledge/](mdc:html/pages/knowledge) - 知识报告
+- [html/pages/research/](mdc:html/pages/research) - 科研辅助
+
+## 元数据规范
+
+每个HTML页面在`metadata.json`中都有对应条目，格式如下：
+
+```json
+{
+  "id": "pages/分类目录/文件名.html",
+  "path": "pages/分类目录/文件名.html",
+  "title": "页面标题 | 凿壁",
+  "lastModifiedDate": "YYYY-MM-DDTHH:MM:SS.sssZ",
+  "category": "分类名称",
+  "description": "页面内容简短描述...",
+  "keywords": ["关键词1", "关键词2", "..."],
+  "publish-date": "YYYY-MM-DD"
+}
+```
+
+## HTML页面要求
+
+所有HTML页面必须：
+1. 是完整的HTML5文档
+2. 包含必要元标签：`publish-date`, `category`, `description`, `keywords`
+3. 分类名必须是规定的四种之一
+4. 页面内显示发布日期和分类名
+5. 包含返回首页链接
+6. 页面底部包含作者信息
+
+## 文件操作规则
+
+### 创建新页面
+1. 在正确分类目录下创建HTML文件
+2. 确保符合HTML结构要求
+3. 更新`metadata.json`
+
+### 移动页面（更改分类）
+1. 更新HTML文件中的分类元数据
+2. 将文件从源目录移动到目标目录
+3. 更新`metadata.json`中的条目（id, path, category）
+4. 确认删除原文件
+
+### 更新元数据
+1. 备份当前`metadata.json`
+2. 更新相应条目和`lastUpdated`字段
+3. 验证JSON格式
+4. 同步更新`dist/metadata.json`
+
+## 最佳实践
+
+1. 进行重要操作前先备份关键文件
+2. 确保HTML文件分类与所在目录一致
+3. 保持`html/metadata.json`和`dist/metadata.json`同步
+4. 所有用户可见内容必须使用简体中文
+5. 定期检查页面链接的正确性

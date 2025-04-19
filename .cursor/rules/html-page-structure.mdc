@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# 凿壁项目HTML页面结构规范
+
+## 基础HTML结构
+
+所有页面必须遵循以下基础HTML5结构：
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="YYYY-MM-DD">
+  <meta name="category" content="分类名">
+  <meta name="description" content="页面摘要...">
+  <meta name="keywords" content="关键词1,关键词2,...">
+  
+  <title>页面标题 | 凿壁</title>
+  
+  <!-- 外部资源引用 -->
+  <!-- CSS库、JavaScript库等 -->
+</head>
+<body>
+  <!-- 页面内容 -->
+  
+  <!-- 作者与版权信息（页脚） -->
+  <footer>
+    <div>
+      <p>作者姓名: 季晓康</p>
+      <p>微信公众号：凿壁</p>
+      <p>版权信息：国家健康医疗大数据研究院</p>
+    </div>
+  </footer>
+</body>
+</html>
+```

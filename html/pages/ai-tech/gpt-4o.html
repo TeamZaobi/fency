@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
+<!DOCTYPE html><html lang="zh-CN"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPT-4o图像生成能力分析与评估</title>
     <meta name="category" content="ai-tech">
     <meta name="description" content="分析评估OpenAI最新模型GPT-4o的图像生成能力，涵盖其优势、局限性、与Midjourney和Stable Diffusion的对比，以及实际应用技巧。">
-    <meta name="publish-date" content="2025-03-22">
-    <meta name="keywords" content="GPT-4o, OpenAI, 图像生成, AI模型, 多模态AI, Midjourney, Stable Diffusion, DALL-E 3, 人工智能, 深度学习">
+    <meta name="publish-date" content="2025-03-30">
+    <meta name="keywords" content="GPT-4o,OpenAI,图像生成,AI模型,多模态AI,Midjourney,Stable Diffusion,DALL-E 3,人工智能,深度学习">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&amp;family=Noto+Serif+SC:wght@400;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
@@ -626,11 +624,9 @@
     <!-- 可见元数据 -->
     <div class="container py-4 text-sm text-gray-600 dark:text-gray-400">
         <span class="inline-flex items-center mr-6">
-            <i class="fas fa-calendar-alt mr-2"></i> 发布日期: 2025-03-22
-        </span>
+             发布日期: 2025-03-30</span>
         <span class="inline-flex items-center">
-            <i class="fas fa-folder mr-2"></i> 分类: ai-tech
-        </span>
+             分类: ai-tech</span>
     </div>
 
     <section class="hero">
@@ -677,41 +673,41 @@
                     <svg width="400" height="300" viewBox="0 0 400 300">
                         <defs>
                             <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0070f3;stop-opacity:0.2" />
-                                <stop offset="100%" style="stop-color:#0070f3;stop-opacity:0.6" />
+                                <stop offset="0%" style="stop-color:#0070f3;stop-opacity:0.2"></stop>
+                                <stop offset="100%" style="stop-color:#0070f3;stop-opacity:0.6"></stop>
                             </linearGradient>
                         </defs>
                         <!-- Brain representation -->
-                        <ellipse cx="200" cy="150" rx="120" ry="100" fill="url(#grad1)" stroke="#0070f3" stroke-width="2" />
+                        <ellipse cx="200" cy="150" rx="120" ry="100" fill="url(#grad1)" stroke="#0070f3" stroke-width="2"></ellipse>
                         <!-- Neural connections -->
                         <g stroke="#0070f3" stroke-width="1.5">
-                            <path d="M120,120 C160,80 240,80 280,120" fill="none" />
-                            <path d="M120,180 C160,220 240,220 280,180" fill="none" />
-                            <path d="M150,70 C180,120 220,120 250,70" fill="none" />
-                            <path d="M150,230 C180,180 220,180 250,230" fill="none" />
+                            <path d="M120,120 C160,80 240,80 280,120" fill="none"></path>
+                            <path d="M120,180 C160,220 240,220 280,180" fill="none"></path>
+                            <path d="M150,70 C180,120 220,120 250,70" fill="none"></path>
+                            <path d="M150,230 C180,180 220,180 250,230" fill="none"></path>
                         </g>
                         <!-- Nodes -->
                         <g fill="#0070f3">
-                            <circle cx="120" cy="120" r="5" />
-                            <circle cx="280" cy="120" r="5" />
-                            <circle cx="120" cy="180" r="5" />
-                            <circle cx="280" cy="180" r="5" />
-                            <circle cx="150" cy="70" r="5" />
-                            <circle cx="250" cy="70" r="5" />
-                            <circle cx="150" cy="230" r="5" />
-                            <circle cx="250" cy="230" r="5" />
-                            <circle cx="200" cy="150" r="8" />
+                            <circle cx="120" cy="120" r="5"></circle>
+                            <circle cx="280" cy="120" r="5"></circle>
+                            <circle cx="120" cy="180" r="5"></circle>
+                            <circle cx="280" cy="180" r="5"></circle>
+                            <circle cx="150" cy="70" r="5"></circle>
+                            <circle cx="250" cy="70" r="5"></circle>
+                            <circle cx="150" cy="230" r="5"></circle>
+                            <circle cx="250" cy="230" r="5"></circle>
+                            <circle cx="200" cy="150" r="8"></circle>
                         </g>
                         <!-- Text to Image arrow -->
                         <g>
-                            <path d="M80,150 L120,150" stroke="#0070f3" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                            <path d="M80,150 L120,150" stroke="#0070f3" stroke-width="2" fill="none" marker-end="url(#arrow)"></path>
                             <text x="70" y="140" fill="var(--text-primary)" font-size="12">文本</text>
-                            <path d="M280,150 L320,150" stroke="#0070f3" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+                            <path d="M280,150 L320,150" stroke="#0070f3" stroke-width="2" fill="none" marker-end="url(#arrow)"></path>
                             <text x="330" y="140" fill="var(--text-primary)" font-size="12">图像</text>
                         </g>
                         <defs>
                             <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                                <path d="M0,0 L0,6 L9,3 z" fill="#0070f3" />
+                                <path d="M0,0 L0,6 L9,3 z" fill="#0070f3"></path>
                             </marker>
                         </defs>
                     </svg>
@@ -876,7 +872,7 @@
                     <p>OpenAI官方发布的研究报告，详细分析了包括GPT-4o在内的多模态模型在图像生成方面的创新与当前限制。</p>
                 </li>
                 <li class="reading-item">
-                    <a href="https://www.morganclaypool.com/doi/abs/10.2200/S01132ED1V01Y202101AIM051" target="_blank" rel="noopener">《生成式人工智能：理论与实践》- Morgan & Claypool出版</a>
+                    <a href="https://www.morganclaypool.com/doi/abs/10.2200/S01132ED1V01Y202101AIM051" target="_blank" rel="noopener">《生成式人工智能：理论与实践》- Morgan &amp; Claypool出版</a>
                     <p>这本专著提供了生成式AI的全面概述，包括图像生成的历史发展、当前技术和未来趋势。</p>
                 </li>
                 <li class="reading-item">
@@ -1058,5 +1054,5 @@
             observer.observe(element);
         });
     </script>
-</body>
-</html>
+
+</body></html>

@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2025-04-10T08:30:00.000Z",
+  "lastUpdated": "2025-04-10T03:37:14.000Z",
   "pages": [
     {
       "id": "pages/ai-tech/gemini-canvas.html",
@@ -767,6 +767,25 @@
         "知识报告"
       ],
       "publish-date": "2025-04-07"
+    },
+    {
+      "id": "pages/ai-tech/deepseek-agent-tcm-clinical-application.html",
+      "path": "pages/ai-tech/deepseek-agent-tcm-clinical-application.html",
+      "title": "DeepSeek+Agent 在中医临床专科建设中的应用探索",
+      "lastModifiedDate": "2025-04-10T03:37:14.000Z",
+      "category": "ai-tech",
+      "description": "探索DeepSeek+Agent技术在中医临床专科建设领域的应用切入点，基于用户行为信号分析法，挖掘AI在中医知识融合、数据整合、流程优化及专家经验传承等方面的潜力与实施策略。",
+      "keywords": [
+        "DeepSeek",
+        "Agent",
+        "中医",
+        "临床专科",
+        "人工智能",
+        "用户行为信号",
+        "知识传承",
+        "医疗AI"
+      ],
+      "publish-date": "2025-04-10"
     }
   ]
 }
