@@ -376,8 +376,8 @@
             loadingIndicator.classList.remove('hidden');
             errorMessage.classList.add('hidden');
             
-            // Fetch metadata.json - 修改为使用/html/metadata.json的绝对路径
-            fetch('/html/metadata.json')
+            // Fetch metadata.json - 使用根目录的metadata.json
+            fetch('/metadata.json')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

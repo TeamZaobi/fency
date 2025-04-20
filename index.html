@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 基本 CSP 规则，允许 CDN 资源 -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' https://cdn.jsdelivr.net https://cdn.staticfile.org 'unsafe-inline';
+                   style-src 'self' https://cdn.staticfile.org https://fonts.googleapis.com 'unsafe-inline';
+                   font-src 'self' https://fonts.gstatic.com https://cdn.staticfile.org;
+                   img-src 'self' data:;
+                   object-src 'none';
+                   base-uri 'self';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <title>凿壁 | 健康医疗行业的AI解决方案先锋 (新版)</title>
+    <meta name="description" content="一个由 LLM 辅助构建和维护的个人知识库，展示内容关联与知识图谱。">
+    <link rel="stylesheet"
+          href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <style>
+        /* --- 颜色变量 (来自 react-app/123.html) --- */
+        :root {
+            /* Light Mode Palette */
+            --light-primary: #007A7A; /* Optimized Teal/Blue */
+            --light-accent: #F26419;  /* Vibrant Orange */
+            --light-bg-page: #F5F7FA; /* Very Light Gray */
+            --light-bg-surface: #FFFFFF; /* White */
+            --light-text-primary: #333333; /* Dark Gray */
+            --light-text-secondary: #666666; /* Medium Gray */
+            --light-text-tertiary: #AAAAAA; /* Light Gray */
+            --light-border: #E0E0E0; /* Light Gray Border */
+            --light-text-on-primary: #FFFFFF;
+            --light-text-on-accent: #FFFFFF;
+
+            /* Dark Mode Palette */
+            --dark-primary: #00A0A0; /* Brighter Teal/Blue */
+            --dark-accent: #FF8A4D;  /* Brighter/Less Saturated Orange */
+            --dark-bg-page: #121212; /* Very Dark Gray */
+            --dark-bg-surface: #1E1E1E; /* Slightly Lighter Dark Gray */
+            --dark-text-primary: #E0E0E0; /* Light Gray (Not Pure White) */
+            --dark-text-secondary: #A0A0A0; /* Medium Light Gray */
+            --dark-text-tertiary: #757575; /* Medium Dark Gray */
+            --dark-border: #424242; /* Dark Gray Border */
+            --dark-text-on-primary: #FFFFFF;
+            --dark-text-on-accent: #0D0D0D; /* Dark text on dark accent for better contrast */
+
+            /* RGB 格式颜色 */
+            --light-primary-rgb: 0, 122, 122;
+            --light-accent-rgb: 242, 100, 25;
+            --dark-primary-rgb: 0, 160, 160;
+            --dark-accent-rgb: 255, 138, 77;
+
+            /* Default to Light Mode Variables */
+            --clr-primary: var(--light-primary);
+            --clr-accent: var(--light-accent);
+            --clr-bg-page: var(--light-bg-page);
+            --clr-bg-surface: var(--light-bg-surface);
+            --clr-text-primary: var(--light-text-primary);
+            --clr-text-secondary: var(--light-text-secondary);
+            --clr-text-tertiary: var(--light-text-tertiary);
+            --clr-border: var(--light-border);
+            --clr-text-on-primary: var(--light-text-on-primary);
+            --clr-text-on-accent: var(--light-text-on-accent);
+            --clr-primary-rgb: var(--light-primary-rgb);
+            --clr-accent-rgb: var(--light-accent-rgb);
+        }
+
+        .light {
+            --clr-primary: var(--light-primary);
+            --clr-accent: var(--light-accent);
+            --clr-bg-page: var(--light-bg-page);
+            --clr-bg-surface: var(--light-bg-surface);
+            --clr-text-primary: var(--light-text-primary);
+            --clr-text-secondary: var(--light-text-secondary);
+            --clr-text-tertiary: var(--light-text-tertiary);
+            --clr-border: var(--light-border);
+            --clr-text-on-primary: var(--light-text-on-primary);
+            --clr-text-on-accent: var(--light-text-on-accent);
+            --clr-primary-rgb: var(--light-primary-rgb);
+            --clr-accent-rgb: var(--light-accent-rgb);
+        }
+
+        .dark {
+            --clr-primary: var(--dark-primary);
+            --clr-accent: var(--dark-accent);
+            --clr-bg-page: var(--dark-bg-page);
+            --clr-bg-surface: var(--dark-bg-surface);
+            --clr-text-primary: var(--dark-text-primary);
+            --clr-text-secondary: var(--dark-text-secondary);
+            --clr-text-tertiary: var(--dark-text-tertiary);
+            --clr-border: var(--dark-border);
+            --clr-text-on-primary: var(--dark-text-on-primary);
+            --clr-text-on-accent: var(--dark-text-on-accent);
+            --clr-primary-rgb: var(--dark-primary-rgb);
+            --clr-accent-rgb: var(--dark-accent-rgb);
+        }
+
+        /* --- 基本样式 --- */
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+            background-color: var(--clr-bg-page);
+            color: var(--clr-text-primary);
+            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 600;
+            color: var(--clr-text-primary);
+        }
+
+        p {
+             color: var(--clr-text-secondary);
+        }
+
+        /* --- 内容卡片样式 --- */
+        .content-card {
+            background-color: var(--clr-bg-surface);
+            border: 1px solid var(--clr-border);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dark .content-card {
+            background-color: var(--clr-bg-surface);
+            border: 1px solid var(--clr-border);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .content-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(var(--clr-primary-rgb), 0.3);
+        }
+
+        .dark .content-card:hover {
+            border-color: rgba(var(--clr-primary-rgb), 0.4);
+            background-color: color-mix(in srgb, var(--clr-bg-surface) 95%, var(--clr-primary) 5%);
+        }
+
+        .content-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), 0 3px 6px rgba(0, 0, 0, 0.08);
+            opacity: 0;
+            transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .content-card:hover::after {
+             opacity: 1;
+        }
+
+        .dark .content-card::after {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 5px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 0.75rem;
+            padding: 1.5rem;
+        }
+
+        .card-body h3 {
+            color: var(--clr-text-primary);
+            font-weight: 700;
+            line-height: 1.3;
+            transition: color 0.3s ease;
+            flex-grow: 1; /* Allow title to take available space */
+        }
+        .content-card:hover h3 {
+             color: var(--clr-primary);
+        }
+        .dark .card-body h3 {
+            color: var(--dark-text-primary);
+        }
+        .dark .content-card:hover h3 {
+             color: var(--dark-primary);
+        }
+
+        .article-date {
+            display: flex;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--clr-text-secondary);
+            gap: 5px;
+             opacity: 0.85;
+        }
+        .dark .article-date {
+            color: var(--dark-text-secondary);
+             opacity: 0.75;
+        }
+
+        .card-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+        }
+        .card-tag-teal {
+             background-color: color-mix(in srgb, var(--light-primary) 15%, white);
+             color: color-mix(in srgb, var(--light-primary) 85%, black);
+        }
+        .dark .card-tag-teal {
+            background-color: color-mix(in srgb, var(--dark-primary) 25%, black);
+            color: color-mix(in srgb, var(--dark-primary) 80%, white);
+        }
+        .card-tag-slate {
+             background-color: #e2e8f0;
+             color: #475569;
+        }
+         .dark .card-tag-slate {
+             background-color: #334155;
+             color: #cbd5e1;
+         }
+        .card-tag-orange {
+             background-color: color-mix(in srgb, var(--light-accent) 20%, white);
+             color: color-mix(in srgb, var(--light-accent) 80%, black);
+        }
+         .dark .card-tag-orange {
+             background-color: color-mix(in srgb, var(--dark-accent) 30%, black);
+             color: color-mix(in srgb, var(--dark-accent) 80%, white);
+         }
+
+        .period-label {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        .period-new {
+            background-color: color-mix(in srgb, var(--light-accent) 20%, white);
+            color: color-mix(in srgb, var(--light-accent) 80%, black);
+        }
+        .dark .period-new {
+            background-color: color-mix(in srgb, var(--dark-accent) 30%, black);
+            color: color-mix(in srgb, var(--dark-accent) 90%, white);
+        }
+        .period-recent {
+            background-color: color-mix(in srgb, var(--light-primary) 15%, white);
+            color: color-mix(in srgb, var(--light-primary) 85%, black);
+        }
+        .dark .period-recent {
+            background-color: color-mix(in srgb, var(--dark-primary) 25%, black);
+            color: color-mix(in srgb, var(--dark-primary) 90%, white);
+        }
+        .period-earlier {
+            background-color: #e0e0e0;
+            color: #666666;
+        }
+        .dark .period-earlier {
+            background-color: #333333;
+            color: #a0a0a0;
+        }
+
+        .card-link {
+             color: var(--clr-primary);
+             transition: color 0.2s ease;
+             font-weight: 500;
+        }
+        .card-link:hover {
+             color: var(--clr-accent);
+             text-decoration: underline;
+        }
+        .dark .card-link {
+             color: var(--dark-primary);
+        }
+         .dark .card-link:hover {
+             color: var(--dark-accent);
+         }
+
+        /* --- 主题切换按钮 --- */
+        .theme-toggle {
+            cursor: pointer;
+            position: relative;
+            overflow: visible;
+             border: 1px solid var(--clr-border);
+             background-color: var(--clr-bg-surface);
+             transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            border-color: var(--clr-primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .light-icon, .dark-icon {
+             position: absolute;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             font-size: 1.1rem;
+             transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .light-icon {
+            color: #f59e0b;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        }
+
+        .dark-icon {
+            color: #0ea5e9;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0) rotate(-90deg);
+        }
+
+        .dark .light-icon {
+            color: #fcd34d;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0) rotate(90deg);
+        }
+
+        .dark .dark-icon {
+            color: #38bdf8;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotate(0deg);
+        }
+
+        /* --- Hero 区样式 --- */
+        .hero-section {
+            background-color: var(--clr-primary);
+            color: var(--clr-text-on-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2V6h4V4H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        .dark .hero-pattern {
+             opacity: 0.2;
+        }
+
+         .btn {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .btn-hero-primary {
+             background-color: var(--light-bg-surface);
+             color: var(--light-primary);
+        }
+         .btn-hero-primary:hover {
+             background-color: #f0f0f0;
+             transform: translateY(-2px);
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+         }
+         .dark .btn-hero-primary {
+             background-color: var(--dark-accent);
+             color: var(--dark-text-on-accent);
+         }
+          .dark .btn-hero-primary:hover {
+             background-color: color-mix(in srgb, var(--dark-accent) 90%, white);
+             transform: translateY(-2px);
+             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          }
+
+        .btn-hero-outline {
+            border: 2px solid var(--clr-text-on-primary);
+            color: var(--clr-text-on-primary);
+            background-color: transparent;
+        }
+        .btn-hero-outline:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+         .dark .btn-hero-outline {
+             border-color: var(--dark-text-primary);
+             color: var(--dark-text-primary);
+         }
+          .dark .btn-hero-outline:hover {
+             background-color: rgba(224, 224, 224, 0.1);
+          }
+
+        /* --- 分类导航标签 --- */
+         .category-tabs {
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background-color: var(--clr-bg-surface);
+            border: 1px solid var(--clr-border);
+        }
+
+        .category-btn {
+            position: relative;
+            overflow: hidden;
+            color: var(--clr-text-secondary);
+            background-color: transparent;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            padding: 0.5rem 1.25rem; /* Adjusted padding */
+        }
+
+        .category-btn i {
+            margin-right: 0.5rem;
+            font-size: 0.95rem;
+            transition: transform 0.3s ease;
+        }
+
+        .category-btn:hover i {
+            transform: translateY(-2px);
+        }
+
+        .category-btn:hover {
+            color: var(--clr-text-primary);
+            background-color: rgba(0,0,0,0.05);
+            transform: translateY(-1px);
+        }
+
+        .dark .category-btn:hover {
+            color: var(--dark-text-primary);
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .category-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background-color: var(--clr-primary);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: translateX(-50%);
+            opacity: 0;
+            border-radius: 1.5px;
+        }
+
+        .category-btn:hover::after {
+            width: 40%;
+            opacity: 0.7;
+        }
+
+        .category-btn.active {
+            color: var(--clr-primary);
+            font-weight: 600;
+            background-color: transparent;
+        }
+        .dark .category-btn.active {
+             color: var(--dark-primary);
+        }
+
+        .category-btn.active::after {
+            width: 60%;
+            opacity: 1;
+        }
+
+        .category-btn.active.category-active-primary::after { background-color: var(--clr-primary); }
+        .category-btn.active.category-active-secondary::after { background-color: #64748b; }
+        .category-btn.active.category-active-accent::after { background-color: var(--clr-accent); }
+        .category-btn.active.category-active-knowledge::after { background-color: #14b8a6; }
+
+        .dark .category-btn.active.category-active-secondary::after { background-color: #475569; }
+        .dark .category-btn.active.category-active-knowledge::after { background-color: #2dd4bf; }
+
+        .category-contents { min-height: 400px; }
+
+        /* --- 关于我们区域样式 --- */
+        .about-section {
+            background-color: var(--clr-bg-surface);
+            border-top: 1px solid var(--clr-border);
+            border-bottom: 1px solid var(--clr-border);
+        }
+        .first-letter p::first-letter {
+            font-size: 3.5em;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.1em;
+            color: var(--clr-primary);
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+            margin-top: 0.1em;
+        }
+        .feature-icon {
+            background-color: color-mix(in srgb, var(--clr-primary) 15%, transparent);
+            color: var(--clr-primary);
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .dark .feature-icon {
+             background-color: color-mix(in srgb, var(--clr-primary) 25%, transparent);
+             color: var(--clr-primary);
+        }
+        .feature-item:hover .feature-icon {
+            transform: scale(1.1) rotate(-10deg);
+            background-color: color-mix(in srgb, var(--clr-primary) 25%, transparent);
+        }
+         .dark .feature-item:hover .feature-icon {
+             background-color: color-mix(in srgb, var(--clr-primary) 35%, transparent);
+         }
+
+        /* --- 解决方案摘要卡片样式 --- */
+        .solution-summary-card {
+            border-radius: 0.75rem;
+            margin-bottom: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            overflow: hidden;
+            padding: 1.5rem;
+            border: 1px solid transparent;
+            transform: perspective(1000px);
+        }
+        .solution-summary-card:hover {
+             transform: scale(1.02) rotateX(1deg);
+             box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+         .dark .solution-summary-card:hover {
+             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+         }
+
+        .solution-summary-card .solution-icon-bg {
+             background-color: var(--clr-bg-surface);
+             padding: 0.75rem;
+             border-radius: 9999px;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+             flex-shrink: 0;
+        }
+         .dark .solution-summary-card .solution-icon-bg {
+             background-color: var(--clr-bg-surface); /* Dark surface */
+             box-shadow: none;
+         }
+        .solution-summary-card .solution-icon {
+             color: var(--clr-text-on-primary);
+             width: 3rem;
+             height: 3rem;
+             display: flex;
+             align-items: center;
+             justify-content: center;
+             border-radius: 9999px;
+             font-size: 1.5rem;
+        }
+        .solution-summary-card .checklist-item {
+             display: flex;
+             align-items: center;
+             gap: 0.5rem;
+        }
+        .solution-summary-card .checklist-item i {
+             font-size: 0.9rem;
+             flex-shrink: 0;
+        }
+         .solution-summary-card .checklist-item span {
+              color: var(--clr-text-secondary);
+              font-size: 0.9rem;
+         }
+          .dark .solution-summary-card .checklist-item span {
+              color: var(--dark-text-secondary);
+          }
+
+        .solution-summary-card.info-upgrade {
+            background: linear-gradient(105deg, color-mix(in srgb, var(--light-primary) 5%, var(--light-bg-surface)) 0%, color-mix(in srgb, var(--light-primary) 12%, var(--light-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--light-primary) 30%, transparent);
+            border-left: 4px solid var(--light-primary);
+        }
+        .dark .solution-summary-card.info-upgrade {
+            background: linear-gradient(105deg, color-mix(in srgb, var(--dark-primary) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--dark-primary) 18%, var(--dark-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--dark-primary) 35%, transparent);
+            border-left: 4px solid var(--dark-primary);
+        }
+        .solution-summary-card.info-upgrade .solution-icon { background-color: var(--clr-primary); }
+        .solution-summary-card.info-upgrade .checklist-item i { color: var(--clr-primary); }
+        .dark .solution-summary-card.info-upgrade .solution-icon { background-color: var(--dark-primary); }
+        .dark .solution-summary-card.info-upgrade .checklist-item i { color: var(--dark-primary); }
+
+        .solution-summary-card.research {
+            --category-color: #64748b;
+            --category-color-dark: #94a3b8;
+            background: linear-gradient(105deg, color-mix(in srgb, var(--category-color) 5%, var(--light-bg-surface)) 0%, color-mix(in srgb, var(--category-color) 12%, var(--light-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--category-color) 30%, transparent);
+            border-left: 4px solid var(--category-color);
+        }
+        .dark .solution-summary-card.research {
+            background: linear-gradient(105deg, color-mix(in srgb, var(--category-color-dark) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--category-color-dark) 18%, var(--dark-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--category-color-dark) 35%, transparent);
+            border-left: 4px solid var(--category-color-dark);
+        }
+        .solution-summary-card.research .solution-icon { background-color: var(--category-color); }
+        .solution-summary-card.research .checklist-item i { color: var(--category-color); }
+        .dark .solution-summary-card.research .solution-icon { background-color: var(--category-color-dark); }
+        .dark .solution-summary-card.research .checklist-item i { color: var(--category-color-dark); }
+
+        .solution-summary-card.ai-tech {
+            background: linear-gradient(105deg, color-mix(in srgb, var(--light-accent) 5%, var(--light-bg-surface)) 0%, color-mix(in srgb, var(--light-accent) 12%, var(--light-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--light-accent) 30%, transparent);
+            border-left: 4px solid var(--light-accent);
+        }
+        .dark .solution-summary-card.ai-tech {
+            background: linear-gradient(105deg, color-mix(in srgb, var(--dark-accent) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--dark-accent) 18%, var(--dark-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--dark-accent) 35%, transparent);
+            border-left: 4px solid var(--dark-accent);
+        }
+        .solution-summary-card.ai-tech .solution-icon { background-color: var(--clr-accent); }
+        .solution-summary-card.ai-tech .checklist-item i { color: var(--clr-accent); }
+        .dark .solution-summary-card.ai-tech .solution-icon { background-color: var(--dark-accent); }
+        .dark .solution-summary-card.ai-tech .checklist-item i { color: var(--dark-accent); }
+
+        .solution-summary-card.knowledge {
+            --category-color: #14b8a6;
+            --category-color-dark: #2dd4bf;
+            background: linear-gradient(105deg, color-mix(in srgb, var(--category-color) 5%, var(--light-bg-surface)) 0%, color-mix(in srgb, var(--category-color) 12%, var(--light-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--category-color) 30%, transparent);
+            border-left: 4px solid var(--category-color);
+        }
+        .dark .solution-summary-card.knowledge {
+            background: linear-gradient(105deg, color-mix(in srgb, var(--category-color-dark) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--category-color-dark) 18%, var(--dark-bg-surface)) 100%);
+            border: 1px solid color-mix(in srgb, var(--category-color-dark) 35%, transparent);
+            border-left: 4px solid var(--category-color-dark);
+        }
+        .solution-summary-card.knowledge .solution-icon { background-color: var(--category-color); }
+        .solution-summary-card.knowledge .checklist-item i { color: var(--category-color); }
+        .dark .solution-summary-card.knowledge .solution-icon { background-color: var(--category-color-dark); }
+        .dark .solution-summary-card.knowledge .checklist-item i { color: var(--category-color-dark); }
+
+        /* --- 其他样式 --- */
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--clr-bg-page); }
+        ::-webkit-scrollbar-thumb { background: var(--clr-primary); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
+        #loading-indicator .spinner { border-color: var(--clr-primary); border-top-color: transparent; }
+        .dark #loading-indicator .spinner { border-color: var(--dark-primary); border-top-color: transparent; }
+        #loading-indicator p { color: var(--clr-text-secondary); }
+        .dark #loading-indicator p { color: var(--dark-text-secondary); }
+        #error-message { color: #dc2626; background-color: #fee2e2; border: 1px solid #fecaca; padding: 1rem; border-radius: 0.5rem; }
+        .dark #error-message { color: #fca5a5; background-color: #7f1d1d; border-color: #ef4444; }
+
+    </style>
+    <!-- 初始化深色/浅色模式脚本 -->
+    <script>
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.add('light');
+        }
+    </script>
+</head>
+<body class="antialiased">
+
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-50 shadow-md transition-all duration-300" style="background-color: var(--clr-bg-surface); border-bottom: 1px solid var(--clr-border);">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="#" class="flex items-center">
+                <span class="text-2xl font-bold" style="color: var(--clr-primary);">凿壁</span>
+            </a>
+            <div class="flex items-center">
+                 <button id="theme-toggle" class="theme-toggle p-2 rounded-full shadow-sm w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <section class="hero-section py-12 md:py-20">
+        <div class="hero-pattern"></div>
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+                    凿壁
+                </h1>
+                <p class="text-xl md:text-2xl text-white mb-6 leading-relaxed max-w-2xl mx-auto ">帮助健康医疗行业凿开AI乱象，帮AI行业凿开医疗行业壁垒</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                    <a href="#content-area" class="btn btn-hero-primary">探索内容分类</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们 Section -->
+    <section id="about" class="py-16 md:py-20 about-section">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-8 text-center">关于<span style="color: var(--clr-primary);">凿壁</span></h2>
+                <div class="first-letter mb-8">
+                    <p class="mb-4">凿壁团队致力于为卫生健康行业提供前沿的AI解决方案。我们的使命是通过破除AI应用在医疗行业中的障碍，让先进技术真正服务于医疗健康事业，提高医疗效率和质量。</p>
+                    <p class="mb-4">我们深知医疗行业的特殊性与复杂性，团队汇集了医疗专家和AI技术人才，通过跨学科合作，打造适合中国医疗体系的智能化解决方案。我们不仅仅是技术提供者，更是医疗AI领域的思想者与探索者。</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                    <div class="flex flex-col items-center text-center p-4 feature-item">
+                        <div class="feature-icon text-xl"> <i class="fas fa-brain"></i> </div>
+                        <h3 class="text-xl font-semibold mb-2">破解AI乱象</h3>
+                        <p class="text-sm">帮助医疗机构识别并避开AI应用中的虚假宣传和不切实际承诺，找到真正有价值的应用方向。</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-4 feature-item">
+                        <div class="feature-icon text-xl"> <i class="fas fa-hospital-user"></i> </div>
+                        <h3 class="text-xl font-semibold mb-2">打破行业壁垒</h3>
+                        <p class="text-sm">促进AI技术与医疗行业的深度融合，解决技术落地过程中的制度性、文化性障碍。</p>
+                    </div>
+                    <div class="flex flex-col items-center text-center p-4 feature-item">
+                        <div class="feature-icon text-xl"> <i class="fas fa-lightbulb"></i> </div>
+                        <h3 class="text-xl font-semibold mb-2">创新解决方案</h3>
+                        <p class="text-sm">基于对医疗流程的深刻理解，提供符合临床实际需求的AI赋能解决方案。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主内容区 -->
+    <main id="content-area" class="container mx-auto px-4 py-8 md:py-12">
+        <!-- 分类导航标签 -->
+        <div class="relative mb-12 md:mb-16">
+            <div class="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-px" style="background-color: var(--clr-border);"></div>
+            <div class="flex justify-center">
+                 <div id="category-tabs" class="flex flex-wrap justify-center rounded-full shadow-md p-1 relative z-10 category-tabs">
+                     <button class="category-btn px-5 py-2 rounded-full" data-category="all">
+                         <i class="fas fa-border-all"></i><span>全部</span>
+                    </button>
+                    <button class="category-btn px-5 py-2 rounded-full" data-category="info-upgrade">
+                         <i class="fas fa-file-medical-alt"></i><span>信息化升级</span>
+                    </button>
+                    <button class="category-btn px-5 py-2 rounded-full" data-category="research">
+                         <i class="fas fa-microscope"></i><span>科研辅助</span>
+                    </button>
+                    <button class="category-btn px-5 py-2 rounded-full" data-category="ai-tech">
+                         <i class="fas fa-robot"></i><span>AI技术与生态</span>
+                    </button>
+                    <button class="category-btn px-5 py-2 rounded-full" data-category="knowledge">
+                         <i class="fas fa-book-medical"></i><span>知识报告</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading-indicator" class="hidden text-center py-12">
+            <div class="spinner inline-block animate-spin rounded-full h-10 w-10 border-t-2 border-b-2"></div>
+            <p class="mt-3 text-sm">加载中...</p>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden text-center py-8">
+            获取数据失败，请刷新页面重试。
+        </div>
+
+        <!-- Content Container (Includes Summary Cards and Article Cards) -->
+        <div id="content-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 category-contents">
+            <!-- Cards will be loaded here by JavaScript -->
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="mt-12 py-6 text-center text-sm" style="background-color: var(--clr-bg-surface); color: var(--clr-text-secondary); border-top: 1px solid var(--clr-border);">
+        <p>作者: 季晓康 (jxk@sdu.edu.cn) | 角色: AI观察员, 认知中枢</p>
+        <p>微信公众号: 凿壁</p>
+        <p class="mt-2">&copy; <span id="copyright-year">2024</span> 国家健康医疗大数据研究院</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DOM Elements ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const htmlElement = document.documentElement;
+            const categoryTabsContainer = document.getElementById('category-tabs');
+            const contentContainer = document.getElementById('content-container');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const errorMessage = document.getElementById('error-message');
+            const copyrightYearSpan = document.getElementById('copyright-year');
+
+            // --- Theme Switching Logic ---
+            const applyTheme = (theme) => {
+                htmlElement.classList.remove('light', 'dark');
+                htmlElement.classList.add(theme);
+                localStorage.setItem('theme', theme);
+                 console.log("Applied theme:", theme);
+            };
+            themeToggle.addEventListener('click', () => {
+                const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
+            // Apply initial theme on load
+            const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(currentTheme);
+
+
+            // --- Content Loading & Filtering Logic ---
+            const categoryMapping = { "info-upgrade": "信息化升级", "research": "科研辅助", "ai-tech": "AI技术与生态", "knowledge": "知识报告" };
+            const categoryTagClassMapping = { "info-upgrade": "card-tag-teal", "research": "card-tag-slate", "ai-tech": "card-tag-orange", "knowledge": "card-tag-teal" };
+            const categoryActiveClassMapping = { "info-upgrade": "category-active-primary", "research": "category-active-secondary", "ai-tech": "category-active-accent", "knowledge": "category-active-knowledge" };
+
+            const solutionSummaryCardsHTML = {
+                "info-upgrade": `
+                    <div class="solution-summary-card info-upgrade col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-file-medical-alt"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">信息化升级解决方案</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">帮助医疗机构进行数字化转型...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗数据资产价值评估</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>合规数据治理方案</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医院智能化管理系统</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗流程优化方案</span></div> </div> </div> </div> </div>`,
+                "research": `
+                    <div class="solution-summary-card research col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-microscope"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">科研辅助解决方案</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">为医学研究者提供AI驱动的辅助工具...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>临床辅助决策系统</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医学影像智能分析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>健康风险预测模型</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>临床路径优化</span></div> </div> </div> </div> </div>`,
+                "ai-tech": `
+                    <div class="solution-summary-card ai-tech col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-robot"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">AI技术与生态解决方案</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">深入解析人工智能前沿技术与生态...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>大模型能力评估</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>多模态智能解析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>AI开发框架分析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗AI解决方案</span></div> </div> </div> </div> </div>`,
+                "knowledge": `
+                    <div class="solution-summary-card knowledge col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-book-medical"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">知识报告</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">提供关于AI与医疗健康领域的深度知识...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>AI模型理论解析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗AI研究综述</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>认知科学研究</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>前沿技术动态</span></div> </div> </div> </div> </div>`
+            };
+
+            const createCard = (page) => {
+                const cardLink = document.createElement('a');
+                cardLink.href = page.path;
+                cardLink.className = "content-card";
+                cardLink.dataset.category = page.category;
+
+                let periodLabelHTML = '';
+                const publishDateStr = page["publish-date"];
+                if (publishDateStr) {
+                    try {
+                        const publishDate = new Date(publishDateStr);
+                        const today = new Date();
+                        publishDate.setHours(0, 0, 0, 0);
+                        today.setHours(0, 0, 0, 0);
+                        const diffTime = today - publishDate;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        let periodClass = 'period-earlier';
+                        let periodText = '早期';
+                        if (diffDays <= 3) { periodClass = 'period-new'; periodText = '新'; }
+                        else if (diffDays <= 15) { periodClass = 'period-recent'; periodText = '近期'; }
+                        periodLabelHTML = `<span class="period-label ${periodClass}">${periodText}</span>`;
+                    } catch (e) { periodLabelHTML = '<span class="period-label period-earlier">错误</span>'; }
+                } else { periodLabelHTML = '<span class="period-label period-earlier">无日期</span>'; }
+
+                const categoryDisplay = categoryMapping[page.category] || page.category || '未分类';
+                const categoryTagClass = categoryTagClassMapping[page.category] || 'card-tag-slate';
+                const formattedDate = publishDateStr ? new Date(publishDateStr).toLocaleDateString('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' }) : '未知日期';
+                const description = (page.description || '暂无描述').substring(0, 100) + ((page.description || '').length > 100 ? '...' : '');
+
+                cardLink.innerHTML = `
+                    ${periodLabelHTML}
+                    <div class="card-body">
+                        <div class="flex items-center justify-between mb-3">
+                             <span class="card-tag ${categoryTagClass}">${categoryDisplay}</span>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-3">${page.title || '无标题'}</h3>
+                        <p class="text-sm mb-4">${description}</p>
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-dashed border-[color:var(--clr-border)]">
+                            <div class="article-date"> <i class="far fa-calendar-alt"></i> <span>${formattedDate}</span> </div>
+                            <span class="card-link inline-flex items-center text-sm"> 阅读全文 <i class="fas fa-arrow-right ml-1 text-xs"></i> </span>
+                        </div>
+                    </div>`;
+                return cardLink;
+            };
+
+            const renderContent = (pages, category) => {
+                contentContainer.innerHTML = '';
+                let contentExists = false;
+
+                if (category && category !== 'all' && solutionSummaryCardsHTML[category]) {
+                     contentContainer.insertAdjacentHTML('beforeend', solutionSummaryCardsHTML[category]);
+                     contentExists = true;
+                }
+
+                 if (pages && pages.length > 0) {
+                    pages.forEach(page => {
+                        contentContainer.appendChild(createCard(page));
+                    });
+                    contentExists = true;
+                 }
+
+                 if (!contentExists) {
+                    contentContainer.innerHTML = '<div class="col-span-full text-center py-12" style="color: var(--clr-text-secondary);">该分类下暂无内容</div>';
+                 }
+            };
+
+            const filterAndRender = (category) => {
+                loadingIndicator.classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+                contentContainer.innerHTML = '';
+
+                fetch('metadata.json') // Using relative path
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        return response.json();
+                    })
+                    .then(data => {
+                        loadingIndicator.classList.add('hidden');
+                        if (!data || !data.pages || !Array.isArray(data.pages)) {
+                           throw new Error('Invalid metadata format: "pages" array not found.');
+                        }
+                        let filteredPages = data.pages;
+                        if (category !== 'all') {
+                            filteredPages = data.pages.filter(page => page.category === category);
+                        }
+                        filteredPages.sort((a, b) => new Date(b["publish-date"] || 0) - new Date(a["publish-date"] || 0));
+                        renderContent(filteredPages, category);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching/processing metadata:', error);
+                        loadingIndicator.classList.add('hidden');
+                        errorMessage.textContent = `加载内容失败: ${error.message}. 请检查 metadata.json 文件是否存在且格式正确。`;
+                        errorMessage.classList.remove('hidden');
+                         contentContainer.innerHTML = '';
+                    });
+            };
+
+            const categoryBtns = categoryTabsContainer.querySelectorAll('.category-btn');
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const selectedCategory = btn.dataset.category;
+                    categoryBtns.forEach(b => {
+                        b.classList.remove('active');
+                        Object.values(categoryActiveClassMapping).forEach(cls => b.classList.remove(cls));
+                    });
+                    btn.classList.add('active');
+                    const activeColorClass = categoryActiveClassMapping[selectedCategory];
+                    if (activeColorClass) btn.classList.add(activeColorClass);
+                    filterAndRender(selectedCategory);
+                });
+            });
+
+            // --- Initial Load ---
+            const allButton = categoryTabsContainer.querySelector('.category-btn[data-category="all"]');
+             if(allButton) allButton.classList.add('active'); // Activate 'All' button visually
+            filterAndRender('all'); // Load all content initially
+
+            // --- Footer Year ---
+            if (copyrightYearSpan) copyrightYearSpan.textContent = new Date().getFullYear();
+
+        }); // End DOMContentLoaded
+    </script>
+
+</body>
+</html>
