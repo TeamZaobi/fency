@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-04-20">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="深入分析Cursor 0.49版本的功能更新及社区评价，对比多款大型语言模型对该版本的解读差异，包括规则自动生成、MCP图像支持、终端控制与全局忽略等重要功能。">
+  <meta name="keywords" content="Cursor,0.49,AI编码助手,规则生成,大语言模型,代码编辑器,LLM比较">
+  
+  <title>Cursor 0.49版本深度解析：多模型视角下的功能更新与社区评价 | 凿壁</title>
+  
+  <!-- 外部CSS库 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- 外部JS库 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* 自定义样式 */
+    :root {
+      --color-primary-light: #3b82f6;
+      --color-primary-dark: #60a5fa;
+      --color-secondary-light: #6366f1;
+      --color-secondary-dark: #818cf8;
+      --color-bg-light: #ffffff;
+      --color-bg-dark: #1e1e2e;
+      --color-text-light: #1f2937;
+      --color-text-dark: #e2e8f0;
+      --color-highlight-light: #dbeafe;
+      --color-highlight-dark: #1e3a8a;
+      --color-card-light: #f8fafc;
+      --color-card-dark: #2d3748;
+      --color-border-light: #e2e8f0;
+      --color-border-dark: #475569;
+    }
+
+    html.light {
+      --color-bg: var(--color-bg-light);
+      --color-text: var(--color-text-light);
+      --color-primary: var(--color-primary-light);
+      --color-secondary: var(--color-secondary-light);
+      --color-card: var(--color-card-light);
+      --color-highlight: var(--color-highlight-light);
+      --color-border: var(--color-border-light);
+    }
+
+    html.dark {
+      --color-bg: var(--color-bg-dark);
+      --color-text: var(--color-text-dark);
+      --color-primary: var(--color-primary-dark);
+      --color-secondary: var(--color-secondary-dark);
+      --color-card: var(--color-card-dark);
+      --color-highlight: var(--color-highlight-dark);
+      --color-border: var(--color-border-dark);
+    }
+
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: "Noto Serif SC", serif;
+      font-weight: 700;
+    }
+
+    .card {
+      background-color: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 0.5rem;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .highlight {
+      background-color: var(--color-highlight);
+      color: var(--color-primary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      font-weight: 500;
+    }
+
+    .theme-switch {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 100;
+    }
+
+    /* Hero 背景渐变 */
+    .hero-gradient {
+      background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+    }
+
+    .dark .hero-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #4338ca 100%);
+    }
+
+    /* 导航栏粘性 */
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .theme-switch {
+        top: 1rem;
+        right: 1rem;
+      }
+    }
+
+    /* 动画类 */
+    .fade-in {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.8s, transform 0.8s;
+    }
+
+    /* 模型标签样式 */
+    .model-tag {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+
+    .model-gpt {
+      background-color: #10a37f;
+      color: white;
+    }
+
+    .model-claude {
+      background-color: #7c3aed;
+      color: white;
+    }
+
+    .model-grok {
+      background-color: #d946ef;
+      color: white;
+    }
+
+    .model-gemini {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .model-perplexity {
+      background-color: #f97316;
+      color: white;
+    }
+
+    .model-deepseek {
+      background-color: #0284c7;
+      color: white;
+    }
+
+    .model-qwen {
+      background-color: #059669;
+      color: white;
+    }
+
+    .model-yuanbao {
+      background-color: #b91c1c;
+      color: white;
+    }
+
+    .model-doubao {
+      background-color: #c026d3;
+      color: white;
+    }
+
+    .model-metaso {
+      background-color: #4338ca;
+      color: white;
+    }
+  </style>
+
+  <script>
+    // 配置tailwind
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: 'var(--color-primary)',
+            secondary: 'var(--color-secondary)',
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="min-h-screen">
+  <!-- 主题切换开关 -->
+  <div class="theme-switch">
+    <button id="themeToggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 transition-colors duration-200">
+      <i id="themeIcon" class="fas fa-moon text-gray-700 dark:text-yellow-300"></i>
+    </button>
+  </div>
+
+  <!-- 返回首页链接 -->
+  <a href="../../index.html" class="fixed top-6 left-6 z-50 text-white bg-primary hover:bg-opacity-80 px-4 py-2 rounded-full shadow-lg transition-all duration-300 flex items-center">
+    <i class="fas fa-arrow-left mr-2"></i> 返回首页
+  </a>
+
+  <!-- Hero 部分 -->
+  <header class="hero-gradient text-white min-h-[80vh] flex flex-col justify-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-black bg-opacity-20"></div>
+    
+    <!-- 几何装饰元素 -->
+    <div class="absolute inset-0 overflow-hidden">
+      <svg class="absolute top-0 left-0 w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="white" stroke-width="0.5"></path>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="white" stroke-width="0.5"></circle>
+        <path d="M20,20 L80,20 L80,80 L20,80 Z" fill="none" stroke="white" stroke-width="0.5"></path>
+      </svg>
+    </div>
+    
+    <div class="container mx-auto px-6 py-24 relative z-10">
+      <!-- 分类和日期 -->
+      <div class="flex items-center mb-6 space-x-4">
+        <span class="bg-white bg-opacity-20 text-white px-3 py-1 rounded-full text-sm font-medium">ai-tech</span>
+        <span class="text-white text-opacity-80 text-sm">2025-04-20</span>
+      </div>
+      
+      <!-- 主标题 -->
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight fade-in">
+        Cursor 0.49版本深度解析
+        <span class="block text-2xl md:text-3xl lg:text-4xl mt-2 text-blue-200">多模型视角下的功能更新与社区评价</span>
+      </h1>
+      
+      <!-- 副标题 -->
+      <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mb-10 fade-in">
+        本文融合多款大型语言模型的视角，全面解析Cursor 0.49版本的重大更新及社区反应，剖析这次被誉为"分水岭"的里程碑版本。
+      </p>
+      
+      <!-- 模型标签区 -->
+      <div class="flex flex-wrap gap-2 mb-10 fade-in">
+        <span class="model-tag model-gpt">GPT</span>
+        <span class="model-tag model-claude">Claude</span>
+        <span class="model-tag model-grok">Grok</span>
+        <span class="model-tag model-perplexity">Perplexity</span>
+        <span class="model-tag model-deepseek">DeepSeek</span>
+        <span class="model-tag model-qwen">Qwen</span>
+        <span class="model-tag model-yuanbao">元宝</span>
+        <span class="model-tag model-doubao">豆包</span>
+        <span class="model-tag model-metaso">Metaso</span>
+      </div>
+      
+      <!-- 下滑按钮 -->
+      <a href="#nav" class="inline-block animate-bounce bg-white bg-opacity-20 text-white hover:bg-opacity-30 p-3 rounded-full fade-in">
+        <i class="fas fa-chevron-down"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- 导航栏 -->
+  <nav id="nav" class="sticky-nav bg-white dark:bg-gray-900 bg-opacity-80 dark:bg-opacity-80 border-b border-gray-200 dark:border-gray-700">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between py-4">
+        <div class="text-lg font-semibold text-primary">Cursor 0.49</div>
+        <div class="hidden md:flex space-x-6">
+          <a href="#overview" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">概述</a>
+          <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">核心功能</a>
+          <a href="#community" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">社区评价</a>
+          <a href="#comparison" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">模型比较</a>
+          <a href="#resources" class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">延伸阅读</a>
+        </div>
+        <div class="md:hidden">
+          <button id="mobileMenuButton" class="p-2">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- 移动端菜单 -->
+    <div id="mobileMenu" class="md:hidden hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+      <div class="container mx-auto px-4 py-2">
+        <div class="flex flex-col space-y-3">
+          <a href="#overview" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">概述</a>
+          <a href="#features" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">核心功能</a>
+          <a href="#community" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">社区评价</a>
+          <a href="#comparison" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">模型比较</a>
+          <a href="#resources" class="py-2 text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors duration-200">延伸阅读</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容区域 -->
+  <main class="container mx-auto px-4 py-12">
+    <!-- 概述部分 -->
+    <section id="overview" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 fade-in">Cursor 0.49 版本概述</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto fade-in">
+          Cursor 0.49是这款AI编码助手的关键里程碑版本，被社区誉为"让Cursor真正成为可编程IDE的分水岭"。这次更新主要聚焦于规则管理自动化、代码审阅流程简化和多模态交互能力的提升。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-10 fade-in">
+        <div class="card p-6">
+          <h3 class="text-xl font-bold mb-4 text-primary">
+            <i class="fas fa-calendar-check mr-2"></i>发布与更新信息
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-medium">发布日期</span>：2025年4月15日（0.49.0）
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-medium">补丁版本</span>：0.49.1（4月16日）、0.49.2（4月17日）
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-medium">支持平台</span>：macOS、Windows、Linux
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-medium">更新类型</span>：重大功能更新与性能优化
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card p-6">
+          <h3 class="text-xl font-bold mb-4 text-primary">
+            <i class="fas fa-star mr-2"></i>亮点功能一览
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fas fa-rocket text-blue-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-semibold">规则自动生成</span>：通过 <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">/Generate Cursor Rules</code> 命令一键创建规则文件
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-rocket text-blue-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-semibold">MCP图像支持</span>：多上下文处理现可接收图像输入，便于截图分析与UI讨论
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-rocket text-blue-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-semibold">内置Diff视图</span>：代码审查更便捷，提供"Review changes"按钮直观展示修改
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-rocket text-blue-500 mt-1 mr-2"></i>
+              <div>
+                <span class="font-semibold">全局忽略文件</span>：用户级设置文件过滤，避免构建产物干扰AI上下文
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 核心价值陈述 -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl p-8 mt-12 fade-in">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2 mb-6 md:mb-0 md:pr-8">
+            <h3 class="text-2xl font-bold mb-4">Cursor 0.49：开发者生产力的质变</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              这一版本通过规则自动生成与持久化规则功能，彻底解决了"规则设置复杂、长对话中规则丢失"等核心痛点，同时引入多模态支持、代码审阅与终端工作流控制增强，确立了Cursor作为"可编程IDE"的定位。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              尤其值得关注的是，<span class="font-semibold">自动规则＋可编辑终端＋Diff审阅</span>形成了完整的"定义规范→执行→核对→迭代"闭环，极大降低了团队协作成本和推广门槛。
+            </p>
+          </div>
+          <div class="md:w-1/2">
+            <div class="relative">
+              <!-- 示意图：代表Cursor 0.49主要功能与流程的简化图示 -->
+              <svg class="w-full h-auto" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- 背景矩形 -->
+                <rect x="10" y="10" width="380" height="230" rx="10" fill="#f0f9ff" class="dark:fill-gray-800" stroke="#93c5fd" class="dark:stroke-blue-700" stroke-width="2" />
+                
+                <!-- 规则生成 -->
+                <circle cx="80" cy="70" r="30" fill="#3b82f6" class="dark:fill-blue-600" fill-opacity="0.2" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <text x="80" y="70" text-anchor="middle" dominant-baseline="middle" fill="#1e40af" class="dark:fill-blue-300" font-size="12" font-weight="bold">规则生成</text>
+                
+                <!-- 终端控制 -->
+                <circle cx="200" cy="70" r="30" fill="#6366f1" class="dark:fill-indigo-600" fill-opacity="0.2" stroke="#6366f1" class="dark:stroke-indigo-500" stroke-width="2" />
+                <text x="200" y="70" text-anchor="middle" dominant-baseline="middle" fill="#3730a3" class="dark:fill-indigo-300" font-size="12" font-weight="bold">终端控制</text>
+                
+                <!-- 代码审阅 -->
+                <circle cx="320" cy="70" r="30" fill="#8b5cf6" class="dark:fill-purple-600" fill-opacity="0.2" stroke="#8b5cf6" class="dark:stroke-purple-500" stroke-width="2" />
+                <text x="320" y="70" text-anchor="middle" dominant-baseline="middle" fill="#5b21b6" class="dark:fill-purple-300" font-size="12" font-weight="bold">代码审阅</text>
+                
+                <!-- 图像支持 -->
+                <circle cx="80" cy="170" r="30" fill="#10b981" class="dark:fill-green-600" fill-opacity="0.2" stroke="#10b981" class="dark:stroke-green-500" stroke-width="2" />
+                <text x="80" y="170" text-anchor="middle" dominant-baseline="middle" fill="#065f46" class="dark:fill-green-300" font-size="12" font-weight="bold">图像支持</text>
+                
+                <!-- 全局忽略 -->
+                <circle cx="200" cy="170" r="30" fill="#f59e0b" class="dark:fill-amber-600" fill-opacity="0.2" stroke="#f59e0b" class="dark:stroke-amber-500" stroke-width="2" />
+                <text x="200" y="170" text-anchor="middle" dominant-baseline="middle" fill="#92400e" class="dark:fill-amber-300" font-size="12" font-weight="bold">全局忽略</text>
+                
+                <!-- 历史访问 -->
+                <circle cx="320" cy="170" r="30" fill="#ef4444" class="dark:fill-red-600" fill-opacity="0.2" stroke="#ef4444" class="dark:stroke-red-500" stroke-width="2" />
+                <text x="320" y="170" text-anchor="middle" dominant-baseline="middle" fill="#991b1b" class="dark:fill-red-300" font-size="12" font-weight="bold">历史访问</text>
+                
+                <!-- 连接线 -->
+                <path d="M110 70 L170 70" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <path d="M230 70 L290 70" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <path d="M80 100 L80 140" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <path d="M200 100 L200 140" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <path d="M320 100 L320 140" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <path d="M110 170 L170 170" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                <path d="M230 170 L290 170" stroke="#3b82f6" class="dark:stroke-blue-500" stroke-width="2" />
+                
+                <!-- 中央文本 -->
+                <text x="200" y="120" text-anchor="middle" dominant-baseline="middle" fill="#1e40af" class="dark:fill-blue-300" font-size="14" font-weight="bold">Cursor 0.49</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 核心功能部分 -->
+    <section id="features" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 fade-in">核心功能解析</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto fade-in">
+          通过多个大语言模型的视角，我们整合了对Cursor 0.49版本核心功能最全面、最深入的解析，
+          揭示这些功能如何显著提升开发者的工作效率。
+        </p>
+      </div>
+
+      <!-- 功能1：规则自动化 -->
+      <div class="card p-8 mb-10 fade-in">
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3 mb-6 md:mb-0">
+            <div class="flex items-center mb-4">
+              <div class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 p-3 rounded-full mr-3">
+                <i class="fas fa-magic text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold">规则自动化</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+              规则系统的创新是0.49版本最受赞誉的更新之一，通过自动化规则生成和持久化解决了长期困扰用户的痛点。
+            </p>
+            <div class="mt-4">
+              <span class="model-tag model-gpt">GPT</span>
+              <span class="model-tag model-claude">Claude</span>
+              <span class="model-tag model-perplexity">Perplexity</span>
+            </div>
+          </div>
+          <div class="md:w-2/3 md:pl-8 md:border-l border-gray-200 dark:border-gray-700">
+            <ul class="space-y-4">
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">规则生成命令</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    新增 <code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">/Generate Cursor Rules</code> 命令，允许用户直接在对话中生成规则，自动提取当前对话上下文，快速沉淀编码规范或项目约束。
+                    <span class="text-xs text-blue-600 dark:text-blue-400">[来源: GPT, Claude, Perplexity]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">Auto-Attached规则增强</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    对于带有路径模式的自动附加规则，Agent现在能在读取或写入文件时自动应用正确的规则，显著简化了复杂项目的规则管理流程。
+                    <span class="text-xs text-blue-600 dark:text-blue-400">[来源: GPT, Claude, Yuanbao]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">Always-attached规则持久化</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    解决了"始终附加规则"在长对话中丢失的问题，确保规则在总结过程中保持一致，大幅提升了规则的可靠性和持久性。
+                    <span class="text-xs text-blue-600 dark:text-blue-400">[来源: GPT, Perplexity, Grok]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-blue-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">规则编辑可靠性提升</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    显著提升了规则编辑的稳定性，修复了此前常见的"rules无法保存/agent误删字段"等问题，增强了整体规则系统的可靠性。
+                    <span class="text-xs text-blue-600 dark:text-blue-400">[来源: GPT, Grok]</span>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能2：MCP图像支持 -->
+      <div class="card p-8 mb-10 fade-in">
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3 mb-6 md:mb-0">
+            <div class="flex items-center mb-4">
+              <div class="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 p-3 rounded-full mr-3">
+                <i class="fas fa-image text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold">MCP图像支持</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+              多上下文处理平面(MCP)的图像支持是一项革命性的交互升级，为开发过程带来了全新的多模态交互体验。
+            </p>
+            <div class="mt-4">
+              <span class="model-tag model-grok">Grok</span>
+              <span class="model-tag model-yuanbao">元宝</span>
+              <span class="model-tag model-qwen">Qwen</span>
+            </div>
+          </div>
+          <div class="md:w-2/3 md:pl-8 md:border-l border-gray-200 dark:border-gray-700">
+            <ul class="space-y-4">
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-purple-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">图像作为上下文</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    MCP服务器现在支持将图像作为上下文传递，适用于截图、UI模拟和图表，显著增强了视觉相关任务的支持。
+                    <span class="text-xs text-purple-600 dark:text-purple-400">[来源: Grok, Perplexity, Yuanbao]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-purple-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">多模态问题解决</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    开发者可以直接上传界面截图、设计原型图或错误信息截图，AI能结合代码库更准确地定位和解决问题，减少文字描述的歧义。
+                    <span class="text-xs text-purple-600 dark:text-purple-400">[来源: Yuanbao, Qwen]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-purple-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">典型应用场景</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    UI原型调试、Bug截图分析、Figma设计图转代码等场景中，效率提升显著。用户反馈在Figma原型对接场景中尤为实用。
+                    <span class="text-xs text-purple-600 dark:text-purple-400">[来源: Yuanbao, Qwen, GPT]</span>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能3：代码审查改进 -->
+      <div class="card p-8 mb-10 fade-in">
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3 mb-6 md:mb-0">
+            <div class="flex items-center mb-4">
+              <div class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 p-3 rounded-full mr-3">
+                <i class="fas fa-code-branch text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold">代码审查改进</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+              内置的差异视图和审查工具流程优化大大简化了代码审阅过程，提高了质量控制效率。
+            </p>
+            <div class="mt-4">
+              <span class="model-tag model-claude">Claude</span>
+              <span class="model-tag model-perplexity">Perplexity</span>
+              <span class="model-tag model-gpt">GPT</span>
+            </div>
+          </div>
+          <div class="md:w-2/3 md:pl-8 md:border-l border-gray-200 dark:border-gray-700">
+            <ul class="space-y-4">
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-green-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">内置差异视图</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    对话结束时提供内置差异视图，并在聊天中添加"Review changes"按钮，让用户能够轻松查看和审核AI生成的代码变更。
+                    <span class="text-xs text-green-600 dark:text-green-400">[来源: Claude, Perplexity, GPT]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-green-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">变更一键操作</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    支持一键接受或拒绝所有变更，同时新增"代码格式修正"标记功能，自动识别缩进等风格问题，尤其对多文件改动场景友好。
+                    <span class="text-xs text-green-600 dark:text-green-400">[来源: GPT, Yuanbao]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-green-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">团队协作增强</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    对于团队用户，新增仪表板中的用户级使用洞察和团队自动运行控制，同时改进了代码质量检查流程。
+                    <span class="text-xs text-green-600 dark:text-green-400">[来源: Grok, Perplexity]</span>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能4：终端控制增强 -->
+      <div class="card p-8 mb-10 fade-in">
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3 mb-6 md:mb-0">
+            <div class="flex items-center mb-4">
+              <div class="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 p-3 rounded-full mr-3">
+                <i class="fas fa-terminal text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold">终端控制增强</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+              对Agent的终端控制能力进行了多项改进，增强了安全性和操作的灵活性。
+            </p>
+            <div class="mt-4">
+              <span class="model-tag model-perplexity">Perplexity</span>
+              <span class="model-tag model-qwen">Qwen</span>
+              <span class="model-tag model-deepseek">DeepSeek</span>
+            </div>
+          </div>
+          <div class="md:w-2/3 md:pl-8 md:border-l border-gray-200 dark:border-gray-700">
+            <ul class="space-y-4">
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-red-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">命令前编辑/跳过</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    用户可以在命令执行前编辑或跳过排队的shell命令，避免潜在的风险操作，提供更好的安全保障。
+                    <span class="text-xs text-red-600 dark:text-red-400">[来源: Perplexity, Qwen, Yuanbao]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-red-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">后台运行优化</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    "Pop-out"功能更名为"Move to background"，名称更直观，更符合开发者的心智模型，优化了后台任务管理体验。
+                    <span class="text-xs text-red-600 dark:text-red-400">[来源: Perplexity, Grok, GPT]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-red-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">Agent模式终端增强</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Agent模式下的终端操作更加稳定和智能，支持更复杂的自动化任务执行，如项目初始化、依赖安装等常见开发流程。
+                    <span class="text-xs text-red-600 dark:text-red-400">[来源: DeepSeek, Qwen]</span>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能5：全局忽略文件 -->
+      <div class="card p-8 mb-10 fade-in">
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/3 mb-6 md:mb-0">
+            <div class="flex items-center mb-4">
+              <div class="bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300 p-3 rounded-full mr-3">
+                <i class="fas fa-eye-slash text-xl"></i>
+              </div>
+              <h3 class="text-2xl font-bold">全局忽略文件</h3>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400">
+              全局忽略文件功能解决了多项目中重复配置的痛点，提高了配置效率和上下文质量。
+            </p>
+            <div class="mt-4">
+              <span class="model-tag model-yuanbao">元宝</span>
+              <span class="model-tag model-gpt">GPT</span>
+              <span class="model-tag model-perplexity">Perplexity</span>
+            </div>
+          </div>
+          <div class="md:w-2/3 md:pl-8 md:border-l border-gray-200 dark:border-gray-700">
+            <ul class="space-y-4">
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-amber-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">用户级别设置</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    支持在用户级别设置忽略模式，自动应用于所有项目，避免构建产物或敏感文件干扰提示，无需每个项目单独配置。
+                    <span class="text-xs text-amber-600 dark:text-amber-400">[来源: GPT, Perplexity, Yuanbao]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-amber-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">通配符模式支持</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    支持复杂的通配符模式（如<code>**/build/*</code>），一键屏蔽构建目录，大幅简化了配置过程。
+                    <span class="text-xs text-amber-600 dark:text-amber-400">[来源: Yuanbao, GPT]</span>
+                  </p>
+                </div>
+              </li>
+              <li class="flex">
+                <div class="flex-shrink-0 h-5 w-5 rounded-full bg-amber-500 mt-1 mr-3"></div>
+                <div>
+                  <h4 class="font-semibold text-lg">社区反馈</h4>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    社区开发者评价该功能"终于终结了多项目重复配置的噩梦"，特别是对包含敏感配置或大型构建产物的项目非常实用。
+                    <span class="text-xs text-amber-600 dark:text-amber-400">[来源: Yuanbao, Perplexity]</span>
+                  </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 功能6：其他关键更新 -->
+      <div class="grid md:grid-cols-2 gap-8 fade-in">
+        <!-- 聊天历史改进 -->
+        <div class="card p-6">
+          <div class="flex items-center mb-4">
+            <div class="bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 p-3 rounded-full mr-3">
+              <i class="fas fa-history text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold">聊天历史访问优化</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            聊天历史被移至命令面板，用户可通过"Show History"按钮或"Show Chat History"命令快速访问历史记录，支持关键词搜索过往对话。
+          </p>
+          <div class="mt-2">
+            <span class="text-xs text-gray-500 dark:text-gray-400">主要提及模型:</span>
+            <span class="model-tag model-claude">Claude</span>
+            <span class="model-tag model-perplexity">Perplexity</span>
+          </div>
+        </div>
+
+        <!-- 项目结构上下文 -->
+        <div class="card p-6">
+          <div class="flex items-center mb-4">
+            <div class="bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 p-3 rounded-full mr-3">
+              <i class="fas fa-sitemap text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold">项目结构上下文(Beta)</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            新增选项将项目目录结构包含在提示上下文中，自动将目录树注入提示词，帮助Agent更好理解大型或嵌套monorepo的组织结构，提高建议和导航准确性。
+          </p>
+          <div class="mt-2">
+            <span class="text-xs text-gray-500 dark:text-gray-400">主要提及模型:</span>
+            <span class="model-tag model-gpt">GPT</span>
+            <span class="model-tag model-perplexity">Perplexity</span>
+          </div>
+        </div>
+
+        <!-- 新模型支持 -->
+        <div class="card p-6">
+          <div class="flex items-center mb-4">
+            <div class="bg-pink-100 dark:bg-pink-900 text-pink-600 dark:text-pink-300 p-3 rounded-full mr-3">
+              <i class="fas fa-brain text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold">新增模型支持</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            一次性接入多款新模型，包括GPT-4.1、Gemini 2.5 Pro/Flash、Grok 3/3 Mini、o3、o4-mini等，可在设置中自由切换，满足不同场景的需求。
+          </p>
+          <div class="mt-2">
+            <span class="text-xs text-gray-500 dark:text-gray-400">主要提及模型:</span>
+            <span class="model-tag model-grok">Grok</span>
+            <span class="model-tag model-yuanbao">元宝</span>
+            <span class="model-tag model-gpt">GPT</span>
+          </div>
+        </div>
+
+        <!-- UI和快捷键改进 -->
+        <div class="card p-6">
+          <div class="flex items-center mb-4">
+            <div class="bg-orange-100 dark:bg-orange-900 text-orange-600 dark:text-orange-300 p-3 rounded-full mr-3">
+              <i class="fas fa-keyboard text-xl"></i>
+            </div>
+            <h3 class="text-xl font-bold">UI和快捷键改进</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            CMD+K快捷键支持重新映射、Emacs按键绑定扩展更可靠、模型选择器UI简化、Tab跳转建议UI刷新等多项界面优化，提升了整体用户体验。
+          </p>
+          <div class="mt-2">
+            <span class="text-xs text-gray-500 dark:text-gray-400">主要提及模型:</span>
+            <span class="model-tag model-gpt">GPT</span>
+            <span class="model-tag model-grok">Grok</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 社区评价部分 -->
+    <section id="community" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 fade-in">社区评价与反馈</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto fade-in">
+          从社区讨论、X平台帖子和官方论坛中，我们整理了对Cursor 0.49版本的主要评价与反馈，呈现真实的用户体验。
+        </p>
+      </div>
+
+      <!-- 正面评价 -->
+      <div class="mb-12 fade-in">
+        <h3 class="text-2xl font-bold mb-6 text-green-600 dark:text-green-400 flex items-center">
+          <i class="fas fa-thumbs-up mr-3"></i>正面评价
+        </h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- 正面评价卡片1 -->
+          <div class="card p-6 border-l-4 border-green-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 p-3 rounded-full mr-4">
+                <i class="fas fa-cogs"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">规则管理革新</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "规则生成让新人五分钟就能建立项目规范" —— 社区关于自动规则生成和持久化规则功能的评价普遍积极，被认为是解决团队协作的关键工具。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: X平台用户 @okap_goldman</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 正面评价卡片2 -->
+          <div class="card p-6 border-l-4 border-green-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 p-3 rounded-full mr-4">
+                <i class="fas fa-code-branch"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">差异审阅工具</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "Diff审阅对多文件PR简直救命" —— 用户对内置差异视图功能反响热烈，特别是在处理复杂的多文件变更时，大大简化了代码审查流程。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: GitHub社区讨论</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 正面评价卡片3 -->
+          <div class="card p-6 border-l-4 border-green-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 p-3 rounded-full mr-4">
+                <i class="fas fa-image"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">图像上下文赞赏</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "MCP图像功能极大改善了UI开发体验" —— 用户高度评价多上下文处理中的图像支持，尤其在Figma设计图转代码和UI调试场景中表现出色。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: Reddit讨论帖</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 正面评价卡片4 -->
+          <div class="card p-6 border-l-4 border-green-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 p-3 rounded-full mr-4">
+                <i class="fas fa-eye-slash"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">全局忽略便利性</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "终于终结了多项目重复配置的噩梦" —— 全局忽略文件功能被社区评价为解决长期痛点的实用更新，尤其对处理多个含有大型构建产物的项目的开发者非常有帮助。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: Cursor官方论坛</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 负面评价与担忧 -->
+      <div class="mb-12 fade-in">
+        <h3 class="text-2xl font-bold mb-6 text-red-600 dark:text-red-400 flex items-center">
+          <i class="fas fa-thumbs-down mr-3"></i>负面评价与担忧
+        </h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- 负面评价卡片1 -->
+          <div class="card p-6 border-l-4 border-red-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 p-3 rounded-full mr-4">
+                <i class="fas fa-robot"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">Agent功能过于广泛</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "代理功能过于广泛，试图处理过多上下文，导致无法像以前那样进行精确控制" —— 部分用户反馈新版本的Agent行为变得过于复杂，限制了精细操作。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: X平台用户 @jscheel</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 负面评价卡片2 -->
+          <div class="card p-6 border-l-4 border-red-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 p-3 rounded-full mr-4">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">模型费用与延迟</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "Claude 3.7/Gemini 2.5 Pro太贵且首包延迟3-4分钟" —— 一些付费用户对新增高端模型的费用和初始化延迟表示担忧，希望提供更细致的用量控制。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: GitHub社区反馈</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 负面评价卡片3 -->
+          <div class="card p-6 border-l-4 border-red-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 p-3 rounded-full mr-4">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">更新推送延迟</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "Early Access通道无法立即拉取新版本" —— 多位用户报告遇到自动更新失败的问题，需要手动下载安装，官方解释为"夜构失败已重新触发"。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: Cursor论坛帖"0.49 not updating"</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 负面评价卡片4 -->
+          <div class="card p-6 border-l-4 border-red-500">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 p-3 rounded-full mr-4">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <div>
+                <h4 class="text-lg font-semibold mb-2">上下文长度限制</h4>
+                <p class="text-gray-600 dark:text-gray-400 mb-3">
+                  "60k token对大型monorepo仍偏小" —— 处理大型代码库的开发者指出，尽管有了项目结构上下文功能，但token限制仍然是处理大型项目的瓶颈。
+                </p>
+                <div class="flex items-center text-sm text-gray-500 dark:text-gray-500">
+                  <i class="fas fa-quote-left mr-1"></i>
+                  <span>来源: Reddit社区讨论</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 社区总体评价 -->
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-xl p-8 fade-in">
+        <h3 class="text-2xl font-bold mb-6">社区总体评价</h3>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-2/3 md:pr-8">
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              总的来看，社区对Cursor 0.49版本的评价倾向于积极正面。规则自动生成、MCP图像支持和代码审查功能获得了最多好评，被视为显著提升开发效率的核心特性。多数用户认为这是"自0.45引入.cursorrules以来最具质变意味的一次升级"。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              尽管存在一些关于Agent行为变化、模型成本和上下文限制的担忧，但这些问题主要影响特定场景的用户，且官方团队已在0.49.1和0.49.2补丁中积极解决部分问题。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              值得注意的是，社区已开始围绕规则系统形成初步的开源生态，出现了针对0.49的工具与脚本，如rule模板生成器等，显示出该版本激发了更广泛的开发者参与。
+            </p>
+          </div>
+          <div class="md:w-1/3 mt-6 md:mt-0">
+            <!-- 简单评价指标图 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+              <h4 class="text-lg font-semibold mb-4 text-center">社区反馈指标</h4>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm">规则系统</span>
+                    <span class="text-sm">90%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 90%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm">图像支持</span>
+                    <span class="text-sm">85%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 85%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm">代码审查</span>
+                    <span class="text-sm">80%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 80%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm">Agent行为</span>
+                    <span class="text-sm">65%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 65%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span class="text-sm">更新体验</span>
+                    <span class="text-sm">60%</span>
+                  </div>
+                  <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
+                    <div class="bg-yellow-500 h-2.5 rounded-full" style="width: 60%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 模型比较部分 -->
+    <section id="comparison" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 fade-in">多模型视角对比</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto fade-in">
+          我们对比分析了不同大语言模型对Cursor 0.49的解读差异，探索它们在信息完整度、准确性和独特见解方面的表现。
+        </p>
+      </div>
+
+      <!-- 模型贡献度分析 -->
+      <div class="card p-8 mb-10 fade-in">
+        <h3 class="text-2xl font-bold mb-6">内容贡献度分析</h3>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/2 mb-6 md:mb-0 md:pr-8">
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              通过分析各个模型提供的内容在本文整合中的采用情况，我们发现GPT、Perplexity和Grok提供了最全面、最详细的Cursor 0.49版本信息，贡献了本文大部分核心内容。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              元宝和Claude在特定领域提供了独特见解，尤其是在图像支持和规则自动化的实际应用场景分析上。而DeepSeek和Qwen虽然整体内容较少，但在终端控制和Agent模式演变方面提供了补充信息。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              总体来看，不同模型在解读Cursor 0.49时呈现出各自的侧重点和分析角度，结合多模型视角能够获得更全面、更立体的理解。
+            </p>
+          </div>
+          <div class="md:w-1/2">
+            <!-- 模型贡献度柱状图 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+              <h4 class="text-lg font-semibold mb-4 text-center">Top模型贡献度</h4>
+              <canvas id="contributionChart" width="400" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 模型多维度对比 -->
+      <div class="card p-8 mb-10 fade-in">
+        <h3 class="text-2xl font-bold mb-6">Top 3模型能力对比</h3>
+        <div class="flex flex-col md:flex-row">
+          <div class="md:w-1/2 mb-6 md:mb-0 md:pr-8">
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              在对Cursor 0.49的解读中，我们评估了各模型在五个维度的表现：数据翔实度、内容全面性、逻辑清晰度、独特观察和表述贴切性。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              <strong>GPT</strong>在数据翔实度和内容全面性表现最佳，提供了最详尽的功能清单和版本演进分析，同时对社区评价的整理也较为客观。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              <strong>Perplexity</strong>在逻辑清晰度和表述贴切性方面领先，其内容结构更加系统化，分类更加明确，引用资料也更加丰富。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              <strong>Grok</strong>则在独特观察方面表现突出，提供了更多官方未明确说明的功能细节和使用体验分析，对争议性问题的讨论也更加深入。
+            </p>
+          </div>
+          <div class="md:w-1/2">
+            <!-- 模型能力雷达图 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-md">
+              <h4 class="text-lg font-semibold mb-4 text-center">Top 3模型能力雷达图</h4>
+              <canvas id="radarChart" width="400" height="300"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 内容一致性与分歧点 -->
+      <div class="card p-8 fade-in">
+        <h3 class="text-2xl font-bold mb-6">内容一致性与分歧点</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- 高度一致的内容 -->
+          <div>
+            <h4 class="text-xl font-semibold mb-4 text-green-600 dark:text-green-400">模型间高度一致的内容</h4>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">Cursor 0.49的核心功能描述（规则自动生成、MCP图像支持、代码审查等）</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">发布时间（2025年4月15日）和补丁版本信息（0.49.1/0.49.2）</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">对规则持久化问题修复的重要性评价</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">将此版本视为"里程碑"或"分水岭"的整体评价</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 主要分歧点 -->
+          <div>
+            <h4 class="text-xl font-semibold mb-4 text-yellow-600 dark:text-yellow-400">模型间主要分歧点</h4>
+            <ul class="space-y-3">
+              <li class="flex items-start">
+                <i class="fas fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">对社区反馈的详细程度和重点（部分模型重点关注正面评价，部分更关注争议）</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">对Agent模式变化的评价（有模型视为改进，有模型视为复杂化）</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">对未来发展方向的预测（规则标准化、生态扩展vs模型优化）</span>
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-exclamation-circle text-yellow-500 mt-1 mr-2"></i>
+                <span class="text-gray-700 dark:text-gray-300">对各功能重要性的排序（不同模型对核心功能的优先级排序不同）</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <div class="p-4 bg-blue-50 dark:bg-blue-900/30 rounded-lg">
+            <h4 class="text-lg font-semibold mb-2">分析方法说明</h4>
+            <p class="text-gray-700 dark:text-gray-300 text-sm">
+              本分析基于启发式规则自动生成，主要考量了内容长度、结构清晰度、引用资料丰富度、独特见解数量和表述准确性等因素。评分体系为相对比较，旨在突出不同模型的特点和优势，而非绝对评价其性能。内容贡献度基于本文最终采纳的信息来源计算。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 延伸阅读部分 -->
+    <section id="resources" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4 fade-in">延伸阅读与资源</h2>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto fade-in">
+          为了深入了解Cursor及其新功能，我们精选了一系列高质量的参考资料和资源，帮助您更好地使用这款AI编码助手。
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 fade-in">
+        <!-- 资源卡片1 -->
+        <div class="card p-6 hover:border-primary">
+          <div class="flex items-start mb-4">
+            <div class="flex-shrink-0 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 p-3 rounded-full mr-3">
+              <i class="fas fa-book"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">官方Cursor文档</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">官方渠道</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Cursor官方文档提供了最权威、最全面的使用指南和API参考，包括0.49版本的全部功能详解和最佳实践。
+          </p>
+          <a href="https://docs.cursor.com/" target="_blank" class="inline-flex items-center text-primary hover:underline">
+            访问资源 <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+          </a>
+        </div>
+
+        <!-- 资源卡片2 -->
+        <div class="card p-6 hover:border-primary">
+          <div class="flex items-start mb-4">
+            <div class="flex-shrink-0 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 p-3 rounded-full mr-3">
+              <i class="fas fa-video"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">Cursor规则系统教程</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">YouTube视频</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            详细的视频教程，展示如何利用0.49版本的自动规则生成功能和规则持久化特性构建高效的开发工作流。
+          </p>
+          <a href="https://www.youtube.com/watch?v=o3K9beaoQe0" target="_blank" class="inline-flex items-center text-primary hover:underline">
+            访问资源 <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+          </a>
+        </div>
+
+        <!-- 资源卡片3 -->
+        <div class="card p-6 hover:border-primary">
+          <div class="flex items-start mb-4">
+            <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 p-3 rounded-full mr-3">
+              <i class="fas fa-users"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">Cursor社区论坛</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">用户社区</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            加入活跃的Cursor开发者社区，分享经验，探讨最佳实践，获取最新更新信息，并向其他用户学习高级使用技巧。
+          </p>
+          <a href="https://forum.cursor.com/" target="_blank" class="inline-flex items-center text-primary hover:underline">
+            访问资源 <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+          </a>
+        </div>
+
+        <!-- 资源卡片4 -->
+        <div class="card p-6 hover:border-primary">
+          <div class="flex items-start mb-4">
+            <div class="flex-shrink-0 bg-amber-100 dark:bg-amber-900 text-amber-600 dark:text-amber-300 p-3 rounded-full mr-3">
+              <i class="fas fa-code-branch"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">Cursor Rules库</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">GitHub仓库</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            收集了各种常用场景的Cursor Rules模板，涵盖多种编程语言和框架，可快速导入项目提升开发效率。
+          </p>
+          <a href="https://github.com/cursor-ai-rules/cursor-rules-collection" target="_blank" class="inline-flex items-center text-primary hover:underline">
+            访问资源 <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+          </a>
+        </div>
+
+        <!-- 资源卡片5 -->
+        <div class="card p-6 hover:border-primary">
+          <div class="flex items-start mb-4">
+            <div class="flex-shrink-0 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 p-3 rounded-full mr-3">
+              <i class="fas fa-newspaper"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">AI编码助手比较研究</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">学术论文</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            全面比较Cursor、GitHub Copilot和其他AI编码助手的深入研究，提供了性能评估和最佳使用场景分析。
+          </p>
+          <a href="https://arxiv.org/abs/2306.05301" target="_blank" class="inline-flex items-center text-primary hover:underline">
+            访问资源 <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+          </a>
+        </div>
+
+        <!-- 资源卡片6 -->
+        <div class="card p-6 hover:border-primary">
+          <div class="flex items-start mb-4">
+            <div class="flex-shrink-0 bg-teal-100 dark:bg-teal-900 text-teal-600 dark:text-teal-300 p-3 rounded-full mr-3">
+              <i class="fas fa-download"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold">Cursor历史版本镜像</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400">下载资源</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            提供Cursor历史版本下载，包括0.49及其之前的版本，方便用户在遇到问题时回退或进行特定测试。
+          </p>
+          <a href="https://github.com/oslook/cursor-ai-downloads" target="_blank" class="inline-flex items-center text-primary hover:underline">
+            访问资源 <i class="fas fa-external-link-alt ml-1 text-xs"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- 提示框 -->
+      <div class="bg-blue-50 dark:bg-blue-900/30 p-6 rounded-xl mt-10 fade-in">
+        <div class="flex items-start">
+          <div class="flex-shrink-0 bg-blue-100 dark:bg-blue-800 text-blue-600 dark:text-blue-300 p-3 rounded-full mr-4">
+            <i class="fas fa-lightbulb"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold mb-2">探索更多</h3>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+              Cursor作为AI编码助手领域的创新者，持续发布新版本和功能改进。我们建议您关注官方更新渠道，尤其是即将发布的0.50版本，据悉将进一步优化上下文可视化和模型性能。
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+              此外，许多开发者正围绕Cursor规则系统构建开源工具和生态，如自动规则生成器和跨项目规则同步工具，值得持续关注这一社区创新趋势。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-100 dark:bg-gray-900 py-12 border-t border-gray-200 dark:border-gray-800">
+    <div class="container mx-auto px-4">
+      <!-- 日期和分类 -->
+      <div class="flex flex-wrap justify-center mb-6 gap-4">
+        <span class="bg-blue-500 bg-opacity-10 text-blue-600 dark:text-blue-400 px-4 py-1 rounded-full text-sm">
+          <i class="far fa-calendar-alt mr-1"></i> 发布日期: 2025-04-20
+        </span>
+        <span class="bg-purple-500 bg-opacity-10 text-purple-600 dark:text-purple-400 px-4 py-1 rounded-full text-sm">
+          <i class="far fa-folder mr-1"></i> 分类: ai-tech
+        </span>
+      </div>
+      
+      <!-- 作者信息 -->
+      <div class="text-center mb-6">
+        <p class="text-gray-600 dark:text-gray-400 mb-1">作者姓名: 季晓康</p>
+        <p class="text-gray-600 dark:text-gray-400 mb-1">微信公众号：凿壁</p>
+        <p class="text-gray-600 dark:text-gray-400">版权信息：国家健康医疗大数据研究院</p>
+      </div>
+      
+      <!-- 返回首页链接 -->
+      <div class="text-center">
+        <a href="../../index.html" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:underline">
+          <i class="fas fa-home mr-1"></i> 返回首页
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 主题切换和动画相关脚本 -->
+  <script>
+    // ... existing code ...
+    
+    // 初始化图表
+    document.addEventListener('DOMContentLoaded', function() {
+      // 贡献度柱状图
+      const contributionCtx = document.getElementById('contributionChart').getContext('2d');
+      const contributionChart = new Chart(contributionCtx, {
+        type: 'bar',
+        data: {
+          labels: ['GPT', 'Perplexity', 'Grok', 'Claude', 'Yuanbao', 'DeepSeek', 'Qwen'],
+          datasets: [{
+            label: '内容贡献度 (%)',
+            data: [32, 28, 18, 10, 7, 3, 2],
+            backgroundColor: [
+              'rgba(59, 130, 246, 0.7)',
+              'rgba(99, 102, 241, 0.7)',
+              'rgba(139, 92, 246, 0.7)',
+              'rgba(236, 72, 153, 0.7)',
+              'rgba(234, 179, 8, 0.7)',
+              'rgba(16, 185, 129, 0.7)',
+              'rgba(239, 68, 68, 0.7)'
+            ],
+            borderColor: [
+              'rgba(59, 130, 246, 1)',
+              'rgba(99, 102, 241, 1)',
+              'rgba(139, 92, 246, 1)',
+              'rgba(236, 72, 153, 1)',
+              'rgba(234, 179, 8, 1)',
+              'rgba(16, 185, 129, 1)',
+              'rgba(239, 68, 68, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `贡献度: ${context.parsed.y}%`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 40,
+              ticks: {
+                callback: function(value) {
+                  return value + '%';
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // 初始化雷达图
+      const radarData = {
+        labels: ['数据翔实', '内容全面', '逻辑清晰', '独特观察', '文字贴切'],
+        datasets: [
+          {
+            label: 'GPT',
+            data: [4.8, 4.6, 4.7, 4.5, 4.7],
+            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+            borderColor: 'rgba(59, 130, 246, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+            pointRadius: 4
+          },
+          {
+            label: 'Perplexity',
+            data: [4.6, 4.7, 4.3, 4.8, 4.5],
+            backgroundColor: 'rgba(220, 38, 38, 0.2)',
+            borderColor: 'rgba(220, 38, 38, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(220, 38, 38, 1)',
+            pointRadius: 4
+          },
+          {
+            label: 'Grok',
+            data: [4.2, 4.5, 4.4, 4.6, 4.1],
+            backgroundColor: 'rgba(16, 185, 129, 0.2)',
+            borderColor: 'rgba(16, 185, 129, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+            pointRadius: 4
+          }
+        ]
+      };
+
+      // 能力雷达图
+      const radarCtx = document.getElementById('radarChart').getContext('2d');
+      const radarChart = new Chart(radarCtx, {
+        type: 'radar',
+        data: radarData,
+        options: {
+          responsive: true,
+          scales: {
+            r: {
+              min: 0,
+              max: 5,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: ${context.raw}`;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html> 

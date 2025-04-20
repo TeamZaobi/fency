@@ -22,7 +22,7 @@ const chalk = require('chalk');
 // 配置项
 const CONFIG = {
   rootDir: path.resolve(__dirname, '../../html'),
-  pagesDir: path.resolve(__dirname, '../../html/pages'),
+  pagesDir: path.resolve(__dirname, '../../pages'),
   categories: ['科研辅助', 'AI技术与生态', '信息化升级', '知识报告'],
   requiredMetaTags: ['title', 'category', 'description', 'publish-date', 'keywords'],
   outputReportFile: path.resolve(__dirname, '../../metadata-report.json'),

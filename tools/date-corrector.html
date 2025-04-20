@@ -448,7 +448,10 @@
         // 加载元数据
         loadBtn.addEventListener('click', async () => {
             try {
-                const response = await fetch('../html/metadata.json');
+                const response = await fetch('../metadata.json');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch metadata: ${response.status} ${response.statusText}`);
+                }
                 metadataJson = await response.json();
                 
                 // 更新UI状态

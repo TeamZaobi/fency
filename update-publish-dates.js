@@ -7,8 +7,8 @@ const fs = require('fs');
 const path = require('path');
 
 // 配置
-const METADATA_PATH = 'html/metadata.json';
-const HTML_BASE_DIR = 'html/';
+const METADATA_PATH = 'metadata.json';
+const HTML_BASE_DIR = '';
 
 // 读取metadata.json
 function loadMetadata() {

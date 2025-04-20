@@ -21,76 +21,42 @@
 
 ## 内容分类
 
-网站内容分为四大类：
+网站内容分为四大类，存放在 `html/pages/` 目录下对应的子文件夹中：
 
-1. **信息化升级**: 医疗数据资产化、医院智能化升级相关内容
-2. **科研辅助**: AI研究主题全景、临床辅助决策系统等
-3. **AI技术与生态**: 大模型能力解析、多模态技术、开发框架等
-4. **知识报告**: AI模型理论、医疗AI研究综述、认知科学研究等
+1. **信息化升级 (info-upgrade)**: 医疗数据资产化、医院智能化升级相关内容
+2. **科研辅助 (research)**: AI研究主题全景、临床辅助决策系统等
+3. **AI技术与生态 (ai-tech)**: 大模型能力解析、多模态技术、开发框架等
+4. **知识报告 (knowledge)**: AI模型理论、医疗AI研究综述、认知科学研究等
 
 ## 项目结构
 
-项目按照功能和内容类型进行了科学组织，具体结构如下：
+项目核心文件结构如下：
 
 ```
-凿壁-医疗AI解决方案平台/
-├── index.html                    # 项目首页
-├── README.md                     # 项目说明文档
-├── CHANGELOG.md                  # 更新日志
-├── CONTRIBUTING.md               # 贡献指南
-│
-├── pages/                        # 主要内容页面目录
-│   ├── info-upgrade/             # 信息化升级相关页面
-│   ├── research/                 # 科研辅助相关页面
-│   ├── ai-tech/                  # AI技术与生态相关页面
-│   └── knowledge/                # 知识报告相关页面
-│
-├── models/                       # AI模型相关页面
-│   └── comparisons/              # 模型对比评测
-│
-├── includes/                     # 页面公共部分
-│   ├── header/                   # 页头文件
-│   └── footer/                   # 页脚文件
-│
-├── assets/                       # 静态资源文件
-│   ├── css/                      # CSS样式文件
-│   ├── js/                       # JavaScript脚本
-│   └── images/                   # 图片资源
-│
-├── scripts/                      # 项目辅助脚本
-│   ├── metadata-processor.js     # 元数据处理脚本
-│   └── metadata-llm-integration.js # LLM集成模块
-│
-├── audit/                        # 代码审计文档
-│   ├── README.md                 # 审计概述
-│   ├── code-structure-best-practices.md # 代码最佳实践
-│   └── project-reflection.md     # 项目反思
-│
-├── react-app/                    # React应用目录
-│   ├── src/                      # 源代码
-│   ├── public/                   # 公共资源
-│   └── README.md                 # React应用说明
-│
-└── docs/                         # 项目文档
-    ├── README.md                 # 详细文档
-    ├── architecture.md           # 架构设计文档
-    ├── content-processing-workflow.md # 内容处理工作流程
-    ├── version-management.md     # 版本管理计划
-    ├── plan.md                   # 开发计划
-    ├── prd.md                    # 产品需求文档
-    └── build.md                  # 构建指南
+/var/www/
+├── html/                    # 主网站目录
+│   ├── index.html           # 网站首页（动态索引页，由JS读取metadata.json生成）
+│   ├── metadata.json        # 网站页面元数据索引文件 (核心数据源)
+│   └── pages/               # 页面内容目录
+│       ├── ai-tech/
+│       ├── info-upgrade/
+│       ├── knowledge/
+│       └── research/
+├── dist/                    # 分发版本目录 (通常与html目录同步)
+│   └── metadata.json        # 分发版本的元数据索引文件
+├── .cursor/                 # Cursor AI 辅助开发配置
+│   └── rules/               # 项目规则文件目录 (指导AI协作)
+├── docs/                    # 项目详细文档（架构、计划等）
+└── README.md                # 项目说明文档
 ```
 
-## 元数据管理
+## 元数据与索引
 
-本项目采用元数据驱动的内容组织方式，确保所有页面都具有标准化的元数据结构，便于索引和关联。每个HTML页面都包含以下元数据标签：
+本项目采用**元数据驱动**的内容组织方式。所有HTML页面都必须包含标准化的元数据标签（详情见 [.cursor/rules/html-page-structure.mdc](mdc:.cursor/rules/html-page-structure.mdc)）。
 
-```html
-<meta name="category" content="分类名">  <!-- 必须是预定义的四个分类之一 -->
-<meta name="description" content="页面内容的简洁摘要...">
-<meta name="publish-date" content="YYYY-MM-DD">  <!-- 发布日期，格式为年-月-日 -->
-<meta name="keywords" content="关键词1, 关键词2, 关键词3, ...">  <!-- 与页面内容相关的关键词列表 -->
-```
+核心数据源是 [html/metadata.json](mdc:html/metadata.json)，它包含了所有页面的元数据，用于动态生成网站首页 [html/index.html](mdc:html/index.html) 的内容卡片和知识图谱。
+
+`metadata.json` 的结构和维护规范请参考 [.cursor/rules/metadata-json-structure.mdc](mdc:.cursor/rules/metadata-json-structure.mdc)。
 
 ## 技术栈
 
@@ -103,29 +69,14 @@
 
 ## 版本管理
 
-凿壁项目采用**功能驱动**的版本管理策略，而非固定时间周期的发布模式。这意味着我们的版本发布由功能完成度和产品路线图驱动，确保每个版本都提供有意义的用户价值，同时保持高质量标准。
+项目遵循详细的 Git 版本控制规范，包括功能驱动发布、语义化版本、Git Flow 分支模型和 Conventional Commits 提交消息格式。
 
-### 版本号规范
+详细规范请参考 [.cursor/rules/git-version-control.mdc](mdc:.cursor/rules/git-version-control.mdc)。
 
-采用语义化版本控制（Semantic Versioning）规范：
+## 开发与维护
 
-- **格式**：`主版本号.次版本号.修订号`（例如：1.2.3）
-- **主版本号**：当进行不兼容的API更改或重大功能重构时递增
-- **次版本号**：当添加功能但保持向后兼容性时递增
-- **修订号**：当进行向后兼容的错误修复时递增
-
-### 版本类型
-
-根据功能重要性和范围，将版本分为以下类型：
-
-1. **主要版本（Major Release）**：包含重大功能更新或架构变更
-2. **功能版本（Feature Release）**：包含新功能但保持向后兼容性
-3. **维护版本（Maintenance Release）**：主要包含错误修复和小改进
-4. **紧急修复版本（Hotfix）**：针对生产环境中的关键问题
-
-详细的版本管理计划请参考 [docs/version-management.md](docs/version-management.md)。
-
-## 开发指南
+### Cursor AI 规则
+本项目利用 Cursor AI 进行辅助开发和维护。相关规则定义在 `.cursor/rules/` 目录下，指导 AI 的行为，确保代码质量和流程一致性。
 
 ### 本地开发
 
@@ -144,7 +95,9 @@
 3. 访问 `http://localhost:8000` 查看网站
 
 ### 开发规范
+详细的网页开发规范、LLM 页面生成要求和文件管理流程请参考 [.cursor/rules/web-dev.mdc](mdc:.cursor/rules/web-dev.mdc)。
 
+核心要求包括：
 - 所有页面内容必须为简体中文
 - 保持代码结构清晰、语义化，包含适当的注释
 - 确保网站在各设备上响应式展示

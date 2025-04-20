@@ -1,23 +1,23 @@
----
-description: 
-globs: 
-alwaysApply: true
----
+# 凿壁项目网站维护规则
+
+## 网站结构
+
+网站采用单页面生成模式，主要包含：
 # 凿壁项目网站维护规则
 
 ## 网站结构
 
 网站采用单页面生成模式，主要包含：
 
-- 主索引页 [html/index.html](mdc:html/index.html) - 动态读取元数据展示内容卡片
-- 元数据索引 [html/metadata.json](mdc:html/metadata.json) - 所有页面的元数据
+- 主索引页 [index.html](mdc:index.html) - 动态读取元数据展示内容卡片
+- 元数据索引 [metadata.json](mdc:metadata.json) - 所有页面的元数据
 - 分发版本 [dist/metadata.json](mdc:dist/metadata.json) - 部署用的元数据副本
 
 内容页面按分类存放在以下目录：
-- [html/pages/ai-tech/](mdc:html/pages/ai-tech) - AI技术与生态
-- [html/pages/info-upgrade/](mdc:html/pages/info-upgrade) - 信息化升级
-- [html/pages/knowledge/](mdc:html/pages/knowledge) - 知识报告
-- [html/pages/research/](mdc:html/pages/research) - 科研辅助
+- [pages/ai-tech/](mdc:pages/ai-tech) - AI技术与生态
+- [pages/info-upgrade/](mdc:pages/info-upgrade) - 信息化升级
+- [pages/knowledge/](mdc:pages/knowledge) - 知识报告
+- [pages/research/](mdc:pages/research) - 科研辅助
 
 ## 元数据规范
 
@@ -36,22 +36,29 @@ alwaysApply: true
 }
 ```
 
+**重要时间规则**：
+1. **服务器当前日期**：`publish-date`字段必须使用创建/更新元数据时的**当前服务器日期**，绝不能使用未来日期
+2. **日期格式**：必须使用`YYYY-MM-DD`格式（如：`2025-04-20`）
+3. **禁止时间穿越**：使用未来日期会导致索引页无法显示内容项
+4. **排序机制**：文章在首页按`publish-date`倒序排列，最新日期显示在最前面
+
 ## HTML页面要求
 
 所有HTML页面必须：
 1. 是完整的HTML5文档
-2. 包含必要元标签：`publish-date`, `category`, `description`, `keywords`
-3. 分类名必须是规定的四种之一
-4. 页面内显示发布日期和分类名
+2. 包含必要元标签：`publish-date`（**当前服务器日期**）, `category`（四种指定代码之一）, `description`, `keywords`
+3. 分类代码必须是规定的四种之一：`ai-tech`, `info-upgrade`, `knowledge`, `research`
+4. 页面内显示的发布日期必须与`<meta name="publish-date">`的值**完全一致**
 5. 包含返回首页链接
 6. 页面底部包含作者信息
 
 ## 文件操作规则
 
 ### 创建新页面
-1. 在正确分类目录下创建HTML文件
-2. 确保符合HTML结构要求
-3. 更新`metadata.json`
+1. **单一内容页面**: 在正确分类目录下创建独立的HTML文件。
+2. **多文档融合页面**: 基于指定文件夹内的多个Markdown文件，通过特定流程（融合、筛选、分析）生成聚合型HTML文件，并存放在合适的分类目录下。
+3. 确保生成的HTML文件符合结构要求（元数据、必要元素等）。
+4. 更新`metadata.json`以包含新页面的条目。
 
 ### 移动页面（更改分类）
 1. 更新HTML文件中的分类元数据
@@ -72,3 +79,4 @@ alwaysApply: true
 3. 保持`html/metadata.json`和`dist/metadata.json`同步
 4. 所有用户可见内容必须使用简体中文
 5. 定期检查页面链接的正确性
+6. **注意部署环境差异:** 项目部署在 GitHub Pages 上，通常位于子目录。维护时需确保代码（特别是 JS/HTML）中使用相对路径引用内部资源，避免因路径问题导致线上错误。

@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: true
 ---
 # 凿壁项目HTML页面结构规范
@@ -41,3 +41,24 @@ alwaysApply: true
 </body>
 </html>
 ```
+
+## 元数据标签规则
+
+1. **publish-date**:
+   - 格式：`YYYY-MM-DD`（例如：`2025-04-20`）
+   - **必须**使用创建页面当天的服务器日期，不得使用未来日期或自定义日期
+   - 页面中显示的日期（如页眉和页脚中）必须与此元标签值完全一致
+
+2. **category**:
+   - 必须使用以下四个指定值之一：`ai-tech`, `info-upgrade`, `knowledge`, `research`
+   - HTML文件必须存放在与分类对应的目录中（例如：ai-tech分类的文件应存放在`pages/ai-tech/`目录）
+   - 页面中显示的分类名可以使用对应的中文名称（参见metadata-json-structure中的映射表）
+
+3. **description**:
+   - 应为100-200字符的简洁摘要
+   - 用于首页卡片展示，应能准确概括页面核心内容
+
+4. **keywords**:
+   - 以逗号分隔的关键词列表
+   - 至少包含3-5个与页面内容高度相关的关键词
+   - 用于知识图谱构建和页面相关性分析

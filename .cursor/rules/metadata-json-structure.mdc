@@ -1,13 +1,13 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: true
 ---
 # 凿壁项目元数据文件结构规范
 
 ## metadata.json 结构
 
-网站使用 [html/metadata.json](mdc:html/metadata.json) 和 [dist/metadata.json](mdc:dist/metadata.json) 两个元数据文件，它们应保持同步。核心结构如下：
+网站使用 [metadata.json](mdc:metadata.json) 和 [dist/metadata.json](mdc:dist/metadata.json) 两个元数据文件，它们应保持同步。核心结构如下：
 
 ```json
 {
@@ -25,12 +25,18 @@ alwaysApply: true
         "关键词2",
         "..."
       ],
-      "publish-date": "YYYY-MM-DD"          // 发布日期
+      "publish-date": "YYYY-MM-DD"           // 发布日期（必须使用当前服务器日期）
     },
     // 更多页面...
   ]
 }
 ```
+
+**重要说明：**
+1. **发布日期规则**：`publish-date`字段**必须**设置为元数据创建/更新时的**服务器当前日期**（不得使用未来日期或过去日期）。
+2. **日期格式**：`publish-date`使用`YYYY-MM-DD`格式，例如`2025-04-20`。
+3. **避免日期错误**：禁止使用未来日期，这会导致索引页无法正确显示内容。
+4. **排序依据**：首页按`publish-date`倒序排列文章，最新发布的显示在前面。
 
 ## 分类映射
 
@@ -38,10 +44,10 @@ alwaysApply: true
 
 | category值 | 对应目录 | 中文显示名称 |
 |------------|---------|------------|
-| ai-tech | html/pages/ai-tech/ | AI技术与生态 |
-| info-upgrade | html/pages/info-upgrade/ | 信息化升级 |
-| knowledge | html/pages/knowledge/ | 知识报告 |
-| research | html/pages/research/ | 科研辅助 |
+| ai-tech | pages/ai-tech/ | AI技术与生态 |
+| info-upgrade | pages/info-upgrade/ | 信息化升级 |
+| knowledge | pages/knowledge/ | 知识报告 |
+| research | pages/research/ | 科研辅助 |
 
 ## 元数据操作规范
 
@@ -52,8 +58,9 @@ alwaysApply: true
 2. 构造新的JSON对象，包含所有必要字段
 3. 设置`id`和`path`为HTML文件的相对路径
 4. 设置`lastModifiedDate`为文件的最后修改时间
-5. 将新对象添加到`pages`数组
-6. 更新`lastUpdated`为当前时间
+5. 设置`publish-date`为**当前服务器时间**的日期部分（YYYY-MM-DD格式）
+6. 将新对象添加到`pages`数组
+7. 更新`lastUpdated`为当前时间
 
 ### 更新现有页面
 更新页面元数据时，需要：
@@ -74,10 +81,10 @@ alwaysApply: true
 
 ## 元数据同步
 
-对`html/metadata.json`的任何更改都应同步到`dist/metadata.json`：
+对`metadata.json`的任何更改都应同步到`dist/metadata.json`：
 
 ```bash
-cp html/metadata.json dist/metadata.json
+cp metadata.json dist/metadata.json
 ```
 
 ## 元数据验证
@@ -85,7 +92,7 @@ cp html/metadata.json dist/metadata.json
 每次更新后，应验证JSON格式的有效性，可使用以下命令：
 
 ```bash
-jq . html/metadata.json > /dev/null && echo "Valid JSON"
+jq . metadata.json > /dev/null && echo "Valid JSON"
 ```
 
 或使用在线JSON验证工具。
@@ -98,3 +105,4 @@ jq . html/metadata.json > /dev/null && echo "Valid JSON"
 4. 每次更新都应更新`lastModifiedDate`和`lastUpdated`
 5. 更新`metadata.json`后必须验证JSON格式
 6. 所有日期和时间使用ISO标准格式
+7. **对于多文档融合页面**: `id`, `path`, `title`, `description`, `keywords` 应反映整合后的内容主题和来源文件夹信息，而非单一来源文件。`category` 同样基于整体内容主题选择。

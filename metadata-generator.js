@@ -3,8 +3,8 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 // 配置
-const HTML_DIR = 'html/pages';
-const OUTPUT_FILE = 'html/metadata.json';
+const HTML_DIR = 'pages';
+const OUTPUT_FILE = 'metadata.json';
 const CATEGORIES = ['ai-tech', 'info-upgrade', 'knowledge', 'research'];
 
 // 从HTML文件中提取元数据
@@ -27,7 +27,7 @@ function extractMetadataFromFile(filePath) {
     const lastModifiedDate = stats.mtime.toISOString();
     
     // 获取相对路径
-    const relativePath = filePath.replace(/^html\//, '');
+    const relativePath = filePath;
     
     // 解析类别
     let category = categoryMatch ? categoryMatch[1].trim() : '';
