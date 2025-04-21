@@ -607,7 +607,7 @@ TypeScript 使用
                 <pre class="language-markdown text-sm text-gray-800 dark:text-gray-200">## Rules正文
 
 ```Markdown
-Use 'cursor_project_rules' as the Knowledge Base: Always refer to cursor_project_rules' to understand the context of the project. Do not code anything outside of the context provided in the 'cursor_project_rules' folder. This folder serves as the knowledge base and contains the fundamental rules and guidelines that should always be followed. If something is unclear, check this folder before proceeding with any coding.  
+Use '@rules' as the Knowledge Base: Always refer to '@rules' to understand the context of the project. Do not code anything outside of the context provided in the '@rules' folder (which is located at '.cursor/rules/' in the project root). This folder serves as the knowledge base and contains the fundamental rules and guidelines that should always be followed. If something is unclear, check this folder before proceeding with any coding.  
 Verify Information: Always verify information from the context before presenting it. Do not make assumptions or speculate without clear evidence]  
 Follow implementation-plan.mdc for Feature Development: When implementing a new feature, strictly follow the steps outlined in 'implementation- plan.mdc. Every step is listed in sequence, and each must be completed in order. After completing each step, update 'implementation-plan.mdc with the word *"Done"' and a two-line summary of what steps were taken. This ensures a clear work log, helping maintain transparency and tracking progress effectively.  
 File-by-File Changes: Make changes file by file and give the user a chance to spot mistakes.  
@@ -649,9 +649,9 @@ Use Assertions: Include assertions wherever possible to validate assumptions and
                 <!-- 规则 1 -->
                 <div class="rule-card">
                     <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded mb-2">规则 1</span>
-                    <div class="rule-original">Use 'cursor_project_rules' as the Knowledge Base: Always refer to cursor_project_rules' to understand the context of the project.</div>
-                    <div class="rule-translation"><i class="fas fa-language text-blue-500 mr-1"></i> 使用 'cursor_project_rules' 作为知识库：始终参考 'cursor_project_rules' 来理解项目背景。</div>
-                    <div class="rule-explanation">这条规则指示 AI（Cursor）将名为 'cursor_project_rules' 的特定文件或文件夹视为其核心信息源。在执行任何编码任务或回答问题之前，AI 必须查阅这个"知识库"来获取关于项目目标、技术栈、限制条件等关键背景信息。这确保了 AI 的行为和产出与项目的具体要求保持一致。</div>
+                    <div class="rule-original">Use '@rules' as the Knowledge Base: Always refer to '@rules' to understand the context of the project.</div>
+                    <div class="rule-translation"><i class="fas fa-language text-blue-500 mr-1"></i> 使用 '@rules' 作为知识库：始终参考 '@rules' 来理解项目背景。</div>
+                    <div class="rule-explanation">这条规则指示 AI（Cursor）将名为 '@rules' 的特定文件或文件夹视为其核心信息源。在执行任何编码任务或回答问题之前，AI 必须查阅这个"知识库"来获取关于项目目标、技术栈、限制条件等关键背景信息。这确保了 AI 的行为和产出与项目的具体要求保持一致。</div>
                 </div>
                 
                 <!-- 规则 2 -->
