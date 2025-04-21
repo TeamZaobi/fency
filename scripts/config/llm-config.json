@@ -1,0 +1,28 @@
+{
+  "defaultProvider": "openai",
+  "providers": {
+    "openai": {
+      "apiKey": "",
+      "model": "gpt-4o",
+      "temperature": 0.3
+    },
+    "deepseek": {
+      "apiKey": "",
+      "endpoint": "https://api.deepseek.com/v1/chat/completions",
+      "model": "deepseek-chat",
+      "temperature": 0.3
+    },
+    "local": {
+      "endpoint": "http://localhost:11434/api/chat",
+      "model": "llama3",
+      "temperature": 0.3
+    },
+    "baidu": {
+      "apiKey": "",
+      "secretKey": "",
+      "endpoint": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions_pro",
+      "model": "ERNIE-Bot-4",
+      "temperature": 0.3
+    }
+  }
+} 
