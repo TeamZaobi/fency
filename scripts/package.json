@@ -1,24 +1,26 @@
 {
-  "name": "metadata-tools",
+  "name": "zaobi-metadata-tools",
   "version": "1.0.0",
-  "description": "Tools for managing metadata in the zaobi project",
+  "description": "凿壁项目元数据处理工具",
   "main": "metadata-processor.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "check:knowledge": "node metadata-processor.js ../pages/knowledge",
-    "check:research": "node metadata-processor.js ../pages/research",
-    "check:ai-tech": "node metadata-processor.js ../pages/ai-tech",
-    "check:info-upgrade": "node metadata-processor.js ../pages/info-upgrade",
-    "check:all": "node metadata-processor.js ../pages"
+    "process": "node metadata-processor.js",
+    "generate": "node generate-metadata.js",
+    "batch": "node batch-generate-metadata.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "bin": {
+    "zb-process": "./metadata-processor.js",
+    "zb-generate": "./generate-metadata.js",
+    "zb-batch": "./batch-generate-metadata.js"
+  },
+  "author": "季晓康",
+  "license": "MIT",
   "dependencies": {
+    "axios": "^1.6.0",
+    "chalk": "^4.1.2",
     "cheerio": "^1.0.0-rc.12",
-    "openai": "^4.20.0"
-  },
-  "engines": {
-    "node": ">=14.0.0"
+    "jsdom": "^22.1.0",
+    "openai": "^4.16.0"
   }
 } 
