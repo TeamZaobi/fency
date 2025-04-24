@@ -1,6 +1,47 @@
 {
-  "lastUpdated": "2025-04-20T10:55:00.000Z",
+  "lastUpdated": "2025-05-22T10:30:00.000Z",
   "pages": [
+    {
+      "id": "pages/ai-tech/bitnet-analysis.html",
+      "path": "pages/ai-tech/bitnet-analysis.html",
+      "title": "微软BitNet项目全面调研分析 | 凿壁",
+      "lastModifiedDate": "2025-04-22T10:30:00.000Z",
+      "category": "ai-tech",
+      "description": "微软BitNet项目是一种革命性的1比特大语言模型技术，本文对其技术原理、性能评估、社区评价及发展趋势进行全面分析，融合多家大语言模型的观点，为读者提供对这一前沿AI技术的深入认识。",
+      "keywords": [
+        "BitNet",
+        "微软",
+        "1比特量化",
+        "大语言模型",
+        "LLM",
+        "模型压缩",
+        "AI效率",
+        "bitnet.cpp",
+        "CPU推理"
+      ],
+      "publish-date": "2025-04-22"
+    },
+    {
+      "id": "pages/ai-tech/intelligent-statistical-analysis-system.html",
+      "path": "pages/ai-tech/intelligent-statistical-analysis-system.html",
+      "title": "智能统计分析系统实现方案详解 | 凿壁",
+      "lastModifiedDate": "2025-04-20T12:30:00.000Z",
+      "category": "ai-tech",
+      "description": "详解智能统计分析系统实现方案，融合规则引擎与人工智能技术，自动化数据特征分析、研究设计识别、统计方法推荐、代码生成与报告创建流程。",
+      "keywords": [
+        "智能统计分析",
+        "规则引擎",
+        "LLM",
+        "数据分析",
+        "研究设计",
+        "统计方法",
+        "代码生成",
+        "R语言",
+        "决策树",
+        "AI辅助统计"
+      ],
+      "publish-date": "2025-04-20"
+    },
     {
       "id": "pages/ai-tech/ai-model-capability-analysis.html",
       "path": "pages/ai-tech/ai-model-capability-analysis.html",

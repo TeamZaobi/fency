@@ -3,9 +3,9 @@ const path = require('path');
 const cheerio = require('cheerio'); // 需要 npm install cheerio
 
 // --- 配置 ---
-const baseHtmlDir = path.join(__dirname, 'html'); // 基准 HTML 目录
-const pagesBaseDir = path.join(baseHtmlDir, 'pages'); // pages 目录
-const outputFilePath = path.join(baseHtmlDir, 'metadata.json'); // 输出文件路径
+const baseDir = __dirname; // 基准目录为当前根目录
+const pagesBaseDir = path.join(baseDir, 'pages'); // pages 目录
+const outputFilePath = path.join(baseDir, 'metadata.json'); // 输出文件路径
 const categories = ['info-upgrade', 'research', 'ai-tech', 'knowledge']; // 预定义的分类目录
 const requiredMeta = ['publish-date', 'category', 'description', 'keywords']; // 必填的 meta 标签 name
 
@@ -56,7 +56,7 @@ function findHtmlFilesRecursive(currentPath) {
 function parseHtmlFile(filePath) {
     let relativePath = 'unknown/path'; // Default in case of early error
     try {
-        relativePath = path.relative(baseHtmlDir, filePath).replace(/\\\\/g, '/'); // 相对 html 目录的路径
+        relativePath = path.relative(baseDir, filePath).replace(/\\\\/g, '/'); // 相对 html 目录的路径
         const fileStats = fs.statSync(filePath);
         const htmlContent = fs.readFileSync(filePath, 'utf-8');
         const $ = cheerio.load(htmlContent);
@@ -187,8 +187,8 @@ function runFullMode() {
 
     try {
         // 确保 html 目录存在
-        if (!fs.existsSync(baseHtmlDir)) {
-            fs.mkdirSync(baseHtmlDir, { recursive: true });
+        if (!fs.existsSync(baseDir)) {
+            fs.mkdirSync(baseDir, { recursive: true });
         }
         fs.writeFileSync(outputFilePath, JSON.stringify(finalOutput, null, 2), 'utf-8');
         console.log(`\n元数据提取完成！结果已保存到 ${outputFilePath}`);
