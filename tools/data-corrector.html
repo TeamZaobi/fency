@@ -104,12 +104,12 @@
         async function loadMetadata() {
             try {
                 // 使用相对路径访问 metadata.json
-                const response = await fetch('../html/metadata.json');
+                const response = await fetch('../metadata.json');
                 if (!response.ok) {
                     // 更详细的错误处理
                     let errorMsg = `HTTP error! status: ${response.status}`;
                     if (response.status === 404) {
-                        errorMsg += ' (metadata.json not found at expected location: ../html/metadata.json)';
+                        errorMsg += ' (metadata.json not found at expected location: ../metadata.json)';
                     } else {
                          try {
                               const text = await response.text();
@@ -176,7 +176,7 @@
 
             } catch (error) {
                 console.error('加载或解析 metadata.json 时出错:', error);
-                loadingMessage.textContent = `错误: 无法加载或解析 metadata.json (${error.message})。请确保文件位于 '../html/metadata.json' 且格式正确。`;
+                loadingMessage.textContent = `错误: 无法加载或解析 metadata.json (${error.message})。请确保文件位于 '../metadata.json' 且格式正确。`;
                 loadingMessage.style.color = 'red';
                 generateJsonBtn.disabled = true; // 加载失败则禁用按钮
             }

@@ -20,7 +20,7 @@
 *   选择理由: 平衡 LLM 的高效率与项目可靠性需求。通过**将约束和验证嵌入到提示词和工作流中**，适应 "vibe coding" 模式。
 *   优势: 保持较高开发效率的同时，通过规则和验证步骤降低维护错误风险。
 
-## 4. 系统架构图 (增加验证环节)
+## 4. 系统架构图 (简化，移除构建步骤)
 
 ```mermaid
 graph TD
@@ -36,14 +36,14 @@ graph TD
         E_F -- 验证通过 --> Meta[metadata.json];
     end
 
-    subgraph "动态索引"
-        G[index.html] -- 加载 --> Meta;
-        Meta -- 数据 --> H[渲染内容卡片<br>按分类与日期];
-        Meta -- 数据 --> I[构建知识图谱<br>基于共享关键词];
+    subgraph "动态索引 (直接读取源文件)"
+        G[/var/www/index.html] -- 加载 --> MetaSrc[/var/www/metadata.json];
+        MetaSrc -- 数据 --> H[渲染内容卡片<br>按分类与日期];
+        MetaSrc -- 数据 --> I[构建知识图谱<br>基于共享关键词];
     end
 
     subgraph "用户交互"
-        J[用户浏览器] -- 访问 --> G;
+        J[用户浏览器] -- 访问 (通过 Nginx 指向 /var/www) --> G;
         J -- 访问 --> D;
         H --> K[卡片浏览与筛选];
         I --> L[图谱交互与导航];
@@ -52,7 +52,7 @@ graph TD
     end
 
     style B fill:#f9f,stroke:#333,stroke-width:2px
-    style Meta fill:#ccf,stroke:#333,stroke-width:2px
+    style MetaSrc fill:#ccf,stroke:#333,stroke-width:2px
     style H fill:#cfc,stroke:#333,stroke-width:2px
     style I fill:#cfc,stroke:#333,stroke-width:2px
     style B_Val fill:#fec,stroke:#f00,stroke-dasharray: 5 5
@@ -62,19 +62,21 @@ graph TD
 **说明 (更新):**
 1.  维护者指导 LLM/Cursor 生成 HTML 文件，**严格依据规则和提示词**。
 2.  **增加验证步骤**: 生成后，通过 LLM 或人工快速检查页面是否包含必要的元标签和结构，符合核心规则。
-3.  维护者确认后保存文件。
-4.  维护者通过 Cursor 调用 LLM，**使用包含验证指令的提示词** (如 P.2 中包含 `jq empty metadata.json.tmp` 的验证)，提取元数据并原子更新 `metadata.json`。**LLM 需报告操作结果，包括验证是否成功。**
-5.  `index.html` 动态加载 `metadata.json` ...
-6.  初始元数据生成也需包含验证步骤。
+3.  维护者确认后保存文件到 `/var/www/pages/` 下的对应分类目录。
+4.  维护者通过 Cursor 调用 LLM，**使用包含验证指令的提示词**，提取元数据并原子更新 `/var/www/metadata.json`。**LLM 需报告操作结果，包括验证是否成功。**
+5.  用户通过 Nginx 访问网站，Nginx 配置指向 `/var/www`。
+6.  浏览器加载 `/var/www/index.html`，该页面通过 JavaScript 动态加载 `/var/www/metadata.json` 来渲染内容卡片和知识图谱。
+7.  **部署过程简化**: 无需构建步骤，直接将 `develop` 分支的内容部署（或同步）到 Web 服务器的 `/var/www` 目录。
 
 ## 5. 核心组件/文件职责 (强调规则和验证)
-*   `index.html`: ...
-*   `pages/`: ...
-*   `metadata.json`: ...
-*   `ts/`: ...
+*   `index.html` (位于 `/var/www`): 网站主入口，包含 JavaScript 逻辑，用于动态加载和渲染 `metadata.json` 中的内容。
+*   `pages/` (位于 `/var/www/pages`): 存放所有独立的 HTML 内容页面。
+*   `metadata.json` (位于 `/var/www`): **核心数据源**，包含所有页面的元数据，由维护者通过 Cursor/LLM 流程更新。
+*   `ts/` (位于 `/var/www/ts`): 包含 TypeScript 源码，**如果需要编译** (例如 `ts/main.ts` 用于 `index.html`)，编译后的 JavaScript 文件 (`js/main.js` 或类似) 需要与 `index.html` 一起位于 `/var/www` 下。
     *   `ts/main.ts`: ... **必须实现健壮的错误处理，能应对 `metadata.json` 加载失败或格式错误的情况，向用户提供清晰反馈。**
     *   `ts/types.ts`: ...
-*   `dist/css/`: ...
+*   `js/` (位于 `/var/www/js`, 如果编译 TS): 存放编译后的 JavaScript 文件。
+*   `assets/` (位于 `/var/www/assets`, 如果存在): 存放共享的静态资源，如图片、CSS 等。
 *   `@rules`: **项目的核心约束**。包含详细的页面生成规则、LLM 协作规则，以及**经过测试和验证的标准提示词模板 (如 P.1-P.5)，这些提示词应包含必要的约束和自我校验指令。**
 
 ## 6. 数据管理 (强调验证)
@@ -178,13 +180,13 @@ graph TD
 ## 7. 技术栈 (无变化)
 *   ...
 
-## 8. 部署策略 (增加验证)
-*   方式: ...
-*   构建步骤:
-    1. 编译 TypeScript (`tsc -p tsconfig.json` 或类似)
-    2. **(强制) 验证 `metadata.json` 格式有效性 (可通过简单脚本或手动检查)。**
-    3. 拷贝相关静态文件到目标服务器。
-*   持续部署: ...
+## 8. 部署策略 (简化，移除构建)
+*   方式: 直接部署 `develop` 分支的 `/var/www` 目录内容到目标服务器。
+*   部署步骤:
+    1. **(同步)** 确保目标服务器的 `/var/www` 目录与 Git `develop` 分支的最新状态一致 (可通过 `git pull`, `rsync`, 或 CI/CD 流程实现)。
+    2. **(验证)** 检查 Nginx 配置 (`/etc/nginx/sites-enabled/default` 或相应文件)，确保 `root` 指令指向 `/var/www`。
+    3. **(重启/重载)** 如有必要，重启或重载 Nginx 服务 (`sudo systemctl reload nginx`)。
+*   持续部署: CI/CD 流水线应配置为在 `develop` 分支更新时，自动将 `/var/www` 的内容同步到生产服务器。
 
 ## 9. 风险与缓解 (聚焦于流程和验证)
 *   **核心风险:** **LLM 操作失败或结果不符合预期 (即使有提示词约束)**，在 "vibe coding" 模式下容易被忽略。

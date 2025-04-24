@@ -6,17 +6,17 @@
 *   **内存 (RAM):** 总计 1.6 GB (注意: 对于复杂的构建过程或运行多个服务，内存可能比较紧张)
 *   **硬盘 (Disk):** 总计 40 GB, 可用约 33 GB。空间充足。
 *   **操作系统 (OS):** Linux (根据环境上下文推断)
-*   **权限:** 目录 `/var/www/react-app` 的所有权已设置为用户 `jxkcook`。
+*   **权限:** 目录 `/var/www/` 的所有权已设置为用户 `jxkcook`。
 
 ## 2. 技术栈
 
-*   **前端框架:** React
-*   **构建工具:** Vite (推荐，速度快且功能现代)
+*   **前端框架:** 可能包含 React (用于 `index.html`) 或其他 JS 库 (用于特定页面)
+*   **构建工具:** Vite (存在 `vite.config.js`, 可能用于开发或特定任务, 但部署不依赖其构建输出)
 *   **包管理器:** npm 或 yarn
-*   **Node.js:** Vite 和 npm/yarn 需要。推荐使用 LTS 版本 (例如 18.x 或 20.x)。
-*   **Web 服务器 (生产环境):** Nginx (推荐) 或 Apache。
+*   **Node.js:** Vite 和 npm/yarn 需要。
+*   **Web 服务器 (生产环境):** Nginx (当前配置使用)。
 
-## 3. 设置步骤
+## 3. 设置与开发步骤
 
 ### 3.1 安装 Node.js 和 npm/yarn
 
@@ -36,34 +36,25 @@ npm -v
 # yarn -v
 ```
 
-### 3.2 使用 Vite 创建 React 项目
+### 3.2 项目设置
 
-导航到父目录 (`/var/www/react-app`) 并运行:
+导航到项目根目录 (`/var/www`) 并根据需要运行:
 
 ```bash
-# 使用 npm
-npm create vite@latest my-react-app --template react
-# 或者使用 yarn
-# yarn create vite my-react-app --template react
-
-cd my-react-app
+cd /var/www
+# 如果项目依赖需要安装 (例如用于运行脚本)
 npm install # 或 yarn install
 ```
-*将 `my-react-app` 替换为你的实际项目名称。*
 
-### 3.3 开发工作流
+### 3.3 开发工作流 (如果使用 Vite 进行开发)
 
-1.  **导航到项目目录:** `cd my-react-app`
-2.  **启动开发服务器:** `npm run dev` (或 `yarn dev`)
-3.  在浏览器中访问应用 (Vite 会提供 URL，通常是 `http://localhost:5173` 或类似地址)。开发服务器支持热模块替换 (HMR)，可实现快速更新。
+1.  **导航到项目目录:** `cd /var/www`
+2.  **启动开发服务器 (如果配置了):** `npm run dev` (或 `yarn dev`)
+3.  在浏览器中访问开发服务器提供的 URL。
 
-### 3.4 生产环境构建
+**注意:** 当前的部署模型不依赖于 Vite 的生产构建 (`npm run build`) 输出到 `dist` 目录。部署直接使用 `/var/www` 目录下的文件。
 
-1.  **导航到项目目录:** `cd my-react-app`
-2.  **运行构建命令:** `npm run build` (或 `yarn build`)
-3.  此命令将在项目文件夹内的 `dist` 目录 (`my-react-app/dist`) 中生成优化后的静态资源 (HTML, CSS, JavaScript)。
-
-## 4. 部署策略 (使用 Nginx)
+## 4. 部署策略 (使用 Nginx - 当前配置)
 
 ### 4.1 安装 Nginx
 
@@ -75,25 +66,31 @@ sudo systemctl start nginx
 sudo systemctl enable nginx # 设置 Nginx 开机启动
 ```
 
-### 4.2 配置 Nginx
+### 4.2 配置 Nginx (与当前 `/etc/nginx/sites-enabled/default` 匹配)
 
-1.  为你的应用创建一个新的 Nginx 服务器块配置文件 (例如，`/etc/nginx/sites-available/react-app`)。
+确保 Nginx 配置指向项目根目录 (`/var/www`)。
+
+1.  检查或创建 Nginx 服务器块配置文件 (例如，`/etc/nginx/sites-available/default`)。
 
     ```nginx
     server {
-        listen 80;
-        # 替换为你的服务器域名或公网 IP 地址
-        server_name _;
+        listen 80 default_server;
+        listen [::]:80 default_server;
 
-        # 如果你的项目名称不是 'my-react-app' 或选择了不同的构建输出目录，请调整 root 路径
-        root /var/www/react-app/my-react-app/dist;
-        index html/index.html index.html index.htm;
+        server_name _; # 或者你的域名
+
+        # *** 关键：网站根目录指向项目根目录 ***
+        root /var/www;
+
+        # 默认索引文件
+        index index.html;
 
         location / {
-            # 对单页应用 (SPA) 很重要
-            # 尝试直接提供请求的文件，如果找不到，
-            # 则提供 html/index.html 让客户端路由处理。
-            try_files $uri $uri/ /html/index.html;
+            # 尝试直接服务文件，然后是目录，最后回退到根目录的 index.html
+            # 这适用于单页应用模式或需要将所有未找到的路径指向 index.html 的情况
+            try_files $uri $uri/ /index.html;
+            # 如果不是 SPA，并且希望对未找到的文件返回 404，可以使用:
+            # try_files $uri $uri/ =404;
         }
 
         # 可选增强配置:
@@ -115,28 +112,25 @@ sudo systemctl enable nginx # 设置 Nginx 开机启动
     }
     ```
 
-2.  通过创建符号链接来启用站点:
+2.  启用站点 (如果使用的是非默认文件):
     ```bash
-    # 如果默认站点存在且与端口 80 冲突，则移除
-    # sudo rm /etc/nginx/sites-enabled/default
-    sudo ln -s /etc/nginx/sites-available/react-app /etc/nginx/sites-enabled/
+    # sudo rm /etc/nginx/sites-enabled/default # 如果需要移除默认配置
+    # sudo ln -s /etc/nginx/sites-available/your-config-file /etc/nginx/sites-enabled/
     ```
 
-3.  测试 Nginx 配置是否存在语法错误:
+3.  测试 Nginx 配置:
     ```bash
     sudo nginx -t
     ```
 
-4.  如果测试成功，重新加载 Nginx 以应用更改:
+4.  重新加载 Nginx:
     ```bash
     sudo systemctl reload nginx
     ```
 
-### 4.3 放置构建文件
+### 4.3 文件放置
 
-运行 `npm run build` 后，确保 `my-react-app/dist` 目录的内容存在于 Nginx 配置中 `root` 指令指定的位置 (`/var/www/react-app/my-react-app/dist`)。如果你的构建过程输出到其他地方，你可能需要复制或移动它们，或者调整 Nginx 的 `root` 指令。
-
-*注意: 你之前创建了一个 `fency` 目录。如果打算将其作为最终部署位置而不是 Vite 生成的标准 `dist` 文件夹，则需要相应调整 Nginx 的 `root` 指令，并确保将构建产物复制到 `fency` 中。*
+确保所有需要部署的文件 (包括 `index.html`, `metadata.json`, `pages/` 目录, `assets/`, `js/` 等) 都位于 Nginx 配置中 `root` 指令指定的 `/var/www` 目录下，并且 Git 的 `develop` 分支包含这些最新文件。
 
 ## 5. 未来考虑事项
 

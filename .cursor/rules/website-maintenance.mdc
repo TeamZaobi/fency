@@ -11,7 +11,6 @@
 
 - 主索引页 [index.html](mdc:index.html) - 动态读取元数据展示内容卡片
 - 元数据索引 [metadata.json](mdc:metadata.json) - 所有页面的元数据
-- 分发版本 [dist/metadata.json](mdc:dist/metadata.json) - 部署用的元数据副本
 
 内容页面按分类存放在以下目录：
 - [pages/ai-tech/](mdc:pages/ai-tech) - AI技术与生态
@@ -70,13 +69,11 @@
 1. 备份当前`metadata.json`
 2. 更新相应条目和`lastUpdated`字段
 3. 验证JSON格式
-4. 同步更新`dist/metadata.json`
 
 ## 最佳实践
 
 1. 进行重要操作前先备份关键文件
 2. 确保HTML文件分类与所在目录一致
-3. 保持`html/metadata.json`和`dist/metadata.json`同步
-4. 所有用户可见内容必须使用简体中文
-5. 定期检查页面链接的正确性
-6. **注意部署环境差异:** 项目部署在 GitHub Pages 上，通常位于子目录。维护时需确保代码（特别是 JS/HTML）中使用相对路径引用内部资源，避免因路径问题导致线上错误。
+3. 所有用户可见内容必须使用简体中文
+4. 定期检查页面链接的正确性
+5. **注意部署环境差异:** 项目部署在 GitHub Pages 上，通常位于子目录。维护时需确保代码（特别是 JS/HTML）中使用相对路径引用内部资源，避免因路径问题导致线上错误。

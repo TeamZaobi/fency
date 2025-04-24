@@ -1,0 +1,4865 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2023-11-20">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="智能统计分析系统实现方案详解，讲述如何将规则引擎与人工智能结合，创建高效的统计分析工具，助力研究人员进行数据分析和统计方法选择。">
+  <meta name="keywords" content="智能分析,统计方法,规则引擎,大语言模型,决策树,数据科学,R语言">
+  
+  <title>智能统计分析系统实现方案详解 | 凿壁</title>
+  
+  <!-- CSS库 -->
+  <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+  <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- 数据可视化库 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- 代码高亮和图表库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  
+  <!-- 动画库 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+  
+  <script>
+    // Tailwind配置
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            'sans': ['"Noto Sans SC"', 'sans-serif'],
+            'serif': ['"Noto Serif SC"', 'serif']
+          },
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    /* 基础样式 */
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Noto Serif SC', serif;
+    }
+    
+    /* 浅色/深色模式 */
+    :root {
+      --bg-primary: #ffffff;
+      --text-primary: #1e293b;
+      --bg-secondary: #f8fafc;
+      --border-color: #e2e8f0;
+      --card-bg: #ffffff;
+      --code-bg: #f8fafc;
+    }
+    
+    .dark {
+      --bg-primary: #0f172a;
+      --text-primary: #e2e8f0;
+      --bg-secondary: #1e293b;
+      --border-color: #334155;
+      --card-bg: #1e293b;
+      --code-bg: #2d3748;
+    }
+    
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+    }
+    
+    /* 代码块样式 */
+    pre {
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+    
+    pre code {
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+    }
+    
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 1rem;
+      background-color: rgba(0,0,0,0.2);
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+    }
+    
+    .code-header .language {
+      font-weight: 500;
+    }
+    
+    .code-header .copy-button {
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      transition: background-color 0.2s;
+    }
+    
+    .code-header .copy-button:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    
+    /* 卡片样式 */
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* 首屏区域 */
+    .hero-section {
+      min-height: 60vh;
+      background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJncmlkIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8cGF0aCBkPSJNIDEwIDAgTCAwIDAgTCAwIDEwIiBmaWxsPSJub25lIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+Cjwvc3ZnPg==');
+      opacity: 0.3;
+      z-index: 1;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    /* 进度导航 */
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .hero-section {
+        min-height: 40vh;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- 主题切换按钮 -->
+  <div class="fixed top-4 right-4 z-50">
+    <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none">
+      <i class="fas fa-sun dark:hidden"></i>
+      <i class="fas fa-moon hidden dark:inline"></i>
+    </button>
+  </div>
+  
+  <!-- Hero区域 -->
+  <section class="hero-section">
+    <div class="container mx-auto px-4 py-16 hero-content flex flex-col justify-center">
+      <div class="max-w-3xl mx-auto text-center text-white">
+        <div class="inline-block mb-4 px-4 py-2 rounded-full bg-white bg-opacity-20 backdrop-blur-sm">
+          <span class="text-sm font-medium">AI技术与生态</span>
+          <span class="mx-2">|</span>
+          <span class="text-sm">发布日期: 2023-11-20</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6 leading-tight">智能统计分析系统实现方案详解</h1>
+        <p class="text-xl md:text-2xl opacity-90 mb-8">
+          规则引擎与人工智能结合的统计分析工具完整实现方案
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <a href="#section-1" class="px-6 py-3 bg-white text-blue-600 rounded-full font-medium hover:bg-opacity-90 transition-all">
+            <i class="fas fa-book-open mr-2"></i>开始阅读
+          </a>
+          <a href="#section-7" class="px-6 py-3 bg-transparent border border-white text-white rounded-full font-medium hover:bg-white hover:bg-opacity-10 transition-all">
+            <i class="fas fa-lightbulb mr-2"></i>未来展望
+          </a>
+        </div>
+      </div>
+    </div>
+    <svg class="absolute bottom-0 left-0 right-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120">
+      <path fill="#ffffff" fill-opacity="1" d="M0,96L48,85.3C96,75,192,53,288,58.7C384,64,480,96,576,96C672,96,768,64,864,48C960,32,1056,32,1152,42.7C1248,53,1344,75,1392,85.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+    </svg>
+  </section>
+  
+  <!-- 粘性导航 -->
+  <nav class="sticky-nav bg-white bg-opacity-80 dark:bg-gray-900 dark:bg-opacity-80 py-3 hidden md:block">
+    <div class="container mx-auto">
+      <ul class="flex flex-wrap justify-center space-x-6">
+        <li><a href="#section-1" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">项目概述</a></li>
+        <li><a href="#section-2" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">整体流程</a></li>
+        <li><a href="#section-3" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">系统组件</a></li>
+        <li><a href="#section-4" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">主程序流程</a></li>
+        <li><a href="#section-5" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">LLM集成</a></li>
+        <li><a href="#section-6" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">项目总结</a></li>
+        <li><a href="#section-7" class="px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">改进方向</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <!-- 主要内容区域 -->
+  <main class="container mx-auto px-4 py-12">
+    <!-- 系统图表摘要 -->
+    <div class="card mb-12 p-6">
+      <h2 class="text-2xl font-bold mb-4 text-center">系统能力一览</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 数据处理卡片 -->
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mr-3">
+              <i class="fas fa-table text-blue-600 dark:text-blue-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold">数据处理</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300">自动分析CSV数据特征，识别变量类型，检测缺失值，提取分布特征</p>
+        </div>
+        
+        <!-- 研究设计卡片 -->
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-3">
+              <i class="fas fa-microscope text-green-600 dark:text-green-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold">研究设计识别</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300">基于变量特征自动判断研究设计类型，区分横断面、纵向、实验研究等</p>
+        </div>
+        
+        <!-- 方法推荐卡片 -->
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center mr-3">
+              <i class="fas fa-brain text-purple-600 dark:text-purple-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold">智能方法推荐</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300">结合规则决策树和大语言模型，推荐最适合的统计方法</p>
+        </div>
+        
+        <!-- 代码生成卡片 -->
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-3">
+              <i class="fas fa-code text-red-600 dark:text-red-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold">代码生成</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300">自动生成可执行的R语言分析代码，包含数据读取、分析执行和可视化</p>
+        </div>
+        
+        <!-- 分析执行卡片 -->
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-full bg-yellow-100 dark:bg-yellow-900 flex items-center justify-center mr-3">
+              <i class="fas fa-play text-yellow-600 dark:text-yellow-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold">分析执行</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300">调用R执行分析代码，捕获输出，扫描生成的结果文件</p>
+        </div>
+        
+        <!-- 报告生成卡片 -->
+        <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+          <div class="flex items-center mb-3">
+            <div class="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mr-3">
+              <i class="fas fa-file-alt text-indigo-600 dark:text-indigo-300"></i>
+            </div>
+            <h3 class="text-lg font-semibold">报告生成</h3>
+          </div>
+          <p class="text-gray-600 dark:text-gray-300">创建HTML格式分析报告，包含数据摘要、方法描述、结果链接等</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 项目概述 -->
+    <section id="section-1" class="mb-16">
+      <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">1. 项目概述</h2>
+      <p class="text-lg mb-6">智能统计分析系统是一款将规则引擎与人工智能结合的统计分析工具，旨在帮助研究人员进行统计分析方法选择和数据分析。该系统能够分析数据特征、识别研究设计类型、推荐合适的统计方法、生成分析代码、执行统计分析并生成分析报告。</p>
+      
+      <!-- 核心功能与特点 -->
+      <div class="mb-8">
+        <h3 class="text-2xl font-semibold mb-4">核心功能与特点</h3>
+        <ul class="space-y-2">
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span><strong class="font-medium">数据输入与理解:</strong> 读取CSV数据并分析其基本特征</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span><strong class="font-medium">研究设计识别:</strong> 基于变量特征自动识别研究设计类型</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span><strong class="font-medium">方法推荐:</strong> 结合规则决策树和大语言模型推荐统计方法</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span><strong class="font-medium">代码生成:</strong> 自动生成R语言分析代码</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span><strong class="font-medium">分析执行:</strong> 调用R执行分析并获取结果</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle text-green-500 mt-1 mr-2"></i>
+            <span><strong class="font-medium">报告生成:</strong> 创建HTML格式的分析报告</span>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- 技术架构 -->
+      <div>
+        <h3 class="text-2xl font-semibold mb-4">技术架构</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <i class="fas fa-layer-group text-4xl text-blue-500 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">前端</h4>
+            <p class="text-center">命令行界面(CLI)</p>
+          </div>
+          <div class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <i class="fas fa-server text-4xl text-green-500 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">后端</h4>
+            <p class="text-center">Python + Pandas + R</p>
+          </div>
+          <div class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <i class="fas fa-sitemap text-4xl text-purple-500 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">决策引擎</h4>
+            <p class="text-center">YAML格式的决策树规则</p>
+          </div>
+          <div class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg col-span-1 md:col-span-2">
+            <i class="fas fa-robot text-4xl text-indigo-500 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">AI增强</h4>
+            <p class="text-center">大语言模型(LLM)API集成</p>
+          </div>
+          <div class="flex flex-col items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <i class="fas fa-file-code text-4xl text-red-500 mb-3"></i>
+            <h4 class="font-semibold text-lg mb-1">输出</h4>
+            <p class="text-center">HTML报告 + R分析结果</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 整体流程设计 -->
+    <section id="section-2" class="mb-16">
+      <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">2. 整体流程设计</h2>
+      <p class="text-lg mb-6">系统采用模块化设计，以下流程图展示了系统的整体工作流程，从数据输入到最终报告生成的完整过程。</p>
+      
+      <!-- 流程图 -->
+      <div class="card p-4 mb-8">
+        <div class="mermaid" data-content="
+flowchart TD
+    Start([开始]) --> DataInput[数据获取与探索]
+    DataInput --> ResearchDesign[研究设计识别]
+    ResearchDesign --> MethodRec[统计方法推荐]
+    MethodRec --> CodeGen[分析代码生成]
+    CodeGen --> Execution[分析执行]
+    Execution --> Report[报告生成]
+    Report --> End([结束])
+
+    subgraph 数据输入流程
+        DataInput --> |读取CSV| Profile[profile_data()]
+        Profile --> |数据特征| Display[display_data_profile()]
+        Display --> |用户选择| Select[select_variables()]
+    end
+
+    subgraph 研究设计识别流程
+        ResearchDesign --> |规则判断| BasicDesign[identify_research_design()]
+        ResearchDesign --> |决策树判断| TreeDesign[identify_research_design_using_integrated_tree()]
+    end
+
+    subgraph 方法推荐流程
+        MethodRec --> |整合决策树| IDT[apply_integrated_decision_tree()]
+        IDT --> |传递结果| LLM[enhance_recommendations_with_llm()]
+        LLM --> |优化推荐| Display2[display_recommended_methods()]
+    end
+        ">
+flowchart TD
+    Start([开始]) --> DataInput[数据获取与探索]
+    DataInput --> ResearchDesign[研究设计识别]
+    ResearchDesign --> MethodRec[统计方法推荐]
+    MethodRec --> CodeGen[分析代码生成]
+    CodeGen --> Execution[分析执行]
+    Execution --> Report[报告生成]
+    Report --> End([结束])
+
+    subgraph 数据输入流程
+        DataInput --> |读取CSV| Profile[profile_data()]
+        Profile --> |数据特征| Display[display_data_profile()]
+        Display --> |用户选择| Select[select_variables()]
+    end
+
+    subgraph 研究设计识别流程
+        ResearchDesign --> |规则判断| BasicDesign[identify_research_design()]
+        ResearchDesign --> |决策树判断| TreeDesign[identify_research_design_using_integrated_tree()]
+    end
+
+    subgraph 方法推荐流程
+        MethodRec --> |整合决策树| IDT[apply_integrated_decision_tree()]
+        IDT --> |传递结果| LLM[enhance_recommendations_with_llm()]
+        LLM --> |优化推荐| Display2[display_recommended_methods()]
+    end
+        </div>
+      </div>
+      
+      <p class="mb-8">整体流程由六个主要阶段组成，每个阶段负责不同的任务，但相互协作形成完整的分析流水线。系统通过有效组织这些阶段，实现了从数据到结果的端到端分析。</p>
+      
+      <!-- 流程阶段表格 -->
+      <div class="overflow-x-auto mb-8">
+        <table class="min-w-full border-collapse">
+          <thead>
+            <tr class="bg-gray-100 dark:bg-gray-800">
+              <th class="px-4 py-3 text-left">阶段</th>
+              <th class="px-4 py-3 text-left">主要功能</th>
+              <th class="px-4 py-3 text-left">核心组件</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">数据获取与探索</td>
+              <td class="px-4 py-3">读取数据文件，分析数据特征，支持用户选择分析变量</td>
+              <td class="px-4 py-3"><code>profile_data()</code>, <code>select_variables()</code></td>
+            </tr>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">研究设计识别</td>
+              <td class="px-4 py-3">根据变量特征和名称识别研究设计类型</td>
+              <td class="px-4 py-3"><code>identify_research_design()</code></td>
+            </tr>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">统计方法推荐</td>
+              <td class="px-4 py-3">结合规则与LLM推荐合适的统计方法</td>
+              <td class="px-4 py-3"><code>apply_integrated_decision_tree()</code>, <code>enhance_recommendations_with_llm()</code></td>
+            </tr>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">分析代码生成</td>
+              <td class="px-4 py-3">根据选择的方法生成R分析代码</td>
+              <td class="px-4 py-3"><code>generate_r_code()</code></td>
+            </tr>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">分析执行</td>
+              <td class="px-4 py-3">执行生成的R代码并获取结果</td>
+              <td class="px-4 py-3"><code>execute_r_analysis()</code></td>
+            </tr>
+            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+              <td class="px-4 py-3 font-medium">报告生成</td>
+              <td class="px-4 py-3">创建HTML分析报告，展示分析结果</td>
+              <td class="px-4 py-3"><code>generate_analysis_report()</code>, <code>show_results_summary()</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <p class="text-lg">系统使用模块化架构，各组件之间通过明确定义的接口通信，既保证了组件的独立性，又确保了整体流程的顺畅执行。这种设计使得系统便于维护和扩展，可以轻松添加新的统计方法或增强现有功能。</p>
+    </section>
+    
+    <!-- 系统组件详解 -->
+    <section id="section-3" class="mb-16">
+      <h2 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">3. 系统组件详解</h2>
+      
+      <!-- 数据处理模块 -->
+      <section id="section-3-1" class="mb-10">
+        <h3 class="text-2xl font-semibold mb-4">3.1 数据处理模块</h3>
+        <p class="text-lg mb-6">数据处理模块负责读取数据、分析数据特征以及让用户选择分析变量。这是分析流程的第一步，为后续所有分析奠定基础。</p>
+        
+        <!-- 数据处理流程图 -->
+        <div class="card p-4 mb-8">
+          <div class="mermaid" data-content="
+flowchart LR
+    CSV[(CSV数据文件)] --> ReadData[读取数据]
+    ReadData --> Analyze[分析数据特征]
+    Analyze --> |变量类型识别| TypeDetect[identify_variable_types]
+    Analyze --> |缺失值分析| Missing[analyze_missing_values]
+    Analyze --> |分布特征| Distribution[analyze_distributions]
+    Analyze --> DataProfile[(数据概况)]
+    DataProfile --> DisplayProfile[display_data_profile]
+    DisplayProfile --> UserSelect[select_variables]
+    UserSelect --> |因变量| DV[dependent_variable]
+    UserSelect --> |自变量| IV[analysis_variables]
+          ">
+flowchart LR
+    CSV[(CSV数据文件)] --> ReadData[读取数据]
+    ReadData --> Analyze[分析数据特征]
+    Analyze --> |变量类型识别| TypeDetect[identify_variable_types]
+    Analyze --> |缺失值分析| Missing[analyze_missing_values]
+    Analyze --> |分布特征| Distribution[analyze_distributions]
+    Analyze --> DataProfile[(数据概况)]
+    DataProfile --> DisplayProfile[display_data_profile]
+    DisplayProfile --> UserSelect[select_variables]
+    UserSelect --> |因变量| DV[dependent_variable]
+    UserSelect --> |自变量| IV[analysis_variables]
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">核心函数实现</h4>
+          
+          <!-- profile_data函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>profile_data()</code>: 分析数据特征
+            </h5>
+            <p class="mb-3">此函数负责读取CSV数据文件，分析其特征，构建数据概况对象。以下是核心功能：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>自动检测变量类型 (连续vs分类)</li>
+              <li>判断逻辑：<code>unique_values <= 10 || (unique_values/len(df) < 0.05 && unique_values <= 20)</code>为分类变量</li>
+              <li>识别缺失值比例</li>
+              <li>提取分布特征(均值、中位数、四分位数等)</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="profile-data-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="profile-data-code">
+def profile_data(data_file_path):
+    """
+    分析CSV数据文件的特征，返回数据概况对象
+    
+    参数:
+        data_file_path (str): CSV数据文件路径
+        
+    返回:
+        dict: 包含数据特征的数据概况对象
+    """
+    try:
+        # 读取CSV数据
+        df = pd.read_csv(data_file_path)
+        
+        # 基本信息
+        row_count = len(df)
+        col_count = len(df.columns)
+        
+        # 变量信息
+        variables = []
+        
+        for col in df.columns:
+            # 计算唯一值数量
+            unique_values = df[col].nunique()
+            # 计算缺失值比例
+            missing_rate = df[col].isna().mean()
+            
+            # 判断变量类型
+            is_categorical = False
+            if pd.api.types.is_numeric_dtype(df[col]):
+                if unique_values <= 10 or (unique_values/len(df) < 0.05 and unique_values <= 20):
+                    is_categorical = True
+            else:
+                is_categorical = True
+            
+            # 计算基本统计量
+            stats = {}
+            if not is_categorical and pd.api.types.is_numeric_dtype(df[col]):
+                stats = {
+                    "mean": df[col].mean(),
+                    "median": df[col].median(),
+                    "std": df[col].std(),
+                    "min": df[col].min(),
+                    "max": df[col].max(),
+                    "q1": df[col].quantile(0.25),
+                    "q3": df[col].quantile(0.75)
+                }
+            elif is_categorical:
+                # 获取前5个最常见的值及其频率
+                value_counts = df[col].value_counts(normalize=True).head(5).to_dict()
+                stats = {"value_counts": value_counts}
+            
+            # 构建变量信息
+            variable_info = {
+                "name": col,
+                "type": "categorical" if is_categorical else "continuous",
+                "unique_values": unique_values,
+                "missing_rate": missing_rate,
+                "stats": stats
+            }
+            
+            variables.append(variable_info)
+        
+        # 返回数据概况对象
+        return {
+            "file_path": data_file_path,
+            "row_count": row_count,
+            "col_count": col_count,
+            "variables": variables,
+            "preview": df.head(5).to_dict('records')
+        }
+    
+    except Exception as e:
+        logger.error(f"分析数据文件时出错: {str(e)}")
+        return {"error": f"分析数据文件时出错: {str(e)}"}
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- display_data_profile函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>display_data_profile()</code>: 展示数据概况
+            </h5>
+            <p class="mb-3">此函数负责将数据概况以用户友好的方式展示，帮助用户了解数据特征：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>展示基本信息(样本量、变量数)</li>
+              <li>展示变量列表及类型</li>
+              <li>展示数据预览</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="display-profile-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="display-profile-code">
+def display_data_profile(data_profile):
+    """
+    展示数据概况信息
+    
+    参数:
+        data_profile (dict): 数据概况对象
+    """
+    if "error" in data_profile:
+        logger.error(data_profile["error"])
+        print(f"错误: {data_profile['error']}")
+        return False
+    
+    print("\n" + "="*50)
+    print(f"数据文件: {data_profile['file_path']}")
+    print(f"观测数: {data_profile['row_count']} 行")
+    print(f"变量数: {data_profile['col_count']} 列")
+    print("="*50 + "\n")
+    
+    # 展示变量信息
+    print("变量列表:")
+    print("-"*80)
+    print(f"{'序号':<5}{'变量名':<20}{'类型':<15}{'唯一值数':<10}{'缺失率':<10}")
+    print("-"*80)
+    
+    for i, var in enumerate(data_profile['variables'], 1):
+        print(f"{i:<5}{var['name']:<20}{var['type']:<15}{var['unique_values']:<10}{var['missing_rate']:.2%}")
+    
+    print("\n" + "="*50)
+    print("数据预览:")
+    
+    # 创建表格展示数据预览
+    headers = list(data_profile['preview'][0].keys())
+    rows = []
+    for row in data_profile['preview']:
+        rows.append([str(row.get(h, '')) for h in headers])
+    
+    # 打印表格
+    col_widths = [max(len(str(row[i])) for row in rows + [headers]) + 2 for i in range(len(headers))]
+    
+    # 打印表头
+    header_line = "".join(f"{headers[i]:<{col_widths[i]}}" for i in range(len(headers)))
+    print(header_line)
+    print("-" * sum(col_widths))
+    
+    # 打印数据行
+    for row in rows:
+        row_line = "".join(f"{row[i]:<{col_widths[i]}}" for i in range(len(row)))
+        print(row_line)
+    
+    print("\n" + "="*50)
+    return True
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- select_variables函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>select_variables()</code>: 选择分析变量
+            </h5>
+            <p class="mb-3">此函数引导用户交互式选择分析变量：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>支持多种输入格式(变量名称、序号、逗号分隔、范围)</li>
+              <li>包含输入验证和错误处理</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="select-variables-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="select-variables-code">
+def select_variables(data_profile):
+    """
+    引导用户选择因变量和分析变量
+    
+    参数:
+        data_profile (dict): 数据概况对象
+        
+    返回:
+        tuple: (因变量, 分析变量列表)
+    """
+    if "error" in data_profile:
+        return None, []
+    
+    variables = data_profile['variables']
+    var_names = [var['name'] for var in variables]
+    
+    # 选择因变量
+    print("\n请选择因变量 (输入变量序号或变量名):")
+    
+    while True:
+        dv_input = input("> ").strip()
+        
+        # 判断输入是否为序号
+        if dv_input.isdigit():
+            idx = int(dv_input) - 1
+            if 0 <= idx < len(var_names):
+                dependent_var = var_names[idx]
+                break
+            else:
+                print(f"序号超出范围，请输入1-{len(var_names)}之间的数字")
+        else:
+            # 判断输入是否为变量名
+            if dv_input in var_names:
+                dependent_var = dv_input
+                break
+            else:
+                print(f"未找到变量名 '{dv_input}'，请重新输入")
+    
+    print(f"已选择因变量: {dependent_var}")
+    
+    # 选择分析变量
+    print("\n请选择分析变量 (输入多个变量序号或变量名，用逗号分隔，输入'all'选择所有变量，可使用范围如'1-5'):")
+    
+    while True:
+        av_input = input("> ").strip()
+        
+        # 处理'all'输入
+        if av_input.lower() == 'all':
+            analysis_vars = [v for v in var_names if v != dependent_var]
+            break
+            
+        # 分割输入
+        parts = [p.strip() for p in av_input.split(',')]
+        selected_vars = []
+        
+        valid_input = True
+        for part in parts:
+            # 处理范围输入 (如 "1-5")
+            if '-' in part:
+                try:
+                    start, end = map(int, part.split('-'))
+                    if 1 <= start <= end <= len(var_names):
+                        for i in range(start-1, end):
+                            if var_names[i] != dependent_var:
+                                selected_vars.append(var_names[i])
+                    else:
+                        print(f"范围 {part} 超出有效范围 1-{len(var_names)}")
+                        valid_input = False
+                        break
+                except ValueError:
+                    print(f"无效的范围格式: {part}")
+                    valid_input = False
+                    break
+            # 处理序号输入
+            elif part.isdigit():
+                idx = int(part) - 1
+                if 0 <= idx < len(var_names):
+                    if var_names[idx] != dependent_var:
+                        selected_vars.append(var_names[idx])
+                else:
+                    print(f"序号 {part} 超出范围，请输入1-{len(var_names)}之间的数字")
+                    valid_input = False
+                    break
+            # 处理变量名输入
+            else:
+                if part in var_names:
+                    if part != dependent_var:
+                        selected_vars.append(part)
+                else:
+                    print(f"未找到变量名 '{part}'，请重新输入")
+                    valid_input = False
+                    break
+        
+        # 验证是否至少选择了一个变量
+        if valid_input:
+            if not selected_vars:
+                print("未选择任何分析变量，请至少选择一个")
+            else:
+                # 去除重复变量
+                analysis_vars = list(dict.fromkeys(selected_vars))
+                break
+    
+    print(f"已选择分析变量: {', '.join(analysis_vars)}")
+    return dependent_var, analysis_vars
+              </code></pre>
+            </div>
+          </div>
+        </div>
+        
+        <p class="text-lg">数据处理模块是整个分析系统的起点，它的设计兼顾了自动化与用户交互，既能高效地分析数据特征，又允许用户灵活选择感兴趣的变量。模块采用了面向对象的数据封装方式，将数据特征封装为结构化的数据概况对象，便于后续模块使用。</p>
+      </section>
+      
+      <!-- 研究设计识别模块 -->
+      <section id="section-3-2" class="mb-10">
+        <h3 class="text-2xl font-semibold mb-4">3.2 研究设计识别模块</h3>
+        <p class="text-lg mb-6">研究设计识别模块基于数据特征和变量名称，自动判断研究设计类型。准确识别研究设计对于选择合适的统计方法至关重要。</p>
+        
+        <!-- 研究设计识别流程图 -->
+        <div class="card p-4 mb-8">
+          <div class="mermaid" data-content="
+flowchart TD
+    DataProfile[(数据概况)] --> RDI[identify_research_design]
+    Variables[(分析变量)] --> RDI
+    RDI --> |基础规则判断| TimeCheck{有时间维度?}
+    TimeCheck --> |是| GroupCheck{有分组变量?}
+    TimeCheck --> |否| CrossSectional[横断面研究]
+    GroupCheck --> |是| RandomCheck{有随机分配?}
+    GroupCheck --> |否| Cohort[队列研究]
+    RandomCheck --> |是| Experimental[实验研究]
+    RandomCheck --> |否| QuasiExperimental[准实验研究]
+    
+    DataProfile --> RDIT[identify_research_design_using_integrated_tree]
+    Variables --> RDIT
+    Tree[(研究设计决策树)] --> RDIT
+    RDIT --> |遵循决策树路径| ResearchDesign[研究设计结果]
+          ">
+flowchart TD
+    DataProfile[(数据概况)] --> RDI[identify_research_design]
+    Variables[(分析变量)] --> RDI
+    RDI --> |基础规则判断| TimeCheck{有时间维度?}
+    TimeCheck --> |是| GroupCheck{有分组变量?}
+    TimeCheck --> |否| CrossSectional[横断面研究]
+    GroupCheck --> |是| RandomCheck{有随机分配?}
+    GroupCheck --> |否| Cohort[队列研究]
+    RandomCheck --> |是| Experimental[实验研究]
+    RandomCheck --> |否| QuasiExperimental[准实验研究]
+    
+    DataProfile --> RDIT[identify_research_design_using_integrated_tree]
+    Variables --> RDIT
+    Tree[(研究设计决策树)] --> RDIT
+    RDIT --> |遵循决策树路径| ResearchDesign[研究设计结果]
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">核心实现</h4>
+          
+          <!-- identify_research_design函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>identify_research_design()</code>: 基于规则判断研究设计
+            </h5>
+            <p class="mb-3">此函数通过分析变量名称和数据特征，判断研究设计类型：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>检查变量名中的时间关键词(<code>time</code>, <code>date</code>, <code>year</code>)</li>
+              <li>检查分组关键词(<code>group</code>, <code>treatment</code>, <code>condition</code>)</li>
+              <li>通过时间和分组维度判断设计类型</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="identify-research-design-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="identify-research-design-code">
+def identify_research_design(dependent_var, analysis_vars, data_profile):
+    """
+    基于变量名称和数据特征识别研究设计类型
+    
+    参数:
+        dependent_var (str): 因变量名称
+        analysis_vars (list): 分析变量列表
+        data_profile (dict): 数据概况对象
+        
+    返回:
+        dict: 研究设计信息
+    """
+    # 初始化研究设计信息
+    research_design = {
+        "type": "cross_sectional",  # 默认为横断面研究
+        "description": "横断面研究（在单一时间点收集的数据）",
+        "features": [],
+        "reasoning": []
+    }
+    
+    # 所有变量列表
+    all_vars = [dependent_var] + analysis_vars
+    var_info = {v['name']: v for v in data_profile['variables']}
+    
+    # 检查是否有时间相关变量
+    time_var_keywords = ['time', 'date', 'year', 'month', 'day', 'week', 'follow', 'visit', 'wave', 'period']
+    time_vars = [v for v in all_vars if any(k in v.lower() for k in time_var_keywords)]
+    
+    has_time_dimension = len(time_vars) > 0
+    
+    # 检查是否有分组变量
+    group_var_keywords = ['group', 'treatment', 'arm', 'condition', 'intervention', 'control', 'experiment']
+    group_vars = [v for v in all_vars if any(k in v.lower() for k in group_var_keywords)]
+    
+    categorical_vars = [v for v in all_vars if v in var_info and var_info[v]['type'] == 'categorical']
+    # 具有少量类别的分类变量可能是分组变量
+    potential_group_vars = [v for v in categorical_vars 
+                           if v in var_info and var_info[v]['unique_values'] <= 5 and v not in time_vars]
+    
+    has_group_dimension = len(group_vars) > 0 or len(potential_group_vars) > 0
+    
+    # 检查是否可能是随机化实验
+    randomization_keywords = ['random', 'assign', 'allocate']
+    has_randomization = any(any(k in v.lower() for k in randomization_keywords) for v in all_vars)
+    
+    # 根据特征确定研究设计类型
+    if has_time_dimension:
+        research_design["features"].append("时间维度")
+        research_design["reasoning"].append(f"发现疑似时间变量: {', '.join(time_vars)}")
+        
+        if has_group_dimension:
+            research_design["features"].append("分组维度")
+            found_group_vars = group_vars if group_vars else potential_group_vars
+            research_design["reasoning"].append(f"发现疑似分组变量: {', '.join(found_group_vars)}")
+            
+            if has_randomization:
+                research_design["type"] = "experimental"
+                research_design["description"] = "实验研究（随机分配受试者到不同处理组）"
+                research_design["features"].append("随机分配")
+                research_design["reasoning"].append("检测到随机分配相关关键词")
+            else:
+                research_design["type"] = "quasi_experimental"
+                research_design["description"] = "准实验研究（非随机分配的对照组设计）"
+        else:
+            research_design["type"] = "longitudinal"
+            research_design["description"] = "纵向研究（多个时间点的观察）"
+    else:
+        if has_group_dimension:
+            found_group_vars = group_vars if group_vars else potential_group_vars
+            research_design["reasoning"].append(f"发现疑似分组变量: {', '.join(found_group_vars)}")
+            research_design["features"].append("分组维度")
+            
+            if has_randomization:
+                research_design["type"] = "cross_sectional_comparative"
+                research_design["description"] = "横断面比较研究（单一时间点的多组比较）"
+                research_design["features"].append("随机分配")
+                research_design["reasoning"].append("检测到随机分配相关关键词")
+        else:
+            research_design["reasoning"].append("未检测到时间或分组维度，判定为基础横断面研究")
+    
+    # 补充研究目的信息
+    if len(analysis_vars) == 1:
+        if research_design["type"] == "cross_sectional":
+            research_design["purpose"] = "探索单个变量与结局的关联性"
+        elif research_design["type"] in ["quasi_experimental", "experimental"]:
+            research_design["purpose"] = "评估干预效果"
+    else:
+        if research_design["type"] == "cross_sectional":
+            research_design["purpose"] = "探索多个变量之间的关联性"
+        elif research_design["type"] in ["quasi_experimental", "experimental"]:
+            research_design["purpose"] = "评估干预效果并控制混杂因素"
+    
+    return research_design
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- identify_research_design_using_integrated_tree函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>identify_research_design_using_integrated_tree()</code>: 决策树判断
+            </h5>
+            <p class="mb-3">此函数使用更严格和复杂的决策树判断研究设计：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>加载研究设计决策树配置</li>
+              <li>使用更严格的时间变量判断(排除单纯年龄变量)</li>
+              <li>沿决策路径深入判断研究特征</li>
+              <li>跟踪并记录决策路径作为解释依据</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="integrated-tree-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="integrated-tree-code">
+def identify_research_design_using_integrated_tree(dependent_var, analysis_vars, data_profile):
+    """
+    使用整合的决策树判断研究设计类型
+    
+    参数:
+        dependent_var (str): 因变量名称
+        analysis_vars (list): 分析变量列表
+        data_profile (dict): 数据概况对象
+        
+    返回:
+        dict: 研究设计信息
+    """
+    # 加载研究设计决策树
+    try:
+        with open(os.path.join(RULES_DIR, 'research_design_tree.yaml'), 'r', encoding='utf-8') as f:
+            design_tree = yaml.safe_load(f)
+    except Exception as e:
+        logger.error(f"加载研究设计决策树出错: {str(e)}")
+        # 如果加载失败，使用基本规则判断
+        return identify_research_design(dependent_var, analysis_vars, data_profile)
+    
+    # 准备决策所需数据
+    all_vars = [dependent_var] + analysis_vars
+    var_info = {v['name']: v for v in data_profile['variables']}
+    
+    # 跟踪决策路径
+    decision_path = []
+    
+    # 开始从决策树的根节点进行判断
+    current_node = design_tree['root']
+    while 'children' in current_node:
+        # 获取当前节点的决策条件
+        condition = current_node.get('condition', {})
+        condition_type = condition.get('type')
+        
+        # 记录决策路径
+        decision_path.append({
+            'node': current_node.get('name', 'unnamed'),
+            'description': current_node.get('description', '')
+        })
+        
+        # 根据条件类型进行判断
+        if condition_type == 'has_time_variables':
+            # 检查是否有时间相关变量（排除单纯的年龄变量）
+            time_var_keywords = condition.get('keywords', ['time', 'date', 'follow', 'visit'])
+            exclude_keywords = condition.get('exclude', ['age'])
+            
+            time_vars = [v for v in all_vars if 
+                        any(k in v.lower() for k in time_var_keywords) and
+                        not any(e in v.lower() for e in exclude_keywords)]
+            
+            # 检查是否有变量包含多个时间点的数据
+            has_multiple_timepoints = False
+            for v in time_vars:
+                if v in var_info and var_info[v]['type'] == 'categorical':
+                    # 分类时间变量通常表示多个时间点
+                    has_multiple_timepoints = True
+                    break
+            
+            if time_vars and has_multiple_timepoints:
+                current_node = current_node['children'].get('yes', {})
+                decision_path[-1]['result'] = 'yes'
+                decision_path[-1]['reason'] = f"检测到时间变量: {', '.join(time_vars)}"
+            else:
+                current_node = current_node['children'].get('no', {})
+                decision_path[-1]['result'] = 'no'
+                decision_path[-1]['reason'] = "未检测到明确的时间变量或多个时间点"
+        
+        elif condition_type == 'has_group_variables':
+            # 检查是否有分组变量
+            group_var_keywords = condition.get('keywords', ['group', 'treatment', 'intervention'])
+            
+            # 直接通过变量名检测
+            group_vars = [v for v in all_vars if any(k in v.lower() for k in group_var_keywords)]
+            
+            # 通过变量特征间接检测
+            categorical_vars = [v for v in all_vars if v in var_info and var_info[v]['type'] == 'categorical']
+            potential_group_vars = [v for v in categorical_vars 
+                                if v in var_info and 
+                                var_info[v]['unique_values'] <= condition.get('max_categories', 5)]
+            
+            if group_vars or potential_group_vars:
+                current_node = current_node['children'].get('yes', {})
+                decision_path[-1]['result'] = 'yes'
+                found_group_vars = group_vars if group_vars else potential_group_vars
+                decision_path[-1]['reason'] = f"检测到可能的分组变量: {', '.join(found_group_vars[:3])}"
+            else:
+                current_node = current_node['children'].get('no', {})
+                decision_path[-1]['result'] = 'no'
+                decision_path[-1]['reason'] = "未检测到明确的分组变量"
+        
+        elif condition_type == 'has_randomization':
+            # 检查是否有随机化相关关键词
+            random_keywords = condition.get('keywords', ['random', 'assign', 'allocate'])
+            
+            has_randomization = any(any(k in v.lower() for k in random_keywords) for v in all_vars)
+            
+            if has_randomization:
+                current_node = current_node['children'].get('yes', {})
+                decision_path[-1]['result'] = 'yes'
+                decision_path[-1]['reason'] = "检测到随机分配相关关键词"
+            else:
+                current_node = current_node['children'].get('no', {})
+                decision_path[-1]['result'] = 'no'
+                decision_path[-1]['reason'] = "未检测到随机分配相关关键词"
+        
+        else:
+            # 如果遇到未知的条件类型，中断决策过程
+            logger.warning(f"遇到未知的条件类型: {condition_type}")
+            break
+    
+    # 到达叶节点，获取研究设计结果
+    research_design = {
+        "type": current_node.get('design_type', 'cross_sectional'),
+        "description": current_node.get('description', '横断面研究'),
+        "features": current_node.get('features', []),
+        "reasoning": [step['reason'] for step in decision_path if 'reason' in step],
+        "decision_path": decision_path
+    }
+    
+    # 补充研究目的信息
+    var_count = len(analysis_vars)
+    if var_count == 1:
+        research_design['purpose'] = current_node.get('purpose_single_var', '探索单个变量与结局的关联性')
+    else:
+        research_design['purpose'] = current_node.get('purpose_multi_var', '探索多个变量之间的关联性')
+    
+    return research_design
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- 研究设计决策树配置示例 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-file-code text-yellow-500 mr-2"></i>
+              研究设计决策树配置示例 (YAML)
+            </h5>
+            <p class="mb-3">以下是用于研究设计识别的决策树配置示例：</p>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">YAML</span>
+                <span class="copy-button" data-code-target="research-design-tree-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-yaml" id="research-design-tree-code">
+# 研究设计决策树配置
+root:
+  name: "研究设计根节点"
+  description: "研究设计类型判断起点"
+  condition:
+    type: "has_time_variables"
+    keywords: ["time", "date", "year", "month", "day", "follow", "visit", "wave", "period"]
+    exclude: ["age", "birth"]
+  children:
+    yes:
+      name: "有时间维度"
+      description: "数据包含多个时间点的测量"
+      condition:
+        type: "has_group_variables"
+        keywords: ["group", "treatment", "arm", "condition", "intervention", "control"]
+        max_categories: 5
+      children:
+        yes:
+          name: "有分组变量"
+          description: "数据包含分组变量"
+          condition:
+            type: "has_randomization"
+            keywords: ["random", "assign", "allocate"]
+          children:
+            yes:
+              name: "实验研究"
+              design_type: "experimental"
+              description: "实验研究（随机分配受试者到不同处理组，并在多个时间点测量）"
+              features: ["时间维度", "分组维度", "随机分配"]
+              purpose_single_var: "评估单一干预措施对结局的影响"
+              purpose_multi_var: "评估干预效果并探索多个因素的影响"
+            no:
+              name: "准实验研究"
+              design_type: "quasi_experimental"
+              description: "准实验研究（非随机分配的对照组设计，多个时间点测量）"
+              features: ["时间维度", "分组维度"]
+              purpose_single_var: "评估非随机干预措施对结局的影响"
+              purpose_multi_var: "评估非随机干预效果并控制混杂因素"
+        no:
+          name: "纵向研究"
+          design_type: "longitudinal"
+          description: "纵向研究（同一对象在多个时间点的观察）"
+          features: ["时间维度"]
+          purpose_single_var: "研究单一变量随时间的变化"
+          purpose_multi_var: "研究多个变量随时间的变化及其相互关系"
+    no:
+      name: "无时间维度"
+      description: "数据仅包含单一时间点的测量"
+      condition:
+        type: "has_group_variables"
+        keywords: ["group", "treatment", "arm", "condition", "intervention", "control"]
+        max_categories: 5
+      children:
+        yes:
+          name: "横断面比较研究"
+          design_type: "cross_sectional_comparative"
+          description: "横断面比较研究（单一时间点的多组比较）"
+          features: ["分组维度"]
+          purpose_single_var: "比较不同组间单一变量与结局的关系"
+          purpose_multi_var: "比较不同组间多个变量与结局的关系"
+        no:
+          name: "基础横断面研究"
+          design_type: "cross_sectional"
+          description: "横断面研究（在单一时间点收集的数据）"
+          features: []
+          purpose_single_var: "探索单个变量与结局的关联性"
+          purpose_multi_var: "探索多个变量之间的关联性"
+              </code></pre>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 p-6 rounded-lg">
+          <h4 class="text-xl font-medium mb-3 flex items-center">
+            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+            研究设计类型对统计方法选择的影响
+          </h4>
+          <p class="mb-4">不同的研究设计需要采用不同的统计方法。以下是各研究设计对应的典型统计方法：</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
+              <h5 class="font-medium mb-2">横断面研究</h5>
+              <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>相关分析（Pearson/Spearman相关系数）</li>
+                <li>T检验与方差分析（组间比较）</li>
+                <li>卡方检验（分类变量关联）</li>
+                <li>线性回归与逻辑回归</li>
+              </ul>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
+              <h5 class="font-medium mb-2">纵向研究</h5>
+              <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>重复测量方差分析</li>
+                <li>混合效应模型</li>
+                <li>生存分析</li>
+                <li>时间序列分析</li>
+              </ul>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
+              <h5 class="font-medium mb-2">实验研究</h5>
+              <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>重复测量方差分析</li>
+                <li>协方差分析（ANCOVA）</li>
+                <li>意向性分析（ITT）</li>
+                <li>多水平模型</li>
+              </ul>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
+              <h5 class="font-medium mb-2">准实验研究</h5>
+              <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>倾向性评分匹配</li>
+                <li>断点回归设计</li>
+                <li>差分法（DID）</li>
+                <li>工具变量法</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 统计方法推荐模块 -->
+      <section id="section-3-3" class="mb-10">
+        <h3 class="text-2xl font-semibold mb-4">3.3 统计方法推荐模块</h3>
+        <p class="text-lg mb-6">统计方法推荐模块是系统的核心，它结合规则决策树和大语言模型(LLM)，为给定的数据和研究设计推荐最合适的统计方法。</p>
+        
+        <!-- 方法推荐流程图 -->
+        <div class="card p-4 mb-8">
+          <div class="mermaid" data-content="
+flowchart TD
+    DataProfile[(数据概况)] --> RecommendMethod[recommend_statistical_method]
+    DV[因变量] --> RecommendMethod
+    IVs[自变量] --> RecommendMethod
+    ResearchDesign[研究设计] --> RecommendMethod
+    
+    RecommendMethod --> |应用决策树| IDT[apply_integrated_decision_tree]
+    CrossTree[(横断面方法决策树)] --> IDT
+    StatTree[(统计方法决策树)] --> IDT
+    
+    IDT --> |基础推荐| BaseMethods[决策树推荐结果]
+    BaseMethods --> EnhanceLLM[enhance_recommendations_with_llm]
+    
+    EnhanceLLM --> |API调用| API{LLM API调用}
+    API --> |成功| ParseJSON[解析JSON响应]
+    API --> |失败| Fallback[使用基础推荐]
+    
+    ParseJSON --> |格式化| OptimizedMethods[LLM优化结果]
+    OptimizedMethods --> DisplayMethods[display_recommended_methods]
+    Fallback --> DisplayMethods
+    
+    DisplayMethods --> UserSelection[用户方法选择]
+          ">
+flowchart TD
+    DataProfile[(数据概况)] --> RecommendMethod[recommend_statistical_method]
+    DV[因变量] --> RecommendMethod
+    IVs[自变量] --> RecommendMethod
+    ResearchDesign[研究设计] --> RecommendMethod
+    
+    RecommendMethod --> |应用决策树| IDT[apply_integrated_decision_tree]
+    CrossTree[(横断面方法决策树)] --> IDT
+    StatTree[(统计方法决策树)] --> IDT
+    
+    IDT --> |基础推荐| BaseMethods[决策树推荐结果]
+    BaseMethods --> EnhanceLLM[enhance_recommendations_with_llm]
+    
+    EnhanceLLM --> |API调用| API{LLM API调用}
+    API --> |成功| ParseJSON[解析JSON响应]
+    API --> |失败| Fallback[使用基础推荐]
+    
+    ParseJSON --> |格式化| OptimizedMethods[LLM优化结果]
+    OptimizedMethods --> DisplayMethods[display_recommended_methods]
+    Fallback --> DisplayMethods
+    
+    DisplayMethods --> UserSelection[用户方法选择]
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">核心实现</h4>
+          
+          <!-- recommend_statistical_method函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>recommend_statistical_method()</code>: 统计方法推荐入口
+            </h5>
+            <p class="mb-3">此函数是统计方法推荐的主入口，它整合了决策树推荐和LLM增强功能：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>获取变量类型信息</li>
+              <li>调用整合决策树获取初步推荐</li>
+              <li>调用LLM增强推荐</li>
+              <li>返回最终推荐结果</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="recommend-method-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="recommend-method-code">
+def recommend_statistical_method(data_profile, dependent_var, analysis_vars, research_design):
+    """
+    推荐适合的统计方法
+    
+    参数:
+        data_profile (dict): 数据概况对象
+        dependent_var (str): 因变量名称
+        analysis_vars (list): 分析变量列表
+        research_design (dict): 研究设计信息
+        
+    返回:
+        dict: 包含推荐方法的结果
+    """
+    # 获取变量类型信息
+    var_info = {v['name']: v for v in data_profile['variables']}
+    
+    # 确定因变量类型
+    if dependent_var in var_info:
+        dependent_var_type = var_info[dependent_var]['type']
+    else:
+        logger.warning(f"因变量 '{dependent_var}' 在数据中未找到")
+        dependent_var_type = "unknown"
+    
+    # 确定分析变量类型
+    analysis_var_types = {}
+    for var in analysis_vars:
+        if var in var_info:
+            analysis_var_types[var] = var_info[var]['type']
+        else:
+            logger.warning(f"分析变量 '{var}' 在数据中未找到")
+            analysis_var_types[var] = "unknown"
+    
+    # 统计分类和连续变量的数量
+    categorical_count = sum(1 for t in analysis_var_types.values() if t == "categorical")
+    continuous_count = sum(1 for t in analysis_var_types.values() if t == "continuous")
+    
+    # 使用整合决策树获取初步推荐
+    logger.info("应用整合决策树获取初步统计方法推荐...")
+    tree_recommendations = apply_integrated_decision_tree(
+        research_design["type"],
+        dependent_var_type,
+        categorical_count,
+        continuous_count,
+        len(analysis_vars)
+    )
+    
+    # 使用LLM增强推荐
+    logger.info("使用LLM增强统计方法推荐...")
+    enhanced_recommendations = enhance_recommendations_with_llm(
+        data_profile,
+        dependent_var,
+        dependent_var_type,
+        analysis_vars,
+        analysis_var_types,
+        research_design,
+        tree_recommendations
+    )
+    
+    # 显示推荐方法
+    recommended_method = display_recommended_methods(enhanced_recommendations)
+    
+    return {
+        "tree_recommendations": tree_recommendations,
+        "enhanced_recommendations": enhanced_recommendations,
+        "recommended_method": recommended_method
+    }
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- apply_integrated_decision_tree函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>apply_integrated_decision_tree()</code>: 应用整合决策树
+            </h5>
+            <p class="mb-3">此函数基于决策树规则推荐初步的统计方法：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>根据研究设计选择适当的决策树</li>
+              <li>加载横断面研究方法决策树(如适用)</li>
+              <li>加载一般统计方法决策树</li>
+              <li>按分析阶段对方法分组和排序</li>
+              <li>去除重复方法</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="integrated-decision-tree-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="integrated-decision-tree-code">
+def apply_integrated_decision_tree(research_type, dependent_var_type, categorical_count, continuous_count, total_vars):
+    """
+    应用整合的统计方法决策树
+    
+    参数:
+        research_type (str): 研究设计类型
+        dependent_var_type (str): 因变量类型
+        categorical_count (int): 分类变量数量
+        continuous_count (int): 连续变量数量
+        total_vars (int): 总分析变量数量
+        
+    返回:
+        list: 推荐的统计方法列表
+    """
+    # 加载对应的决策树规则
+    try:
+        # 加载一般统计方法决策树
+        with open(os.path.join(RULES_DIR, 'statistical_methods_tree.yaml'), 'r', encoding='utf-8') as f:
+            general_methods_tree = yaml.safe_load(f)
+        
+        # 如果是横断面研究，加载特定的横断面研究方法决策树
+        cross_sectional_methods_tree = None
+        if research_type in ["cross_sectional", "cross_sectional_comparative"]:
+            try:
+                with open(os.path.join(RULES_DIR, 'cross_sectional_methods_tree.yaml'), 'r', encoding='utf-8') as f:
+                    cross_sectional_methods_tree = yaml.safe_load(f)
+            except Exception as e:
+                logger.warning(f"加载横断面研究方法决策树出错: {str(e)}")
+    except Exception as e:
+        logger.error(f"加载统计方法决策树出错: {str(e)}")
+        # 如果加载失败，返回默认的统计方法列表
+        return get_default_statistical_methods(research_type, dependent_var_type)
+    
+    # 推荐结果列表
+    recommended_methods = []
+    
+    # 应用一般统计方法决策树
+    if general_methods_tree:
+        methods = traverse_methods_tree(
+            general_methods_tree,
+            research_type,
+            dependent_var_type,
+            categorical_count,
+            continuous_count,
+            total_vars
+        )
+        recommended_methods.extend(methods)
+    
+    # 应用横断面研究方法决策树（如果适用）
+    if cross_sectional_methods_tree and research_type in ["cross_sectional", "cross_sectional_comparative"]:
+        methods = traverse_methods_tree(
+            cross_sectional_methods_tree,
+            research_type,
+            dependent_var_type,
+            categorical_count,
+            continuous_count,
+            total_vars
+        )
+        recommended_methods.extend(methods)
+    
+    # 去除重复方法
+    unique_methods = []
+    method_keys = set()
+    for method in recommended_methods:
+        if method["method_key"] not in method_keys:
+            method_keys.add(method["method_key"])
+            unique_methods.append(method)
+    
+    # 按分析阶段对方法分组和排序
+    stage_order = {
+        "descriptive": 1,
+        "univariate": 2,
+        "bivariate": 3,
+        "multivariate": 4,
+        "advanced": 5
+    }
+    
+    sorted_methods = sorted(unique_methods, key=lambda x: stage_order.get(x.get("stage", ""), 99))
+    
+    return sorted_methods
+
+def traverse_methods_tree(tree, research_type, dependent_var_type, categorical_count, continuous_count, total_vars):
+    """
+    遍历方法决策树，提取适用的方法
+    
+    参数:
+        tree (dict): 方法决策树
+        research_type (str): 研究设计类型
+        dependent_var_type (str): 因变量类型
+        categorical_count (int): 分类变量数量
+        continuous_count (int): 连续变量数量
+        total_vars (int): 总分析变量数量
+        
+    返回:
+        list: 适用的统计方法列表
+    """
+    # 初始化结果列表
+    applicable_methods = []
+    
+    # 检查树结构
+    if not tree or "methods" not in tree:
+        return applicable_methods
+    
+    # 遍历所有方法
+    for method in tree["methods"]:
+        # 默认方法为适用
+        is_applicable = True
+        
+        # 检查研究设计条件
+        if "applicable_research_types" in method:
+            if research_type not in method["applicable_research_types"]:
+                is_applicable = False
+        
+        # 检查因变量条件
+        if is_applicable and "applicable_dependent_var_types" in method:
+            if dependent_var_type not in method["applicable_dependent_var_types"]:
+                is_applicable = False
+        
+        # 检查变量数量条件
+        if is_applicable and "min_variables" in method:
+            if total_vars < method["min_variables"]:
+                is_applicable = False
+        
+        # 检查分类变量条件
+        if is_applicable and "requires_categorical" in method and method["requires_categorical"]:
+            if categorical_count == 0:
+                is_applicable = False
+        
+        # 检查连续变量条件
+        if is_applicable and "requires_continuous" in method and method["requires_continuous"]:
+            if continuous_count == 0:
+                is_applicable = False
+        
+        # 如果方法适用，添加到结果列表
+        if is_applicable:
+            # 复制方法信息，避免修改原始数据
+            method_info = method.copy()
+            # 设置方法来源
+            method_info["source"] = "decision_tree"
+            applicable_methods.append(method_info)
+    
+    return applicable_methods
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- enhance_recommendations_with_llm函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>enhance_recommendations_with_llm()</code>: LLM增强推荐
+            </h5>
+            <p class="mb-3">此函数调用大语言模型API，对决策树推荐进行优化和增强：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>构建包含数据特征、研究设计和初步推荐的提示词</li>
+              <li>调用LLM API获取优化推荐</li>
+              <li>解析JSON格式响应</li>
+              <li>标记方法来源为"llm_optimized"</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="enhance-llm-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="enhance-llm-code">
+def enhance_recommendations_with_llm(data_profile, dependent_var, dependent_var_type, 
+                                   analysis_vars, analysis_var_types, research_design, 
+                                   tree_recommendations):
+    """
+    使用大语言模型增强和优化统计方法推荐
+    
+    参数:
+        data_profile (dict): 数据概况
+        dependent_var (str): 因变量名称
+        dependent_var_type (str): 因变量类型
+        analysis_vars (list): 分析变量列表
+        analysis_var_types (dict): 分析变量类型字典
+        research_design (dict): 研究设计信息
+        tree_recommendations (list): 决策树推荐方法列表
+        
+    返回:
+        list: 增强后的推荐方法列表
+    """
+    # 如果没有LLM API配置或决策树推荐为空，直接返回原始推荐
+    if not OPENAI_API_KEY or not tree_recommendations:
+        logger.warning("未配置LLM API或决策树推荐为空，跳过LLM增强步骤")
+        return tree_recommendations
+    
+    # 构建提示词
+    prompt = construct_method_recommendation_prompt(
+        data_profile, 
+        dependent_var, 
+        dependent_var_type, 
+        analysis_vars, 
+        analysis_var_types, 
+        research_design, 
+        tree_recommendations
+    )
+    
+    # 调用LLM API
+    logger.info("调用LLM API增强统计方法推荐...")
+    response = call_llm_api(prompt)
+    
+    # 检查API调用是否成功
+    if not response.get("success", False):
+        logger.error(f"LLM API调用失败: {response.get('error', '未知错误')}")
+        return tree_recommendations
+    
+    # 解析LLM响应
+    try:
+        # 尝试提取和解析JSON
+        content = response.get("content", "")
+        json_result = extract_json_from_text(content)
+        
+        if json_result and "methods" in json_result and isinstance(json_result["methods"], list):
+            # 为LLM推荐的方法添加来源标记
+            for method in json_result["methods"]:
+                method["source"] = "llm_optimized"
+            
+            return json_result["methods"]
+        else:
+            logger.warning("LLM响应中未找到有效的方法列表，使用原始决策树推荐")
+            return tree_recommendations
+    except Exception as e:
+        logger.error(f"解析LLM响应出错: {str(e)}")
+        return tree_recommendations
+
+def construct_method_recommendation_prompt(data_profile, dependent_var, dependent_var_type, 
+                                         analysis_vars, analysis_var_types, research_design, 
+                                         tree_recommendations):
+    """
+    构建用于方法推荐的LLM提示词
+    
+    参数略...
+    
+    返回:
+        str: 格式化的提示词
+    """
+    # 转换因变量信息
+    dv_info = next((v for v in data_profile["variables"] if v["name"] == dependent_var), {})
+    
+    prompt = f"""作为统计学专家，请根据以下信息对统计方法推荐进行整合和优化：
+
+## 数据基本情况
+- 观测数: {data_profile["row_count"]} 行
+- 变量数: {data_profile["col_count"]} 列
+
+## 研究设计信息
+- 研究类型: {research_design["type"]} ({research_design["description"].split('（')[0]})
+- 研究目的: {research_design.get("purpose", "探索变量之间的关联性")}
+
+## 因变量信息
+- 名称: {dependent_var}
+- 类型: {dependent_var_type}
+- 唯一值数: {dv_info.get("unique_values", "未知")}
+- 缺失率: {dv_info.get("missing_rate", 0):.1%}
+
+## 研究目标
+{research_design.get("purpose", "探索变量之间的关联性")}，分析{len(analysis_vars)}个自变量（包括{', '.join(analysis_vars[:3])}{"等" if len(analysis_vars) > 3 else ""}）与{dependent_var}之间的关联性
+
+## 决策树推荐的统计方法
+"""
+    
+    # 添加决策树推荐的方法
+    for i, method in enumerate(tree_recommendations, 1):
+        prompt += f"{i}. **{method['name']}** [{method['method_key']}] (阶段: {method.get('stage', '未指定')})\n"
+        prompt += f"   {method.get('description', '无描述')}\n\n"
+    
+    # 添加任务描述
+    prompt += """## 任务
+请作为统计方法专家，整合和优化上述推荐的统计方法，而不是简单地将它们合并。您需要:
+
+1. 评估每种方法的适用性，考虑数据特征、研究设计和分析目标
+2. 删除不适合或冗余的方法
+3. 确定最关键的方法，并按重要性和执行顺序排列
+4. 为每种方法提供更详细的描述、适用条件和注意事项
+
+请以JSON格式返回结果，包含一个优化后的方法列表，格式如下:
+```json
+{
+  "methods": [
+    {
+      "name": "方法名称",
+      "method_key": "方法键值（与原推荐中相同）",
+      "stage": "描述性分析/单因素分析/多因素分析/高级分析",
+      "description": "方法描述",
+      "is_primary": true/false,
+      "applicable_conditions": "适用条件描述",
+      "considerations": "使用时需要注意的事项"
+    },
+    // 更多方法...
+  ]
+}
+```
+
+请确保返回的是有效的JSON格式，不要在JSON前后添加额外文本。"""
+    
+    return prompt
+
+def extract_json_from_text(text):
+    """
+    从文本中提取JSON对象
+    
+    参数:
+        text (str): 可能包含JSON的文本
+        
+    返回:
+        dict or None: 解析后的JSON对象，如果提取失败则返回None
+    """
+    # 尝试查找JSON块（包括在```json和```之间的内容）
+    json_match = re.search(r'```(?:json)?(.*?)```', text, re.DOTALL)
+    
+    if json_match:
+        json_str = json_match.group(1).strip()
+    else:
+        # 尝试查找大括号之间的内容
+        json_match = re.search(r'(\{.*\})', text, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(1).strip()
+        else:
+            return None
+    
+    # 尝试解析JSON
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError:
+        # 如果解析失败，尝试修复常见的JSON格式问题
+        try:
+            # 替换单引号为双引号
+            fixed_str = json_str.replace("'", "\"")
+            # 确保属性名使用双引号
+            fixed_str = re.sub(r'(\w+):', r'"\1":', fixed_str)
+            return json.loads(fixed_str)
+        except:
+            return None
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- display_recommended_methods函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>display_recommended_methods()</code>: 展示推荐方法
+            </h5>
+            <p class="mb-3">此函数以用户友好的方式展示推荐的统计方法，并引导用户选择：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>按分析阶段对方法分组</li>
+              <li>主要方法使用不同颜色突出显示</li>
+              <li>展示方法的适用条件</li>
+              <li>返回默认方法供后续分析</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="display-methods-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="display-methods-code">
+def display_recommended_methods(methods):
+    """
+    展示推荐的统计方法并引导用户选择
+    
+    参数:
+        methods (list): 推荐方法列表
+        
+    返回:
+        dict: 用户选择的统计方法
+    """
+    if not methods:
+        print("未找到适用的统计方法推荐")
+        return None
+    
+    # 按阶段分组方法
+    methods_by_stage = {}
+    for method in methods:
+        stage = method.get("stage", "其他")
+        if stage not in methods_by_stage:
+            methods_by_stage[stage] = []
+        methods_by_stage[stage].append(method)
+    
+    # 阶段顺序和显示名称
+    stage_order = [
+        "descriptive", "univariate", "bivariate", "multivariate", "advanced", "其他"
+    ]
+    stage_display = {
+        "descriptive": "描述性分析",
+        "univariate": "单因素分析",
+        "bivariate": "双变量分析",
+        "multivariate": "多变量分析",
+        "advanced": "高级分析",
+        "其他": "其他方法"
+    }
+    
+    # 打印推荐方法
+    print("\n" + "="*60)
+    print("推荐的统计方法:")
+    print("="*60)
+    
+    # 查找默认方法（第一个主要方法）
+    default_method = next((m for m in methods if m.get("is_primary", False)), methods[0])
+    
+    # 方法编号映射
+    method_number_map = {}
+    current_number = 1
+    
+    # 按阶段顺序展示方法
+    for stage in stage_order:
+        if stage in methods_by_stage and methods_by_stage[stage]:
+            print(f"\n## {stage_display.get(stage, stage)}")
+            print("-"*60)
+            
+            for method in methods_by_stage[stage]:
+                # 存储方法编号映射
+                method_number_map[current_number] = method
+                
+                # 确定方法显示样式
+                is_default = method == default_method
+                is_primary = method.get("is_primary", False)
+                
+                # 方法标题行
+                prefix = f"[{current_number}] "
+                if is_default:
+                    prefix += ">> "
+                elif is_primary:
+                    prefix += "* "
+                else:
+                    prefix += "  "
+                
+                # 调整颜色
+                if is_default:
+                    print(f"\033[1;32m{prefix}{method['name']}\033[0m")
+                elif is_primary:
+                    print(f"\033[1;36m{prefix}{method['name']}\033[0m")
+                else:
+                    print(f"{prefix}{method['name']}")
+                
+                # 方法描述
+                print(f"   {method.get('description', '无描述')}")
+                
+                # 适用条件
+                if "applicable_conditions" in method:
+                    print(f"   适用条件: {method['applicable_conditions']}")
+                
+                # 方法来源
+                source = method.get("source", "未知")
+                if source == "llm_optimized":
+                    print(f"   (LLM优化推荐)")
+                elif source == "decision_tree":
+                    print(f"   (决策树推荐)")
+                
+                current_number += 1
+                print()
+    
+    # 引导用户选择
+    print("\n"+"="*60)
+    if default_method:
+        print(f"默认推荐方法: [{methods.index(default_method) + 1}] {default_method['name']}")
+    
+    print("\n请选择要使用的统计方法 (输入编号，直接回车使用默认推荐):")
+    
+    while True:
+        choice = input("> ").strip()
+        
+        # 使用默认方法
+        if not choice:
+            print(f"使用默认方法: {default_method['name']}")
+            return default_method
+        
+        # 解析用户输入
+        try:
+            method_num = int(choice)
+            if method_num in method_number_map:
+                selected_method = method_number_map[method_num]
+                print(f"已选择: {selected_method['name']}")
+                return selected_method
+            else:
+                print(f"无效的编号，请输入1-{len(methods)}之间的数字")
+        except ValueError:
+            print("请输入有效的数字")
+              </code></pre>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 实际方法推荐效果的数据可视化 -->
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">推荐优化效果对比</h4>
+          <p class="mb-4">下图展示了在不同数据场景下，基础决策树推荐与LLM增强推荐的效果对比。LLM增强能够更好地考虑复杂的数据特征和研究背景。</p>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- 推荐精确度对比图 -->
+            <div class="card p-4">
+              <h5 class="text-lg font-medium mb-3">推荐精确度对比</h5>
+              <div>
+                <canvas id="accuracyChart" height="250"></canvas>
+              </div>
+            </div>
+            
+            <!-- 推荐完整性对比图 -->
+            <div class="card p-4">
+              <h5 class="text-lg font-medium mb-3">推荐完整性对比</h5>
+              <div>
+                <canvas id="completenessChart" height="250"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- LLM提示词构建策略图 -->
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">LLM提示词构建策略</h4>
+          <p class="mb-4">系统使用结构化的提示词模板，融合数据特征、研究设计和初步推荐，引导LLM生成优化的统计方法推荐。</p>
+          
+          <div class="card p-4">
+            <div class="mermaid" data-content="
+flowchart LR
+    subgraph LLM提示词构建
+        direction TB
+        A1[数据基本情况] --> Prompt
+        A2[研究设计信息] --> Prompt
+        A3[因变量信息] --> Prompt
+        A4[自变量信息] --> Prompt
+        A5[推荐方法初步列表] --> Prompt
+        A6[任务定义] --> Prompt
+        A7[JSON格式规范] --> Prompt
+    end
+    
+    Prompt --> API[LLM API]
+    API --> Response[LLM响应]
+    
+    subgraph 响应处理
+        direction TB
+        Response --> B1[JSON提取]
+        B1 --> B2[边界修复]
+        B2 --> B3[JSON解析]
+        B3 --> |成功| B4[结构化结果]
+        B3 --> |失败| B5[文本模式提取]
+        B5 --> B6[简化结果构建]
+    end
+            ">
+flowchart LR
+    subgraph LLM提示词构建
+        direction TB
+        A1[数据基本情况] --> Prompt
+        A2[研究设计信息] --> Prompt
+        A3[因变量信息] --> Prompt
+        A4[自变量信息] --> Prompt
+        A5[推荐方法初步列表] --> Prompt
+        A6[任务定义] --> Prompt
+        A7[JSON格式规范] --> Prompt
+    end
+    
+    Prompt --> API[LLM API]
+    API --> Response[LLM响应]
+    
+    subgraph 响应处理
+        direction TB
+        Response --> B1[JSON提取]
+        B1 --> B2[边界修复]
+        B2 --> B3[JSON解析]
+        B3 --> |成功| B4[结构化结果]
+        B3 --> |失败| B5[文本模式提取]
+        B5 --> B6[简化结果构建]
+    end
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-amber-50 dark:bg-amber-900 dark:bg-opacity-20 p-6 rounded-lg">
+          <h4 class="text-xl font-medium mb-3 flex items-center">
+            <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+            混合推荐架构的优势
+          </h4>
+          <p class="mb-4">系统采用"规则基础+AI增强"的混合架构，将决策树规则与LLM优势结合，克服了单一方法的局限性：</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
+              <h5 class="font-medium mb-2">决策树的优势</h5>
+              <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>结果稳定可预测，不受模型波动影响</li>
+                <li>无需网络连接，本地即可运行</li>
+                <li>执行效率高，响应速度快</li>
+                <li>推荐过程透明，可追踪和解释</li>
+                <li>严格遵循统计学理论规范</li>
+              </ul>
+            </div>
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-md shadow-sm">
+              <h5 class="font-medium mb-2">LLM增强的优势</h5>
+              <ul class="list-disc pl-5 space-y-1 text-sm">
+                <li>考虑更复杂和微妙的数据特征</li>
+                <li>提供更丰富的方法描述和适用条件</li>
+                <li>能够处理规则未覆盖的边缘情况</li>
+                <li>基于研究目的进行更智能的方法优先级排序</li>
+                <li>添加专家洞见，提升推荐质量</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- LLM API调用模块 -->
+      <section id="section-3-4" class="mb-10">
+        <h3 class="text-2xl font-semibold mb-4">3.4 LLM API调用模块</h3>
+        <p class="text-lg mb-6">LLM API调用模块是系统的智能增强部分，负责与大语言模型API交互。该模块设计兼顾了API版本兼容性和容错处理，确保系统能够稳定地获取大语言模型的优化结果。</p>
+        
+        <!-- LLM API调用流程图 -->
+        <div class="card p-4 mb-8">
+          <div class="mermaid" data-content="
+flowchart TD
+    Prompt[提示词] --> CallLLM[call_llm_api]
+    CallLLM --> CheckVersion{OpenAI版本?}
+    
+    CheckVersion --> |>=1.0.0| NewAPI[新版API调用]
+    CheckVersion --> |<1.0.0| OldAPI[旧版API调用]
+    
+    NewAPI --> |尝试| ClientCall[client.chat.completions.create]
+    ClientCall --> |成功| ExtractContent1[提取内容]
+    ClientCall --> |失败| OldAPI
+    
+    OldAPI --> LegacyCall[openai.ChatCompletion.create]
+    LegacyCall --> ExtractContent2[提取内容]
+    
+    ExtractContent1 --> Response[返回结构化响应]
+    ExtractContent2 --> Response
+    
+    subgraph JSON处理流程
+        JSONAPI[LLM响应] --> ExtractJSON[提取JSON部分]
+        ExtractJSON --> ValidateJSON{JSON验证}
+        ValidateJSON --> |成功| ParsedJSON[解析JSON对象]
+        ValidateJSON --> |失败| TextExtract[从文本提取信息]
+    end
+          ">
+flowchart TD
+    Prompt[提示词] --> CallLLM[call_llm_api]
+    CallLLM --> CheckVersion{OpenAI版本?}
+    
+    CheckVersion --> |>=1.0.0| NewAPI[新版API调用]
+    CheckVersion --> |<1.0.0| OldAPI[旧版API调用]
+    
+    NewAPI --> |尝试| ClientCall[client.chat.completions.create]
+    ClientCall --> |成功| ExtractContent1[提取内容]
+    ClientCall --> |失败| OldAPI
+    
+    OldAPI --> LegacyCall[openai.ChatCompletion.create]
+    LegacyCall --> ExtractContent2[提取内容]
+    
+    ExtractContent1 --> Response[返回结构化响应]
+    ExtractContent2 --> Response
+    
+    subgraph JSON处理流程
+        JSONAPI[LLM响应] --> ExtractJSON[提取JSON部分]
+        ExtractJSON --> ValidateJSON{JSON验证}
+        ValidateJSON --> |成功| ParsedJSON[解析JSON对象]
+        ValidateJSON --> |失败| TextExtract[从文本提取信息]
+    end
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">核心实现</h4>
+          
+          <!-- call_llm_api函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>call_llm_api()</code>: LLM API调用核心函数
+            </h5>
+            <p class="mb-3">此函数是与大语言模型API交互的核心，设计了灵活的版本兼容机制：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>检测openai库版本</li>
+              <li>根据版本选择API调用方式</li>
+              <li>处理API响应和错误</li>
+              <li>返回结构化结果</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="call-llm-api-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="call-llm-api-code">
+def call_llm_api(prompt, system_message="你是专业的统计学家和数据分析专家。"):
+    """
+    调用LLM API，支持新旧两种版本的OpenAI API
+    
+    参数:
+        prompt (str): 提示词
+        system_message (str): 系统消息，用于设置模型角色
+        
+    返回:
+        dict: 结构化的API响应结果，包含成功标志和内容
+    """
+    try:
+        # 检查openai版本
+        import pkg_resources
+        openai_version = pkg_resources.get_distribution("openai").version
+        first_digit = int(openai_version.split('.')[0])
+        is_new_api = first_digit >= 1  # 1.0.0及以上版本使用新API
+        
+        if is_new_api:
+            # 新版API (1.0.0+)
+            try:
+                from openai import OpenAI
+                
+                # 初始化OpenAI客户端
+                client = OpenAI(
+                    api_key=OPENAI_API_KEY,
+                    base_url=OPENAI_API_BASE
+                )
+                
+                # 调用API
+                response = client.chat.completions.create(
+                    model=MODEL_NAME,
+                    messages=[
+                        {"role": "system", "content": system_message},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.2
+                )
+                
+                # 提取内容
+                content = response.choices[0].message.content
+                return {
+                    "success": True,
+                    "content": content
+                }
+            except Exception as e:
+                logger.error(f"新版API调用失败: {str(e)}")
+                logger.info("尝试退回到旧版API格式...")
+                # 如果出错，尝试旧版API格式
+                is_new_api = False
+        
+        if not is_new_api:
+            # 旧版API (0.x.x)
+            response = openai.ChatCompletion.create(
+                model=MODEL_NAME,
+                messages=[
+                    {"role": "system", "content": system_message},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.2
+            )
+            
+            # 提取内容
+            content = response.choices[0].message["content"]
+            return {
+                "success": True,
+                "content": content
+            }
+    except Exception as e:
+        logger.error(f"调用LLM API出错: {str(e)}")
+        return {
+            "success": False,
+            "error": f"调用LLM API出错: {str(e)}"
+        }
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- extract_json_from_text函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>extract_json_from_text()</code>: 从文本中提取JSON
+            </h5>
+            <p class="mb-3">此函数用于从LLM响应中提取结构化JSON数据：</p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+              <li>使用正则表达式提取JSON块</li>
+              <li>处理JSON边界问题</li>
+              <li>修复常见JSON格式错误</li>
+              <li>解析JSON对象</li>
+            </ul>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="extract-json-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="extract-json-code">
+def extract_json_from_text(text):
+    """
+    从文本中提取JSON对象
+    
+    参数:
+        text (str): 可能包含JSON的文本
+        
+    返回:
+        dict or None: 解析后的JSON对象，如果提取失败则返回None
+    """
+    # 尝试查找JSON块（包括在```json和```之间的内容）
+    json_match = re.search(r'```(?:json)?(.*?)```', text, re.DOTALL)
+    
+    if json_match:
+        json_str = json_match.group(1).strip()
+    else:
+        # 尝试查找大括号之间的内容
+        json_match = re.search(r'(\{.*\})', text, re.DOTALL)
+        if json_match:
+            json_str = json_match.group(1).strip()
+        else:
+            logger.warning("在文本中未找到JSON格式内容")
+            return None
+    
+    # 尝试解析JSON
+    try:
+        return json.loads(json_str)
+    except json.JSONDecodeError as e:
+        logger.warning(f"JSON解析失败: {str(e)}")
+        
+        # 尝试修复常见的JSON格式问题
+        try:
+            # 替换单引号为双引号
+            fixed_str = json_str.replace("'", "\"")
+            # 确保属性名使用双引号
+            fixed_str = re.sub(r'(\w+):', r'"\1":', fixed_str)
+            # 修复可能的末尾逗号
+            fixed_str = re.sub(r',\s*}', '}', fixed_str)
+            fixed_str = re.sub(r',\s*]', ']', fixed_str)
+            
+            logger.info("尝试修复后的JSON")
+            return json.loads(fixed_str)
+        except Exception as e2:
+            logger.error(f"JSON修复和解析失败: {str(e2)}")
+            return None
+              </code></pre>
+            </div>
+          </div>
+        </div>
+        
+        <!-- LLM提示词构建与响应处理流程 -->
+        <div class="card p-4 mb-8">
+          <h4 class="text-xl font-medium mb-3">提示词构建与响应处理流程</h4>
+          <div class="mermaid" data-content="
+flowchart LR
+    subgraph LLM提示词构建
+        direction TB
+        A1[数据基本情况] --> Prompt
+        A2[研究设计信息] --> Prompt
+        A3[因变量信息] --> Prompt
+        A4[自变量信息] --> Prompt
+        A5[推荐方法初步列表] --> Prompt
+        A6[任务定义] --> Prompt
+        A7[JSON格式规范] --> Prompt
+    end
+    
+    Prompt --> API[LLM API]
+    API --> Response[LLM响应]
+    
+    subgraph 响应处理
+        direction TB
+        Response --> B1[JSON提取]
+        B1 --> B2[边界修复]
+        B2 --> B3[JSON解析]
+        B3 --> |成功| B4[结构化结果]
+        B3 --> |失败| B5[文本模式提取]
+        B5 --> B6[简化结果构建]
+    end
+          ">
+flowchart LR
+    subgraph LLM提示词构建
+        direction TB
+        A1[数据基本情况] --> Prompt
+        A2[研究设计信息] --> Prompt
+        A3[因变量信息] --> Prompt
+        A4[自变量信息] --> Prompt
+        A5[推荐方法初步列表] --> Prompt
+        A6[任务定义] --> Prompt
+        A7[JSON格式规范] --> Prompt
+    end
+    
+    Prompt --> API[LLM API]
+    API --> Response[LLM响应]
+    
+    subgraph 响应处理
+        direction TB
+        Response --> B1[JSON提取]
+        B1 --> B2[边界修复]
+        B2 --> B3[JSON解析]
+        B3 --> |成功| B4[结构化结果]
+        B3 --> |失败| B5[文本模式提取]
+        B5 --> B6[简化结果构建]
+    end
+          </div>
+        </div>
+        
+        <!-- 提示词示例 -->
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">LLM提示词构建策略</h4>
+          <p class="mb-4">系统构建了结构化、指导明确的LLM提示词，以获取最佳的统计方法推荐结果：</p>
+          
+          <div class="relative group">
+            <div class="code-header">
+              <span class="language">Markdown</span>
+              <span class="copy-button" data-code-target="prompt-example-code">
+                <i class="fas fa-copy"></i> 复制
+              </span>
+            </div>
+            <pre><code class="language-markdown" id="prompt-example-code">
+作为统计学专家，请根据以下信息对统计方法推荐进行整合和优化：
+
+## 数据基本情况
+- 观测数: 302 行
+- 变量数: 15 列
+
+## 研究设计信息
+- 研究类型: cross_sectional (横断面研究)
+- 研究目的: 探索多个变量之间的关联性
+
+## 因变量信息
+- 名称: outcome
+- 类型: binary
+- 唯一值数: 2
+- 缺失率: 0.3%
+
+## 研究目标
+在横断面研究中，探索7个自变量（包括age、gender、income等）与outcome之间的关联性，评估各因素对结局的影响程度
+
+## 决策树推荐的统计方法
+1. **描述性统计** [descriptive] (阶段: 描述性分析)
+   计算均值、标准差、中位数、频数、百分比等
+
+2. **逻辑回归** [logistic_regression] (阶段: 多因素分析)
+   分析多个自变量对二分类因变量的影响，计算优势比
+
+3. **卡方检验** [chi_square] (阶段: 单因素分析)
+   分析分类自变量与二分类因变量之间的关联
+
+4. **t检验/Mann-Whitney U检验** [t_test] (阶段: 单因素分析)
+   比较不同组别之间连续变量的差异
+
+5. **相关分析** [correlation] (阶段: 单因素分析)
+   检验连续变量之间的相关性
+
+## 任务
+请作为统计方法专家，整合和优化上述推荐的统计方法，而不是简单地将它们合并。您需要:
+
+1. 评估每种方法的适用性，考虑数据特征、研究设计和分析目标
+2. 删除不适合或冗余的方法
+3. 确定最关键的方法，并按重要性和执行顺序排列
+4. 为每种方法提供更详细的描述、适用条件和注意事项
+
+请以JSON格式返回结果，包含一个优化后的方法列表，格式如下:
+```json
+{
+  "methods": [
+    {
+      "name": "方法名称",
+      "method_key": "方法键值（与原推荐中相同）",
+      "stage": "描述性分析/单因素分析/多因素分析/高级分析",
+      "description": "方法描述",
+      "is_primary": true/false,
+      "applicable_conditions": "适用条件描述",
+      "considerations": "使用时需要注意的事项"
+    },
+    // 更多方法...
+  ]
+}
+```
+
+请确保返回的是有效的JSON格式，不要在JSON前后添加额外文本。</code></pre>
+          </div>
+        </div>
+        
+        <div class="bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 p-6 rounded-lg">
+          <h4 class="text-xl font-medium mb-3 flex items-center">
+            <i class="fas fa-shield-alt text-yellow-500 mr-2"></i>
+            错误恢复与降级策略
+          </h4>
+          <p class="mb-4">系统实现了多层错误处理和降级策略，确保即使在LLM服务不可用或响应不符合预期时，系统仍能正常运行：</p>
+          
+          <!-- 错误处理流程图 -->
+          <div class="overflow-x-auto mb-4">
+            <div class="mermaid" data-content="
+flowchart TD
+    LLMCall[LLM API调用] --> APISuccess{API调用成功?}
+    APISuccess --> |是| JSONParse{JSON解析}
+    APISuccess --> |否| Fallback1[回退到决策树结果]
+    
+    JSONParse --> |成功| MethodCheck{方法列表有效?}
+    JSONParse --> |失败| TextExtract[文本提取尝试]
+    
+    TextExtract --> RegexSuccess{正则提取成功?}
+    RegexSuccess --> |是| SimpleStruct[构建简化结构]
+    RegexSuccess --> |否| Fallback1
+    
+    MethodCheck --> |是| EnhancedResult[增强结果]
+    MethodCheck --> |否| Fallback1
+    
+    SimpleStruct --> EnhancedResult
+            ">
+flowchart TD
+    LLMCall[LLM API调用] --> APISuccess{API调用成功?}
+    APISuccess --> |是| JSONParse{JSON解析}
+    APISuccess --> |否| Fallback1[回退到决策树结果]
+    
+    JSONParse --> |成功| MethodCheck{方法列表有效?}
+    JSONParse --> |失败| TextExtract[文本提取尝试]
+    
+    TextExtract --> RegexSuccess{正则提取成功?}
+    RegexSuccess --> |是| SimpleStruct[构建简化结构]
+    RegexSuccess --> |否| Fallback1
+    
+    MethodCheck --> |是| EnhancedResult[增强结果]
+    MethodCheck --> |否| Fallback1
+    
+    SimpleStruct --> EnhancedResult
+            </div>
+          </div>
+          
+          <ul class="list-disc pl-6 space-y-1">
+            <li>当LLM API调用失败时，系统会回退到使用决策树推荐结果</li>
+            <li>当JSON解析失败时，系统尝试使用文本提取模式获取必要信息</li>
+            <li>每个降级步骤都有详细的日志记录，便于问题诊断</li>
+            <li>所有错误处理逻辑对用户透明，确保平滑的用户体验</li>
+            <li>系统能够处理不同API版本和不同格式的响应内容</li>
+          </ul>
+        </div>
+      </section>
+      
+      <!-- 代码生成模块 -->
+      <section id="section-3-5" class="mb-10">
+        <h3 class="text-2xl font-semibold mb-4">3.5 代码生成模块</h3>
+        <p class="text-lg mb-6">代码生成模块是系统的核心输出组件，负责将统计分析流程转化为可直接执行的代码，支持Python（pandas、statsmodels、scikit-learn）和R语言两种格式。该模块结合模板系统和LLM能力，生成高质量、标准化且可定制的分析代码。</p>
+        
+        <!-- 代码生成流程图 -->
+        <div class="card p-4 mb-8">
+          <div class="mermaid" data-content="
+flowchart TD
+    Method[统计方法] --> Language{语言选择}
+    Language --> |Python| PyCodeGen[Python代码生成器]
+    Language --> |R| RCodeGen[R代码生成器]
+    
+    subgraph Python代码生成
+        PyCodeGen --> PyTemplate[模板选择]
+        PyTemplate --> PyVariables[变量映射]
+        PyVariables --> PyParams[参数设置]
+        PyParams --> PyCode[Python代码]
+    end
+    
+    subgraph R代码生成
+        RCodeGen --> RTemplate[模板选择]
+        RTemplate --> RVariables[变量映射]
+        RVariables --> RParams[参数设置]
+        RParams --> RCode[R代码]
+    end
+    
+    PyCode --> Formatter[代码格式化]
+    RCode --> Formatter
+    Formatter --> Documentation[添加文档注释]
+    Documentation --> FinalCode[最终代码]
+          ">
+flowchart TD
+    Method[统计方法] --> Language{语言选择}
+    Language --> |Python| PyCodeGen[Python代码生成器]
+    Language --> |R| RCodeGen[R代码生成器]
+    
+    subgraph Python代码生成
+        PyCodeGen --> PyTemplate[模板选择]
+        PyTemplate --> PyVariables[变量映射]
+        PyVariables --> PyParams[参数设置]
+        PyParams --> PyCode[Python代码]
+    end
+    
+    subgraph R代码生成
+        RCodeGen --> RTemplate[模板选择]
+        RTemplate --> RVariables[变量映射]
+        RVariables --> RParams[参数设置]
+        RParams --> RCode[R代码]
+    end
+    
+    PyCode --> Formatter[代码格式化]
+    RCode --> Formatter
+    Formatter --> Documentation[添加文档注释]
+    Documentation --> FinalCode[最终代码]
+          </div>
+        </div>
+        
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">核心实现</h4>
+          
+          <!-- generate_code函数 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>generate_code()</code>: 代码生成主函数
+            </h5>
+            <p class="mb-3">此函数是代码生成的入口点，整合了模板系统与LLM增强：</p>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="generate-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="generate-code">
+def generate_code(method, data_info, variables, language="python", enhance_with_llm=True):
+    """
+    根据统计方法和数据信息生成分析代码
+    
+    参数:
+        method (dict): 统计方法信息，包含method_key、name等
+        data_info (dict): 数据相关信息，如数据集名称、形状等
+        variables (dict): 变量信息，包含因变量和自变量列表
+        language (str): 代码语言，支持'python'或'r'
+        enhance_with_llm (bool): 是否使用LLM增强代码质量
+        
+    返回:
+        str: 生成的代码
+    """
+    # 获取方法模板
+    template = get_method_template(method["method_key"], language)
+    if not template:
+        logger.warning(f"未找到方法 {method['method_key']} 的{language}模板")
+        return None
+    
+    # 基本代码生成 - 使用模板系统
+    code = apply_template(
+        template,
+        data_info=data_info,
+        variables=variables,
+        method=method
+    )
+    
+    # 使用LLM增强代码 (如果启用)
+    if enhance_with_llm and code:
+        enhanced_code = enhance_code_with_llm(
+            code,
+            method=method,
+            data_info=data_info,
+            variables=variables,
+            language=language
+        )
+        if enhanced_code:
+            code = enhanced_code
+    
+    # 代码格式化
+    code = format_code(code, language)
+    
+    return code
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- 模板系统示例 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-puzzle-piece text-green-500 mr-2"></i>
+              模板系统示例
+            </h5>
+            <p class="mb-3">系统使用可扩展的模板系统，为每种统计方法定义了标准化模板：</p>
+            
+            <!-- Python模板示例 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="python-template">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="python-template">
+# 逻辑回归模板 (Python)
+LOGISTIC_REGRESSION_TEMPLATE = """
+# 导入必要的库
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+from statsmodels.formula.api import glm
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report, confusion_matrix
+
+# 加载数据集
+df = pd.read_csv("{{data_info.file_path}}")
+
+# 数据预处理
+## 处理缺失值
+df = df.dropna(subset=["{{variables.dependent_var}}"])
+predictors = [{% for var in variables.independent_vars %}"{{var}}"{% if not loop.last %}, {% endif %}{% endfor %}]
+df = df.dropna(subset=predictors)
+
+# 描述性统计
+print("因变量分布:")
+print(df["{{variables.dependent_var}}"].value_counts(normalize=True))
+
+# 创建公式
+formula = "{{variables.dependent_var}} ~ {{variables.independent_vars|join(' + ')}}"
+
+# 拟合逻辑回归模型
+model = glm(formula=formula, data=df, family=sm.families.Binomial()).fit()
+
+# 打印模型摘要
+print(model.summary())
+
+# 计算预测概率和类别
+df['predicted_prob'] = model.predict(df)
+df['predicted_class'] = (df['predicted_prob'] > 0.5).astype(int)
+
+# 评估模型性能
+conf_matrix = confusion_matrix(df["{{variables.dependent_var}}"], df['predicted_class'])
+print("\\n混淆矩阵:")
+print(conf_matrix)
+
+print("\\n分类报告:")
+print(classification_report(df["{{variables.dependent_var}}"], df['predicted_class']))
+
+# 计算并打印优势比和95%置信区间
+print("\\n优势比和95%置信区间:")
+conf = model.conf_int()
+odds_ratios = pd.DataFrame({
+    'OR': np.exp(model.params),
+    '2.5%': np.exp(conf[0]),
+    '97.5%': np.exp(conf[1])
+})
+print(odds_ratios)
+
+# 可视化重要预测因素
+plt.figure(figsize=(10, 6))
+odds_ratios_plot = odds_ratios.drop('Intercept').sort_values('OR')
+odds_ratios_plot.plot(y='OR', yerr=[odds_ratios_plot['OR'] - odds_ratios_plot['2.5%'], 
+                                    odds_ratios_plot['97.5%'] - odds_ratios_plot['OR']], 
+                     kind='barh', logx=True)
+plt.axvline(x=1, color='red', linestyle='--')
+plt.title('各变量的优势比和95%置信区间')
+plt.tight_layout()
+plt.savefig('odds_ratios.png')
+plt.show()
+"""
+              </code></pre>
+            </div>
+            
+            <!-- R模板示例 -->
+            <div class="relative group mt-4">
+              <div class="code-header">
+                <span class="language">R</span>
+                <span class="copy-button" data-code-target="r-template">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-r" id="r-template">
+# 逻辑回归模板 (R)
+LOGISTIC_REGRESSION_R_TEMPLATE = """
+# 加载必要的包
+library(tidyverse)
+library(broom)
+library(pROC)
+library(sjPlot)
+
+# 读取数据
+data <- read.csv("{{data_info.file_path}}")
+
+# 数据预处理
+data <- data %>% 
+  drop_na({{variables.dependent_var}}, {{variables.independent_vars|join(', ')}})
+
+# 描述性统计
+cat("因变量分布:\n")
+print(table(data${{variables.dependent_var}}) / nrow(data))
+
+# 拟合逻辑回归模型
+formula <- {{variables.dependent_var}} ~ {{variables.independent_vars|join(' + ')}}
+model <- glm(formula, data = data, family = binomial())
+
+# 打印模型摘要
+summary(model)
+
+# 计算预测概率和类别
+data$predicted_prob <- predict(model, type = "response")
+data$predicted_class <- ifelse(data$predicted_prob > 0.5, 1, 0)
+
+# 创建混淆矩阵
+conf_matrix <- table(Actual = data${{variables.dependent_var}}, Predicted = data$predicted_class)
+print("混淆矩阵:")
+print(conf_matrix)
+
+# 计算分类指标
+sensitivity <- conf_matrix[2,2] / sum(conf_matrix[2,])
+specificity <- conf_matrix[1,1] / sum(conf_matrix[1,])
+accuracy <- sum(diag(conf_matrix)) / sum(conf_matrix)
+
+cat(sprintf("敏感性: %.4f\n", sensitivity))
+cat(sprintf("特异性: %.4f\n", specificity))
+cat(sprintf("准确率: %.4f\n", accuracy))
+
+# 计算ROC曲线
+roc_obj <- roc(data${{variables.dependent_var}}, data$predicted_prob)
+auc_value <- auc(roc_obj)
+cat(sprintf("AUC: %.4f\n", auc_value))
+
+# 绘制ROC曲线
+plot(roc_obj, main = "ROC曲线")
+
+# 计算并打印优势比和95%置信区间
+odds_ratios <- exp(cbind(OR = coef(model), confint(model)))
+print("优势比和95%置信区间:")
+print(odds_ratios)
+
+# 使用sjPlot绘制更美观的优势比图
+plot_model(model, show.values = TRUE, value.offset = 0.3, sort.est = TRUE,
+           title = "逻辑回归优势比及95%置信区间")
+
+# 保存图表
+ggsave("odds_ratios_plot.png", width = 10, height = 6)
+"""
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- LLM代码增强 -->
+          <div class="mb-6">
+            <h5 class="text-lg font-medium mb-2 flex items-center">
+              <i class="fas fa-code text-blue-500 mr-2"></i>
+              <code>enhance_code_with_llm()</code>: LLM代码增强函数
+            </h5>
+            <p class="mb-3">此函数利用LLM改进模板生成的代码，添加最佳实践和特定场景优化：</p>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="enhance-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="enhance-code">
+def enhance_code_with_llm(code, method, data_info, variables, language="python"):
+    """
+    使用LLM增强生成的代码质量
+    
+    参数:
+        code (str): 基于模板生成的原始代码
+        method (dict): 统计方法信息
+        data_info (dict): 数据相关信息
+        variables (dict): 变量信息
+        language (str): 代码语言
+        
+    返回:
+        str: 增强后的代码
+    """
+    # 构建提示词
+    prompt = f"""
+作为统计编程专家，请增强以下{language}代码，使其更加健壮、高效和专业。
+
+## 代码上下文
+- 统计方法: {method['name']} ({method['method_key']})
+- 数据集大小: {data_info.get('n_rows', '未知')} 行 × {data_info.get('n_cols', '未知')} 列
+- 因变量: {variables['dependent_var']} (类型: {data_info.get('dependent_var_type', '未知')})
+- 自变量: {', '.join(variables['independent_vars'])}
+- 研究目的: {data_info.get('research_purpose', '数据分析')}
+
+## 原始代码
+```{language}
+{code}
+```
+
+## 增强要求
+1. 添加必要的数据验证和边界条件检查
+2. 提高代码的可读性、效率和健壮性
+3. 添加详细的注释，特别是统计解释部分
+4. 保持代码结构和基本功能不变
+5. 添加适当的可视化，以便更好地解释结果
+6. 如果适用，增加模型诊断和验证步骤
+
+请返回完整的增强代码，不要包含解释。只返回增强后的代码。
+"""
+    
+    # 调用LLM API
+    response = call_llm_api(prompt, system_message="你是专业的统计编程专家。")
+    
+    if response["success"]:
+        # 提取代码块
+        enhanced_code = extract_code_from_text(response["content"], language)
+        if enhanced_code:
+            return enhanced_code
+    
+    # 如果增强失败，返回原始代码
+    logger.warning("LLM代码增强失败，返回原始代码")
+    return code
+
+def extract_code_from_text(text, language="python"):
+    """从LLM响应中提取代码块"""
+    pattern = fr"```(?:{language})?(.*?)```"
+    match = re.search(pattern, text, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return None
+              </code></pre>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 代码生成示例比较 -->
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">模板生成vs LLM增强比较</h4>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- 基础模板生成 -->
+            <div class="card p-4">
+              <h5 class="text-lg font-medium mb-3 flex items-center">
+                <i class="fas fa-file-code text-blue-400 mr-2"></i>
+                模板生成的基础代码
+              </h5>
+              <div class="text-sm opacity-75 mb-3">直接使用模板系统生成的代码示例</div>
+              
+              <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-sm overflow-hidden">
+<pre class="language-python"><code># 使用ANOVA检验不同组别之间的差异
+import pandas as pd
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+
+# 加载数据
+df = pd.read_csv("data.csv")
+
+# 描述性统计
+grouped = df.groupby("treatment_group")
+print(grouped["outcome_score"].describe())
+
+# 执行单因素方差分析
+fvalue, pvalue = stats.f_oneway(
+    df[df["treatment_group"] == "A"]["outcome_score"],
+    df[df["treatment_group"] == "B"]["outcome_score"],
+    df[df["treatment_group"] == "C"]["outcome_score"]
+)
+
+print(f"F值: {fvalue}, p值: {pvalue}")
+
+# 绘制箱线图
+plt.figure(figsize=(10, 6))
+df.boxplot(column="outcome_score", by="treatment_group")
+plt.title("不同治疗组的结果分数")
+plt.suptitle("")
+plt.show()</code></pre>
+              </div>
+            </div>
+            
+            <!-- LLM增强版本 -->
+            <div class="card p-4">
+              <h5 class="text-lg font-medium mb-3 flex items-center">
+                <i class="fas fa-robot text-purple-500 mr-2"></i>
+                LLM增强后的代码
+              </h5>
+              <div class="text-sm opacity-75 mb-3">经过LLM增强，添加了健壮性和解释性</div>
+              
+              <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-sm overflow-hidden">
+<pre class="language-python"><code># 使用ANOVA检验不同组别之间的差异
+import pandas as pd
+import numpy as np
+import scipy.stats as stats
+import matplotlib.pyplot as plt
+import seaborn as sns
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+# 设置绘图样式
+sns.set(style="whitegrid")
+plt.rcParams.update({'font.size': 12})
+
+# 加载数据
+df = pd.read_csv("data.csv")
+
+# 数据验证
+print(f"数据集大小: {df.shape}")
+print("缺失值检查:")
+print(df[["treatment_group", "outcome_score"]].isnull().sum())
+
+# 清理数据
+df = df.dropna(subset=["treatment_group", "outcome_score"])
+print(f"清理后数据集大小: {df.shape}")
+
+# 检查组别
+groups = df["treatment_group"].unique()
+print(f"处理组别: {groups}")
+
+# 描述性统计
+grouped = df.groupby("treatment_group")
+desc_stats = grouped["outcome_score"].describe()
+print("描述性统计:")
+print(desc_stats)
+
+# 正态性检验
+print("\n各组正态性检验 (Shapiro-Wilk):")
+for group in groups:
+    group_data = df[df["treatment_group"] == group]["outcome_score"]
+    stat, p = stats.shapiro(group_data)
+    print(f"组别 {group}: W={stat:.4f}, p={p:.4f} " + 
+          ("(可能非正态分布)" if p < 0.05 else "(符合正态分布)"))
+
+# 方差齐性检验
+stat, p = stats.levene(*[df[df["treatment_group"] == g]["outcome_score"] for g in groups])
+print(f"\n方差齐性检验 (Levene): W={stat:.4f}, p={p:.4f} " + 
+      ("(方差可能不齐)" if p < 0.05 else "(方差齐性)"))
+
+# 执行单因素方差分析
+print("\nANOVA结果:")
+group_data = [df[df["treatment_group"] == g]["outcome_score"] for g in groups]
+fvalue, pvalue = stats.f_oneway(*group_data)
+print(f"F值: {fvalue:.4f}, p值: {pvalue:.4f}")
+print("结论: " + ("拒绝原假设，存在组间差异" if pvalue < 0.05 else "不能拒绝原假设，无显著组间差异"))
+
+# 如果ANOVA显著，进行事后检验
+if pvalue < 0.05:
+    print("\n事后多重比较 (Tukey HSD):")
+    tukey = pairwise_tukeyhsd(
+        df["outcome_score"], df["treatment_group"],
+        alpha=0.05
+    )
+    print(tukey)
+
+# 可视化
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+
+# 箱线图
+sns.boxplot(x="treatment_group", y="outcome_score", data=df, ax=ax1)
+ax1.set_title("不同治疗组的结果分数分布")
+ax1.set_xlabel("治疗组")
+ax1.set_ylabel("结果分数")
+
+# 小提琴图 (提供分布信息)
+sns.violinplot(x="treatment_group", y="outcome_score", data=df, ax=ax2)
+ax2.set_title("不同治疗组的结果分数密度")
+ax2.set_xlabel("治疗组")
+ax2.set_ylabel("结果分数")
+
+plt.tight_layout()
+plt.savefig("treatment_group_comparison.png", dpi=300)
+plt.show()
+
+# 效应大小计算 (Eta平方)
+groups_mean = df.groupby("treatment_group")["outcome_score"].mean()
+grand_mean = df["outcome_score"].mean()
+n = len(df)
+SSb = sum([(groups_mean[g] - grand_mean)**2 * len(df[df["treatment_group"] == g]) for g in groups])
+SSt = sum((df["outcome_score"] - grand_mean)**2)
+eta_squared = SSb / SSt
+print(f"\n效应大小 (Eta平方): {eta_squared:.4f}")
+print("效应大小解释: " + 
+      ("微弱效应" if eta_squared < 0.06 else 
+       "中等效应" if eta_squared < 0.14 else "强效应"))</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 最佳实践和评价 -->
+        <div class="bg-green-50 dark:bg-green-900 dark:bg-opacity-20 p-6 rounded-lg">
+          <h4 class="text-xl font-medium mb-3 flex items-center">
+            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+            代码生成模块的优势
+          </h4>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <h5 class="text-base font-medium mb-2">模板系统优势</h5>
+              <ul class="list-disc pl-6 space-y-1 text-sm">
+                <li>高度一致的代码结构和风格</li>
+                <li>可预测的输出，适合标准化场景</li>
+                <li>独立于外部API，稳定可靠</li>
+                <li>易于测试和维护</li>
+                <li>对关键分析有专门定制模板</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h5 class="text-base font-medium mb-2">LLM增强优势</h5>
+              <ul class="list-disc pl-6 space-y-1 text-sm">
+                <li>提供数据验证和边界条件检查</li>
+                <li>增加专业统计解释和洞察</li>
+                <li>补充高级可视化和诊断步骤</li>
+                <li>针对特定数据场景提供优化</li>
+                <li>代码更具可读性和教育价值</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-center py-4">
+            <i class="fas fa-plus-circle text-gray-400 text-2xl mx-6"></i>
+          </div>
+          
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+            <h5 class="text-base font-medium mb-2 text-center">混合架构关键优势</h5>
+            <ul class="list-disc pl-6 space-y-1 text-sm">
+              <li><strong>降级能力</strong>: 当LLM服务不可用时，基本模板系统仍能提供标准化代码</li>
+              <li><strong>可定制性</strong>: 研究人员可以选择基础版或增强版代码，根据需要调整</li>
+              <li><strong>持续改进</strong>: 模板系统可以基于LLM生成的优质代码持续更新和完善</li>
+              <li><strong>教育价值</strong>: 增强版代码包含详细注释和统计学解释，帮助用户理解分析</li>
+              <li><strong>标准化与创新平衡</strong>: 结合了标准化模板的一致性和LLM的创新能力</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 执行模块与报告生成 -->
+      <section id="section-3-6" class="mb-10">
+        <h3 class="text-2xl font-semibold mb-4">3.6 执行模块与报告生成</h3>
+        <p class="text-lg mb-6">执行模块负责运行生成的代码，收集分析结果，并生成用户友好的HTML报告，将统计结果呈现为易于理解的形式。该模块确保了从分析到结果呈现的无缝过渡。</p>
+        
+        <!-- 执行流程图 -->
+        <div class="card p-4 mb-8">
+          <div class="mermaid" data-content="
+flowchart TD
+    Code[分析代码] --> SaveScript[保存到临时脚本]
+    SaveScript --> Language{代码语言}
+    Language --> |Python| PyExec[调用Python解释器]
+    Language --> |R| RExec[调用R解释器]
+    
+    PyExec --> Capture[捕获标准输出与错误]
+    RExec --> Capture
+    
+    Capture --> Success{执行成功?}
+    Success --> |是| ScanResults[扫描结果文件]
+    Success --> |否| ErrorReport[创建错误报告]
+    
+    ScanResults --> GenerateReport[生成HTML报告]
+    ErrorReport --> GenerateReport
+    
+    GenerateReport --> Report[分析报告]
+    Report --> ShowSummary[展示结果摘要]
+          ">
+flowchart TD
+    Code[分析代码] --> SaveScript[保存到临时脚本]
+    SaveScript --> Language{代码语言}
+    Language --> |Python| PyExec[调用Python解释器]
+    Language --> |R| RExec[调用R解释器]
+    
+    PyExec --> Capture[捕获标准输出与错误]
+    RExec --> Capture
+    
+    Capture --> Success{执行成功?}
+    Success --> |是| ScanResults[扫描结果文件]
+    Success --> |否| ErrorReport[创建错误报告]
+    
+    ScanResults --> GenerateReport[生成HTML报告]
+    ErrorReport --> GenerateReport
+    
+    GenerateReport --> Report[分析报告]
+    Report --> ShowSummary[展示结果摘要]
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <!-- 执行模块 -->
+          <div>
+            <h4 class="text-xl font-medium mb-3">执行模块</h4>
+            <p class="mb-3">执行模块负责安全地运行生成的分析代码，并收集执行结果：</p>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="execute-code">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="execute-code">
+def execute_analysis(code, language="python", data_file=None, output_dir="./output"):
+    """
+    执行生成的分析代码并收集结果
+    
+    参数:
+        code (str): 要执行的代码
+        language (str): 代码语言，支持'python'或'r'
+        data_file (str): 数据文件路径
+        output_dir (str): 输出目录
+        
+    返回:
+        dict: 执行结果，包含状态、日志和生成的文件
+    """
+    # 确保输出目录存在
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 获取时间戳用于文件名
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    
+    # 根据语言确定文件扩展名和命令
+    if language.lower() == "python":
+        script_ext = ".py"
+        command = ["python"]
+    elif language.lower() == "r":
+        script_ext = ".R"
+        command = ["Rscript"]
+    else:
+        return {
+            "success": False,
+            "error": f"不支持的语言: {language}"
+        }
+    
+    # 创建临时脚本文件
+    script_file = os.path.join(output_dir, f"analysis_{timestamp}{script_ext}")
+    
+    # 如果代码中包含数据文件占位符，替换为实际路径
+    if data_file:
+        code = code.replace("{{data_file}}", data_file)
+    
+    # 写入代码到脚本文件
+    with open(script_file, "w", encoding="utf-8") as f:
+        f.write(code)
+    
+    # 设置执行环境
+    env = os.environ.copy()
+    env["OUTPUT_DIR"] = output_dir
+    
+    try:
+        # 执行脚本
+        logger.info(f"执行{language}脚本: {script_file}")
+        cmd = command + [script_file]
+        process = subprocess.run(
+            cmd,
+            env=env,
+            cwd=output_dir,
+            text=True,
+            capture_output=True,
+            timeout=300  # 设置超时时间为5分钟
+        )
+        
+        # 记录标准输出和错误
+        stdout = process.stdout
+        stderr = process.stderr
+        
+        # 检查执行状态
+        success = process.returncode == 0
+        
+        # 扫描生成的结果文件
+        result_files = []
+        if success:
+            for file in os.listdir(output_dir):
+                file_path = os.path.join(output_dir, file)
+                # 跳过脚本文件本身
+                if file_path != script_file and os.path.isfile(file_path):
+                    # 检查文件是否是在执行后创建的
+                    if os.path.getmtime(file_path) > os.path.getmtime(script_file):
+                        result_files.append(file_path)
+        
+        return {
+            "success": success,
+            "script_file": script_file,
+            "stdout": stdout,
+            "stderr": stderr,
+            "result_files": result_files,
+            "execution_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+    
+    except subprocess.TimeoutExpired:
+        logger.error(f"执行超时: {script_file}")
+        return {
+            "success": False,
+            "script_file": script_file,
+            "error": "执行超时(超过5分钟)",
+            "execution_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+    except Exception as e:
+        logger.error(f"执行出错: {str(e)}")
+        return {
+            "success": False,
+            "script_file": script_file,
+            "error": f"执行出错: {str(e)}",
+            "execution_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+              </code></pre>
+            </div>
+          </div>
+          
+          <!-- 报告生成模块 -->
+          <div>
+            <h4 class="text-xl font-medium mb-3">报告生成模块</h4>
+            <p class="mb-3">报告生成模块将分析结果转化为用户友好的HTML文档：</p>
+            
+            <!-- 代码实现 -->
+            <div class="relative group">
+              <div class="code-header">
+                <span class="language">Python</span>
+                <span class="copy-button" data-code-target="generate-report">
+                  <i class="fas fa-copy"></i> 复制
+                </span>
+              </div>
+              <pre><code class="language-python" id="generate-report">
+def generate_analysis_report(method, data_profile, execution_result, 
+                           dependent_var, analysis_vars, output_dir="./output"):
+    """
+    生成HTML格式的分析报告
+    
+    参数:
+        method (dict): 统计方法信息
+        data_profile (dict): 数据概况
+        execution_result (dict): 执行结果
+        dependent_var (str): 因变量
+        analysis_vars (list): 分析变量
+        output_dir (str): 输出目录
+        
+    返回:
+        dict: 报告生成结果
+    """
+    # 确保输出目录存在
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # 获取时间戳
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    report_file = os.path.join(output_dir, f"report_{timestamp}.html")
+    
+    # 开始创建HTML内容
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>统计分析报告 - {method['name']}</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }}
+            h1, h2, h3, h4 {{
+                color: #2c3e50;
+            }}
+            .header {{
+                background-color: #3498db;
+                color: white;
+                padding: 20px;
+                margin-bottom: 20px;
+                border-radius: 5px;
+            }}
+            .section {{
+                margin-bottom: 30px;
+                padding: 20px;
+                background-color: #f9f9f9;
+                border-radius: 5px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }}
+            .footer {{
+                text-align: center;
+                margin-top: 30px;
+                padding: 10px;
+                font-size: 0.9em;
+                color: #7f8c8d;
+            }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+            }}
+            th, td {{
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                text-align: left;
+            }}
+            th {{
+                background-color: #f2f2f2;
+            }}
+            .result-files {{
+                margin-top: 20px;
+            }}
+            .result-file {{
+                display: block;
+                margin: 10px 0;
+                padding: 10px;
+                background-color: #e8f4fc;
+                border-radius: 3px;
+                text-decoration: none;
+                color: #2980b9;
+            }}
+            .error {{
+                color: #e74c3c;
+                background-color: #fceae8;
+                padding: 10px;
+                border-radius: 3px;
+            }}
+            .success {{
+                color: #27ae60;
+                background-color: #e8fcec;
+                padding: 10px;
+                border-radius: 3px;
+            }}
+            pre {{
+                background-color: #f8f8f8;
+                padding: 15px;
+                border-radius: 3px;
+                overflow-x: auto;
+                font-size: 14px;
+                line-height: 1.4;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>统计分析报告</h1>
+            <p>生成时间: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
+        </div>
+        
+        <div class="section">
+            <h2>分析概览</h2>
+            <p><strong>分析方法:</strong> {method['name']}</p>
+            <p><strong>方法描述:</strong> {method.get('description', '无描述')}</p>
+            <p><strong>因变量:</strong> {dependent_var}</p>
+            <p><strong>分析变量:</strong> {', '.join(analysis_vars)}</p>
+        </div>
+        
+        <div class="section">
+            <h2>数据概览</h2>
+            <p><strong>数据文件:</strong> {data_profile.get('file_path', '未指定')}</p>
+            <p><strong>观测数:</strong> {data_profile.get('row_count', '未知')} 行</p>
+            <p><strong>变量数:</strong> {data_profile.get('col_count', '未知')} 列</p>
+            
+            <h3>变量信息</h3>
+            <table>
+                <tr>
+                    <th>变量名</th>
+                    <th>类型</th>
+                    <th>唯一值数</th>
+                    <th>缺失率</th>
+                </tr>
+    """
+    
+    # 添加变量信息表格行
+    for var in data_profile.get('variables', []):
+        if var['name'] == dependent_var or var['name'] in analysis_vars:
+            html_content += f"""
+                <tr>
+                    <td>{var['name']}</td>
+                    <td>{var['type']}</td>
+                    <td>{var.get('unique_values', '未知')}</td>
+                    <td>{var.get('missing_rate', 0):.2%}</td>
+                </tr>
+            """
+    
+    html_content += """
+            </table>
+        </div>
+    """
+    
+    # 添加分析结果部分
+    html_content += """
+        <div class="section">
+            <h2>分析结果</h2>
+    """
+    
+    if execution_result.get('success', False):
+        html_content += """
+            <div class="success">
+                <p>✅ 分析执行成功</p>
+            </div>
+        """
+        
+        # 添加执行输出
+        if execution_result.get('stdout'):
+            html_content += f"""
+            <h3>执行输出</h3>
+            <pre>{execution_result['stdout']}</pre>
+            """
+        
+        # 添加结果文件列表
+        if execution_result.get('result_files'):
+            html_content += """
+            <h3>结果文件</h3>
+            <div class="result-files">
+            """
+            
+            for file_path in execution_result['result_files']:
+                file_name = os.path.basename(file_path)
+                # 对于图片文件，直接嵌入
+                if file_name.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.svg')):
+                    # 复制图片到报告目录
+                    report_dir = os.path.dirname(report_file)
+                    img_dest = os.path.join(report_dir, file_name)
+                    shutil.copy2(file_path, img_dest)
+                    
+                    html_content += f"""
+                    <h4>{file_name}</h4>
+                    <img src="{file_name}" alt="{file_name}" style="max-width:100%; height:auto;">
+                    <a href="{file_name}" download class="result-file">下载图片</a>
+                    """
+                else:
+                    file_rel_path = os.path.relpath(file_path, os.path.dirname(report_file))
+                    html_content += f"""
+                    <a href="{file_rel_path}" download class="result-file">
+                        <i>📄</i> {file_name}
+                    </a>
+                    """
+            
+            html_content += """
+            </div>
+            """
+    else:
+        html_content += f"""
+            <div class="error">
+                <p>❌ 分析执行失败</p>
+                <p>{execution_result.get('error', '未知错误')}</p>
+            </div>
+        """
+        
+        # 添加错误输出
+        if execution_result.get('stderr'):
+            html_content += f"""
+            <h3>错误输出</h3>
+            <pre>{execution_result['stderr']}</pre>
+            """
+    
+    # 添加方法说明部分
+    html_content += f"""
+        </div>
+        
+        <div class="section">
+            <h2>方法说明</h2>
+            <p>{method.get('description', '无描述')}</p>
+            
+            <h3>适用条件</h3>
+            <p>{method.get('applicable_conditions', '无特定适用条件说明')}</p>
+            
+            <h3>注意事项</h3>
+            <p>{method.get('considerations', '无特定注意事项')}</p>
+        </div>
+        
+        <div class="footer">
+            <p>由智能统计分析系统生成 | {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # 保存HTML报告
+    with open(report_file, "w", encoding="utf-8") as f:
+        f.write(html_content)
+    
+    return {
+        "success": True,
+        "report_file": report_file,
+        "report_url": f"file://{os.path.abspath(report_file)}"
+    }
+              </code></pre>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 报告展示函数 -->
+        <div class="mb-8">
+          <h4 class="text-xl font-medium mb-3">结果展示函数</h4>
+          
+          <div class="relative group">
+            <div class="code-header">
+              <span class="language">Python</span>
+              <span class="copy-button" data-code-target="show-results">
+                <i class="fas fa-copy"></i> 复制
+              </span>
+            </div>
+            <pre><code class="language-python" id="show-results">
+def show_results_summary(execution_result, report_result):
+    """
+    向用户展示分析结果摘要
+    
+    参数:
+        execution_result (dict): 执行结果
+        report_result (dict): 报告生成结果
+    """
+    print("\n" + "="*60)
+    print("分析结果摘要")
+    print("="*60)
+    
+    # 展示执行状态
+    if execution_result.get('success', False):
+        print("\n✅ 分析执行成功")
+    else:
+        print("\n❌ 分析执行失败")
+        print(f"错误: {execution_result.get('error', '未知错误')}")
+    
+    # 展示脚本路径
+    if 'script_file' in execution_result:
+        print(f"\n分析脚本: {execution_result['script_file']}")
+    
+    # 展示结果文件
+    if execution_result.get('result_files'):
+        print("\n生成的结果文件:")
+        for file in execution_result['result_files']:
+            print(f"  - {file}")
+    
+    # 展示报告路径
+    if report_result.get('success', False) and 'report_file' in report_result:
+        print(f"\n分析报告: {report_result['report_file']}")
+        print(f"报告URL: {report_result['report_url']}")
+        
+        # 尝试自动打开报告
+        try:
+            import webbrowser
+            webbrowser.open(report_result['report_url'])
+            print("\n已尝试在浏览器中打开报告。如果未自动打开，请手动访问上述URL。")
+        except:
+            print("\n无法自动打开报告，请手动访问上述URL。")
+    
+    print("\n" + "="*60)
+    print("分析完成")
+    print("="*60)
+            </code></pre>
+          </div>
+        </div>
+        
+        <!-- 报告示例 -->
+        <div class="mb-6">
+          <h4 class="text-xl font-medium mb-3">报告效果示例</h4>
+          
+          <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+            <div class="bg-blue-600 text-white p-5">
+              <h1 class="text-xl font-bold">统计分析报告</h1>
+              <p class="text-sm opacity-90">生成时间: 2023-11-20 15:30:45</p>
+            </div>
+            
+            <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-lg font-semibold mb-2">分析概览</h2>
+              <p><strong>分析方法:</strong> 逻辑回归</p>
+              <p><strong>方法描述:</strong> 分析多个自变量对二分类因变量的影响，计算优势比</p>
+              <p><strong>因变量:</strong> outcome</p>
+              <p><strong>分析变量:</strong> age, gender, income, education, treatment</p>
+            </div>
+            
+            <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-lg font-semibold mb-2">数据概览</h2>
+              <p><strong>数据文件:</strong> data/research_data.csv</p>
+              <p><strong>观测数:</strong> 302 行</p>
+              <p><strong>变量数:</strong> 15 列</p>
+              
+              <h3 class="text-md font-semibold mt-4 mb-2">变量信息</h3>
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead>
+                    <tr>
+                      <th class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-left">变量名</th>
+                      <th class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-left">类型</th>
+                      <th class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-left">唯一值数</th>
+                      <th class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-left">缺失率</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <tr>
+                      <td class="px-4 py-2">outcome</td>
+                      <td class="px-4 py-2">categorical</td>
+                      <td class="px-4 py-2">2</td>
+                      <td class="px-4 py-2">0.30%</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2">age</td>
+                      <td class="px-4 py-2">continuous</td>
+                      <td class="px-4 py-2">65</td>
+                      <td class="px-4 py-2">0.00%</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2">gender</td>
+                      <td class="px-4 py-2">categorical</td>
+                      <td class="px-4 py-2">2</td>
+                      <td class="px-4 py-2">0.00%</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2">income</td>
+                      <td class="px-4 py-2">continuous</td>
+                      <td class="px-4 py-2">120</td>
+                      <td class="px-4 py-2">1.32%</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2">education</td>
+                      <td class="px-4 py-2">categorical</td>
+                      <td class="px-4 py-2">4</td>
+                      <td class="px-4 py-2">0.66%</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2">treatment</td>
+                      <td class="px-4 py-2">categorical</td>
+                      <td class="px-4 py-2">2</td>
+                      <td class="px-4 py-2">0.00%</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+              <h2 class="text-lg font-semibold mb-2">分析结果</h2>
+              <div class="bg-green-50 dark:bg-green-900 dark:bg-opacity-20 text-green-700 dark:text-green-300 p-3 rounded mb-4">
+                <p>✅ 分析执行成功</p>
+              </div>
+              
+              <h3 class="text-md font-semibold mt-4 mb-2">执行输出摘要</h3>
+              <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded text-sm font-mono whitespace-pre-wrap">
+因变量分布:
+0    0.539735
+1    0.460265
+Name: outcome, dtype: float64
+
+逻辑回归结果摘要:
+                 Logit Regression Results                           
+==================================================================
+Dep. Variable:                outcome   No. Observations:                  300
+Model:                          Logit   Df Residuals:                      294
+Method:                           MLE   Df Model:                            5
+Date:                Mon, 20 Nov 2023   Pseudo R-squ.:                 0.2183
+Time:                        15:30:42   Log-Likelihood:                -172.48
+converged:                       True   LL-Null:                       -220.65
+Covariance Type:            nonrobust   LR p-value:                 1.107e-19
+==================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------
+Intercept     -2.3520      0.593     -3.965      0.000      -3.514      -1.190
+age            0.0328      0.008      4.101      0.000       0.017       0.049
+gender[T.1]   -0.4321      0.255     -1.693      0.090      -0.932       0.068
+income         0.0124      0.004      3.100      0.002       0.005       0.020
+education      0.4538      0.142      3.196      0.001       0.175       0.732
+treatment[T.1] 1.2754      0.257      4.963      0.000       0.772       1.779
+==================================================================
+              </div>
+              
+              <h3 class="text-md font-semibold mt-4 mb-2">结果文件</h3>
+              <div class="mt-3">
+                <div class="mb-6">
+                  <h4 class="text-base font-medium mb-2">odds_ratios_plot.png</h4>
+                  <img src="../../assets/odds_ratio_sample.png" alt="Odds Ratios Plot" class="max-w-full h-auto rounded border border-gray-200 dark:border-gray-700">
+                  <a href="#" class="inline-block mt-2 px-3 py-1 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-30 text-blue-600 dark:text-blue-300 rounded text-sm">下载图片</a>
+                </div>
+                
+                <a href="#" class="block p-3 mb-2 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 text-blue-600 dark:text-blue-300 rounded">
+                  <i class="fas fa-file-csv mr-2"></i> model_results.csv
+                </a>
+                <a href="#" class="block p-3 mb-2 bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 text-blue-600 dark:text-blue-300 rounded">
+                  <i class="fas fa-file-code mr-2"></i> analysis_20231120153042.R
+                </a>
+              </div>
+            </div>
+            
+            <div class="p-5">
+              <h2 class="text-lg font-semibold mb-2">方法说明</h2>
+              <p>逻辑回归是一种用于预测二分类因变量(0/1)的统计方法。它评估多个自变量对结局的影响，并可计算优势比来量化关联强度。</p>
+              
+              <h3 class="text-md font-semibold mt-4 mb-2">适用条件</h3>
+              <p>适用于二分类因变量(如成功/失败、是/否)，可以同时处理分类和连续自变量。样本量建议至少为每个自变量10个观测。</p>
+              
+              <h3 class="text-md font-semibold mt-4 mb-2">注意事项</h3>
+              <p>需注意自变量之间的多重共线性问题；对于小样本稀有事件，考虑使用Firth逻辑回归；解释优势比时需注意其表示相对风险而非绝对风险。</p>
+            </div>
+            
+            <div class="py-4 px-5 bg-gray-100 dark:bg-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
+              <p>由智能统计分析系统生成 | 2023-11-20 15:30:45</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-indigo-50 dark:bg-indigo-900 dark:bg-opacity-20 p-6 rounded-lg">
+          <h4 class="text-xl font-medium mb-3 flex items-center">
+            <i class="fas fa-chart-line text-indigo-500 mr-2"></i>
+            报告生成的优势
+          </h4>
+          <div class="space-y-2">
+            <p><strong>结构化展示</strong> - 将统计结果以结构化HTML格式呈现，便于阅读和解释</p>
+            <p><strong>自动可视化</strong> - 自动嵌入分析生成的图表，提供直观的数据表达</p>
+            <p><strong>方法解释</strong> - 包含统计方法解释、适用条件和注意事项，提升科学严谨性</p>
+            <p><strong>完整追溯</strong> - 保存完整分析代码和中间结果，确保研究可重复性</p>
+            <p><strong>错误处理</strong> - 即使分析失败也能生成报告，展示错误信息，便于调试问题</p>
+            <p><strong>自动打开</strong> - 自动在浏览器中打开报告，提升用户体验</p>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+  
+  <footer class="bg-gray-100 dark:bg-gray-800 py-8 mt-16">
+    <div class="container mx-auto px-4">
+      <p class="text-center">作者姓名: 季晓康</p>
+      <p class="text-center">微信公众号：凿壁</p>
+      <p class="text-center">版权信息：国家健康医疗大数据研究院</p>
+      <p class="text-center mt-4">
+        <a href="../../index.html" class="text-blue-500 hover:text-blue-700">
+          <i class="fas fa-arrow-left mr-2"></i>返回首页
+        </a>
+      </p>
+    </div>
+  </footer>
+  
+  <script>
+    // 初始化主题
+    if (localStorage.getItem('theme') === 'dark' || 
+        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
+    // 主题切换
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      if (document.documentElement.classList.contains('dark')) {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+      }
+    });
+    
+    // Mermaid初始化
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+      darkMode: document.documentElement.classList.contains('dark')
+    });
+    
+    // 初始化代码高亮
+    document.addEventListener('DOMContentLoaded', function() {
+      // 立即初始化Mermaid图表
+      setTimeout(function() {
+        mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+      }, 0);
+      
+      // 代码高亮
+      document.querySelectorAll('pre code').forEach(function(el) {
+        hljs.highlightElement(el);
+      });
+      
+      // 代码复制功能
+      document.querySelectorAll('.copy-button').forEach(function(button) {
+        button.addEventListener('click', function() {
+          const codeId = this.getAttribute('data-code-target');
+          const codeElement = document.getElementById(codeId);
+          if (codeElement) {
+            navigator.clipboard.writeText(codeElement.textContent).then(function() {
+              const originalText = button.innerHTML;
+              button.innerHTML = '<i class="fas fa-check"></i> 已复制';
+              setTimeout(function() {
+                button.innerHTML = originalText;
+              }, 2000);
+            });
+          }
+        });
+      });
+      
+      // 监听主题变化重新渲染Mermaid图表
+      document.getElementById('theme-toggle').addEventListener('click', function() {
+        // 更新mermaid配置
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+          darkMode: document.documentElement.classList.contains('dark')
+        });
+        
+        // 更可靠的方式重新渲染图表
+        setTimeout(() => {
+          document.querySelectorAll('.mermaid').forEach(function(el) {
+            // 保存原始内容
+            const content = el.getAttribute('data-content');
+            if (content) {
+              // 清空当前内容
+              el.innerHTML = '';
+              // 重新插入内容
+              el.textContent = content;
+              // 重新初始化
+              mermaid.init(undefined, el);
+            }
+          });
+        }, 100);
+      });
+      
+      // 统计方法推荐精确度对比图表
+      const accuracyCtx = document.getElementById('accuracyChart').getContext('2d');
+      const accuracyChart = new Chart(accuracyCtx, {
+        type: 'bar',
+        data: {
+          labels: ['简单数据', '中等复杂度', '高复杂度', '非典型案例'],
+          datasets: [{
+            label: '决策树推荐',
+            data: [95, 82, 68, 45],
+            backgroundColor: 'rgba(54, 162, 235, 0.5)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          }, {
+            label: 'LLM增强推荐',
+            data: [96, 89, 82, 71],
+            backgroundColor: 'rgba(153, 102, 255, 0.5)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+                font: {
+                  family: '"Noto Sans SC", sans-serif',
+                  size: window.innerWidth < 768 ? 10 : 12
+                },
+                padding: window.innerWidth < 768 ? 10 : 20
+              }
+            },
+            title: {
+              display: false,
+              text: '推荐精确度对比'
+            },
+            tooltip: {
+              backgroundColor: document.documentElement.classList.contains('dark') ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+              titleColor: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+              bodyColor: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+              borderColor: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+              borderWidth: 1,
+              padding: window.innerWidth < 768 ? 8 : 12,
+              bodyFont: {
+                family: '"Noto Sans SC", sans-serif',
+                size: window.innerWidth < 768 ? 10 : 12
+              },
+              titleFont: {
+                family: '"Noto Sans SC", sans-serif',
+                size: window.innerWidth < 768 ? 11 : 14
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: {
+                color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+                font: {
+                  family: '"Noto Sans SC", sans-serif',
+                  size: window.innerWidth < 768 ? 10 : 12
+                }
+              },
+              grid: {
+                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+                font: {
+                  family: '"Noto Sans SC", sans-serif',
+                  size: window.innerWidth < 768 ? 10 : 12
+                }
+              },
+              grid: {
+                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              }
+            }
+          }
+        }
+      });
+      
+      // 统计方法推荐完整性对比图表
+      const completenessCtx = document.getElementById('completenessChart').getContext('2d');
+      const completenessChart = new Chart(completenessCtx, {
+        type: 'radar',
+        data: {
+          labels: ['方法覆盖率', '细节描述', '适用条件', '方法顺序', '潜在问题识别'],
+          datasets: [{
+            label: '决策树推荐',
+            data: [85, 60, 70, 90, 50],
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+          }, {
+            label: 'LLM增强推荐',
+            data: [92, 85, 88, 80, 85],
+            backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            borderColor: 'rgba(153, 102, 255, 1)',
+            pointBackgroundColor: 'rgba(153, 102, 255, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          elements: {
+            line: {
+              borderWidth: 3
+            },
+            point: {
+              radius: window.innerWidth < 768 ? 2 : 3,
+              hoverRadius: window.innerWidth < 768 ? 3 : 5
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+                font: {
+                  family: '"Noto Sans SC", sans-serif',
+                  size: window.innerWidth < 768 ? 10 : 12
+                },
+                padding: window.innerWidth < 768 ? 10 : 20
+              }
+            },
+            tooltip: {
+              backgroundColor: document.documentElement.classList.contains('dark') ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+              titleColor: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+              bodyColor: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+              borderColor: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+              borderWidth: 1,
+              padding: window.innerWidth < 768 ? 8 : 12,
+              bodyFont: {
+                family: '"Noto Sans SC", sans-serif',
+                size: window.innerWidth < 768 ? 10 : 12
+              },
+              titleFont: {
+                family: '"Noto Sans SC", sans-serif',
+                size: window.innerWidth < 768 ? 11 : 14
+              }
+            }
+          },
+          scales: {
+            r: {
+              angleLines: {
+                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              },
+              grid: {
+                color: document.documentElement.classList.contains('dark') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+              },
+              pointLabels: {
+                color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+                font: {
+                  family: '"Noto Sans SC", sans-serif',
+                  size: window.innerWidth < 768 ? 10 : 12
+                }
+              },
+              ticks: {
+                color: document.documentElement.classList.contains('dark') ? '#e2e8f0' : '#1e293b',
+                backdropColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff',
+                backdropPadding: window.innerWidth < 768 ? 2 : 4,
+                font: {
+                  size: window.innerWidth < 768 ? 8 : 10
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // 主题切换时更新图表颜色
+      document.getElementById('theme-toggle').addEventListener('click', function() {
+        const isDark = document.documentElement.classList.contains('dark');
+        
+        // 更新图表配置
+        const textColor = isDark ? '#e2e8f0' : '#1e293b';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const tooltipBgColor = isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)';
+        const tooltipBorderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        
+        // 更新精确度图表
+        accuracyChart.options.scales.x.ticks.color = textColor;
+        accuracyChart.options.scales.x.grid.color = gridColor;
+        accuracyChart.options.scales.y.ticks.color = textColor;
+        accuracyChart.options.scales.y.grid.color = gridColor;
+        accuracyChart.options.plugins.legend.labels.color = textColor;
+        accuracyChart.options.plugins.tooltip.backgroundColor = tooltipBgColor;
+        accuracyChart.options.plugins.tooltip.titleColor = textColor;
+        accuracyChart.options.plugins.tooltip.bodyColor = textColor;
+        accuracyChart.options.plugins.tooltip.borderColor = tooltipBorderColor;
+        accuracyChart.update();
+        
+        // 更新完整性图表
+        completenessChart.options.scales.r.angleLines.color = gridColor;
+        completenessChart.options.scales.r.grid.color = gridColor;
+        completenessChart.options.scales.r.pointLabels.color = textColor;
+        completenessChart.options.scales.r.ticks.color = textColor;
+        completenessChart.options.scales.r.ticks.backdropColor = isDark ? '#1e293b' : '#ffffff';
+        completenessChart.options.plugins.legend.labels.color = textColor;
+        completenessChart.options.plugins.tooltip.backgroundColor = tooltipBgColor;
+        completenessChart.options.plugins.tooltip.titleColor = textColor;
+        completenessChart.options.plugins.tooltip.bodyColor = textColor;
+        completenessChart.options.plugins.tooltip.borderColor = tooltipBorderColor;
+        completenessChart.update();
+      });
+      
+      // 监听窗口大小变化，调整图表
+      window.addEventListener('resize', function() {
+        // 更新字体大小和其他响应式属性
+        const isMobile = window.innerWidth < 768;
+        const fontSize = isMobile ? 10 : 12;
+        const titleFontSize = isMobile ? 11 : 14;
+        const pointRadius = isMobile ? 2 : 3;
+        const hoverRadius = isMobile ? 3 : 5;
+        const padding = isMobile ? 10 : 20;
+        const tooltipPadding = isMobile ? 8 : 12;
+        
+        // 更新精确度图表
+        accuracyChart.options.plugins.legend.labels.font.size = fontSize;
+        accuracyChart.options.plugins.legend.labels.padding = padding;
+        accuracyChart.options.scales.x.ticks.font.size = fontSize;
+        accuracyChart.options.scales.y.ticks.font.size = fontSize;
+        accuracyChart.options.plugins.tooltip.padding = tooltipPadding;
+        accuracyChart.options.plugins.tooltip.bodyFont.size = fontSize;
+        accuracyChart.options.plugins.tooltip.titleFont.size = titleFontSize;
+        accuracyChart.update();
+        
+        // 更新完整性图表
+        completenessChart.options.plugins.legend.labels.font.size = fontSize;
+        completenessChart.options.plugins.legend.labels.padding = padding;
+        completenessChart.options.scales.r.pointLabels.font.size = fontSize;
+        completenessChart.options.scales.r.ticks.font.size = isMobile ? 8 : 10;
+        completenessChart.options.scales.r.ticks.backdropPadding = isMobile ? 2 : 4;
+        completenessChart.options.elements.point.radius = pointRadius;
+        completenessChart.options.elements.point.hoverRadius = hoverRadius;
+        completenessChart.options.plugins.tooltip.padding = tooltipPadding;
+        completenessChart.options.plugins.tooltip.bodyFont.size = fontSize;
+        completenessChart.options.plugins.tooltip.titleFont.size = titleFontSize;
+        completenessChart.update();
+      });
+      
+      // 页面滚动效果
+      gsap.registerPlugin(ScrollTrigger);
+      
+      // 为粘性导航添加滚动状态样式
+      ScrollTrigger.create({
+        trigger: '.hero-section',
+        start: 'bottom top',
+        onEnter: () => document.querySelector('.sticky-nav').classList.remove('hidden'),
+        onLeaveBack: () => document.querySelector('.sticky-nav').classList.add('hidden')
+      });
+      
+      // 平滑滚动到锚点
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            window.scrollTo({
+              top: target.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // 页面元素滚动动画
+      const animateElements = () => {
+        // 获取设备类型，移动设备上减少动画复杂度
+        const isMobile = window.innerWidth < 768;
+        const duration = isMobile ? 0.6 : 0.8;
+        const stagger = isMobile ? 0.05 : 0.1;
+        
+        // 标题动画 - 更精确的选择器
+        gsap.from('h2.text-3xl', {
+          scrollTrigger: {
+            trigger: 'h2.text-3xl',
+            start: 'top bottom-=100',
+            toggleActions: "play none none reset"
+          },
+          y: 40,
+          opacity: 0,
+          duration: duration,
+          stagger: stagger
+        });
+
+        // 章节副标题动画
+        gsap.from('h3.text-2xl', {
+          scrollTrigger: {
+            trigger: 'h3.text-2xl',
+            start: 'top bottom-=80',
+            toggleActions: "play none none reset"
+          },
+          y: 30,
+          opacity: 0,
+          duration: duration,
+          stagger: stagger
+        });
+        
+        // 卡片动画 - 细化选择器
+        gsap.from('.card', {
+          scrollTrigger: {
+            trigger: '.card',
+            start: 'top bottom-=50',
+            toggleActions: "play none none reset"
+          },
+          y: 40,
+          opacity: 0,
+          duration: duration,
+          stagger: stagger
+        });
+        
+        // 特性卡片动画
+        gsap.from('.p-4.border', {
+          scrollTrigger: {
+            trigger: '.p-4.border',
+            start: 'top bottom-=40',
+            toggleActions: "play none none reset"
+          },
+          y: 25,
+          opacity: 0,
+          duration: duration,
+          stagger: stagger
+        });
+        
+        // 代码块动画
+        gsap.from('pre', {
+          scrollTrigger: {
+            trigger: 'pre',
+            start: 'top bottom-=30',
+            toggleActions: "play none none reset"
+          },
+          opacity: 0,
+          duration: duration,
+          stagger: stagger
+        });
+        
+        // 图表区域动画
+        gsap.from('canvas', {
+          scrollTrigger: {
+            trigger: 'canvas',
+            start: 'top bottom-=50',
+            toggleActions: "play none none reset"
+          },
+          scale: 0.95,
+          opacity: 0,
+          duration: duration,
+          stagger: stagger * 1.5
+        });
+      };
+      
+      // 确保在DOM和图片加载完成后初始化动画
+      window.addEventListener("load", function() {
+        // 注册ScrollTrigger插件
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 执行滚动动画
+        animateElements();
+        
+        // 窗口调整大小时刷新ScrollTrigger
+        let resizeTimer;
+        window.addEventListener("resize", function() {
+          clearTimeout(resizeTimer);
+          resizeTimer = setTimeout(function() {
+            // 刷新所有ScrollTrigger实例
+            ScrollTrigger.refresh();
+          }, 250);
+        });
+        
+        // 修复移动设备上的触摸滚动问题
+        if ('ontouchstart' in window) {
+          let lastScrollTop = 0;
+          window.addEventListener("scroll", function() {
+            let st = window.pageYOffset || document.documentElement.scrollTop;
+            if (Math.abs(lastScrollTop - st) > 50) {
+              // 刷新所有ScrollTrigger实例以响应大幅度滚动
+              ScrollTrigger.update();
+              lastScrollTop = st;
+            }
+          }, { passive: true });
+        }
+      });
+      
+      // DOMContentLoaded事件中添加简单的初始化
+      document.addEventListener("DOMContentLoaded", function() {
+        // 为粘性导航添加滚动状态样式
+        ScrollTrigger.create({
+          trigger: '.hero-section',
+          start: 'bottom top',
+          onEnter: () => document.querySelector('.sticky-nav').classList.remove('hidden'),
+          onLeaveBack: () => document.querySelector('.sticky-nav').classList.add('hidden')
+        });
+        
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              window.scrollTo({
+                top: target.offsetTop - 80,
+                behavior: 'smooth'
+              });
+            }
+          });
+        });
+      });
+    });
+
+    // Mermaid图表初始化
+    const initMermaidCharts = () => {
+      // 配置Mermaid主题和样式
+      mermaid.initialize({
+        startOnLoad: true,
+        securityLevel: 'loose',
+        theme: isDarkMode() ? 'dark' : 'default',
+        flowchart: {
+          htmlLabels: true,
+          curve: 'linear',
+          useMaxWidth: true
+        },
+        themeCSS: `
+          .node rect, .node circle, .node ellipse, .node polygon, .node path {
+            fill: ${isDarkMode() ? '#3b3b4f' : '#f4f6f9'};
+            stroke: ${isDarkMode() ? '#88ddff' : '#1a73e8'};
+            stroke-width: 2px;
+          }
+          .edgePath .path {
+            stroke: ${isDarkMode() ? '#88ddff' : '#1a73e8'};
+            stroke-width: 2px;
+          }
+          .arrowheadPath {
+            fill: ${isDarkMode() ? '#88ddff' : '#1a73e8'};
+          }
+          .edgeLabel rect {
+            fill: ${isDarkMode() ? '#2d2d3b' : '#ffffff'};
+            opacity: 0.8 !important;
+          }
+          .edgeLabel span {
+            color: ${isDarkMode() ? '#ffffff' : '#333333'};
+          }
+          .label text {
+            fill: ${isDarkMode() ? '#ffffff' : '#333333'};
+          }
+          .cluster rect {
+            fill: ${isDarkMode() ? '#2d2d3b' : '#f4f6f9'};
+            stroke: ${isDarkMode() ? '#88ddff' : '#1a73e8'};
+          }
+        `
+      });
+
+      // 渲染图表
+      mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+    };
+
+    // 在DOM加载完毕后初始化Mermaid
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof mermaid !== 'undefined') {
+        initMermaidCharts();
+      } else {
+        console.warn('Mermaid.js not loaded');
+      }
+    });
+
+    // 主题切换时重新渲染Mermaid图表
+    themeToggle.addEventListener('click', function() {
+      // 延迟执行以确保主题已切换
+      setTimeout(() => {
+        if (typeof mermaid !== 'undefined') {
+          // 重新初始化所有图表
+          document.querySelectorAll('.mermaid').forEach(el => {
+            // 保存原始内容
+            const content = el.getAttribute('data-content') || el.textContent;
+            if (!el.getAttribute('data-content')) {
+              el.setAttribute('data-content', content);
+            }
+            
+            // 清空并重新渲染
+            el.innerHTML = content;
+            try {
+              mermaid.initialize({
+                theme: isDarkMode() ? 'dark' : 'default',
+                // 其他配置保持不变...
+              });
+              mermaid.init(undefined, el);
+            } catch (e) {
+              console.error('Failed to render Mermaid chart:', e);
+              el.innerHTML = content;
+            }
+          });
+        }
+      }, 100);
+    });
+
+    // 自定义项目流程图的Mermaid代码，放在主程序之前
+    const updateProcessMermaidCode = () => {
+      const processChart = document.getElementById('process-flow-chart');
+      if (processChart) {
+        processChart.innerHTML = `
+        graph TD
+          A[数据输入] -->|结构化数据/非结构化描述| B[研究设计识别]
+          B --> C[统计方法推荐]
+          C --> D[代码生成]
+          D --> E[分析执行]
+          E --> F[报告生成]
+          
+          classDef default fill:#f4f6f9,stroke:#1a73e8,stroke-width:2px,color:#333;
+          classDef dark fill:#3b3b4f,stroke:#88ddff,stroke-width:2px,color:#fff;
+          
+          class A,B,C,D,E,F ${isDarkMode() ? 'dark' : 'default'};
+        `;
+        
+        // 标记需要渲染
+        processChart.removeAttribute('data-processed');
+        
+        // 渲染图表
+        if (typeof mermaid !== 'undefined') {
+          try {
+            mermaid.init(undefined, processChart);
+          } catch (e) {
+            console.error('Failed to render process flow chart:', e);
+          }
+        }
+      }
+    };
+    
+    // 自定义系统架构图的Mermaid代码
+    const updateArchitectureMermaidCode = () => {
+      const architectureChart = document.getElementById('architecture-chart');
+      if (architectureChart) {
+        architectureChart.innerHTML = `
+        graph TD
+          A[用户界面] -->|数据输入| B[后端处理引擎]
+          B --> C{决策引擎}
+          C -->|研究设计识别| D[AI增强分析]
+          C -->|方法推荐| D
+          D --> E[代码生成]
+          E --> F[执行环境]
+          F --> G[报告生成器]
+          G --> A
+          
+          classDef default fill:#f4f6f9,stroke:#1a73e8,stroke-width:2px,color:#333;
+          classDef dark fill:#3b3b4f,stroke:#88ddff,stroke-width:2px,color:#fff;
+          classDef decision fill:${isDarkMode() ? '#4a5568' : '#e2e8f0'},stroke:${isDarkMode() ? '#88ddff' : '#4a5568'},stroke-width:2px,color:${isDarkMode() ? '#fff' : '#333'};
+          
+          class A,B,D,E,F,G ${isDarkMode() ? 'dark' : 'default'};
+          class C decision;
+        `;
+        
+        // 标记需要渲染
+        architectureChart.removeAttribute('data-processed');
+        
+        // 渲染图表
+        if (typeof mermaid !== 'undefined') {
+          try {
+            mermaid.init(undefined, architectureChart);
+          } catch (e) {
+            console.error('Failed to render architecture chart:', e);
+          }
+        }
+      }
+    };
+
+    // 确保在主题切换时更新图表
+    themeToggle.addEventListener('click', function() {
+      setTimeout(() => {
+        updateProcessMermaidCode();
+        updateArchitectureMermaidCode();
+      }, 100);
+    });
+
+    // 初始化时更新图表
+    window.addEventListener('load', function() {
+      updateProcessMermaidCode();
+      updateArchitectureMermaidCode();
+    });
+
+    // Charts.js图表初始化和主题切换处理
+    const initCharts = () => {
+      // 仅当页面上存在canvas元素且Chart已加载时执行
+      if (document.getElementById('method-usage-chart') && typeof Chart !== 'undefined') {
+        // 创建方法使用率图表
+        const methodUsageCtx = document.getElementById('method-usage-chart').getContext('2d');
+        
+        // 定义图表主题配置
+        const chartTheme = {
+          light: {
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.7)',
+              'rgba(255, 99, 132, 0.7)',
+              'rgba(75, 192, 192, 0.7)',
+              'rgba(255, 206, 86, 0.7)',
+              'rgba(153, 102, 255, 0.7)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(153, 102, 255, 1)'
+            ],
+            gridColor: 'rgba(0, 0, 0, 0.1)',
+            textColor: '#333333'
+          },
+          dark: {
+            backgroundColor: [
+              'rgba(54, 162, 235, 0.8)',
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(75, 192, 192, 0.8)',
+              'rgba(255, 206, 86, 0.8)',
+              'rgba(153, 102, 255, 0.8)'
+            ],
+            borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(153, 102, 255, 1)'
+            ],
+            gridColor: 'rgba(255, 255, 255, 0.1)',
+            textColor: '#ffffff'
+          }
+        };
+        
+        // 获取当前主题
+        const currentTheme = isDarkMode() ? 'dark' : 'light';
+        
+        // 方法使用率数据
+        const methodUsageData = {
+          labels: ['回归分析', 't检验', '方差分析', '卡方检验', '聚类分析'],
+          datasets: [{
+            label: '推荐频率 (%)',
+            data: [65, 59, 45, 40, 30],
+            backgroundColor: chartTheme[currentTheme].backgroundColor,
+            borderColor: chartTheme[currentTheme].borderColor,
+            borderWidth: 1
+          }]
+        };
+        
+        // 图表配置
+        const methodUsageConfig = {
+          type: 'bar',
+          data: methodUsageData,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                labels: {
+                  color: chartTheme[currentTheme].textColor
+                }
+              },
+              tooltip: {
+                enabled: true
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: chartTheme[currentTheme].gridColor
+                },
+                ticks: {
+                  color: chartTheme[currentTheme].textColor
+                }
+              },
+              x: {
+                grid: {
+                  color: chartTheme[currentTheme].gridColor
+                },
+                ticks: {
+                  color: chartTheme[currentTheme].textColor
+                }
+              }
+            }
+          }
+        };
+        
+        // 存储图表实例以便更新
+        window.methodUsageChart = new Chart(methodUsageCtx, methodUsageConfig);
+        
+        // 创建准确率对比图表
+        if (document.getElementById('accuracy-chart')) {
+          const accuracyCtx = document.getElementById('accuracy-chart').getContext('2d');
+          
+          // 准确率数据
+          const accuracyData = {
+            labels: ['基础统计模型', '机器学习模型', '人工智能增强'],
+            datasets: [{
+              label: '准确率 (%)',
+              data: [75, 85, 95],
+              backgroundColor: chartTheme[currentTheme].backgroundColor.slice(0, 3),
+              borderColor: chartTheme[currentTheme].borderColor.slice(0, 3),
+              borderWidth: 1
+            }]
+          };
+          
+          // 准确率图表配置
+          const accuracyConfig = {
+            type: 'bar',
+            data: accuracyData,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  labels: {
+                    color: chartTheme[currentTheme].textColor
+                  }
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: 100,
+                  grid: {
+                    color: chartTheme[currentTheme].gridColor
+                  },
+                  ticks: {
+                    color: chartTheme[currentTheme].textColor
+                  }
+                },
+                x: {
+                  grid: {
+                    color: chartTheme[currentTheme].gridColor
+                  },
+                  ticks: {
+                    color: chartTheme[currentTheme].textColor
+                  }
+                }
+              }
+            }
+          };
+          
+          // 存储图表实例以便更新
+          window.accuracyChart = new Chart(accuracyCtx, accuracyConfig);
+        }
+      }
+    };
+    
+    // 更新图表主题
+    const updateChartsTheme = () => {
+      const currentTheme = isDarkMode() ? 'dark' : 'light';
+      
+      // 定义图表主题配置
+      const chartTheme = {
+        light: {
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.7)',
+            'rgba(255, 99, 132, 0.7)',
+            'rgba(75, 192, 192, 0.7)',
+            'rgba(255, 206, 86, 0.7)',
+            'rgba(153, 102, 255, 0.7)'
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          gridColor: 'rgba(0, 0, 0, 0.1)',
+          textColor: '#333333'
+        },
+        dark: {
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(255, 206, 86, 0.8)',
+            'rgba(153, 102, 255, 0.8)'
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 99, 132, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          gridColor: 'rgba(255, 255, 255, 0.1)',
+          textColor: '#ffffff'
+        }
+      };
+      
+      // 更新方法使用率图表
+      if (window.methodUsageChart) {
+        // 更新数据集颜色
+        window.methodUsageChart.data.datasets[0].backgroundColor = chartTheme[currentTheme].backgroundColor;
+        window.methodUsageChart.data.datasets[0].borderColor = chartTheme[currentTheme].borderColor;
+        
+        // 更新轴和图例颜色
+        window.methodUsageChart.options.scales.y.grid.color = chartTheme[currentTheme].gridColor;
+        window.methodUsageChart.options.scales.x.grid.color = chartTheme[currentTheme].gridColor;
+        window.methodUsageChart.options.scales.y.ticks.color = chartTheme[currentTheme].textColor;
+        window.methodUsageChart.options.scales.x.ticks.color = chartTheme[currentTheme].textColor;
+        window.methodUsageChart.options.plugins.legend.labels.color = chartTheme[currentTheme].textColor;
+        
+        // 应用更新
+        window.methodUsageChart.update();
+      }
+      
+      // 更新准确率对比图表
+      if (window.accuracyChart) {
+        // 更新数据集颜色
+        window.accuracyChart.data.datasets[0].backgroundColor = chartTheme[currentTheme].backgroundColor.slice(0, 3);
+        window.accuracyChart.data.datasets[0].borderColor = chartTheme[currentTheme].borderColor.slice(0, 3);
+        
+        // 更新轴和图例颜色
+        window.accuracyChart.options.scales.y.grid.color = chartTheme[currentTheme].gridColor;
+        window.accuracyChart.options.scales.x.grid.color = chartTheme[currentTheme].gridColor;
+        window.accuracyChart.options.scales.y.ticks.color = chartTheme[currentTheme].textColor;
+        window.accuracyChart.options.scales.x.ticks.color = chartTheme[currentTheme].textColor;
+        window.accuracyChart.options.plugins.legend.labels.color = chartTheme[currentTheme].textColor;
+        
+        // 应用更新
+        window.accuracyChart.update();
+      }
+    };
+    
+    // 初始化图表
+    window.addEventListener('load', function() {
+      initCharts();
+    });
+    
+    // 主题切换时更新图表
+    themeToggle.addEventListener('click', function() {
+      // 延迟执行以确保主题已切换
+      setTimeout(updateChartsTheme, 100);
+    });
+
+    // GSAP滚动动画初始化
+    const initScrollAnimations = () => {
+      // 检查GSAP和ScrollTrigger是否已加载
+      if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+        // 注册ScrollTrigger插件
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // 为各个部分创建滚动触发动画
+        
+        // 1. 标题和主要内容的动画
+        gsap.from('.hero h1, .hero p', {
+          opacity: 0,
+          y: 50,
+          stagger: 0.2,
+          duration: 1,
+          ease: 'power3.out'
+        });
+        
+        // 2. 页面各个部分的动画
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+          // 为每个部分的标题创建动画
+          const sectionTitle = section.querySelector('h2, h3');
+          if (sectionTitle) {
+            gsap.from(sectionTitle, {
+              scrollTrigger: {
+                trigger: sectionTitle,
+                start: 'top 80%',
+                toggleActions: 'play none none none'
+              },
+              opacity: 0,
+              x: -50,
+              duration: 0.8,
+              ease: 'power2.out'
+            });
+          }
+          
+          // 为每个部分的内容创建动画
+          const contentElements = section.querySelectorAll('p, ul, ol, .card, .feature-card, .chart-container, .mermaid');
+          if (contentElements.length) {
+            gsap.from(contentElements, {
+              scrollTrigger: {
+                trigger: section,
+                start: 'top 70%',
+                toggleActions: 'play none none none'
+              },
+              opacity: 0,
+              y: 30,
+              stagger: 0.1,
+              duration: 0.6,
+              ease: 'power2.out'
+            });
+          }
+        });
+        
+        // 3. 代码块动画
+        const codeBlocks = document.querySelectorAll('pre code');
+        if (codeBlocks.length) {
+          gsap.from(codeBlocks, {
+            scrollTrigger: {
+              trigger: codeBlocks,
+              start: 'top 80%',
+              toggleActions: 'play none none none'
+            },
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.7,
+            ease: 'power2.out'
+          });
+        }
+        
+        // 4. 图表动画
+        const chartContainers = document.querySelectorAll('.chart-container');
+        if (chartContainers.length) {
+          gsap.from(chartContainers, {
+            scrollTrigger: {
+              trigger: chartContainers,
+              start: 'top 75%',
+              toggleActions: 'play none none none'
+            },
+            opacity: 0,
+            y: 40,
+            duration: 0.8,
+            ease: 'back.out(1.2)'
+          });
+        }
+        
+        // 5. 流程图动画
+        const mermaidDiagrams = document.querySelectorAll('.mermaid');
+        if (mermaidDiagrams.length) {
+          mermaidDiagrams.forEach(diagram => {
+            gsap.from(diagram, {
+              scrollTrigger: {
+                trigger: diagram,
+                start: 'top 75%',
+                toggleActions: 'play none none none'
+              },
+              opacity: 0,
+              y: 30,
+              duration: 0.8,
+              ease: 'power2.out'
+            });
+          });
+        }
+        
+        // 6. 响应式动画调整
+        ScrollTrigger.matchMedia({
+          // 桌面尺寸
+          "(min-width: 1024px)": function() {
+            // 桌面上可以有更复杂的动画
+            // 例如，为特色卡片添加更多动画
+            const featureCards = document.querySelectorAll('.feature-card');
+            if (featureCards.length) {
+              gsap.from(featureCards, {
+                scrollTrigger: {
+                  trigger: featureCards,
+                  start: 'top 75%',
+                  toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 50,
+                stagger: 0.15,
+                duration: 0.8,
+                ease: 'back.out(1.7)'
+              });
+            }
+          },
+          // 移动设备尺寸
+          "(max-width: 767px)": function() {
+            // 移动设备上使用更简单的动画
+            // 减少stagger间隔和动画幅度
+            const allContent = document.querySelectorAll('p, .card, .feature-card');
+            if (allContent.length) {
+              gsap.from(allContent, {
+                scrollTrigger: {
+                  trigger: allContent,
+                  start: 'top 80%',
+                  toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                y: 20,
+                stagger: 0.05,
+                duration: 0.5,
+                ease: 'power1.out'
+              });
+            }
+          }
+        });
+        
+        // 7. 页脚动画
+        const footer = document.querySelector('footer');
+        if (footer) {
+          gsap.from(footer, {
+            scrollTrigger: {
+              trigger: footer,
+              start: 'top 90%',
+              toggleActions: 'play none none none'
+            },
+            opacity: 0,
+            y: 20,
+            duration: 0.6,
+            ease: 'power1.out'
+          });
+        }
+      }
+    };
+    
+    // 页面加载完成后初始化滚动动画
+    window.addEventListener('load', function() {
+      // 确保在DOM和所有资源加载完成后初始化动画
+      initScrollAnimations();
+    });
+  </script>
+</body>
+</html> 

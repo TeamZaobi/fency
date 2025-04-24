@@ -330,7 +330,12 @@
 
         const createCard = (page) => {
             const card = document.createElement('a');
-            card.href = page.path; // Assuming path is relative to index.html
+            // 修复路径：移除可能的/html前缀
+            let linkPath = page.path;
+            if (linkPath && linkPath.startsWith('/html')) {
+                linkPath = linkPath.replace('/html', '');
+            }
+            card.href = linkPath; // 使用处理后的路径
             card.className = "content-card block bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-6 p-6 hover:shadow-xl dark:shadow-lg dark:hover:shadow-2xl";
             card.dataset.category = page.category; // Add category data attribute for filtering
 
@@ -457,7 +462,12 @@
                 const categoryDisplay = categoryMapping[item.category] || item.category || '未分类';
                 
                 const card = document.createElement('a'); // Create as a link
-                card.href = item.path || '#'; // Link to page
+                // 修复路径：移除可能的/html前缀
+                let linkPath = item.path || '#';
+                if (linkPath && linkPath.startsWith('/html')) {
+                    linkPath = linkPath.replace('/html', '');
+                }
+                card.href = linkPath; // 使用处理后的路径
                 card.className = "block bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 content-card mb-6";
                 
                 card.innerHTML = `

@@ -8,7 +8,7 @@
  *   node metadata-processor.js [目录路径]
  * 
  * 示例:
- *   node metadata-processor.js ./html/pages/knowledge
+ *   node metadata-processor.js ./pages/knowledge
  */
 
 const fs = require('fs');
@@ -375,7 +375,7 @@ function generateReport(results) {
 async function main() {
   try {
     // 获取命令行参数
-    const directoryPath = process.argv[2] || './html/pages';
+    const directoryPath = process.argv[2] || './pages';
     
     logger.info(`开始处理目录: ${directoryPath}`);
     

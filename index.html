@@ -790,7 +790,7 @@
 
     <!-- 页脚 -->
     <footer class="mt-12 py-6 text-center text-sm" style="background-color: var(--clr-bg-surface); color: var(--clr-text-secondary); border-top: 1px solid var(--clr-border);">
-        <p>作者: 季晓康 (jxk@sdu.edu.cn) | 角色: AI观察员, 认知中枢</p>
+        <p>作者: 凿壁AI| 成员：季晓康、曲静、王永超、许飞飞等</p>
         <p>微信公众号: 凿壁</p>
         <p class="mt-2">&copy; <span id="copyright-year">2024</span> 国家健康医疗大数据研究院</p>
     </footer>
@@ -909,9 +909,38 @@
                 errorMessage.classList.add('hidden');
                 contentContainer.innerHTML = '';
 
-                fetch('metadata.json') // Using relative path
+                // 确定正确的元数据文件路径
+                let metadataUrl;
+                const hostname = window.location.hostname;
+                const pathname = window.location.pathname;
+                
+                console.log("当前环境:", { 
+                    hostname, 
+                    pathname,
+                    href: window.location.href
+                });
+                
+                // 检查是否在GitHub Pages环境
+                if (hostname.includes('github.io')) {
+                    // GitHub Pages环境 - 提取项目名并构建路径
+                    // 例如: teamzaobi.github.io/fency/ => /fency/metadata.json
+                    const projectPath = pathname.split('/')[1]; // 提取项目名称
+                    metadataUrl = projectPath ? `/${projectPath}/metadata.json` : '/metadata.json';
+                    console.log("GitHub Pages环境检测到项目路径:", projectPath);
+                } else {
+                    // 服务器环境 - 使用绝对路径
+                    metadataUrl = '/metadata.json';
+                }
+                
+                console.log("最终元数据加载路径:", metadataUrl);
+                
+                fetch(metadataUrl)
                     .then(response => {
-                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                        if (!response.ok) {
+                            console.error(`元数据加载失败: ${response.status} ${response.statusText}`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        console.log("元数据响应成功:", response.status);
                         return response.json();
                     })
                     .then(data => {

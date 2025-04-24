@@ -7,8 +7,8 @@ const writeFile = promisify(fs.writeFile);
 
 // --- 配置 ---
 const distMetadataPath = path.resolve(process.cwd(), 'dist/metadata.json');
-const htmlMetadataPath = path.resolve(process.cwd(), 'html/metadata.json');
-const backupHtmlMetadataPath = path.resolve(process.cwd(), 'html/metadata.json.backup');
+const htmlMetadataPath = path.resolve(process.cwd(), 'metadata.json');
+const backupHtmlMetadataPath = path.resolve(process.cwd(), 'metadata.json.backup');
 // ---
 
 async function correctMetadataJson() {
@@ -62,17 +62,17 @@ async function correctMetadataJson() {
       pages: correctedPages,
     };
 
-    // 写回修正后的 html/metadata.json
+    // 写回修正后的 metadata.json
     console.log(`写回修正后的元数据到: ${htmlMetadataPath}`);
     await writeFile(htmlMetadataPath, JSON.stringify(finalHtmlMetadata, null, 2), 'utf8');
 
-    console.log('\n===== html/metadata.json 修正完成 =====');
+    console.log('\n===== metadata.json 修正完成 =====');
     console.log(`总条目数: ${finalHtmlMetadata.pages.length}`);
     console.log(`从 dist/metadata.json 修正的条目数: ${correctedCount}`);
     console.log(`保留的新增条目数: ${preservedCount}`);
 
   } catch (error) {
-    console.error('修正 html/metadata.json 过程中发生错误:', error);
+    console.error('修正 metadata.json 过程中发生错误:', error);
   }
 }
 

@@ -1,17 +1,17 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: 'html', // Set the project root to the 'html' directory
+  root: '.', // 设置项目根目录为当前目录
   build: {
-    outDir: '../dist', // Output directory relative to the root (i.e., project_root/dist)
-    emptyOutDir: true, // Clear the output directory before building
+    outDir: 'dist', // 输出目录
+    emptyOutDir: true, // 清空输出目录
     rollupOptions: {
         input: {
-             main: 'html/index.html' // Specify the entry point HTML
+             main: 'index.html' // 入口HTML文件
         }
     }
   },
   server: {
-    open: '/index.html' // Automatically open index.html when running dev server
+    open: '/index.html' // 自动打开index.html
   }
 }); 
