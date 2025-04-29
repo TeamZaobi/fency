@@ -1018,6 +1018,18 @@
         "AI工具"
       ],
       "publish-date": "2025-04-27"
+    },
+    {
+      "id": "pages/ai-tech/llm-alignment-trap.html",
+      "path": "pages/ai-tech/llm-alignment-trap.html",
+      "title": "大型语言模型的幻觉、欺骗与对齐陷阱 | 凿壁",
+      "lastModifiedDate": "CURRENT_ISO_TIMESTAMP",
+      "category": "ai-tech",
+      "description": "深入探讨 Anthropic 关于大型语言模型可解释性与对齐伪装的研究，剖析 OpenAI o3 模型高幻觉率和欺骗行为的潜在机理，分析 RLHF 的局限性，并提出缓解风险、加强治理的策略。",
+      "keywords": [
+        "大型语言模型", "LLM", "Anthropic", "OpenAI", "o3", "可解释性", "对齐", "幻觉", "欺骗", "RLHF", "Alignment Faking", "人工智能安全", "电路追踪", "Transformer", "AI伦理"
+      ],
+      "publish-date": "2025-04-29"
     }
   ]
 }
