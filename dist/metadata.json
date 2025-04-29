@@ -1,11 +1,50 @@
 {
-  "lastUpdated": "2025-05-22T10:30:00.000Z",
+  "lastUpdated": "2025-04-29T09:05:08Z",
   "pages": [
+    {
+      "id": "pages/ai-tech/qwen3-llm-analysis.html",
+      "path": "pages/ai-tech/qwen3-llm-analysis.html",
+      "title": "Qwen 3 大语言模型深度解析 | 凿壁",
+      "lastModifiedDate": "2025-04-29T09:05:08Z",
+      "category": "ai-tech",
+      "description": "深度解析阿里巴巴最新开源大语言模型Qwen 3的技术细节、性能评测、社区反响和未来趋势，涵盖MoE架构、双推理模式及行业影响。",
+      "keywords": [
+        "Qwen 3",
+        "大语言模型",
+        "开源AI",
+        "MoE",
+        "阿里巴巴",
+        "AI技术",
+        "LLM"
+      ],
+      "publish-date": "2025-04-29"
+    },
+    {
+      "id": "pages/ai-tech/context7-mcp-analysis.html",
+      "path": "pages/ai-tech/context7-mcp-analysis.html",
+      "title": "Context7 MCP 应用评估：社区反馈、使用案例及与其他 MCP 的协同增效分析 | 凿壁",
+      "lastModifiedDate": "2025-04-27T00:20:22.366Z",
+      "category": "ai-tech",
+      "description": "深入分析 Context7 MCP 应用自发布以来的社区评价、实际使用案例及改进建议，重点探讨其在 Cursor 和 Claude Desktop 中与其他 MCP 结合使用的协同增效机制与优势。",
+      "keywords": [
+        "Context7",
+        "MCP",
+        "模型上下文协议",
+        "AI 辅助开发",
+        "Cursor",
+        "Claude Desktop",
+        "协同增效",
+        "Upstash",
+        "开发者工具",
+        "LLM"
+      ],
+      "publish-date": "2025-04-27"
+    },
     {
       "id": "pages/ai-tech/bitnet-analysis.html",
       "path": "pages/ai-tech/bitnet-analysis.html",
       "title": "微软BitNet项目全面调研分析 | 凿壁",
-      "lastModifiedDate": "2025-04-22T10:30:00.000Z",
+      "lastModifiedDate": "2025-05-22T10:30:00.000Z",
       "category": "ai-tech",
       "description": "微软BitNet项目是一种革命性的1比特大语言模型技术，本文对其技术原理、性能评估、社区评价及发展趋势进行全面分析，融合多家大语言模型的观点，为读者提供对这一前沿AI技术的深入认识。",
       "keywords": [
@@ -107,44 +146,6 @@
         "AI编程"
       ],
       "publish-date": "2025-03-30"
-    },
-    {
-      "id": "pages/ai-tech/deepresearch_by_gemini_2.5.html",
-      "path": "pages/ai-tech/deepresearch_by_gemini_2.5.html",
-      "title": "Gemini Deep Research深度评测与分析",
-      "lastModifiedDate": "2025-04-10T02:20:57.997Z",
-      "category": "ai-tech",
-      "description": "深入评测Google Gemini Deep Research工具的功能、性能与竞争优势，分析其技术基础、用户体验及应用场景。",
-      "keywords": [
-        "Gemini",
-        "Deep Research",
-        "Google",
-        "AI研究工具",
-        "深度分析",
-        "功能评测",
-        "竞品对比",
-        "AI工具"
-      ],
-      "publish-date": "2025-04-08"
-    },
-    {
-      "id": "pages/ai-tech/deepseek-agent-tcm-clinical-application.html",
-      "path": "pages/ai-tech/deepseek-agent-tcm-clinical-application.html",
-      "title": "DeepSeek+Agent 在中医临床专科建设中的应用探索",
-      "lastModifiedDate": "2025-04-10T03:49:06.821Z",
-      "category": "ai-tech",
-      "description": "探索DeepSeek+Agent技术在中医临床专科建设领域的应用切入点，基于用户行为信号分析法，挖掘AI在中医知识融合、数据整合、流程优化及专家经验传承等方面的潜力与实施策略。",
-      "keywords": [
-        "DeepSeek",
-        "Agent",
-        "中医",
-        "临床专科",
-        "人工智能",
-        "用户行为信号",
-        "知识传承",
-        "医疗AI"
-      ],
-      "publish-date": "2025-04-10"
     },
     {
       "id": "pages/ai-tech/gemini-canvas.html",
@@ -957,6 +958,66 @@
         "LLM比较"
       ],
       "publish-date": "2025-04-20"
+    },
+    {
+      "id": "pages/ai-tech/cursor-gitmcp-integration.html",
+      "path": "pages/ai-tech/cursor-gitmcp-integration.html",
+      "title": "零部署学习：Cursor × GitMCP 集成指南 | 凿壁",
+      "lastModifiedDate": "2025-04-25T10:30:00.000Z",
+      "category": "ai-tech",
+      "description": "借助Cursor的Vibe Coding模式和gitmcp.io托管服务，可以零本地安装地学习并复用GitHub项目的代码、Prompt与设计思路。本文详细介绍这一方案的价值、具体流程、最佳实践与潜在风险。",
+      "keywords": [
+        "Cursor",
+        "GitMCP",
+        "Vibe Coding",
+        "gitmcp.io",
+        "MCP",
+        "Claude",
+        "代码学习",
+        "GitHub"
+      ],
+      "publish-date": "2025-04-25"
+    },
+    {
+      "id": "pages/research/future-medical-research-insights.html",
+      "path": "pages/research/future-medical-research-insights.html",
+      "title": "五大洞见：重塑未来25年医学科研 | 凿壁",
+      "lastModifiedDate": "2025-04-26T07:23:26.000Z",
+      "category": "research",
+      "description": "探索五条核心洞见，揭示技术、历史与生命机制如何交汇，重塑2025-2050年医学科研的未来图景，涵盖算力、数据、AI驱动的范式转变及关键风险。",
+      "keywords": [
+        "医学科研",
+        "未来预测",
+        "人工智能",
+        "算力",
+        "数据科学",
+        "知识图谱",
+        "生物信息学",
+        "认知通胀",
+        "AlphaFold",
+        "Med-PaLM"
+      ],
+      "publish-date": "2025-04-26"
+    },
+    {
+      "id": "pages/ai-tech/deepwiki-community-feedback.html",
+      "path": "pages/ai-tech/deepwiki-community-feedback.html",
+      "title": "DeepWiki 社区反馈概览",
+      "lastModifiedDate": "2025-04-27T12:27:08+08:00",
+      "category": "ai-tech",
+      "description": "DeepWiki 社区反馈概览，总结了用户评价、核心特性、技术规模和潜在问题，包含可视化图表，帮助开发者快速了解该 AI 代码文档工具。",
+      "keywords": [
+        "DeepWiki",
+        "Cognition AI",
+        "AI文档生成",
+        "代码库",
+        "社区反馈",
+        "GitHub",
+        "开源",
+        "LLM",
+        "AI工具"
+      ],
+      "publish-date": "2025-04-27"
     }
   ]
 }
