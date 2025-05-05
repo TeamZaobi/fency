@@ -1,6 +1,104 @@
 {
-  "lastUpdated": "2025-04-29T09:05:08Z",
+  "lastUpdated": "CURRENT_ISO_TIMESTAMP",
   "pages": [
+    {
+      "id": "pages/ai-tech/amie-analysis.html",
+      "path": "pages/ai-tech/amie-analysis.html",
+      "title": "AMIE: 谷歌医疗对话 AI 深度解析 | 凿壁",
+      "lastModifiedDate": "CURRENT_ISO_TIMESTAMP",
+      "category": "ai-tech",
+      "description": "深入解析谷歌研发的对话式医疗 AI 系统 AMIE，涵盖其核心技术、性能评估、应用前景、伦理挑战及行业影响。信息基于多方来源整合。",
+      "keywords": [
+        "AMIE",
+        "Google AI",
+        "医疗AI",
+        "对话系统",
+        "人工智能",
+        "诊断辅助",
+        "医学伦理",
+        "大型语言模型",
+        "LLM"
+      ],
+      "publish-date": "2025-05-04"
+    },
+    {
+      "id": "pages/research/notebooklm-research-impact.html",
+      "path": "pages/research/notebooklm-research-impact.html",
+      "title": "NotebookLM更新对科研的影响分析 | 凿壁",
+      "lastModifiedDate": "2025-05-02T08:56:10.000Z",
+      "category": "research",
+      "description": "分析Google NotebookLM最新更新（新界面、音频功能、Plus版）对科研，特别是中文医学科研的影响。结合社区反馈（中文音频、医学应用）和未来趋势（AI普及、协作、多语言支持），探讨其潜力和应用前景。",
+      "keywords": [
+        "NotebookLM",
+        "Google AI",
+        "科研工具",
+        "中文医学",
+        "AI研究助手",
+        "文献综述",
+        "音频生成",
+        "社区反馈",
+        "未来趋势"
+      ],
+      "publish-date": "2025-05-02"
+    },
+    {
+      "id": "pages/ai-tech/react-vs-vue-ai-coding-stability.html",
+      "path": "pages/ai-tech/react-vs-vue-ai-coding-stability.html",
+      "title": "React vs Vue 在 AI 增强编码稳定性范式下的分析 | 凿壁",
+      "lastModifiedDate": "2025-05-01T06:40:16.283Z",
+      "category": "ai-tech",
+      "description": "深入分析 React 与 Vue 在 AI 增强编码新范式下的差异，评估两者在结构一致性、上下文注入、规则驱动开发、大规模协作及与 Cursor、Context7 等工具集成时的适应性与稳定性。",
+      "keywords": [
+        "React",
+        "Vue",
+        "AI编码",
+        "代码生成",
+        "上下文注入",
+        "Context7",
+        "Cursor AI",
+        "RAG",
+        "前端框架对比",
+        "开发稳定性"
+      ],
+      "publish-date": "2025-05-01"
+    },
+    {
+      "id": "pages/knowledge/qwen-vs-deepseek-model-comparison.html",
+      "path": "pages/knowledge/qwen-vs-deepseek-model-comparison.html",
+      "title": "DeepSeek-R1 vs. Qwen3-235B-A22B：规模、硬件与部署深度对比 | 凿壁",
+      "lastModifiedDate": "2025-04-30T10:00:00.000Z",
+      "category": "knowledge",
+      "description": "对比分析DeepSeek-R1 (671B) 与 Qwen3-235B-A22B (235B) MoE模型的参数规模、硬件需求与部署策略，探讨两者在实际应用中的选型考量。",
+      "keywords": [
+        "DeepSeek-R1",
+        "Qwen3-235B-A22B",
+        "MoE模型对比",
+        "大模型部署",
+        "硬件需求",
+        "模型选型",
+        "参数规模",
+        "GPU显存"
+      ],
+      "publish-date": "2025-04-30"
+    },
+    {
+      "id": "pages/ai-tech/added-tokens-llm-agent-protocol.html",
+      "path": "pages/ai-tech/added-tokens-llm-agent-protocol.html",
+      "title": "Added Tokens：大模型Agent系统调用协议 | 凿壁",
+      "lastModifiedDate": "2025-04-30T08:37:23.352Z",
+      "category": "ai-tech",
+      "description": "通过剖析Qwen 3的added_tokens机制，探讨大模型Agent系统从",
+      "keywords": [
+        "added_tokens",
+        "Qwen 3",
+        "MCP",
+        "Agent工作流",
+        "函数调用",
+        "思考链",
+        "协议内生化"
+      ],
+      "publish-date": "2025-04-30"
+    },
     {
       "id": "pages/ai-tech/qwen3-llm-analysis.html",
       "path": "pages/ai-tech/qwen3-llm-analysis.html",
@@ -16,6 +114,32 @@
         "阿里巴巴",
         "AI技术",
         "LLM"
+      ],
+      "publish-date": "2025-04-29"
+    },
+    {
+      "id": "pages/ai-tech/llm-alignment-trap.html",
+      "path": "pages/ai-tech/llm-alignment-trap.html",
+      "title": "大型语言模型的幻觉、欺骗与对齐陷阱 | 凿壁",
+      "lastModifiedDate": "CURRENT_ISO_TIMESTAMP",
+      "category": "ai-tech",
+      "description": "深入探讨 Anthropic 关于大型语言模型可解释性与对齐伪装的研究，剖析 OpenAI o3 模型高幻觉率和欺骗行为的潜在机理，分析 RLHF 的局限性，并提出缓解风险、加强治理的策略。",
+      "keywords": [
+        "大型语言模型",
+        "LLM",
+        "Anthropic",
+        "OpenAI",
+        "o3",
+        "可解释性",
+        "对齐",
+        "幻觉",
+        "欺骗",
+        "RLHF",
+        "Alignment Faking",
+        "人工智能安全",
+        "电路追踪",
+        "Transformer",
+        "AI伦理"
       ],
       "publish-date": "2025-04-29"
     },
@@ -39,6 +163,66 @@
         "LLM"
       ],
       "publish-date": "2025-04-27"
+    },
+    {
+      "id": "pages/ai-tech/deepwiki-community-feedback.html",
+      "path": "pages/ai-tech/deepwiki-community-feedback.html",
+      "title": "DeepWiki 社区反馈概览",
+      "lastModifiedDate": "2025-04-27T12:27:08+08:00",
+      "category": "ai-tech",
+      "description": "DeepWiki 社区反馈概览，总结了用户评价、核心特性、技术规模和潜在问题，包含可视化图表，帮助开发者快速了解该 AI 代码文档工具。",
+      "keywords": [
+        "DeepWiki",
+        "Cognition AI",
+        "AI文档生成",
+        "代码库",
+        "社区反馈",
+        "GitHub",
+        "开源",
+        "LLM",
+        "AI工具"
+      ],
+      "publish-date": "2025-04-27"
+    },
+    {
+      "id": "pages/research/future-medical-research-insights.html",
+      "path": "pages/research/future-medical-research-insights.html",
+      "title": "五大洞见：重塑未来25年医学科研 | 凿壁",
+      "lastModifiedDate": "2025-04-26T07:23:26.000Z",
+      "category": "research",
+      "description": "探索五条核心洞见，揭示技术、历史与生命机制如何交汇，重塑2025-2050年医学科研的未来图景，涵盖算力、数据、AI驱动的范式转变及关键风险。",
+      "keywords": [
+        "医学科研",
+        "未来预测",
+        "人工智能",
+        "算力",
+        "数据科学",
+        "知识图谱",
+        "生物信息学",
+        "认知通胀",
+        "AlphaFold",
+        "Med-PaLM"
+      ],
+      "publish-date": "2025-04-26"
+    },
+    {
+      "id": "pages/ai-tech/cursor-gitmcp-integration.html",
+      "path": "pages/ai-tech/cursor-gitmcp-integration.html",
+      "title": "零部署学习：Cursor × GitMCP 集成指南 | 凿壁",
+      "lastModifiedDate": "2025-04-25T10:30:00.000Z",
+      "category": "ai-tech",
+      "description": "借助Cursor的Vibe Coding模式和gitmcp.io托管服务，可以零本地安装地学习并复用GitHub项目的代码、Prompt与设计思路。本文详细介绍这一方案的价值、具体流程、最佳实践与潜在风险。",
+      "keywords": [
+        "Cursor",
+        "GitMCP",
+        "Vibe Coding",
+        "gitmcp.io",
+        "MCP",
+        "Claude",
+        "代码学习",
+        "GitHub"
+      ],
+      "publish-date": "2025-04-25"
     },
     {
       "id": "pages/ai-tech/bitnet-analysis.html",
@@ -82,49 +266,330 @@
       "publish-date": "2025-04-20"
     },
     {
-      "id": "pages/ai-tech/ai-model-capability-analysis.html",
-      "path": "pages/ai-tech/ai-model-capability-analysis.html",
-      "title": "人工智能模型能力分析",
-      "lastModifiedDate": "2025-04-17T00:16:39.053Z",
+      "id": "pages/ai-tech/cursor-049-analysis.html",
+      "path": "pages/ai-tech/cursor-049-analysis.html",
+      "title": "Cursor 0.49版本深度解析：多模型视角下的功能更新与社区评价 | 凿壁",
+      "lastModifiedDate": "2025-04-20T10:38:00.000Z",
       "category": "ai-tech",
-      "description": "全面分析主流AI模型在八大核心能力维度的表现，包括创意写作、综合归纳、文生图、科研辅助、代码开发、语音交互、复杂推理和数学能力。",
+      "description": "深入分析Cursor 0.49版本的功能更新及社区评价，对比多款大型语言模型对该版本的解读差异，包括规则自动生成、MCP图像支持、终端控制与全局忽略等重要功能。",
       "keywords": [
-        "AI模型",
-        "人工智能",
-        "能力分析",
-        "模型对比",
-        "ChatGPT",
-        "DeepSeek",
-        "Claude",
-        "文心一言",
-        "Gemini",
-        "豆包",
-        "多模态AI",
-        "LLM",
-        "AI评测"
+        "Cursor",
+        "0.49",
+        "AI编码助手",
+        "规则生成",
+        "大语言模型",
+        "代码编辑器",
+        "LLM比较"
       ],
-      "publish-date": "2025-03-27"
+      "publish-date": "2025-04-20"
     },
     {
-      "id": "pages/ai-tech/cursor-strategies.html",
-      "path": "pages/ai-tech/cursor-strategies.html",
-      "title": "Cursor AI编码工具使用策略 - 高效开发指南",
-      "lastModifiedDate": "2025-04-06T09:07:28.849Z",
+      "id": "pages/ai-tech/gpt-o3-benchmark.html",
+      "path": "pages/ai-tech/gpt-o3-benchmark.html",
+      "title": "GPT-o3与o4-mini发布：benchmark挤位效应与社区反响",
+      "lastModifiedDate": "2025-04-18T10:57:06.271Z",
       "category": "ai-tech",
-      "description": "基于Prajwal Tomar的研究，本指南提供一套详细的Cursor AI编码工具使用策略，助您全面释放其潜力，提升开发效率和质量。",
+      "description": "全面解析GPT-o3与o4-mini上线后对评测榜单的影响，以及24小时内社区讨论演变与最佳实践技巧。",
       "keywords": [
-        "Cursor AI",
-        "编码工具",
-        "AI编程",
-        "开发策略",
-        "效率提升",
-        "Prajwal Tomar",
-        "代码生成",
-        "AI辅助开发",
-        "软件工程",
-        "编程技巧"
+        "GPT-o3",
+        "o4-mini",
+        "OpenAI",
+        "Benchmark",
+        "AI评测",
+        "大模型",
+        "性能评估",
+        "推理能力"
       ],
-      "publish-date": "2025-03-26"
+      "publish-date": "2025-04-18"
+    },
+    {
+      "id": "pages/research/halicin.html",
+      "path": "pages/research/halicin.html",
+      "title": "Halicin: AI发现的广谱抗生素研发现状 | 凿壁",
+      "lastModifiedDate": "2025-04-19T07:03:35.372Z",
+      "category": "research",
+      "description": "详细探讨通过人工智能发现的抗生素halicin的研发历程、作用机制、临床前研究进展以及未来发展前景，呈现AI技术在药物研发领域的突破性应用。",
+      "keywords": [
+        "halicin",
+        "人工智能",
+        "抗生素",
+        "药物发现",
+        "耐药菌",
+        "临床前研究",
+        "AI药物研发"
+      ],
+      "publish-date": "2025-04-18"
+    },
+    {
+      "id": "pages/ai-tech/vanna-ai-report.html",
+      "path": "pages/ai-tech/vanna-ai-report.html",
+      "title": "Vanna AI 技术分析报告 - 打造高质量文本到SQL转换的开源框架",
+      "lastModifiedDate": "2025-04-17T02:38:09.573Z",
+      "category": "ai-tech",
+      "description": "Vanna AI是一个基于Python的开源RAG框架，能够将自然语言查询转换为精确的SQL语句，简化用户与数据库的交互。本报告详细分析了其功能、性能、社区生态以及部署方案。",
+      "keywords": [
+        "Vanna AI",
+        "RAG",
+        "文本到SQL",
+        "数据库查询",
+        "检索增强生成",
+        "开源框架",
+        "数据分析"
+      ],
+      "publish-date": "2025-04-15"
+    },
+    {
+      "id": "pages/ai-tech/jupyter-mcp-server-report.html",
+      "path": "pages/ai-tech/jupyter-mcp-server-report.html",
+      "title": "Jupyter MCP Server 综合调研报告 | AI与数据科学融合的新尝试",
+      "lastModifiedDate": "2025-04-14T08:10:48.379Z",
+      "category": "ai-tech",
+      "description": "对 Jupyter MCP Server 项目及其在数据科学领域类似项目的综合调研报告，分析了功能、社区评价和未来展望。",
+      "keywords": [
+        "Jupyter",
+        "MCP",
+        "Model Context Protocol",
+        "数据科学",
+        "AI",
+        "自动化",
+        "R",
+        "Databricks",
+        "Kaggle",
+        "Claude"
+      ],
+      "publish-date": "2025-04-14"
+    },
+    {
+      "id": "pages/knowledge/ai-emotion-management.html",
+      "path": "pages/knowledge/ai-emotion-management.html",
+      "title": "AI辅助情绪管理的新范式：技术与心理学的融合 | 凿壁",
+      "lastModifiedDate": "2025-04-14T08:08:32.444Z",
+      "category": "knowledge",
+      "description": "探索人工智能如何革新情绪管理领域，分析当前AI情绪检测与干预技术的发展现状、挑战及未来发展方向，以及在心理健康领域的应用前景。",
+      "keywords": [
+        "情绪管理",
+        "人工智能",
+        "情绪检测",
+        "心理健康",
+        "情绪干预",
+        "心理学",
+        "情绪识别",
+        "数字健康",
+        "精神健康",
+        "AI应用"
+      ],
+      "publish-date": "2025-04-13"
+    },
+    {
+      "id": "pages/ai-tech/mcpstore.html",
+      "path": "pages/ai-tech/mcpstore.html",
+      "title": "阿里云百炼平台全生命周期MCP服务解析",
+      "lastModifiedDate": "2025-04-09T11:25:15.164Z",
+      "category": "ai-tech",
+      "description": "阿里云百炼平台推出的全生命周期MCP（模型连接协议）服务，简化AI智能体开发流程，提供50多种MCP服务，降低AI应用开发门槛。",
+      "keywords": [
+        "MCP",
+        "模型连接协议",
+        "阿里云百炼",
+        "AI智能体",
+        "LLM工具集成"
+      ],
+      "publish-date": "2025-04-10"
+    },
+    {
+      "id": "pages/knowledge/refactor-by-ast-graph.html",
+      "path": "pages/knowledge/refactor-by-ast-graph.html",
+      "title": "基于AST与图数据库的代码重构工作方案",
+      "lastModifiedDate": "2025-04-10T02:33:40.034Z",
+      "category": "knowledge",
+      "description": "探索如何利用抽象语法树(AST)和图数据库技术实现大型代码库的结构化分析与精确重构，克服传统手动重构和LLM辅助重构的局限性。",
+      "keywords": [
+        "代码重构",
+        "AST",
+        "抽象语法树",
+        "图数据库",
+        "Neo4j",
+        "软件工程",
+        "开发工具",
+        "代码分析",
+        "知识报告"
+      ],
+      "publish-date": "2025-04-07"
+    },
+    {
+      "id": "pages/ai-tech/gemini-canvas.html",
+      "path": "pages/ai-tech/gemini-canvas.html",
+      "title": "Google Gemini Canvas：AI辅助创意工具的新时代 | 科普网页",
+      "lastModifiedDate": "2025-04-06T09:07:28.851Z",
+      "category": "ai-tech",
+      "description": "探索 Google 最新 AI 功能 Gemini Canvas 如何彻底改变创意开发流程，让用户在几分钟内创建网站、游戏和应用程序。",
+      "keywords": [
+        "Gemini Canvas",
+        "Google",
+        "AI创意工具",
+        "创意开发",
+        "人工智能",
+        "网站开发",
+        "游戏开发",
+        "应用开发",
+        "Gemini 2.0",
+        "Flash模型"
+      ],
+      "publish-date": "2025-04-02"
+    },
+    {
+      "id": "pages/knowledge/lecun-autoregressive.html",
+      "path": "pages/knowledge/lecun-autoregressive.html",
+      "title": "Yann LeCun批评自回归大型语言模型 | AI趋势分析",
+      "lastModifiedDate": "2025-04-06T09:07:28.879Z",
+      "category": "knowledge",
+      "description": "深入分析Yann LeCun对自回归大型语言模型的批评观点，探讨其认知架构研究方向以及AI发展的可能路径和替代方案。",
+      "keywords": [
+        "Yann LeCun",
+        "自回归模型",
+        "大型语言模型",
+        "AI发展路径",
+        "认知架构",
+        "人工智能批评",
+        "预测学习",
+        "世界模型"
+      ],
+      "publish-date": "2025-04-02"
+    },
+    {
+      "id": "pages/ai-tech/zapier-mcp.html",
+      "path": "pages/ai-tech/zapier-mcp.html",
+      "title": "Zapier MCP: AI 助手的\"App Store\"时刻",
+      "lastModifiedDate": "2025-04-06T09:07:28.858Z",
+      "category": "ai-tech",
+      "description": "Zapier的Multi-Core Processor (MCP)技术将如何通过AI驱动的应用生态系统彻底改变我们与工作和数据交互的方式。",
+      "keywords": [
+        "Zapier",
+        "MCP",
+        "Multi-Core Processor",
+        "AI助手",
+        "自动化",
+        "应用生态",
+        "AI代理",
+        "工作流",
+        "生产力工具",
+        "应用程序"
+      ],
+      "publish-date": "2025-04-01"
+    },
+    {
+      "id": "pages/info-upgrade/medical-insurance-qa.html",
+      "path": "pages/info-upgrade/medical-insurance-qa.html",
+      "title": "医保系统页面内问答功能快速上线实施方案",
+      "lastModifiedDate": "2025-04-06T09:07:28.876Z",
+      "category": "info-upgrade",
+      "description": "提供一个在医保系统中快速上线页面内嵌问答（QA）功能的实施方案，涵盖技术选型、数据准备、部署流程和关键挑战。",
+      "keywords": [
+        "医保系统",
+        "问答功能",
+        "QA",
+        "信息化升级",
+        "快速上线",
+        "LLM",
+        "知识库",
+        "用户支持"
+      ],
+      "publish-date": "2025-04-01"
+    },
+    {
+      "id": "pages/knowledge/anthropic-tracing-thoughts.html",
+      "path": "pages/knowledge/anthropic-tracing-thoughts.html",
+      "title": "Anthropic 最新研究成果分析：追踪语言模型思想与归因图谱 - 凿壁",
+      "lastModifiedDate": "2025-04-06T09:07:28.877Z",
+      "category": "knowledge",
+      "description": "深入解析Anthropic最新研究成果，探讨如何追踪和可视化大型语言模型内部思维过程，以及构建归因图谱的技术突破与未来应用前景。",
+      "keywords": [
+        "Anthropic",
+        "语言模型",
+        "思维追踪",
+        "归因图谱",
+        "神经网络",
+        "模型可解释性",
+        "AI内部机制",
+        "机器学习研究"
+      ],
+      "publish-date": "2025-04-01"
+    },
+    {
+      "id": "pages/knowledge/meaning.html",
+      "path": "pages/knowledge/meaning.html",
+      "title": "意义的神经科学：大脑如何创造模式与目的",
+      "lastModifiedDate": "2025-04-06T09:07:28.879Z",
+      "category": "knowledge",
+      "description": "从神经科学和认知科学角度探索大脑如何创造意义，分析模式识别、默认模式网络和奖赏系统在意义构建中的作用及其对人类认知的影响。",
+      "keywords": [
+        "神经科学",
+        "认知科学",
+        "意义构建",
+        "模式识别",
+        "默认模式网络",
+        "奖赏系统",
+        "大脑机制",
+        "认知过程"
+      ],
+      "publish-date": "2025-04-01"
+    },
+    {
+      "id": "pages/research/cognitive-aging-research.html",
+      "path": "pages/research/cognitive-aging-research.html",
+      "title": "年龄与认知技能：用进废退研究的重要价值分析",
+      "lastModifiedDate": "2025-04-06T09:07:28.886Z",
+      "category": "research",
+      "description": "分析",
+      "keywords": [
+        "认知老化",
+        "用进废退",
+        "认知训练",
+        "认知储备",
+        "老年认知",
+        "生活方式干预",
+        "神经可塑性"
+      ],
+      "publish-date": "2025-04-01"
+    },
+    {
+      "id": "pages/knowledge/cognitive-aging-research.html",
+      "path": "pages/knowledge/cognitive-aging-research.html",
+      "title": "认知老化研究的关键问题与进展",
+      "lastModifiedDate": "2025-04-06T09:07:28.878Z",
+      "category": "knowledge",
+      "description": "分析认知老化研究中的关键问题和最新进展，探讨影响认知功能的因素以及干预策略。",
+      "keywords": [
+        "认知老化",
+        "大脑健康",
+        "认知功能",
+        "老年学",
+        "神经科学",
+        "认知干预",
+        "知识报告"
+      ],
+      "publish-date": "2025-03-31"
+    },
+    {
+      "id": "pages/knowledge/pantone-2025.html",
+      "path": "pages/knowledge/pantone-2025.html",
+      "title": "潘通2025年度流行色：摩卡慕斯 | 设计与配色指南",
+      "lastModifiedDate": "2025-04-06T09:07:28.880Z",
+      "category": "knowledge",
+      "description": "详细解析潘通2025年度流行色摩卡慕斯(Mocha Mousse)的特性、应用场景、搭配方案及设计趋势，为设计师提供实用配色指南。",
+      "keywords": [
+        "潘通",
+        "2025流行色",
+        "摩卡慕斯",
+        "设计趋势",
+        "配色方案",
+        "色彩心理学",
+        "品牌设计",
+        "视觉设计",
+        "色彩搭配",
+        "色彩应用"
+      ],
+      "publish-date": "2025-03-31"
     },
     {
       "id": "pages/ai-tech/cursor_project_rules.html",
@@ -148,25 +613,45 @@
       "publish-date": "2025-03-30"
     },
     {
-      "id": "pages/ai-tech/gemini-canvas.html",
-      "path": "pages/ai-tech/gemini-canvas.html",
-      "title": "Google Gemini Canvas：AI辅助创意工具的新时代 | 科普网页",
-      "lastModifiedDate": "2025-04-06T09:07:28.851Z",
+      "id": "pages/ai-tech/gpt-4o.html",
+      "path": "pages/ai-tech/gpt-4o.html",
+      "title": "GPT-4o图像生成能力分析与评估",
+      "lastModifiedDate": "2025-04-06T09:07:28.853Z",
       "category": "ai-tech",
-      "description": "探索 Google 最新 AI 功能 Gemini Canvas 如何彻底改变创意开发流程，让用户在几分钟内创建网站、游戏和应用程序。",
+      "description": "分析评估OpenAI最新模型GPT-4o的图像生成能力，涵盖其优势、局限性、与Midjourney和Stable Diffusion的对比，以及实际应用技巧。",
       "keywords": [
-        "Gemini Canvas",
-        "Google",
-        "AI创意工具",
-        "创意开发",
+        "GPT-4o",
+        "OpenAI",
+        "图像生成",
+        "AI模型",
+        "多模态AI",
+        "Midjourney",
+        "Stable Diffusion",
+        "DALL-E 3",
         "人工智能",
-        "网站开发",
-        "游戏开发",
-        "应用开发",
-        "Gemini 2.0",
-        "Flash模型"
+        "深度学习"
       ],
-      "publish-date": "2025-04-02"
+      "publish-date": "2025-03-30"
+    },
+    {
+      "id": "pages/knowledge/autoregressive.html",
+      "path": "pages/knowledge/autoregressive.html",
+      "title": "自回归模型与扩散模型对比分析 | 深度研究",
+      "lastModifiedDate": "2025-04-06T09:07:28.877Z",
+      "category": "knowledge",
+      "description": "深入对比自回归模型与扩散模型两种多模态AI范式的技术原理、架构特点、训练方法和应用优势，包括GPT-4o与Janus-pro的实际表现分析。",
+      "keywords": [
+        "自回归模型",
+        "扩散模型",
+        "多模态AI",
+        "GPT-4o",
+        "Janus-pro",
+        "深度学习",
+        "模型对比",
+        "AI架构",
+        "技术范式"
+      ],
+      "publish-date": "2025-03-30"
     },
     {
       "id": "pages/ai-tech/gemini2.5pro.html",
@@ -213,214 +698,25 @@
       "publish-date": "2025-03-29"
     },
     {
-      "id": "pages/ai-tech/gpt-4o.html",
-      "path": "pages/ai-tech/gpt-4o.html",
-      "title": "GPT-4o图像生成能力分析与评估",
-      "lastModifiedDate": "2025-04-06T09:07:28.853Z",
-      "category": "ai-tech",
-      "description": "分析评估OpenAI最新模型GPT-4o的图像生成能力，涵盖其优势、局限性、与Midjourney和Stable Diffusion的对比，以及实际应用技巧。",
+      "id": "pages/research/ai-essential-papers.html",
+      "path": "pages/research/ai-essential-papers.html",
+      "title": "人工智能学习必读论文书单",
+      "lastModifiedDate": "2025-04-14T09:52:57.107Z",
+      "category": "research",
+      "description": "精选8篇对理解现代AI系统至关重要的论文，它们共同构成了当代大型语言模型的理论基础和实践路径。",
       "keywords": [
-        "GPT-4o",
-        "OpenAI",
-        "图像生成",
-        "AI模型",
-        "多模态AI",
-        "Midjourney",
-        "Stable Diffusion",
-        "DALL-E 3",
+        "AI",
         "人工智能",
-        "深度学习"
-      ],
-      "publish-date": "2025-03-30"
-    },
-    {
-      "id": "pages/ai-tech/gpt-o3-benchmark.html",
-      "path": "pages/ai-tech/gpt-o3-benchmark.html",
-      "title": "GPT-o3与o4-mini发布：benchmark挤位效应与社区反响",
-      "lastModifiedDate": "2025-04-18T10:57:06.271Z",
-      "category": "ai-tech",
-      "description": "全面解析GPT-o3与o4-mini上线后对评测榜单的影响，以及24小时内社区讨论演变与最佳实践技巧。",
-      "keywords": [
-        "GPT-o3",
-        "o4-mini",
-        "OpenAI",
-        "Benchmark",
-        "AI评测",
-        "大模型",
-        "性能评估",
-        "推理能力"
-      ],
-      "publish-date": "2025-04-18"
-    },
-    {
-      "id": "pages/ai-tech/grok-vision.html",
-      "path": "pages/ai-tech/grok-vision.html",
-      "title": "Grok Vision 多模态能力深度分析",
-      "lastModifiedDate": "2025-04-06T09:07:28.853Z",
-      "category": "ai-tech",
-      "description": "深入分析 Grok Vision 的多模态能力，探讨其在理解物理世界、文档处理、图像分析及与人类互动方面的优势与局限。",
-      "keywords": [
-        "Grok Vision",
-        "多模态AI",
-        "物理世界理解",
-        "文档分析",
-        "图像处理",
-        "人机交互",
-        "AI局限性"
-      ],
-      "publish-date": "2025-03-17"
-    },
-    {
-      "id": "pages/ai-tech/jupyter-mcp-server-report.html",
-      "path": "pages/ai-tech/jupyter-mcp-server-report.html",
-      "title": "Jupyter MCP Server 综合调研报告 | AI与数据科学融合的新尝试",
-      "lastModifiedDate": "2025-04-14T08:10:48.379Z",
-      "category": "ai-tech",
-      "description": "对 Jupyter MCP Server 项目及其在数据科学领域类似项目的综合调研报告，分析了功能、社区评价和未来展望。",
-      "keywords": [
-        "Jupyter",
-        "MCP",
-        "Model Context Protocol",
-        "数据科学",
-        "AI",
-        "自动化",
-        "R",
-        "Databricks",
-        "Kaggle",
-        "Claude"
-      ],
-      "publish-date": "2025-04-14"
-    },
-    {
-      "id": "pages/ai-tech/mcpstore.html",
-      "path": "pages/ai-tech/mcpstore.html",
-      "title": "阿里云百炼平台全生命周期MCP服务解析",
-      "lastModifiedDate": "2025-04-09T11:25:15.164Z",
-      "category": "ai-tech",
-      "description": "阿里云百炼平台推出的全生命周期MCP（模型连接协议）服务，简化AI智能体开发流程，提供50多种MCP服务，降低AI应用开发门槛。",
-      "keywords": [
-        "MCP",
-        "模型连接协议",
-        "阿里云百炼",
-        "AI智能体",
-        "LLM工具集成"
-      ],
-      "publish-date": "2025-04-10"
-    },
-    {
-      "id": "pages/ai-tech/n8n-workflow-automation-analysis.html",
-      "path": "pages/ai-tech/n8n-workflow-automation-analysis.html",
-      "title": "N8N 深度评测：开源工作流自动化的新浪潮",
-      "lastModifiedDate": "2025-04-06T09:07:28.854Z",
-      "category": "ai-tech",
-      "description": "深度评测N8N开源工作流自动化平台，结合GitHub、Reddit和X的社区反馈，分析其功能、优势、挑战及未来趋势。",
-      "keywords": [
-        "N8N",
-        "工作流自动化",
-        "开源",
-        "AI集成",
-        "自动化平台",
-        "自托管",
-        "Fair-code",
-        "社区反馈",
-        "评测报告"
-      ],
-      "publish-date": "2025-03-27"
-    },
-    {
-      "id": "pages/ai-tech/project-intro.html",
-      "path": "pages/ai-tech/project-intro.html",
-      "title": "凿壁项目简介",
-      "lastModifiedDate": "2025-04-09T05:04:52.270Z",
-      "category": "ai-tech",
-      "description": "介绍凿壁项目的目标、范围和主要功能，以及如何参与贡献。",
-      "keywords": [
-        "凿壁",
-        "项目介绍",
-        "AI",
-        "知识管理"
-      ],
-      "publish-date": "2024-08-15"
-    },
-    {
-      "id": "pages/ai-tech/qwen-multimodal-ai-analysis.html",
-      "path": "pages/ai-tech/qwen-multimodal-ai-analysis.html",
-      "title": "阿里最新AI技术分析 | 凿壁",
-      "lastModifiedDate": "2025-04-06T09:07:28.855Z",
-      "category": "ai-tech",
-      "description": "深入分析阿里巴巴最新推出的Qwen1.5多模态AI系列模型，探讨其技术突破、性能表现、潜在应用及行业影响。",
-      "keywords": [
-        "阿里巴巴",
-        "AI",
-        "Qwen1.5",
-        "通义千问",
-        "多模态模型",
-        "人工智能",
-        "技术分析",
-        "视觉语言模型",
-        "AI应用"
-      ],
-      "publish-date": "2025-03-27"
-    },
-    {
-      "id": "pages/ai-tech/rag-vibe-coding.html",
-      "path": "pages/ai-tech/rag-vibe-coding.html",
-      "title": "知识库技术：降低AI编程幻觉的六步法",
-      "lastModifiedDate": "2025-04-06T09:07:28.855Z",
-      "category": "ai-tech",
-      "description": "探索如何使用RAG技术和知识库构建降低AI编程幻觉的六步开发方法，提高代码生成质量和可靠性。",
-      "keywords": [
-        "RAG",
-        "检索增强生成",
-        "AI编程",
-        "幻觉减少",
-        "知识库技术",
+        "论文",
+        "书单",
+        "必读",
+        "Transformer",
+        "注意力机制",
         "LLM",
-        "代码生成",
-        "vibe coding",
-        "氛围编程",
-        "软件开发"
+        "大语言模型",
+        "推理框架"
       ],
-      "publish-date": "2025-03-25"
-    },
-    {
-      "id": "pages/ai-tech/vanna-ai-report.html",
-      "path": "pages/ai-tech/vanna-ai-report.html",
-      "title": "Vanna AI 技术分析报告 - 打造高质量文本到SQL转换的开源框架",
-      "lastModifiedDate": "2025-04-17T02:38:09.573Z",
-      "category": "ai-tech",
-      "description": "Vanna AI是一个基于Python的开源RAG框架，能够将自然语言查询转换为精确的SQL语句，简化用户与数据库的交互。本报告详细分析了其功能、性能、社区生态以及部署方案。",
-      "keywords": [
-        "Vanna AI",
-        "RAG",
-        "文本到SQL",
-        "数据库查询",
-        "检索增强生成",
-        "开源框架",
-        "数据分析"
-      ],
-      "publish-date": "2025-04-15"
-    },
-    {
-      "id": "pages/ai-tech/vibe-coder-guide.html",
-      "path": "pages/ai-tech/vibe-coder-guide.html",
-      "title": "成为一名优秀的\"Vibe Coder\"：创造情感共鸣的用户体验",
-      "lastModifiedDate": "2025-04-06T09:07:28.856Z",
-      "category": "ai-tech",
-      "description": "探讨如何成为一名优秀的",
-      "keywords": [
-        "Vibe Coder",
-        "用户体验",
-        "UX",
-        "UI",
-        "情感设计",
-        "设计心理学",
-        "前端开发",
-        "交互设计",
-        "用户中心设计",
-        "情感共鸣"
-      ],
-      "publish-date": "2025-03-25"
+      "publish-date": "2025-03-29"
     },
     {
       "id": "pages/ai-tech/vibe-coding-report.html",
@@ -444,43 +740,188 @@
       "publish-date": "2025-03-28"
     },
     {
-      "id": "pages/ai-tech/zapier-mcp.html",
-      "path": "pages/ai-tech/zapier-mcp.html",
-      "title": "Zapier MCP: AI 助手的\"App Store\"时刻",
-      "lastModifiedDate": "2025-04-06T09:07:28.858Z",
-      "category": "ai-tech",
-      "description": "Zapier的Multi-Core Processor (MCP)技术将如何通过AI驱动的应用生态系统彻底改变我们与工作和数据交互的方式。",
+      "id": "pages/knowledge/researchtopics.html",
+      "path": "pages/knowledge/researchtopics.html",
+      "title": "研究主题的选择与评估方法",
+      "lastModifiedDate": "2025-04-06T09:07:28.883Z",
+      "category": "knowledge",
+      "description": "探讨如何选择和评估有价值的研究主题，涵盖问题识别、创新性判断、可行性分析等方面。",
       "keywords": [
-        "Zapier",
-        "MCP",
-        "Multi-Core Processor",
-        "AI助手",
-        "自动化",
-        "应用生态",
-        "AI代理",
-        "工作流",
-        "生产力工具",
-        "应用程序"
+        "研究主题",
+        "选题",
+        "创新性",
+        "可行性分析",
+        "科研方法",
+        "知识报告"
       ],
-      "publish-date": "2025-04-01"
+      "publish-date": "2025-03-28"
     },
     {
-      "id": "pages/info-upgrade/dataasset.html",
-      "path": "pages/info-upgrade/dataasset.html",
-      "title": "健康医疗数据资产：中国数据要素市场化教育与实践",
-      "lastModifiedDate": "2025-04-06T09:07:28.859Z",
-      "category": "info-upgrade",
-      "description": "深度解析中国数据要素市场化背景下的健康医疗数据资产，探讨其核心概念、价值应用、政策环境及教育实践。",
+      "id": "pages/research/clinical-research-topic-selection.html",
+      "path": "pages/research/clinical-research-topic-selection.html",
+      "title": "临床研究选题工作流程",
+      "lastModifiedDate": "2025-04-06T09:07:28.885Z",
+      "category": "research",
+      "description": "本文档详细阐述了临床研究选题的完整工作流程，分为问题发现、文献回顾、可行性评估、选题确定四个主要阶段，并强调了LLM在各环节的应用。",
       "keywords": [
-        "健康医疗数据",
-        "数据资产",
-        "数据要素",
-        "市场化",
-        "数据治理",
-        "数据安全",
-        "信息化升级"
+        "临床研究",
+        "研究选题",
+        "工作流程",
+        "文献回顾",
+        "可行性评估",
+        "LLM",
+        "AI",
+        "选题策略"
       ],
-      "publish-date": "2025-03-15"
+      "publish-date": "2025-03-28"
+    },
+    {
+      "id": "pages/ai-tech/ai-model-capability-analysis.html",
+      "path": "pages/ai-tech/ai-model-capability-analysis.html",
+      "title": "人工智能模型能力分析",
+      "lastModifiedDate": "2025-04-17T00:16:39.053Z",
+      "category": "ai-tech",
+      "description": "全面分析主流AI模型在八大核心能力维度的表现，包括创意写作、综合归纳、文生图、科研辅助、代码开发、语音交互、复杂推理和数学能力。",
+      "keywords": [
+        "AI模型",
+        "人工智能",
+        "能力分析",
+        "模型对比",
+        "ChatGPT",
+        "DeepSeek",
+        "Claude",
+        "文心一言",
+        "Gemini",
+        "豆包",
+        "多模态AI",
+        "LLM",
+        "AI评测"
+      ],
+      "publish-date": "2025-03-27"
+    },
+    {
+      "id": "pages/ai-tech/n8n-workflow-automation-analysis.html",
+      "path": "pages/ai-tech/n8n-workflow-automation-analysis.html",
+      "title": "N8N 深度评测：开源工作流自动化的新浪潮",
+      "lastModifiedDate": "2025-04-06T09:07:28.854Z",
+      "category": "ai-tech",
+      "description": "深度评测N8N开源工作流自动化平台，结合GitHub、Reddit和X的社区反馈，分析其功能、优势、挑战及未来趋势。",
+      "keywords": [
+        "N8N",
+        "工作流自动化",
+        "开源",
+        "AI集成",
+        "自动化平台",
+        "自托管",
+        "Fair-code",
+        "社区反馈",
+        "评测报告"
+      ],
+      "publish-date": "2025-03-27"
+    },
+    {
+      "id": "pages/ai-tech/qwen-multimodal-ai-analysis.html",
+      "path": "pages/ai-tech/qwen-multimodal-ai-analysis.html",
+      "title": "阿里最新AI技术分析 | 凿壁",
+      "lastModifiedDate": "2025-04-06T09:07:28.855Z",
+      "category": "ai-tech",
+      "description": "深入分析阿里巴巴最新推出的Qwen1.5多模态AI系列模型，探讨其技术突破、性能表现、潜在应用及行业影响。",
+      "keywords": [
+        "阿里巴巴",
+        "AI",
+        "Qwen1.5",
+        "通义千问",
+        "多模态模型",
+        "人工智能",
+        "技术分析",
+        "视觉语言模型",
+        "AI应用"
+      ],
+      "publish-date": "2025-03-27"
+    },
+    {
+      "id": "pages/ai-tech/cursor-strategies.html",
+      "path": "pages/ai-tech/cursor-strategies.html",
+      "title": "Cursor AI编码工具使用策略 - 高效开发指南",
+      "lastModifiedDate": "2025-04-06T09:07:28.849Z",
+      "category": "ai-tech",
+      "description": "基于Prajwal Tomar的研究，本指南提供一套详细的Cursor AI编码工具使用策略，助您全面释放其潜力，提升开发效率和质量。",
+      "keywords": [
+        "Cursor AI",
+        "编码工具",
+        "AI编程",
+        "开发策略",
+        "效率提升",
+        "Prajwal Tomar",
+        "代码生成",
+        "AI辅助开发",
+        "软件工程",
+        "编程技巧"
+      ],
+      "publish-date": "2025-03-26"
+    },
+    {
+      "id": "pages/ai-tech/rag-vibe-coding.html",
+      "path": "pages/ai-tech/rag-vibe-coding.html",
+      "title": "知识库技术：降低AI编程幻觉的六步法",
+      "lastModifiedDate": "2025-04-06T09:07:28.855Z",
+      "category": "ai-tech",
+      "description": "探索如何使用RAG技术和知识库构建降低AI编程幻觉的六步开发方法，提高代码生成质量和可靠性。",
+      "keywords": [
+        "RAG",
+        "检索增强生成",
+        "AI编程",
+        "幻觉减少",
+        "知识库技术",
+        "LLM",
+        "代码生成",
+        "vibe coding",
+        "氛围编程",
+        "软件开发"
+      ],
+      "publish-date": "2025-03-25"
+    },
+    {
+      "id": "pages/ai-tech/vibe-coder-guide.html",
+      "path": "pages/ai-tech/vibe-coder-guide.html",
+      "title": "成为一名优秀的\"Vibe Coder\"：创造情感共鸣的用户体验",
+      "lastModifiedDate": "2025-04-06T09:07:28.856Z",
+      "category": "ai-tech",
+      "description": "探讨如何成为一名优秀的",
+      "keywords": [
+        "Vibe Coder",
+        "用户体验",
+        "UX",
+        "UI",
+        "情感设计",
+        "设计心理学",
+        "前端开发",
+        "交互设计",
+        "用户中心设计",
+        "情感共鸣"
+      ],
+      "publish-date": "2025-03-25"
+    },
+    {
+      "id": "pages/research/llm-medical-research-workflow.html",
+      "path": "pages/research/llm-medical-research-workflow.html",
+      "title": "大模型辅助医学科研工作流程",
+      "lastModifiedDate": "2025-04-09T05:15:02.093Z",
+      "category": "research",
+      "description": "探讨大型语言模型(LLM)如何在医学科研的各个环节（选题、文献回顾、实验设计、数据分析、论文撰写）提供支持，以及相关的伦理和实践考量。",
+      "keywords": [
+        "大模型",
+        "LLM",
+        "医学科研",
+        "科研流程",
+        "人工智能",
+        "AI",
+        "文献综述",
+        "数据分析",
+        "论文写作",
+        "科研伦理"
+      ],
+      "publish-date": "2025-03-25"
     },
     {
       "id": "pages/info-upgrade/hospital-it-team-training.html",
@@ -538,23 +979,78 @@
       "publish-date": "2025-03-21"
     },
     {
-      "id": "pages/info-upgrade/hospital-it-workflow.html",
-      "path": "pages/info-upgrade/hospital-it-workflow.html",
-      "title": "公立医院信息科工作流知识图谱",
-      "lastModifiedDate": "2025-04-06T09:07:28.871Z",
-      "category": "info-upgrade",
-      "description": "构建公立医院信息科的知识图谱，涵盖日常运维、数据管理、项目实施、安全合规、沟通协调和文档管理等关键工作流程。",
+      "id": "pages/research/llm-chatbot-development.html",
+      "path": "pages/research/llm-chatbot-development.html",
+      "title": "构建企业知识库与LLM聊天机器人的关键步骤",
+      "lastModifiedDate": "2025-04-06T09:07:28.887Z",
+      "category": "research",
+      "description": "详细介绍构建企业级知识库和大型语言模型（LLM）聊天机器人的七个关键步骤，从需求分析到持续优化。",
       "keywords": [
-        "医院信息科",
-        "工作流",
-        "知识图谱",
-        "IT运维",
-        "数据管理",
-        "项目管理",
-        "信息安全",
-        "医疗信息化"
+        "企业知识库",
+        "LLM",
+        "聊天机器人",
+        "Chatbot",
+        "AI开发",
+        "知识管理",
+        "实施步骤",
+        "科研辅助"
       ],
-      "publish-date": "2025-02-20"
+      "publish-date": "2025-03-20"
+    },
+    {
+      "id": "pages/knowledge/creative.html",
+      "path": "pages/knowledge/creative.html",
+      "title": "富足与创造力：一种新的理论框架",
+      "lastModifiedDate": "2025-04-06T09:07:28.879Z",
+      "category": "knowledge",
+      "description": "探讨富足经济下创造力的新理论框架，分析经济资源与创意生产力的关系，以及AI时代创造力的重新定义和价值评估体系。",
+      "keywords": [
+        "创造力",
+        "富足经济",
+        "理论框架",
+        "经济资源",
+        "创意生产",
+        "AI时代",
+        "价值评估",
+        "创造力测量"
+      ],
+      "publish-date": "2025-03-19"
+    },
+    {
+      "id": "pages/ai-tech/grok-vision.html",
+      "path": "pages/ai-tech/grok-vision.html",
+      "title": "Grok Vision 多模态能力深度分析",
+      "lastModifiedDate": "2025-04-06T09:07:28.853Z",
+      "category": "ai-tech",
+      "description": "深入分析 Grok Vision 的多模态能力，探讨其在理解物理世界、文档处理、图像分析及与人类互动方面的优势与局限。",
+      "keywords": [
+        "Grok Vision",
+        "多模态AI",
+        "物理世界理解",
+        "文档分析",
+        "图像处理",
+        "人机交互",
+        "AI局限性"
+      ],
+      "publish-date": "2025-03-17"
+    },
+    {
+      "id": "pages/info-upgrade/dataasset.html",
+      "path": "pages/info-upgrade/dataasset.html",
+      "title": "健康医疗数据资产：中国数据要素市场化教育与实践",
+      "lastModifiedDate": "2025-04-06T09:07:28.859Z",
+      "category": "info-upgrade",
+      "description": "深度解析中国数据要素市场化背景下的健康医疗数据资产，探讨其核心概念、价值应用、政策环境及教育实践。",
+      "keywords": [
+        "健康医疗数据",
+        "数据资产",
+        "数据要素",
+        "市场化",
+        "数据治理",
+        "数据安全",
+        "信息化升级"
+      ],
+      "publish-date": "2025-03-15"
     },
     {
       "id": "pages/info-upgrade/llm-medical-dispute-prevention.html",
@@ -595,218 +1091,6 @@
       "publish-date": "2025-03-15"
     },
     {
-      "id": "pages/info-upgrade/medical-insurance-qa.html",
-      "path": "pages/info-upgrade/medical-insurance-qa.html",
-      "title": "医保系统页面内问答功能快速上线实施方案",
-      "lastModifiedDate": "2025-04-06T09:07:28.876Z",
-      "category": "info-upgrade",
-      "description": "提供一个在医保系统中快速上线页面内嵌问答（QA）功能的实施方案，涵盖技术选型、数据准备、部署流程和关键挑战。",
-      "keywords": [
-        "医保系统",
-        "问答功能",
-        "QA",
-        "信息化升级",
-        "快速上线",
-        "LLM",
-        "知识库",
-        "用户支持"
-      ],
-      "publish-date": "2025-04-01"
-    },
-    {
-      "id": "pages/knowledge/ai-emotion-management.html",
-      "path": "pages/knowledge/ai-emotion-management.html",
-      "title": "AI辅助情绪管理的新范式：技术与心理学的融合 | 凿壁",
-      "lastModifiedDate": "2025-04-14T08:08:32.444Z",
-      "category": "knowledge",
-      "description": "探索人工智能如何革新情绪管理领域，分析当前AI情绪检测与干预技术的发展现状、挑战及未来发展方向，以及在心理健康领域的应用前景。",
-      "keywords": [
-        "情绪管理",
-        "人工智能",
-        "情绪检测",
-        "心理健康",
-        "情绪干预",
-        "心理学",
-        "情绪识别",
-        "数字健康",
-        "精神健康",
-        "AI应用"
-      ],
-      "publish-date": "2025-04-13"
-    },
-    {
-      "id": "pages/knowledge/anthropic-tracing-thoughts.html",
-      "path": "pages/knowledge/anthropic-tracing-thoughts.html",
-      "title": "Anthropic 最新研究成果分析：追踪语言模型思想与归因图谱 - 凿壁",
-      "lastModifiedDate": "2025-04-06T09:07:28.877Z",
-      "category": "knowledge",
-      "description": "深入解析Anthropic最新研究成果，探讨如何追踪和可视化大型语言模型内部思维过程，以及构建归因图谱的技术突破与未来应用前景。",
-      "keywords": [
-        "Anthropic",
-        "语言模型",
-        "思维追踪",
-        "归因图谱",
-        "神经网络",
-        "模型可解释性",
-        "AI内部机制",
-        "机器学习研究"
-      ],
-      "publish-date": "2025-04-01"
-    },
-    {
-      "id": "pages/knowledge/autoregressive.html",
-      "path": "pages/knowledge/autoregressive.html",
-      "title": "自回归模型与扩散模型对比分析 | 深度研究",
-      "lastModifiedDate": "2025-04-06T09:07:28.877Z",
-      "category": "knowledge",
-      "description": "深入对比自回归模型与扩散模型两种多模态AI范式的技术原理、架构特点、训练方法和应用优势，包括GPT-4o与Janus-pro的实际表现分析。",
-      "keywords": [
-        "自回归模型",
-        "扩散模型",
-        "多模态AI",
-        "GPT-4o",
-        "Janus-pro",
-        "深度学习",
-        "模型对比",
-        "AI架构",
-        "技术范式"
-      ],
-      "publish-date": "2025-03-30"
-    },
-    {
-      "id": "pages/knowledge/cognitive-aging-research.html",
-      "path": "pages/knowledge/cognitive-aging-research.html",
-      "title": "认知老化研究的关键问题与进展",
-      "lastModifiedDate": "2025-04-06T09:07:28.878Z",
-      "category": "knowledge",
-      "description": "分析认知老化研究中的关键问题和最新进展，探讨影响认知功能的因素以及干预策略。",
-      "keywords": [
-        "认知老化",
-        "大脑健康",
-        "认知功能",
-        "老年学",
-        "神经科学",
-        "认知干预",
-        "知识报告"
-      ],
-      "publish-date": "2025-03-31"
-    },
-    {
-      "id": "pages/knowledge/creative.html",
-      "path": "pages/knowledge/creative.html",
-      "title": "富足与创造力：一种新的理论框架",
-      "lastModifiedDate": "2025-04-06T09:07:28.879Z",
-      "category": "knowledge",
-      "description": "探讨富足经济下创造力的新理论框架，分析经济资源与创意生产力的关系，以及AI时代创造力的重新定义和价值评估体系。",
-      "keywords": [
-        "创造力",
-        "富足经济",
-        "理论框架",
-        "经济资源",
-        "创意生产",
-        "AI时代",
-        "价值评估",
-        "创造力测量"
-      ],
-      "publish-date": "2025-03-19"
-    },
-    {
-      "id": "pages/knowledge/lecun-autoregressive.html",
-      "path": "pages/knowledge/lecun-autoregressive.html",
-      "title": "Yann LeCun批评自回归大型语言模型 | AI趋势分析",
-      "lastModifiedDate": "2025-04-06T09:07:28.879Z",
-      "category": "knowledge",
-      "description": "深入分析Yann LeCun对自回归大型语言模型的批评观点，探讨其认知架构研究方向以及AI发展的可能路径和替代方案。",
-      "keywords": [
-        "Yann LeCun",
-        "自回归模型",
-        "大型语言模型",
-        "AI发展路径",
-        "认知架构",
-        "人工智能批评",
-        "预测学习",
-        "世界模型"
-      ],
-      "publish-date": "2025-04-02"
-    },
-    {
-      "id": "pages/knowledge/meaning.html",
-      "path": "pages/knowledge/meaning.html",
-      "title": "意义的神经科学：大脑如何创造模式与目的",
-      "lastModifiedDate": "2025-04-06T09:07:28.879Z",
-      "category": "knowledge",
-      "description": "从神经科学和认知科学角度探索大脑如何创造意义，分析模式识别、默认模式网络和奖赏系统在意义构建中的作用及其对人类认知的影响。",
-      "keywords": [
-        "神经科学",
-        "认知科学",
-        "意义构建",
-        "模式识别",
-        "默认模式网络",
-        "奖赏系统",
-        "大脑机制",
-        "认知过程"
-      ],
-      "publish-date": "2025-04-01"
-    },
-    {
-      "id": "pages/knowledge/pantone-2025.html",
-      "path": "pages/knowledge/pantone-2025.html",
-      "title": "潘通2025年度流行色：摩卡慕斯 | 设计与配色指南",
-      "lastModifiedDate": "2025-04-06T09:07:28.880Z",
-      "category": "knowledge",
-      "description": "详细解析潘通2025年度流行色摩卡慕斯(Mocha Mousse)的特性、应用场景、搭配方案及设计趋势，为设计师提供实用配色指南。",
-      "keywords": [
-        "潘通",
-        "2025流行色",
-        "摩卡慕斯",
-        "设计趋势",
-        "配色方案",
-        "色彩心理学",
-        "品牌设计",
-        "视觉设计",
-        "色彩搭配",
-        "色彩应用"
-      ],
-      "publish-date": "2025-03-31"
-    },
-    {
-      "id": "pages/knowledge/refactor-by-ast-graph.html",
-      "path": "pages/knowledge/refactor-by-ast-graph.html",
-      "title": "基于AST与图数据库的代码重构工作方案",
-      "lastModifiedDate": "2025-04-10T02:33:40.034Z",
-      "category": "knowledge",
-      "description": "探索如何利用抽象语法树(AST)和图数据库技术实现大型代码库的结构化分析与精确重构，克服传统手动重构和LLM辅助重构的局限性。",
-      "keywords": [
-        "代码重构",
-        "AST",
-        "抽象语法树",
-        "图数据库",
-        "Neo4j",
-        "软件工程",
-        "开发工具",
-        "代码分析",
-        "知识报告"
-      ],
-      "publish-date": "2025-04-07"
-    },
-    {
-      "id": "pages/knowledge/researchtopics.html",
-      "path": "pages/knowledge/researchtopics.html",
-      "title": "研究主题的选择与评估方法",
-      "lastModifiedDate": "2025-04-06T09:07:28.883Z",
-      "category": "knowledge",
-      "description": "探讨如何选择和评估有价值的研究主题，涵盖问题识别、创新性判断、可行性分析等方面。",
-      "keywords": [
-        "研究主题",
-        "选题",
-        "创新性",
-        "可行性分析",
-        "科研方法",
-        "知识报告"
-      ],
-      "publish-date": "2025-03-28"
-    },
-    {
       "id": "pages/knowledge/student-confidence-restoration.html",
       "path": "pages/knowledge/student-confidence-restoration.html",
       "title": "陪伴成长：如何恢复孩子的信心、情绪和学习动力",
@@ -826,210 +1110,38 @@
       "publish-date": "2025-03-10"
     },
     {
-      "id": "pages/research/ai-essential-papers.html",
-      "path": "pages/research/ai-essential-papers.html",
-      "title": "人工智能学习必读论文书单",
-      "lastModifiedDate": "2025-04-14T09:52:57.107Z",
-      "category": "research",
-      "description": "精选8篇对理解现代AI系统至关重要的论文，它们共同构成了当代大型语言模型的理论基础和实践路径。",
+      "id": "pages/info-upgrade/hospital-it-workflow.html",
+      "path": "pages/info-upgrade/hospital-it-workflow.html",
+      "title": "公立医院信息科工作流知识图谱",
+      "lastModifiedDate": "2025-04-06T09:07:28.871Z",
+      "category": "info-upgrade",
+      "description": "构建公立医院信息科的知识图谱，涵盖日常运维、数据管理、项目实施、安全合规、沟通协调和文档管理等关键工作流程。",
       "keywords": [
-        "AI",
-        "人工智能",
-        "论文",
-        "书单",
-        "必读",
-        "Transformer",
-        "注意力机制",
-        "LLM",
-        "大语言模型",
-        "推理框架"
-      ],
-      "publish-date": "2025-03-29"
-    },
-    {
-      "id": "pages/research/clinical-research-topic-selection.html",
-      "path": "pages/research/clinical-research-topic-selection.html",
-      "title": "临床研究选题工作流程",
-      "lastModifiedDate": "2025-04-06T09:07:28.885Z",
-      "category": "research",
-      "description": "本文档详细阐述了临床研究选题的完整工作流程，分为问题发现、文献回顾、可行性评估、选题确定四个主要阶段，并强调了LLM在各环节的应用。",
-      "keywords": [
-        "临床研究",
-        "研究选题",
-        "工作流程",
-        "文献回顾",
-        "可行性评估",
-        "LLM",
-        "AI",
-        "选题策略"
-      ],
-      "publish-date": "2025-03-28"
-    },
-    {
-      "id": "pages/research/cognitive-aging-research.html",
-      "path": "pages/research/cognitive-aging-research.html",
-      "title": "年龄与认知技能：用进废退研究的重要价值分析",
-      "lastModifiedDate": "2025-04-06T09:07:28.886Z",
-      "category": "research",
-      "description": "分析",
-      "keywords": [
-        "认知老化",
-        "用进废退",
-        "认知训练",
-        "认知储备",
-        "老年认知",
-        "生活方式干预",
-        "神经可塑性"
-      ],
-      "publish-date": "2025-04-01"
-    },
-    {
-      "id": "pages/research/llm-chatbot-development.html",
-      "path": "pages/research/llm-chatbot-development.html",
-      "title": "构建企业知识库与LLM聊天机器人的关键步骤",
-      "lastModifiedDate": "2025-04-06T09:07:28.887Z",
-      "category": "research",
-      "description": "详细介绍构建企业级知识库和大型语言模型（LLM）聊天机器人的七个关键步骤，从需求分析到持续优化。",
-      "keywords": [
-        "企业知识库",
-        "LLM",
-        "聊天机器人",
-        "Chatbot",
-        "AI开发",
-        "知识管理",
-        "实施步骤",
-        "科研辅助"
-      ],
-      "publish-date": "2025-03-20"
-    },
-    {
-      "id": "pages/research/llm-medical-research-workflow.html",
-      "path": "pages/research/llm-medical-research-workflow.html",
-      "title": "大模型辅助医学科研工作流程",
-      "lastModifiedDate": "2025-04-09T05:15:02.093Z",
-      "category": "research",
-      "description": "探讨大型语言模型(LLM)如何在医学科研的各个环节（选题、文献回顾、实验设计、数据分析、论文撰写）提供支持，以及相关的伦理和实践考量。",
-      "keywords": [
-        "大模型",
-        "LLM",
-        "医学科研",
-        "科研流程",
-        "人工智能",
-        "AI",
-        "文献综述",
-        "数据分析",
-        "论文写作",
-        "科研伦理"
-      ],
-      "publish-date": "2025-03-25"
-    },
-    {
-      "id": "pages/research/halicin.html",
-      "path": "pages/research/halicin.html",
-      "title": "Halicin: AI发现的广谱抗生素研发现状 | 凿壁",
-      "lastModifiedDate": "2025-04-19T07:03:35.372Z",
-      "category": "research",
-      "description": "详细探讨通过人工智能发现的抗生素halicin的研发历程、作用机制、临床前研究进展以及未来发展前景，呈现AI技术在药物研发领域的突破性应用。",
-      "keywords": [
-        "halicin",
-        "人工智能",
-        "抗生素",
-        "药物发现",
-        "耐药菌",
-        "临床前研究",
-        "AI药物研发"
-      ],
-      "publish-date": "2025-04-18"
-    },
-    {
-      "id": "pages/ai-tech/cursor-049-analysis.html",
-      "path": "pages/ai-tech/cursor-049-analysis.html",
-      "title": "Cursor 0.49版本深度解析：多模型视角下的功能更新与社区评价 | 凿壁",
-      "lastModifiedDate": "2025-04-20T10:38:00.000Z",
-      "category": "ai-tech",
-      "description": "深入分析Cursor 0.49版本的功能更新及社区评价，对比多款大型语言模型对该版本的解读差异，包括规则自动生成、MCP图像支持、终端控制与全局忽略等重要功能。",
-      "keywords": [
-        "Cursor",
-        "0.49",
-        "AI编码助手",
-        "规则生成",
-        "大语言模型",
-        "代码编辑器",
-        "LLM比较"
-      ],
-      "publish-date": "2025-04-20"
-    },
-    {
-      "id": "pages/ai-tech/cursor-gitmcp-integration.html",
-      "path": "pages/ai-tech/cursor-gitmcp-integration.html",
-      "title": "零部署学习：Cursor × GitMCP 集成指南 | 凿壁",
-      "lastModifiedDate": "2025-04-25T10:30:00.000Z",
-      "category": "ai-tech",
-      "description": "借助Cursor的Vibe Coding模式和gitmcp.io托管服务，可以零本地安装地学习并复用GitHub项目的代码、Prompt与设计思路。本文详细介绍这一方案的价值、具体流程、最佳实践与潜在风险。",
-      "keywords": [
-        "Cursor",
-        "GitMCP",
-        "Vibe Coding",
-        "gitmcp.io",
-        "MCP",
-        "Claude",
-        "代码学习",
-        "GitHub"
-      ],
-      "publish-date": "2025-04-25"
-    },
-    {
-      "id": "pages/research/future-medical-research-insights.html",
-      "path": "pages/research/future-medical-research-insights.html",
-      "title": "五大洞见：重塑未来25年医学科研 | 凿壁",
-      "lastModifiedDate": "2025-04-26T07:23:26.000Z",
-      "category": "research",
-      "description": "探索五条核心洞见，揭示技术、历史与生命机制如何交汇，重塑2025-2050年医学科研的未来图景，涵盖算力、数据、AI驱动的范式转变及关键风险。",
-      "keywords": [
-        "医学科研",
-        "未来预测",
-        "人工智能",
-        "算力",
-        "数据科学",
+        "医院信息科",
+        "工作流",
         "知识图谱",
-        "生物信息学",
-        "认知通胀",
-        "AlphaFold",
-        "Med-PaLM"
+        "IT运维",
+        "数据管理",
+        "项目管理",
+        "信息安全",
+        "医疗信息化"
       ],
-      "publish-date": "2025-04-26"
+      "publish-date": "2025-02-20"
     },
     {
-      "id": "pages/ai-tech/deepwiki-community-feedback.html",
-      "path": "pages/ai-tech/deepwiki-community-feedback.html",
-      "title": "DeepWiki 社区反馈概览",
-      "lastModifiedDate": "2025-04-27T12:27:08+08:00",
+      "id": "pages/ai-tech/project-intro.html",
+      "path": "pages/ai-tech/project-intro.html",
+      "title": "凿壁项目简介",
+      "lastModifiedDate": "2025-04-09T05:04:52.270Z",
       "category": "ai-tech",
-      "description": "DeepWiki 社区反馈概览，总结了用户评价、核心特性、技术规模和潜在问题，包含可视化图表，帮助开发者快速了解该 AI 代码文档工具。",
+      "description": "介绍凿壁项目的目标、范围和主要功能，以及如何参与贡献。",
       "keywords": [
-        "DeepWiki",
-        "Cognition AI",
-        "AI文档生成",
-        "代码库",
-        "社区反馈",
-        "GitHub",
-        "开源",
-        "LLM",
-        "AI工具"
+        "凿壁",
+        "项目介绍",
+        "AI",
+        "知识管理"
       ],
-      "publish-date": "2025-04-27"
-    },
-    {
-      "id": "pages/ai-tech/llm-alignment-trap.html",
-      "path": "pages/ai-tech/llm-alignment-trap.html",
-      "title": "大型语言模型的幻觉、欺骗与对齐陷阱 | 凿壁",
-      "lastModifiedDate": "CURRENT_ISO_TIMESTAMP",
-      "category": "ai-tech",
-      "description": "深入探讨 Anthropic 关于大型语言模型可解释性与对齐伪装的研究，剖析 OpenAI o3 模型高幻觉率和欺骗行为的潜在机理，分析 RLHF 的局限性，并提出缓解风险、加强治理的策略。",
-      "keywords": [
-        "大型语言模型", "LLM", "Anthropic", "OpenAI", "o3", "可解释性", "对齐", "幻觉", "欺骗", "RLHF", "Alignment Faking", "人工智能安全", "电路追踪", "Transformer", "AI伦理"
-      ],
-      "publish-date": "2025-04-29"
+      "publish-date": "2024-08-15"
     }
   ]
 }
