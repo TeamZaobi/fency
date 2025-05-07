@@ -1,0 +1,81 @@
+# Task ID: 4
+# Title: 路由配置
+# Status: done
+# Dependencies: 2, 3
+# Priority: high
+# Description: 使用react-router-dom设置路由系统，配置主页和内容页路由。
+# Details:
+#   1. 配置路由结构：
+#      - 在App.tsx中设置BrowserRouter：
+#        ```tsx
+#        import { BrowserRouter, Routes, Route } from 'react-router-dom';
+#        
+#        const App = () => {
+#          return (
+#            <BrowserRouter>
+#              <Routes>
+#                <Route path="/" element={<HomePage />} />
+#                <Route path="/pages/:category/:slug" element={<ContentPageWrapper />} />
+#                <Route path="*" element={<NotFound />} />
+#              </Routes>
+#            </BrowserRouter>
+#          );
+#        };
+#        ```
+#   
+#   2. 创建路由组件占位符：
+#      - 创建src/pages/HomePage.tsx（简单占位版本）
+#      - 创建src/pages/ContentPageWrapper.tsx（简单占位版本）
+#      - 创建src/pages/NotFound.tsx（404页面）
+#   
+#   3. 集成Layout组件：
+#      - 更新App.tsx，使用Layout包裹路由内容：
+#        ```tsx
+#        const App = () => {
+#          return (
+#            <ThemeProvider>
+#              <BrowserRouter>
+#                <Layout>
+#                  <Routes>
+#                    <Route path="/" element={<HomePage />} />
+#                    <Route path="/pages/:category/:slug" element={<ContentPageWrapper />} />
+#                    <Route path="*" element={<NotFound />} />
+#                  </Routes>
+#                </Layout>
+#              </BrowserRouter>
+#            </ThemeProvider>
+#          );
+#        };
+#        ```
+#   
+#   4. 实现导航逻辑：
+#      - 在Layout组件中添加React Router的Link组件
+#      - 实现导航栏中的链接
+#      - 设置"返回首页"链接逻辑
+#   
+#   5. 处理URL参数：
+#      - 在ContentPageWrapper中实现获取和使用URL参数的逻辑：
+#        ```tsx
+#        import { useParams } from 'react-router-dom';
+#        
+#        const ContentPageWrapper = () => {
+#          const { category, slug } = useParams();
+#          // 使用这些参数加载对应内容
+#          return <div>内容页: {category}/{slug}</div>;
+#        };
+#        ```
+#
+# Test Strategy:
+#   1. 路由功能测试：
+#      - 验证主页路由正确加载HomePage组件
+#      - 验证内容页路由正确加载ContentPageWrapper组件
+#      - 验证无效路由正确重定向到404页面
+#   
+#   2. 参数传递测试：
+#      - 测试URL参数正确传递到内容页组件
+#      - 验证不同参数组合的处理逻辑
+#   
+#   3. 导航测试：
+#      - 测试导航链接正确工作
+#      - 验证导航状态（active状态）正确反映
+#      - 测试浏览器前进/后退导航功能 

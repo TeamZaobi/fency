@@ -1,0 +1,148 @@
+{
+  "tasks": [
+    {
+      "id": 1,
+      "title": "项目初始化与基础设置",
+      "status": "done",
+      "dependencies": [],
+      "priority": "high",
+      "description": "创建React+TypeScript项目，集成Tailwind CSS和shadcn/ui。",
+      "details": "使用Vite创建项目，安装必要依赖，配置Tailwind CSS，初始化shadcn/ui。设置基本项目结构。",
+      "testStrategy": "验证项目能正常启动，所有依赖正确安装，基础组件正常显示。",
+      "subtasks": []
+    },
+    {
+      "id": 2,
+      "title": "核心架构设计",
+      "status": "done",
+      "dependencies": [1],
+      "priority": "high",
+      "description": "设计React组件架构，确定状态管理方案，规划文件结构。",
+      "details": "定义主要组件结构（App, Layout, HomePage, ContentPageWrapper），设计状态管理方案（Context或Redux），规划项目目录结构。",
+      "testStrategy": "完成架构文档，包含组件关系图，数据流图，目录结构规划。",
+      "subtasks": []
+    },
+    {
+      "id": 3,
+      "title": "共享Layout组件实现",
+      "status": "done",
+      "dependencies": [1, 2],
+      "priority": "high",
+      "description": "实现共享的页面布局组件，包括页眉、页脚和主题切换功能。",
+      "details": "创建Layout.tsx组件，包含页眉、页脚，实现ThemeProvider进行主题管理，添加主题切换按钮，确保跨设备兼容性。",
+      "testStrategy": "测试各屏幕尺寸下布局正确渲染，主题切换功能正常工作，包含单元测试。",
+      "subtasks": []
+    },
+    {
+      "id": 4,
+      "title": "路由配置",
+      "status": "done",
+      "dependencies": [2, 3],
+      "priority": "high",
+      "description": "使用react-router-dom设置路由系统，配置主页和内容页路由。",
+      "details": "安装react-router-dom，在App.tsx中设置BrowserRouter，配置路由规则，包括/（首页）和/pages/:category/:slug（内容页）路由。",
+      "testStrategy": "测试所有路由能正确加载相应组件，URL参数正确传递，导航功能正常工作。",
+      "subtasks": []
+    },
+    {
+      "id": 5,
+      "title": "HomePage组件实现",
+      "status": "pending",
+      "dependencies": [3, 4],
+      "priority": "high",
+      "description": "实现首页组件，替代原index.html，包含metadata.json数据加载与内容卡片展示。",
+      "details": "创建HomePage.tsx，实现metadata.json数据获取逻辑，使用shadcn/ui的Card组件创建内容卡片，实现分类筛选功能，实现按发布日期排序。",
+      "testStrategy": "测试数据正确加载，卡片正确显示，筛选和排序功能正常工作，响应式布局正确。",
+      "subtasks": []
+    },
+    {
+      "id": 6,
+      "title": "内容渲染策略决策与实现",
+      "status": "pending",
+      "dependencies": [2, 4],
+      "priority": "high",
+      "description": "确定并实现内容页渲染策略（MDX或组件方案），配置必要的工具和依赖。",
+      "details": "评估并选择最佳内容渲染策略（推荐MDX），安装相关依赖（如@mdx-js/react），配置构建工具支持MDX，建立内容页模板结构。",
+      "testStrategy": "测试简单MDX文件能被正确渲染，样式正确应用，与React组件兼容良好。",
+      "subtasks": []
+    },
+    {
+      "id": 7,
+      "title": "ContentPageWrapper组件开发",
+      "status": "pending",
+      "dependencies": [4, 6],
+      "priority": "high",
+      "description": "开发内容页包装器组件，负责根据URL加载和渲染对应的内容页面。",
+      "details": "创建ContentPageWrapper.tsx，实现根据路由参数（category和slug）查找对应内容，动态加载对应的MDX文件或组件，处理加载状态和错误状态。",
+      "testStrategy": "测试不同路由参数下正确加载对应内容，处理错误和加载状态，提供合理的用户反馈。",
+      "subtasks": []
+    },
+    {
+      "id": 8,
+      "title": "图表组件重构",
+      "status": "pending",
+      "dependencies": [6, 7],
+      "priority": "medium",
+      "description": "将现有的Chart.js图表重构为React图表组件（使用recharts或类似库）。",
+      "details": "分析现有内容页中的Chart.js图表实现，选择合适的React图表库（如recharts），创建对应的React组件，确保数据正确传递与显示。",
+      "testStrategy": "对比原始Chart.js实现和新React组件，确保视觉表现一致，交互功能正常，响应式表现良好。",
+      "subtasks": []
+    },
+    {
+      "id": 9,
+      "title": "动画效果重构",
+      "status": "pending",
+      "dependencies": [6, 7],
+      "priority": "medium",
+      "description": "将原生JS/GSAP动画效果重构为React组件（使用Framer Motion或类似库）。",
+      "details": "分析现有页面中的GSAP/ScrollTrigger动画效果，选择适合的React动画库（如Framer Motion），创建对应的动画组件，保持原有视觉效果。",
+      "testStrategy": "对比原始动画效果和重构后的效果，确保视觉体验一致，性能良好，在不同设备上表现稳定。",
+      "subtasks": []
+    },
+    {
+      "id": 10,
+      "title": "第一个内容页面迁移",
+      "status": "pending",
+      "dependencies": [7, 8, 9],
+      "priority": "medium",
+      "description": "将第一个内容页面（如cursor-049-analysis.html）迁移到新架构，作为迁移测试用例。",
+      "details": "选择一个复杂度较高的页面（如包含图表的cursor-049-analysis.html），将其内容转换为MDX格式，使用新开发的React组件替代原有的Chart.js图表和动画效果，测试完整的渲染流程。",
+      "testStrategy": "对比原始页面和迁移后的页面，确保内容完整，视觉一致，功能正常，用户体验良好。",
+      "subtasks": []
+    },
+    {
+      "id": 11,
+      "title": "批量内容迁移",
+      "status": "pending",
+      "dependencies": [10],
+      "priority": "medium",
+      "description": "将剩余内容页面批量迁移到新架构，可能需要开发迁移工具或流程。",
+      "details": "开发自动化工具或流程，辅助HTML页面到MDX的转换，处理特殊情况和自定义组件，进行批量迁移并验证结果。",
+      "testStrategy": "抽样测试多个迁移后的页面，确保内容正确，样式一致，功能正常，无明显缺失或错误。",
+      "subtasks": []
+    },
+    {
+      "id": 12,
+      "title": "样式迁移与主题支持",
+      "status": "pending",
+      "dependencies": [3, 5, 7],
+      "priority": "medium",
+      "description": "迁移现有CSS样式到Tailwind配置，确保主题切换功能在所有页面正常工作。",
+      "details": "分析现有样式，将关键样式变量迁移到Tailwind配置，确保浅色/深色主题在所有组件中正确应用，优化响应式设计。",
+      "testStrategy": "测试所有页面在浅色/深色模式下的表现，确保视觉一致性，在不同设备上测试响应式布局。",
+      "subtasks": []
+    },
+    {
+      "id": 13,
+      "title": "测试与优化",
+      "status": "pending",
+      "dependencies": [5, 10, 11, 12],
+      "priority": "medium",
+      "description": "进行全面测试，优化性能，修复发现的问题。",
+      "details": "执行单元测试、集成测试和端到端测试，检查性能瓶颈，进行必要的代码优化，确保跨浏览器兼容性，修复发现的问题。",
+      "testStrategy": "使用测试工具（如Jest、React Testing Library）进行自动化测试，使用Lighthouse等工具进行性能评测，在多种设备和浏览器中测试。",
+      "subtasks": []
+    }
+  ],
+  "lastUpdated": "2024-08-01T08:00:00.000Z"
+} 

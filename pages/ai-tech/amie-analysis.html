@@ -463,13 +463,12 @@
 
                     <!-- Performance Assessment Card -->
                      <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
--                        <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300">
-+                        <details class="group">
-+                             <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
-+                                 <span><i class="fas fa-chart-line mr-2"></i>性能评估与验证</span>
-+                                 <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
-+                             </summary>
-+                            <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-chart-line mr-2"></i>性能评估与验证</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                             <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
                              <p>
                                   AMIE 在多项评估中展示了令人印象深刻的性能，尤其是在模拟的临床场景中：
                              </p>
@@ -483,20 +482,18 @@
                               <p class="mt-4 italic text-muted-foreground border-l-4 border-accent pl-4 bg-accent/30 dark:bg-accent/10 p-4 rounded-md">
                                   <strong>重要提醒：</strong>尽管这些数据亮眼，但必须认识到它们主要来源于模拟环境或基于文本的交互。真实临床环境的复杂性和不可预测性远超模拟，因此这些性能指标能否完全转化为真实世界的临床效益，仍需大规模、前瞻性的临床试验来验证。
                               </p>
-                         </div>
--                     </div>
-+                        </details>
-+                     </div>
+                          </div>
+                         </details>
+                      </div>
 
                     <!-- Potential Applications Card -->
                       <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
--                         <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300">
-+                         <details class="group">
-+                             <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
-+                                 <span><i class="fas fa-rocket mr-2"></i>应用前景与潜力</span>
-+                                 <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
-+                             </summary>
-+                             <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-rocket mr-2"></i>应用前景与潜力</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
                               <p>
                                   基于当前的评估和讨论，AMIE 及类似技术在临床上展现出多种潜在应用价值：
                                   <ul class="list-disc pl-6 mt-2 space-y-1">
@@ -508,19 +505,17 @@
                                   </ul>
                               </p>
                           </div>
--                      </div>
-+                         </details>
-+                      </div>
+                         </details>
+                      </div>
 
                     <!-- Industry Landscape & Impact Card -->
                       <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
--                         <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300">
-+                         <details class="group">
-+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
-+                                  <span><i class="fas fa-industry mr-2"></i>行业影响与定位</span>
-+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
-+                              </summary>
-+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-industry mr-2"></i>行业影响与定位</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
                                <p>
                                    AMIE 的发布巩固了谷歌在对话式诊断 AI 领域的地位，展示了其 Gemini 系列模型的强大能力，并与其在医疗领域推动"代理式 AI"的更广泛战略相符<span class="source-tag source-tag-gemini">gemini</span>。在竞争格局中，AMIE 专注于诊断对话和多模态整合，使其区别于单任务 AI 工具，并在特定医疗任务上被认为优于通用模型 GPT-4<span class="source-tag source-tag-gemini">gemini</span>。
                                </p>
@@ -531,19 +526,17 @@
                                    AMIE 的出现加剧了关于 AI 在医疗中角色的争论（增强 vs. 取代）。医生群体担忧 AI 可能导致技能贬值或被用于削减成本，而 AI 也可能促使医疗角色转变，让人类医生更专注于复杂决策和人际互动<span class="source-tag source-tag-gemini">gemini</span>。值得注意的是，谷歌和许多评论者倾向于将 AMIE 定位为"AI 助手"，这种措辞虽然有助于初期市场接纳，但可能掩盖其长期潜在的颠覆力量——即 AI 高效处理诊断流程的潜力可能从根本上重塑医疗劳动力的结构和经济模式<span class="source-tag source-tag-gemini">gemini</span>。
                                </p>
                           </div>
--                      </div>
-+                         </details>
-+                      </div>
+                         </details>
+                      </div>
 
                     <!-- Challenges, Ethics & Limitations Card -->
                       <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
--                         <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300">
-+                         <details class="group">
-+                             <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
-+                                 <span><i class="fas fa-exclamation-triangle mr-2"></i>挑战、伦理与局限性</span>
-+                                 <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
-+                             </summary>
-+                             <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-exclamation-triangle mr-2"></i>挑战、伦理与局限性</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
                                <p>
                                    尽管前景广阔，将 AMIE 或类似技术从研究推向实际应用，需要跨越重重障碍。除了公开承认的技术局限性，还面临一系列复杂的挑战。
                                </p>
@@ -591,9 +584,8 @@
                                      </div>
                                 </details>
                           </div>
--                      </div>
-+                         </details>
-+                      </div>
+                         </details>
+                      </div>
                  <!-- </div> Removed closing div of the large wrapping card -->
             </section>
 
@@ -608,13 +600,13 @@
                      <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
                         <h3 class="text-xl font-semibold mb-4 text-secondary-foreground flex items-center"><i class="fas fa-chart-pie mr-3 text-accent"></i>贡献度分析 (基于内容块)</h3>
                          <ul class="list-disc pl-5 space-y-2 text-card-foreground">
-                            <li><code>perplexity.md</code>: 10 块</li>
-                            <li><code>doubao.md</code>: 10 块</li>
-                            <li><code>gemini.md</code>: 10 块</li>
-                            <li><code>yuanbao.md</code>: 8 块</li>
-                            <li><code>ChatGPT.md</code>: 6 块</li>
-                            <li><code>grok3.md</code>: 4 块</li>
+                            <li><code>gemini.md</code>: 19 块</li>
+                            <li><code>yuanbao.md</code>: 14 块</li>
+                            <li><code>perplexity.md</code>: 13 块</li>
+                            <li><code>doubao.md</code>: 13 块</li>
+                            <li><code>ChatGPT.md</code>: 9 块</li>
                             <li><code>Deepseek.md</code>: 4 块</li>
+                            <li><code>grok3.md</code>: 3 块</li>
                          </ul>
                          <p class="text-xs text-muted-foreground mt-4">注：统计基于融合内容中出现的 `[来源: ...]` 标签次数。</p>
                      </div>
@@ -902,25 +894,29 @@ graph TD;
 
                     // --- NEW: Update Dataset Colors ---
                     if (chart.data && chart.data.datasets) {
-                        // Assuming the dataset order and corresponding colors are fixed
-                        const datasetColors = [
-                            { colorVar: '--chart-1', rgbVar: '--chart-1-rgb' },
-                            { colorVar: '--accent', rgbVar: '--accent-rgb' },
-                            { colorVar: '--chart-4', rgbVar: '--chart-4-rgb' }
+                        // Use fixed RGB colors regardless of theme for datasets
+                        const fixedColors = [
+                            { // Perplexity - Green (Index 0)
+                                bg: 'rgba(0, 255, 0, 0.15)',
+                                border: 'rgb(0, 255, 0)'
+                            },
+                            { // Yuanbao - Blue (Index 1)
+                                bg: 'rgba(0, 0, 255, 0.15)',
+                                border: 'rgb(0, 0, 255)'
+                            },
+                            { // Gemini - Red (Index 2)
+                                bg: 'rgba(255, 0, 0, 0.15)',
+                                border: 'rgb(255, 0, 0)'
+                            }
                         ];
 
                         chart.data.datasets.forEach((dataset, index) => {
-                            if (datasetColors[index]) {
-                                const colorName = datasetColors[index].colorVar;
-                                const rgbName = datasetColors[index].rgbVar;
-                                const colorValue = getComputedStyle(document.documentElement).getPropertyValue(colorName).trim();
-                                // Note: rgb values were already set on rootStyle earlier in this function
-
-                                dataset.backgroundColor = `rgba(var(${rgbName}), 0.01)`; // Drastically lowered alpha for testing
-                                dataset.borderColor = colorValue;
-                                dataset.pointBackgroundColor = colorValue;
+                            if (fixedColors[index]) {
+                                dataset.backgroundColor = fixedColors[index].bg;
+                                dataset.borderColor = fixedColors[index].border;
+                                dataset.pointBackgroundColor = fixedColors[index].border; // Use border color for points
                                 dataset.pointBorderColor = '#fff'; // Keep point border white for contrast
-                                dataset.pointHoverBorderColor = colorValue; // Hover border same as line
+                                dataset.pointHoverBorderColor = fixedColors[index].border; // Hover border same as line
                             }
                         });
                          console.log("Chart dataset colors updated for chart:", chart.id);
@@ -1069,39 +1065,51 @@ graph TD;
                         datasets: [
                             {
                                 label: 'perplexity.md',
-                                data: [90, 80, 90, 75, 85], // Recalculated scores
+                                data: [75, 80, 80, 70, 85], // Scores for Perplexity
                                 fill: true,
-                                backgroundColor: 'rgba(255, 0, 0, 0.15)', // Direct RED with 0.15 opacity
-                                borderColor: 'rgb(255, 0, 0)', // Bright RED
-                                borderWidth: 3, // 增加线条宽度
-                                pointBackgroundColor: 'rgb(255, 0, 0)',
-                                pointBorderColor: '#fff',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: 'rgb(255, 0, 0)'
+                                backgroundColor: 'rgba(0, 255, 0, 0.15)', // GREEN with 15% opacity fill
+                                borderColor: 'rgb(0, 255, 0)', // Solid GREEN line
+                                borderWidth: 2, // Thinner line
+                                pointBackgroundColor: 'rgb(0, 255, 0)', // Solid GREEN points
+                                pointBorderColor: '#fff', // White border around points
+                                pointRadius: 4, // Adjust point size
+                                pointBorderWidth: 1, // Thinner point border
+                                pointHoverRadius: 6, // Larger point on hover
+                                pointHoverBorderWidth: 1, // Thinner hover border
+                                pointHoverBackgroundColor: '#fff', // White background on hover
+                                pointHoverBorderColor: 'rgb(0, 255, 0)' // GREEN border on hover
                             },
-                             {
-                                label: 'doubao.md',
-                                data: [70, 85, 85, 70, 80], // Recalculated scores
+                            {
+                                label: 'yuanbao.md', // Was 'doubao.md'
+                                data: [90, 85, 85, 75, 85], // Scores for Yuanbao
                                 fill: true,
-                                backgroundColor: 'rgba(0, 0, 255, 0.15)', // Direct BLUE with 0.15 opacity
-                                borderColor: 'rgb(0, 0, 255)', // Bright BLUE
-                                borderWidth: 3, // 增加线条宽度
-                                pointBackgroundColor: 'rgb(0, 0, 255)',
-                                pointBorderColor: '#fff',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: 'rgb(0, 0, 255)'
+                                backgroundColor: 'rgba(0, 0, 255, 0.15)', // BLUE with 15% opacity fill
+                                borderColor: 'rgb(0, 0, 255)', // Solid BLUE line
+                                borderWidth: 2, // Thinner line
+                                pointBackgroundColor: 'rgb(0, 0, 255)', // Solid BLUE points
+                                pointBorderColor: '#fff', // White border around points
+                                pointRadius: 4, // Adjust point size
+                                pointBorderWidth: 1, // Thinner point border
+                                pointHoverRadius: 6, // Larger point on hover
+                                pointHoverBorderWidth: 1, // Thinner hover border
+                                pointHoverBackgroundColor: '#fff', // White background on hover
+                                pointHoverBorderColor: 'rgb(0, 0, 255)' // BLUE border on hover
                             },
-                             {
-                                label: 'gemini.md',
-                                data: [65, 80, 85, 95, 90], // Recalculated scores
+                            {
+                                label: 'gemini.md', // Was 'perplexity.md'
+                                data: [70, 95, 90, 95, 90], // Scores for Gemini
                                 fill: true,
-                                backgroundColor: 'rgba(0, 255, 0, 0.15)', // Direct GREEN with 0.15 opacity
-                                borderColor: 'rgb(0, 255, 0)', // Bright GREEN
-                                borderWidth: 3, // 增加线条宽度
-                                pointBackgroundColor: 'rgb(0, 255, 0)',
-                                pointBorderColor: '#fff',
-                                pointHoverBackgroundColor: '#fff',
-                                pointHoverBorderColor: 'rgb(0, 255, 0)'
+                                backgroundColor: 'rgba(255, 0, 0, 0.15)', // RED with 15% opacity fill
+                                borderColor: 'rgb(255, 0, 0)', // Solid RED line
+                                borderWidth: 2, // Thinner line
+                                pointBackgroundColor: 'rgb(255, 0, 0)', // Solid RED points
+                                pointBorderColor: '#fff', // White border around points
+                                pointRadius: 4, // Adjust point size
+                                pointBorderWidth: 1, // Thinner point border
+                                pointHoverRadius: 6, // Larger point on hover
+                                pointHoverBorderWidth: 1, // Thinner hover border
+                                pointHoverBackgroundColor: '#fff', // White background on hover
+                                pointHoverBorderColor: 'rgb(255, 0, 0)' // RED border on hover
                             }
                         ]
                     };

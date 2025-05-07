@@ -1,0 +1,75 @@
+# Task ID: 7
+# Title: ContentPageWrapper组件开发
+# Status: pending
+# Dependencies: 4, 6
+# Priority: high
+# Description: 开发内容页包装器组件，负责根据URL加载和渲染对应的内容页面。
+# Details:
+#   1. 创建ContentPageWrapper组件：
+#      - 在src/pages目录下创建ContentPageWrapper.tsx。
+#   
+#   2. 实现动态导入逻辑：
+#      - 使用`react-router-dom`的`useParams`获取`:category`和`:slug`。
+#      - 动态构造MDX文件的路径（例如`/content/${category}/${slug}.mdx`）。
+#      - 使用`React.lazy`和动态`import()`来异步加载对应的MDX文件：
+#        ```tsx
+#        import React, { Suspense } from 'react';
+#        import { useParams } from 'react-router-dom';
+#        import { useMDXComponents } from '@/mdx-components'; // 引入MDX组件配置
+#        
+#        const ContentPageWrapper = () => {
+#          const { category, slug } = useParams();
+#        
+#          const MdxComponent = React.useMemo(() => {
+#            if (!category || !slug) return null;
+#            return React.lazy(() => 
+#              import(`../../content/${category}/${slug}.mdx`)
+#                .catch(() => ({ default: () => <div>加载内容失败或页面不存在</div> }))
+#            );
+#          }, [category, slug]);
+#        
+#          return (
+#            <div className="prose dark:prose-invert max-w-none py-8">
+#              <Suspense fallback={<div>加载中...</div>}>
+#                {MdxComponent ? <MdxComponent components={useMDXComponents({})} /> : <div>无效的页面路径</div>}
+#              </Suspense>
+#            </div>
+#          );
+#        };
+#        
+#        export default ContentPageWrapper; // 使用默认导出
+#        ```
+#        
+#      - 注意：需要配置Vite（或所用构建工具）支持动态导入和glob导入（可能需要插件）。确保`import()`路径正确。
+#   
+#   3. 处理加载和错误状态：
+#      - 使用`React.Suspense`处理异步加载MDX组件时的加载状态。
+#      - 在动态`import()`中使用`.catch()`来处理加载失败或文件不存在的情况。
+#   
+#   4. 集成MDX组件配置：
+#      - 导入`useMDXComponents`并将其传递给加载的MDX组件，以便应用全局组件替换。
+#   
+#   5. 添加基础样式：
+#      - 使用`@tailwindcss/typography`插件 (prose类) 为MDX内容提供基础的排版样式。
+#      - 安装插件：`npm install -D @tailwindcss/typography`
+#      - 在`tailwind.config.js`中配置插件。
+#
+# Test Strategy:
+#   1. 正常加载测试：
+#      - 访问一个有效的`/pages/:category/:slug`路由。
+#      - 验证对应的MDX内容被正确加载和渲染。
+#      - 确认基础排版样式(prose)已应用。
+#   
+#   2. 加载状态测试：
+#      - 模拟慢速网络或大型MDX文件加载。
+#      - 验证`Suspense`的`fallback`（加载中...）正确显示。
+#   
+#   3. 错误处理测试：
+#      - 访问一个不存在的`/pages/:category/:slug`路由。
+#      - 验证`import().catch()`中的错误处理逻辑被触发，显示错误消息。
+#      - 访问无效路径（例如缺少category或slug）。
+#      - 验证组件能处理无效参数并显示相应提示。
+#   
+#   4. MDX组件集成测试：
+#      - 在测试用的MDX文件中使用全局替换的组件（如在mdx-components.tsx中定义）。
+#      - 验证这些组件被正确渲染。 

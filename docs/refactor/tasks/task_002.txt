@@ -1,0 +1,58 @@
+# Task ID: 2
+# Title: 核心架构设计
+# Status: done
+# Dependencies: 1
+# Priority: high
+# Description: 设计React组件架构，确定状态管理方案，规划文件结构。
+# Details:
+#   1. 定义主要组件结构：
+#      - App.tsx：应用根组件，设置路由和全局状态
+#      - Layout.tsx：共享页面布局，包含页眉、页脚、主题切换
+#      - HomePage.tsx：首页组件，替代原index.html功能
+#      - ContentPageWrapper.tsx：内容页组件，动态加载对应内容
+#      - 规划基础UI组件结构（使用shadcn/ui组件）
+#   
+#   2. 设计状态管理方案：
+#      - 使用React Context API创建主题上下文（ThemeProvider）
+#      - 设计metadata.json数据获取和管理方法（MetadataProvider）
+#      - 确定何时使用本地组件状态vs全局状态
+#   
+#   3. 规划项目目录结构：
+#      - `/src/components/`：共享UI组件
+#      - `/src/components/ui/`：shadcn/ui组件
+#      - `/src/pages/`：页面级组件
+#      - `/src/context/`：React Context定义
+#      - `/src/hooks/`：自定义Hooks
+#      - `/src/utils/`：工具函数
+#      - `/src/assets/`：静态资源
+#      - `/src/types/`：TypeScript类型定义
+#      - `/public/`：公共资源（包括metadata.json）
+#      - `/content/`：MDX内容文件（如选择MDX方案）
+#   
+#   4. 设计数据流：
+#      - 定义metadata.json的TypeScript接口
+#      - 设计数据获取和错误处理流程
+#      - 规划组件间数据传递方式
+#      - 设计按分类筛选和排序的实现策略
+#   
+#   5. 规划路由结构：
+#      - 主页路由：`/`
+#      - 内容页路由：`/pages/:category/:slug`
+#      - 考虑404页面处理
+#      - 设计导航组件和链接策略
+#
+# Test Strategy:
+#   1. 完成架构文档：
+#      - 创建组件关系图，清晰展示组件层次和关系
+#      - 绘制数据流图，展示数据如何从API获取到展示
+#      - 创建目录结构规划文档
+#   
+#   2. 进行架构评审：
+#      - 检查是否覆盖了所有现有功能
+#      - 评估是否能支持未来扩展
+#      - 验证设计模式是否符合React最佳实践
+#   
+#   3. 创建原型或概念验证：
+#      - 简单实现关键流程，验证架构可行性
+#      - 测试数据流是否能正常工作
+#      - 验证状态管理方案是否有效 

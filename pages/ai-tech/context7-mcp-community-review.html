@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO and Metadata -->
+    <title>Context7 MCP 应用评估: 社区反馈与洞察 | 凿壁</title>
+    <meta name="description" content="对 Context7 MCP 服务器的社区评价、使用案例及未来发展进行调研分析，特别关注其在 AI 辅助编码中的作用和价值。">
+    <meta name="keywords" content="Context7, MCP, 模型上下文协议, AI辅助编码, 社区反馈, 使用案例, Cursor, Windsurf, Upstash, LLM, 文档实时性">
+    
+    <!-- Mandatory Metadata (Update date dynamically) -->
+    <meta name="publish-date" content="2024-08-07"> 
+    <meta name="category" content="ai-tech">
+
+    <!-- Favicon -->
+    <link rel="icon" href="../../favicon.ico" type="image/x-icon">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+
+    <!-- Tailwind Configuration & Custom Styles -->
+    <style type="text/tailwindcss">
+        @tailwind base;
+        @tailwind components;
+        @tailwind utilities;
+
+        :root {
+          --background: rgb(241, 240, 229);
+          --foreground: rgb(86, 69, 63);
+          --card: rgb(241, 240, 229);
+          --card-foreground: rgb(86, 69, 63);
+          --popover: rgb(255, 255, 255);
+          --popover-foreground: rgb(86, 69, 63);
+          --primary: rgb(163, 119, 100);
+          --primary-foreground: rgb(255, 255, 255);
+          --secondary: rgb(186, 171, 146);
+          --secondary-foreground: rgb(255, 255, 255);
+          --muted: rgb(228, 199, 184);
+          --muted-foreground: rgb(138, 101, 90);
+          --accent: rgb(228, 199, 184);
+          --accent-foreground: rgb(86, 69, 63);
+          --destructive: rgb(31, 26, 23);
+          --destructive-foreground: rgb(255, 255, 255);
+          --border: rgb(186, 171, 146);
+          --input: rgb(186, 171, 146);
+          --ring: rgb(163, 119, 100);
+          --chart-1: rgb(163, 119, 100);
+          --chart-2: rgb(138, 101, 90);
+          --chart-3: rgb(195, 158, 136);
+          --chart-4: rgb(186, 171, 146);
+          --chart-5: rgb(162, 135, 119);
+          --radius: 0.5rem;
+          --font-sans: 'DM Sans', 'Noto Sans SC', sans-serif;
+          --font-serif: 'Georgia', 'Noto Serif SC', serif;
+          --font-mono: 'Menlo', monospace;
+        }
+
+        .dark {
+          --background: rgb(45, 37, 33);
+          --foreground: rgb(241, 240, 229);
+          --card: rgb(60, 51, 46);
+          --card-foreground: rgb(241, 240, 229);
+          --popover: rgb(60, 51, 46);
+          --popover-foreground: rgb(241, 240, 229);
+          --primary: rgb(195, 158, 136);
+          --primary-foreground: rgb(45, 37, 33);
+          --secondary: rgb(138, 101, 90);
+          --secondary-foreground: rgb(241, 240, 229);
+          --muted: rgb(86, 69, 63);
+          --muted-foreground: rgb(197, 170, 155);
+          --accent: rgb(186, 171, 146);
+          --accent-foreground: rgb(45, 37, 33);
+          --destructive: rgb(229, 115, 115);
+          --destructive-foreground: rgb(45, 37, 33);
+          --border: rgb(86, 69, 63);
+          --input: rgb(86, 69, 63);
+          --ring: rgb(195, 158, 136);
+          --chart-1: rgb(195, 158, 136);
+          --chart-2: rgb(186, 171, 146);
+          --chart-3: rgb(163, 119, 100);
+          --chart-4: rgb(138, 101, 90);
+          --chart-5: rgb(162, 135, 119);
+        }
+
+        @layer base {
+          body {
+            @apply bg-background text-foreground font-sans;
+            transition: background-color 0.3s ease, color 0.3s ease;
+          }
+          h1, h2, h3, h4, h5, h6 {
+            @apply font-serif font-bold text-primary;
+          }
+          h1 { @apply text-4xl md:text-5xl lg:text-6xl mb-6; }
+          h2 { @apply text-3xl md:text-4xl lg:text-5xl mt-12 mb-6; }
+          h3 { @apply text-2xl md:text-3xl lg:text-4xl mt-10 mb-4; }
+          h4 { @apply text-xl md:text-2xl lg:text-3xl mt-8 mb-4 text-secondary; }
+          p { @apply text-base md:text-lg leading-relaxed mb-4; }
+          a { @apply text-primary hover:text-secondary transition-colors duration-300 underline decoration-dotted underline-offset-4; }
+          ul { @apply list-disc list-inside mb-4 pl-4 space-y-2; }
+          ol { @apply list-decimal list-inside mb-4 pl-4 space-y-2; }
+          li { @apply text-base md:text-lg leading-relaxed; }
+          blockquote { @apply border-l-4 border-accent bg-muted/20 p-4 italic my-6 text-muted-foreground; }
+          table { @apply w-full border-collapse border border-border my-6; }
+          th, td { @apply border border-border p-3 text-left; }
+          th { @apply bg-accent/30 font-semibold; }
+          pre { @apply bg-card text-card-foreground p-4 rounded-lg overflow-x-auto my-4 text-sm font-mono; }
+          code { @apply bg-muted text-muted-foreground px-1 py-0.5 rounded text-sm font-mono; }
+          pre code { @apply bg-transparent text-inherit p-0 rounded-none; }
+          hr { @apply border-t border-border my-8; }
+          .btn { @apply inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-secondary transition-colors duration-300; }
+          .icon-link { @apply inline-block text-foreground hover:text-primary transition-colors duration-200 mr-2; }
+          .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease-out, transform 0.5s ease-out; }
+          .fade-in.visible { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-bg {
+          /* Placeholder for potential background image/gradient */
+          background-color: var(--muted);
+          background: linear-gradient(135deg, var(--muted) 0%, var(--background) 100%);
+          transition: background 0.3s ease;
+        }
+        .dark .hero-bg {
+             background: linear-gradient(135deg, var(--muted) 0%, var(--background) 100%);
+        }
+
+        /* Custom Card Style */
+        .info-card {
+            @apply bg-card border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300;
+        }
+        
+        /* Styling for visible date/category */
+        .meta-info {
+            @apply text-sm text-muted-foreground mb-2 flex items-center space-x-4;
+        }
+        .meta-info i {
+            @apply mr-1;
+        }
+        .meta-info span {
+             @apply font-medium text-foreground;
+        }
+
+        /* Dark mode toggle button */
+        #theme-toggle {
+            @apply fixed bottom-4 right-4 z-50 p-2 rounded-full bg-secondary text-secondary-foreground hover:bg-primary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors duration-300;
+        }
+         #theme-toggle i {
+            @apply text-lg;
+         }
+
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Dark Mode Toggle Button -->
+    <button id="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i> <!-- Initial icon, JS will change it -->
+    </button>
+
+    <!-- Main Content Area -->
+    <div class="container mx-auto px-4 py-8 md:px-6 md:py-12 lg:px-8 lg:py-16">
+        
+        <!-- Back to Home Link -->
+        <div class="mb-8 fade-in">
+            <a href="../../index.html" class="text-sm text-muted-foreground hover:text-primary transition-colors duration-300">
+                <i class="fas fa-arrow-left mr-1"></i>返回首页
+            </a>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero-bg rounded-lg p-8 md:p-12 lg:p-16 mb-12 text-center fade-in">
+            <h1 class="text-primary mb-4 font-bold">Context7 MCP 应用评估</h1>
+            <p class="text-xl md:text-2xl text-foreground max-w-3xl mx-auto mb-6">深入了解社区对 Context7 的反馈、实际应用场景及其在 AI 辅助编码生态中的潜力。</p>
+            <div class="meta-info justify-center">
+                <div><i class="fas fa-calendar-alt"></i>发布日期: <span class="publish-date-placeholder">2024-08-07</span></div>
+                <div><i class="fas fa-tag"></i>分类: <span class="category-placeholder">AI技术与生态</span></div>
+            </div>
+        </section>
+
+        <!-- Main Content Sections -->
+        <article class="max-w-4xl mx-auto">
+            
+            <!-- Key Takeaways -->
+            <section class="mb-12 fade-in">
+                <h2 class="border-l-4 border-primary pl-4 mb-6">关键要点</h2>
+                <ul class="list-none pl-0 space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span>社区对 Context7 MCP 服务器的评价总体积极，尤其在减少 AI 代码生成中的幻觉方面表现突出。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span>主要使用案例包括在 Cursor、Windsurf 等编辑器中获取实时、版本特定的文档和代码示例，适用于 Next.js、MongoDB 等多种项目。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span>未来发展可能包括扩展支持的库和工具范围，增强集成能力，并根据社区反馈持续进行改进。</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- How Context7 Works Diagram -->
+            <section class="mb-12 fade-in">
+                 <h2 class="border-l-4 border-primary pl-4 mb-6">Context7 工作原理</h2>
+                 <div class="card bg-muted/30 dark:bg-card/50">
+                     <div class="flex justify-center">
+                         <div id="context7-workflow-diagram" class="mermaid bg-transparent">
+                            graph LR
+                                A[用户在IDE中提问<br>+ "use context7"] --> B(支持MCP的IDE<br>如 Cursor, Claude Desktop);
+                                B --> C{Context7 MCP 服务器};
+                                C -->|1. 识别库/版本| D(文档源<br>官方网站/仓库);
+                                D -->|2. 拉取相关内容| C;
+                                C -->|3. 解析/向量化/排序| E(处理后的文档片段);
+                                E -->|4. 注入上下文| B;
+                                B --> F[(LLM<br>如 Claude, GPT)];
+                                F -->|生成响应| B;
+                                B -->|显示结果| A;
+
+                                style A fill:var(--background),stroke:var(--primary),stroke-width:2px;
+                                style B fill:var(--card),stroke:var(--border),stroke-width:1px;
+                                style C fill:var(--secondary),stroke:var(--foreground),stroke-width:1px,color:var(--secondary-foreground);
+                                style D fill:var(--muted),stroke:var(--border),stroke-width:1px;
+                                style E fill:var(--accent),stroke:var(--border),stroke-width:1px;
+                                style F fill:var(--primary),stroke:var(--foreground),stroke-width:1px,color:var(--primary-foreground);
+                         </div>
+                    </div>
+                    <p class="text-center text-sm mt-4 opacity-70">图1：Context7 MCP 服务器核心工作流程示意图</p>
+                 </div>
+            </section>
+
+            <!-- Community Evaluation -->
+            <section class="mb-12 fade-in">
+                <h2 class="border-l-4 border-primary pl-4 mb-6">社区评价</h2>
+                <p>自上线以来，Context7 MCP 服务器在开发者社区中获得了积极的反响。其核心价值在于通过 MCP 提供实时、版本特定的文档和代码示例，有效解决了 LLM 依赖过时训练数据的问题，显著减少了 AI 生成代码中的"幻觉"。</p>
+                <blockquote class="fade-in">
+                    <p>"Context7 解决了大模型知识截止的问题，特别适合处理新版本框架和库..."</p>
+                    <footer class="text-sm mt-2">- 社区用户反馈 (X/Twitter)</footer>
+                </blockquote>
+                <p>社交媒体（如 X/Twitter）和技术论坛（如 Reddit）上的讨论普遍认为，Context7 极大地提高了开发者的生产力，尤其是在处理更新频繁的框架（如 Next.js）或新接触的技术栈时。快速增长的下载量和用户好评证明了其在 AI 辅助编码工具中的重要地位。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div class="info-card fade-in">
+                        <h4 class="flex items-center"><i class="fas fa-thumbs-up mr-2 text-secondary"></i>主要优点</h4>
+                        <ul class="list-none pl-0 space-y-2 text-sm">
+                            <li><i class="fas fa-check text-green-600 mr-2"></i>提供最新、版本特定的文档</li>
+                            <li><i class="fas fa-check text-green-600 mr-2"></i>减少代码生成中的错误和幻觉</li>
+                            <li><i class="fas fa-check text-green-600 mr-2"></i>提高开发效率，减少手动搜索</li>
+                            <li><i class="fas fa-check text-green-600 mr-2"></i>与主流 AI 编辑器良好集成</li>
+                        </ul>
+                    </div>
+                    <div class="info-card fade-in">
+                        <h4 class="flex items-center"><i class="fas fa-comments mr-2 text-secondary"></i>社区声音</h4>
+                        <ul class="list-none pl-0 space-y-2 text-sm">
+                            <li><i class="fab fa-twitter text-blue-500 mr-2"></i>X/Twitter: 热烈讨论，下载量快速增长</li>
+                            <li><i class="fab fa-reddit text-orange-500 mr-2"></i>Reddit: 用户称赞其效果显著</li>
+                            <li><i class="fas fa-globe text-gray-500 mr-2"></i>博客/论坛: 被誉为解决文档痛点的利器</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Use Cases -->
+            <section class="mb-12 fade-in">
+                <h2 class="border-l-4 border-primary pl-4 mb-6">使用案例</h2>
+                <p>Context7 的主要应用场景是与 AI 编码助手和编辑器集成，为开发者提供即时的上下文支持。它已被证明在多种开发任务中非常有效：</p>
+                <ul class="list-none pl-0 space-y-4">
+                    <li class="flex items-start fade-in">
+                        <i class="fas fa-laptop-code text-primary mr-3 mt-1 flex-shrink-0 text-xl"></i>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-1">编辑器集成</h4>
+                            <p class="text-sm mb-0">无缝集成于 Cursor, Windsurf, Claude Desktop, VS Code, Zed 等流行编辑器。通过在提示中简单添加 <code>use context7</code> 指令即可调用。</p>
+                        </div>
+                    </li>
+                     <li class="flex items-start fade-in">
+                        <i class="fas fa-cogs text-primary mr-3 mt-1 flex-shrink-0 text-xl"></i>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-1">框架与库支持</h4>
+                            <p class="text-sm mb-1">特别适用于快速迭代的技术，如:</p>
+                            <ul class="list-none pl-4 text-sm mb-0">
+                                <li><i class="fab fa-react mr-1"></i>Next.js (例如 App Router, Server Components)</li>
+                                <li><i class="fas fa-database mr-1"></i>MongoDB (例如聚合管道查询)</li>
+                                <li><i class="fas fa-link mr-1"></i>TanStack Router</li>
+                                <li><i class="fas fa-cloud mr-1"></i>Gear Protocol</li>
+                                <li><i class="fas fa-code mr-1"></i>以及 Zod, React Query 等众多库。</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="flex items-start fade-in">
+                        <i class="fas fa-terminal text-primary mr-3 mt-1 flex-shrink-0 text-xl"></i>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-1">程序化访问</h4>
+                            <p class="text-sm mb-0">提供 API 工具（如 <code>resolve-library-id</code>, <code>get-library-docs</code>）允许开发者在自定义脚本或工具中查询文档，增强自动化能力。</p>
+                        </div>
+                    </li>
+                </ul>
+                <p class="mt-6 fade-in">这些案例表明，Context7 不仅简化了日常编码，还为处理复杂项目和学习新技术提供了有力支持。</p>
+            </section>
+
+            <!-- Future Development -->
+            <section class="mb-12 fade-in">
+                <h2 class="border-l-4 border-primary pl-4 mb-6">未来发展预测</h2>
+                <p>虽然官方尚未发布详细的路线图，但基于 Context7 的开源性质、Upstash 的积极维护以及活跃的社区反馈，可以预测其未来发展将围绕以下几个方向：</p>
+                <ul class="list-none pl-0 space-y-3">
+                    <li class="flex items-start">
+                        <i class="fas fa-puzzle-piece text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span><strong>扩展库与框架覆盖：</strong>持续增加对更多编程语言、库和框架的支持，特别是社区呼声较高的技术。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-plug text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span><strong>增强工具集成：</strong>深化与现有编辑器（如 Cursor, Claude Code）的集成，并可能支持更多新兴的 AI 开发工具。</span>
+                    </li>
+                     <li class="flex items-start">
+                        <i class="fas fa-search-plus text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span><strong>功能优化：</strong>根据用户反馈改进文档解析的准确性、搜索相关性，并可能添加更高级的过滤或自定义选项。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-users text-primary mr-3 mt-1 flex-shrink-0"></i>
+                        <span><strong>社区驱动创新：</strong>受益于开放的 MCP 生态，可能会与其他社区开发的 MCP 服务器（如用于特定数据库或服务的服务器）产生更多协同效应。</span>
+                    </li>
+                </ul>
+                 <p class="mt-4">Context7 的发展将紧密依赖于社区的参与和贡献，有望在 AI 辅助开发领域扮演更重要的角色。</p>
+            </section>
+
+            <!-- Summary Table -->
+            <section class="mb-12 fade-in">
+                <h2 class="border-l-4 border-primary pl-4 mb-6">总结</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th class="w-1/4">类别</th>
+                                <th>详情</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-background dark:bg-card">
+                                <td class="font-semibold">社区评价</td>
+                                <td>积极，强调减少幻觉和提高生产力，X 和 Reddit 反馈一致好评。</td>
+                            </tr>
+                            <tr class="bg-card dark:bg-background">
+                                <td class="font-semibold">使用案例</td>
+                                <td>与 Cursor 等编辑器集成，适用于 Next.js、MongoDB 等项目，方法为添加"use context7"。</td>
+                            </tr>
+                             <tr class="bg-background dark:bg-card">
+                                <td class="font-semibold">未来发展预测</td>
+                                <td>预计扩展库支持，增强工具集成，基于社区反馈持续优化。</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Key Citations -->
+            <section class="fade-in">
+                 <h2 class="border-l-4 border-primary pl-4 mb-6">关键引文</h2>
+                 <ul class="list-none pl-0 space-y-3 text-sm">
+                    <li>
+                        <i class="fas fa-link text-secondary mr-2"></i>
+                        <a href="https://github.com/upstash/context7" target="_blank" rel="noopener noreferrer">GitHub - upstash/context7: Up-to-date documentation for LLMs and AI code editors</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-link text-secondary mr-2"></i>
+                        <a href="https://upstash.com/blog/context7-mcp" target="_blank" rel="noopener noreferrer">Upstash Blog: Context7 MCP Up-to-Date Docs for Any Cursor Prompt</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-link text-secondary mr-2"></i>
+                        <a href="https://apidog.com/blog/context7-mcp-server/" target="_blank" rel="noopener noreferrer">Apidog Blog: How to Install and Use Context7 MCP Server real-time documentation</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-link text-secondary mr-2"></i>
+                        <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener noreferrer">Anthropic News: Introducing the Model Context Protocol open standard for AI</a>
+                    </li>
+                    <li>
+                        <i class="fas fa-link text-secondary mr-2"></i>
+                        <a href="https://www.reddit.com/r/ChatGPTCoding/comments/1k6uyjp/i_just_found_out_about_context7_mcp_server_and/" target="_blank" rel="noopener noreferrer">Reddit: I just found out about Context7 MCP Server and it's awesome</a>
+                    </li>
+                     <li>
+                        <i class="fas fa-link text-secondary mr-2"></i>
+                        <a href="https://mcpservers.org/servers/upstash/context7-mcp" target="_blank" rel="noopener noreferrer">Awesome MCP Servers: Context7 Up-to-date Docs For Any Cursor Prompt</a>
+                    </li>
+                 </ul>
+            </section>
+
+        </article>
+        
+        <!-- Content sections added above -->
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-16 border-t border-border pt-8 pb-12 text-center text-muted-foreground">
+        <div class="container mx-auto px-4">
+            <p class="mb-2">作者姓名: 季晓康</p>
+            <p class="mb-2">微信公众号：凿壁</p>
+            <p>版权信息：国家健康医疗大数据研究院</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Dark Mode and Animations -->
+    <script>
+        // Dark Mode Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        const userPrefersDark = localStorage.getItem('theme') === 'dark' || 
+                                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+        const setTheme = (isDark) => {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        };
+
+        // Set initial theme
+        setTheme(userPrefersDark);
+
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            setTheme(!isDark);
+        });
+
+        // GSAP Initialization & Basic Fade-in Animation
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Function to update placeholders
+        function updateMetadataPlaceholders() {
+            const publishDateMeta = document.querySelector('meta[name="publish-date"]');
+            const categoryMeta = document.querySelector('meta[name="category"]');
+            
+            const publishDatePlaceholder = document.querySelector('.publish-date-placeholder');
+            const categoryPlaceholder = document.querySelector('.category-placeholder');
+
+            const categoryMap = {
+                'ai-tech': 'AI技术与生态',
+                'info-upgrade': '信息化升级',
+                'knowledge': '知识报告',
+                'research': '科研辅助'
+            };
+
+            if (publishDateMeta && publishDatePlaceholder) {
+                publishDatePlaceholder.textContent = publishDateMeta.getAttribute('content');
+            }
+            if (categoryMeta && categoryPlaceholder) {
+                const categoryKey = categoryMeta.getAttribute('content');
+                categoryPlaceholder.textContent = categoryMap[categoryKey] || categoryKey; 
+            }
+        }
+
+        // Call the function on page load
+        document.addEventListener('DOMContentLoaded', updateMetadataPlaceholders);
+
+        // Fade in elements
+        const fadeInElements = gsap.utils.toArray('.fade-in');
+        fadeInElements.forEach(element => {
+            gsap.fromTo(element, 
+                { opacity: 0, y: 30 }, 
+                { 
+                    opacity: 1, 
+                    y: 0, 
+                    duration: 0.8,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%", // Start animation when 85% of the element is visible
+                        toggleActions: "play none none none" // Play animation once on enter
+                    }
+                }
+            );
+        });
+
+        // Initialize Mermaid if used
+        if (typeof mermaid !== 'undefined') {
+           const isDarkMode = document.documentElement.classList.contains('dark');
+           mermaid.initialize({
+               startOnLoad: true,
+               theme: isDarkMode ? 'dark' : 'base', 
+               themeVariables: {
+                   background: isDarkMode ? 'rgb(60, 51, 46)' : 'rgb(241, 240, 229)', // Match card background
+                   primaryColor: isDarkMode ? 'rgb(195, 158, 136)' : 'rgb(163, 119, 100)', // Primary text/border
+                   primaryTextColor: isDarkMode ? 'rgb(45, 37, 33)' : 'rgb(255, 255, 255)', // Text on primary nodes
+                   lineColor: isDarkMode ? 'rgb(138, 101, 90)' : 'rgb(186, 171, 146)', // Arrow/border color
+                   textColor: isDarkMode ? 'rgb(241, 240, 229)' : 'rgb(86, 69, 63)', // Default node text
+                   mainBkg: isDarkMode ? 'rgb(86, 69, 63)' : 'rgb(228, 199, 184)', // Secondary node background (like muted)
+                   nodeBorder: isDarkMode ? 'rgb(186, 171, 146)' : 'rgb(138, 101, 90)' // Node borders
+               },
+               flowchart: {
+                 useMaxWidth: true,
+                 htmlLabels: true
+               },
+               securityLevel: 'loose'
+           });
+        }
+
+        // Update Mermaid theme on dark mode toggle
+        themeToggle.addEventListener('click', () => {
+           if (typeof mermaid !== 'undefined') {
+              const isDark = document.documentElement.classList.contains('dark');
+              // Bruteforce re-render: Remove old svg, mermaid API re-renders
+              document.querySelectorAll('.mermaid svg').forEach(svg => svg.remove()); 
+              mermaid.initialize({
+                  startOnLoad: true,
+                  theme: isDark ? 'dark' : 'base',
+                  themeVariables: {
+                       background: isDark ? 'rgb(60, 51, 46)' : 'rgb(241, 240, 229)',
+                       primaryColor: isDark ? 'rgb(195, 158, 136)' : 'rgb(163, 119, 100)',
+                       primaryTextColor: isDark ? 'rgb(45, 37, 33)' : 'rgb(255, 255, 255)',
+                       lineColor: isDark ? 'rgb(138, 101, 90)' : 'rgb(186, 171, 146)',
+                       textColor: isDark ? 'rgb(241, 240, 229)' : 'rgb(86, 69, 63)',
+                       mainBkg: isDark ? 'rgb(86, 69, 63)' : 'rgb(228, 199, 184)',
+                       nodeBorder: isDark ? 'rgb(186, 171, 146)' : 'rgb(138, 101, 90)'
+                  },
+                  flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true
+                  },
+                  securityLevel: 'loose'
+              });
+              mermaid.contentLoaded(); // Trigger re-render
+           }
+        });
+
+    </script>
+</body>
+</html> 

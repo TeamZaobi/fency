@@ -1,0 +1,23 @@
+{
+  "lastUpdated": "2025-04-24T15:38:42+08:00",
+  "pages": [
+    {
+      "id": "pages/ai-tech/cursor-049-analysis.html",
+      "path": "pages/ai-tech/cursor-049-analysis.html",
+      "title": "Cursor 0.49版本深度解析：多模型视角下的功能更新与社区评价 | 凿壁",
+      "lastModifiedDate": "2025-04-20T00:00:00Z", 
+      "category": "ai-tech",
+      "description": "深入分析Cursor 0.49版本的功能更新及社区评价，对比多款大型语言模型对该版本的解读差异，包括规则自动生成、MCP图像支持、终端控制与全局忽略等重要功能。",
+      "keywords": [
+        "Cursor", 
+        "0.49", 
+        "AI编码助手", 
+        "规则生成", 
+        "大语言模型", 
+        "代码编辑器", 
+        "LLM比较"
+      ],
+      "publish-date": "2025-04-20" 
+    }
+  ]
+} 

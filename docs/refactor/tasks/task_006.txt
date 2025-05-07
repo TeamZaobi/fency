@@ -1,0 +1,76 @@
+# Task ID: 6
+# Title: 内容渲染策略决策与实现
+# Status: pending
+# Dependencies: 2, 4
+# Priority: high
+# Description: 确定并实现内容页渲染策略（MDX或组件方案），配置必要的工具和依赖。
+# Details:
+#   1. 评估内容渲染策略：
+#      - **MDX方案**：
+#        - 优点：Markdown语法易于内容编写，可直接嵌入React组件实现复杂交互和个性化。
+#        - 缺点：需要额外配置构建工具，需要学习MDX语法和集成方式。
+#      - **页面特定组件方案**：
+#        - 优点：最大化灵活性，每个页面是独立React组件。
+#        - 缺点：页面数量大时维护成本高，可能导致大量相似但重复的代码。
+#      - **决策**：推荐MDX方案，因为它更好地平衡了内容编写效率和个性化需求。
+#   
+#   2. 配置MDX支持 (以Vite为例)：
+#      - 安装依赖：
+#        `npm install -D @mdx-js/rollup`
+#      - 在vite.config.ts中添加MDX插件：
+#        ```ts
+#        // vite.config.ts
+#        import { defineConfig } from 'vite'
+#        import react from '@vitejs/plugin-react'
+#        import mdx from '@mdx-js/rollup'
+#        
+#        export default defineConfig({
+#          plugins: [react(), mdx()]
+#        })
+#        ```
+#      - 创建mdx-components.tsx文件以自定义MDX渲染的组件：
+#        ```tsx
+#        // src/mdx-components.tsx
+#        import type { MDXComponents } from 'mdx/types'
+#        
+#        export function useMDXComponents(components: MDXComponents): MDXComponents {
+#          return {
+#            // 允许在此处覆盖默认HTML元素，例如使用shadcn/ui组件
+#            // h1: ({ children }) => <h1 style={{ fontSize: "100px" }}>{children}</h1>,
+#            ...components,
+#          }
+#        }
+#        ```
+#   
+#   3. 创建基础MDX内容文件：
+#      - 在/content目录下按分类创建子目录（ai-tech, info-upgrade等）
+#      - 创建一个简单的.mdx文件用于测试，例如：
+#        ```mdx
+#        // content/ai-tech/test-page.mdx
+#        # 测试页面标题
+#        
+#        这是一个简单的MDX测试页面。
+#        
+#        ## 子标题
+#        
+#        一些内容...
+#        ```
+#   
+#   4. 规划MDX与React组件集成：
+#      - 定义在MDX中嵌入自定义React组件的方法（import方式）
+#      - 规划如何将个性化图表、动画等封装为React组件并在MDX中使用
+#      - 考虑如何在MDX中应用页面特定样式
+#
+# Test Strategy:
+#   1. MDX编译测试：
+#      - 验证MDX文件能被Vite正确编译，无错误
+#      - 确认构建产物中包含处理后的MDX内容
+#   
+#   2. MDX渲染测试：
+#      - 创建一个简单的路由指向测试MDX文件
+#      - 验证MDX内容能在浏览器中正确渲染，基础HTML元素正确显示
+#      - 验证mdx-components.tsx中的自定义组件替换能正常工作
+#   
+#   3. 组件嵌入测试：
+#      - 尝试在MDX中导入并使用一个简单的React组件
+#      - 验证组件能被正确渲染并正常工作 

@@ -1,0 +1,83 @@
+# Task ID: 9
+# Title: 动画效果重构
+# Status: pending
+# Dependencies: 6, 7
+# Priority: medium
+# Description: 将原生JS/GSAP动画效果重构为React组件（使用Framer Motion或类似库）。
+# Details:
+#   1. 选择React动画库：
+#      - 评估库选项：Framer Motion, react-spring, GSAP (React 插件) 等。
+#      - 考虑因素：易用性、性能、声明式API、与React集成、社区资源。
+#      - 决策：推荐 Framer Motion，因其强大的声明式API和与React的良好集成。
+#      - 安装：`npm install framer-motion`
+#   
+#   2. 分析现有原生JS/GSAP动画：
+#      - 识别内容页面中使用的动画类型（入场动画、滚动触发动画、微交互等）。
+#      - 理解动画的目标元素、触发条件、效果和时序。
+#   
+#   3. 创建动画组件或Hooks：
+#      - 封装常见的动画效果为可复用的React组件或自定义Hooks。
+#      - 例如，创建`<FadeIn>`组件或`useScrollTriggerAnimation` Hook。
+#      - 示例 (FadeIn 组件):
+#        ```tsx
+#        // src/components/animations/FadeIn.tsx
+#        import { motion } from 'framer-motion';
+#        
+#        interface FadeInProps {
+#          children: React.ReactNode;
+#          delay?: number;
+#          duration?: number;
+#        }
+#        
+#        export const FadeIn = ({ children, delay = 0, duration = 0.5 }: FadeInProps) => {
+#          return (
+#            <motion.div
+#              initial={{ opacity: 0, y: 20 }}
+#              animate={{ opacity: 1, y: 0 }}
+#              transition={{ duration, delay }}
+#            >
+#              {children}
+#            </motion.div>
+#          );
+#        };
+#        ```
+#   
+#   4. 实现滚动触发动画：
+#      - 使用Framer Motion的`useInView` Hook或`whileInView` prop来实现滚动到视口时触发的动画。
+#      - 示例:
+#        ```tsx
+#        <motion.div
+#          initial={{ opacity: 0 }}
+#          whileInView={{ opacity: 1 }}
+#          viewport={{ once: true, amount: 0.5 }} // 滚动到一半时触发，仅一次
+#          transition={{ duration: 1 }}
+#        >
+#          {/* 内容 */}
+#        </motion.div>
+#        ```
+#   
+#   5. 处理复杂或特定页面的动画：
+#      - 对于页面独有的复杂动画（如"电影感SVG动画"），创建特定于该页面的动画组件。
+#      - 可能需要结合使用Framer Motion和其他库（如SVG操作库）。
+#      - 优先保证性能和可维护性，避免过度复杂的实现。
+#   
+#   6. 在MDX中使用动画组件：
+#      - 在MDX文件中导入并使用封装好的动画组件包裹需要动画效果的内容。
+#
+# Test Strategy:
+#   1. 动画效果测试：
+#      - 验证动画在不同浏览器和设备上流畅播放，无卡顿。
+#      - 对比重构后的动画与原始动画，确保视觉效果基本一致。
+#      - 测试滚动触发动画的触发时机和表现。
+#   
+#   2. 性能测试：
+#      - 使用浏览器开发者工具检查动画对性能的影响（CPU、GPU、内存）。
+#      - 确保动画不会导致页面卡顿或响应迟缓。
+#      - 在低性能设备上测试动画表现。
+#   
+#   3. 交互测试：
+#      - 确保动画不影响用户与页面的正常交互。
+#      - 测试微交互动画的响应性和反馈效果。
+#   
+#   4. MDX集成测试：
+#      - 验证动画组件在MDX页面中能正确应用并触发。 

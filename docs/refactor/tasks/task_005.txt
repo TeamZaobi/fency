@@ -1,0 +1,221 @@
+# Task ID: 5
+# Title: HomePage组件实现
+# Status: pending
+# Dependencies: 3, 4
+# Priority: high
+# Description: 实现首页组件，替代原index.html，包含metadata.json数据加载与内容卡片展示。
+# Details:
+#   1. 创建数据类型：
+#      - 在src/types目录下定义metadata.json的类型接口：
+#        ```tsx
+#        // src/types/metadata.ts
+#        export interface MetadataPage {
+#          id: string;
+#          path: string;
+#          title: string;
+#          lastModifiedDate: string;
+#          category: string;
+#          description: string;
+#          keywords: string[];
+#          "publish-date": string;
+#        }
+#        
+#        export interface Metadata {
+#          lastUpdated: string;
+#          pages: MetadataPage[];
+#        }
+#        ```
+#   
+#   2. 创建数据获取Hook：
+#      - 在src/hooks目录下创建useMetadata.ts：
+#        ```tsx
+#        // src/hooks/useMetadata.ts
+#        import { useState, useEffect } from 'react';
+#        import { Metadata } from '../types/metadata';
+#        
+#        export const useMetadata = () => {
+#          const [data, setData] = useState<Metadata | null>(null);
+#          const [loading, setLoading] = useState(true);
+#          const [error, setError] = useState<Error | null>(null);
+#        
+#          useEffect(() => {
+#            const fetchData = async () => {
+#              try {
+#                const response = await fetch('/metadata.json');
+#                if (!response.ok) {
+#                  throw new Error('Failed to fetch metadata');
+#                }
+#                const jsonData = await response.json();
+#                setData(jsonData);
+#              } catch (err) {
+#                setError(err instanceof Error ? err : new Error('Unknown error'));
+#              } finally {
+#                setLoading(false);
+#              }
+#            };
+#        
+#            fetchData();
+#          }, []);
+#        
+#          return { data, loading, error };
+#        };
+#        ```
+#   
+#   3. 创建卡片组件：
+#      - 使用shadcn/ui的Card组件创建ContentCard.tsx：
+#        ```tsx
+#        // src/components/ContentCard.tsx
+#        import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+#        import { Badge } from "@/components/ui/badge";
+#        import { Link } from "react-router-dom";
+#        import { MetadataPage } from "@/types/metadata";
+#        
+#        interface ContentCardProps {
+#          page: MetadataPage;
+#        }
+#        
+#        export const ContentCard = ({ page }: ContentCardProps) => {
+#          // 从page.path提取slug
+#          const pathParts = page.path.split('/');
+#          const slug = pathParts[pathParts.length - 1].replace('.html', '');
+#          
+#          return (
+#            <Card className="h-full flex flex-col">
+#              <CardHeader>
+#                <h3 className="text-lg font-semibold">{page.title}</h3>
+#                <Badge variant="outline">{getCategoryLabel(page.category)}</Badge>
+#              </CardHeader>
+#              <CardContent className="flex-grow">
+#                <p className="text-sm text-muted-foreground">{page.description}</p>
+#              </CardContent>
+#              <CardFooter className="flex justify-between">
+#                <span className="text-xs text-muted-foreground">{page["publish-date"]}</span>
+#                <Link 
+#                  to={`/pages/${page.category}/${slug}`}
+#                  className="text-sm underline text-primary"
+#                >
+#                  查看详情
+#                </Link>
+#              </CardFooter>
+#            </Card>
+#          );
+#        };
+#        
+#        // 将英文类别转换为中文显示
+#        const getCategoryLabel = (category: string): string => {
+#          const labels: Record<string, string> = {
+#            'ai-tech': 'AI技术与生态',
+#            'info-upgrade': '信息化升级',
+#            'knowledge': '知识报告',
+#            'research': '科研辅助'
+#          };
+#          return labels[category] || category;
+#        };
+#        ```
+#   
+#   4. 创建分类筛选组件：
+#      - 使用shadcn/ui的Tabs组件实现：
+#        ```tsx
+#        // src/components/CategoryFilter.tsx
+#        import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+#        
+#        interface CategoryFilterProps {
+#          activeCategory: string;
+#          onCategoryChange: (category: string) => void;
+#        }
+#        
+#        export const CategoryFilter = ({ 
+#          activeCategory,
+#          onCategoryChange
+#        }: CategoryFilterProps) => {
+#          return (
+#            <Tabs defaultValue={activeCategory} onValueChange={onCategoryChange}>
+#              <TabsList>
+#                <TabsTrigger value="all">全部</TabsTrigger>
+#                <TabsTrigger value="ai-tech">AI技术与生态</TabsTrigger>
+#                <TabsTrigger value="info-upgrade">信息化升级</TabsTrigger>
+#                <TabsTrigger value="knowledge">知识报告</TabsTrigger>
+#                <TabsTrigger value="research">科研辅助</TabsTrigger>
+#              </TabsList>
+#            </Tabs>
+#          );
+#        };
+#        ```
+#   
+#   5. 实现HomePage组件：
+#      - 整合上述组件，完成完整的HomePage：
+#        ```tsx
+#        // src/pages/HomePage.tsx
+#        import { useState } from "react";
+#        import { useMetadata } from "@/hooks/useMetadata";
+#        import { ContentCard } from "@/components/ContentCard";
+#        import { CategoryFilter } from "@/components/CategoryFilter";
+#        import { MetadataPage } from "@/types/metadata";
+#        
+#        export const HomePage = () => {
+#          const { data, loading, error } = useMetadata();
+#          const [activeCategory, setActiveCategory] = useState("all");
+#        
+#          if (loading) return <div className="container py-8">加载中...</div>;
+#          if (error) return <div className="container py-8">加载错误: {error.message}</div>;
+#          if (!data) return <div className="container py-8">无数据</div>;
+#        
+#          // 过滤并排序页面
+#          const filteredPages = data.pages
+#            .filter(page => activeCategory === "all" || page.category === activeCategory)
+#            .sort((a, b) => {
+#              // 按发布日期倒序排序
+#              return new Date(b["publish-date"]).getTime() - new Date(a["publish-date"]).getTime()
+#            });
+#        
+#          return (
+#            <div className="container py-8">
+#              {/* Hero 部分 */}
+#              <div className="mb-12 text-center">
+#                <h1 className="text-4xl font-bold mb-4">凿壁</h1>
+#                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+#                  探索AI和医疗大数据领域的前沿见解与实践
+#                </p>
+#              </div>
+#              
+#              {/* 分类筛选 */}
+#              <div className="mb-8">
+#                <CategoryFilter 
+#                  activeCategory={activeCategory}
+#                  onCategoryChange={setActiveCategory}
+#                />
+#              </div>
+#              
+#              {/* 内容卡片网格 */}
+#              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+#                {filteredPages.map(page => (
+#                  <ContentCard key={page.id} page={page} />
+#                ))}
+#              </div>
+#              
+#              {/* 无结果提示 */}
+#              {filteredPages.length === 0 && (
+#                <div className="text-center py-12">
+#                  <p className="text-muted-foreground">该分类下暂无内容</p>
+#                </div>
+#              )}
+#            </div>
+#          );
+#        };
+#        ```
+#
+# Test Strategy:
+#   1. 数据加载测试：
+#      - 验证metadata.json能正确加载
+#      - 测试加载状态显示正确
+#      - 测试错误状态处理正确
+#   
+#   2. 筛选与排序测试：
+#      - 验证分类筛选功能正常工作
+#      - 验证日期排序功能正确
+#      - 测试无内容时的空状态显示
+#   
+#   3. 显示与交互测试：
+#      - 确认卡片信息显示正确（标题、描述、日期、分类）
+#      - 测试卡片链接跳转功能
+#      - 验证响应式布局在不同屏幕尺寸下的表现 

@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-04-30">
+  <meta name="category" content="knowledge">
+  <meta name="description" content="对比分析DeepSeek-R1 (671B) 与 Qwen3-235B-A22B (235B) MoE模型的参数规模、硬件需求与部署策略，探讨两者在实际应用中的选型考量。">
+  <meta name="keywords" content="DeepSeek-R1,Qwen3-235B-A22B,MoE模型对比,大模型部署,硬件需求,模型选型,参数规模,GPU显存">
+  
+  <title>DeepSeek-R1 vs. Qwen3-235B-A22B：规模、硬件与部署深度对比 | 凿壁</title>
+  
+  <!-- 引入必需的CDN资源 -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion/dist/framer-motion.js"></script>
+  
+  <style>
+    /* 主题变量定义 - 浅色模式 */
+    :root {
+      --background: rgb(204, 204, 204);
+      --foreground: rgb(31, 31, 31);
+      --card: rgb(176, 176, 176);
+      --card-foreground: rgb(31, 31, 31);
+      --popover: rgb(176, 176, 176);
+      --popover-foreground: rgb(31, 31, 31);
+      --primary: rgb(183, 28, 28);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(85, 107, 47);
+      --secondary-foreground: rgb(255, 255, 255);
+      --muted: rgb(184, 184, 184);
+      --muted-foreground: rgb(74, 74, 74);
+      --accent: rgb(70, 130, 180);
+      --accent-foreground: rgb(255, 255, 255);
+      --destructive: rgb(255, 111, 0);
+      --destructive-foreground: rgb(0, 0, 0);
+      --border: rgb(80, 80, 80);
+      --input: rgb(80, 80, 80);
+      --ring: rgb(183, 28, 28);
+      --chart-1: rgb(183, 28, 28);
+      --chart-2: rgb(85, 107, 47);
+      --chart-3: rgb(70, 130, 180);
+      --chart-4: rgb(255, 111, 0);
+      --chart-5: rgb(141, 110, 99);
+      --sidebar: rgb(176, 176, 176);
+      --sidebar-foreground: rgb(31, 31, 31);
+      --sidebar-primary: rgb(183, 28, 28);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(70, 130, 180);
+      --sidebar-accent-foreground: rgb(255, 255, 255);
+      --sidebar-border: rgb(80, 80, 80);
+      --sidebar-ring: rgb(183, 28, 28);
+      --font-sans: "Oxanium", sans-serif;
+      --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      --font-mono: "Source Code Pro", monospace;
+      --radius: 0px;
+      --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.20);
+      --shadow-xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.20);
+      --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
+      --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
+      --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 2px 4px -1px hsl(0 0% 0% / 0.40);
+      --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 4px 6px -1px hsl(0 0% 0% / 0.40);
+      --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 8px 10px -1px hsl(0 0% 0% / 0.40);
+      --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 1.00);
+    }
+
+    /* 主题变量定义 - 深色模式 */
+    .dark {
+      --background: rgb(26, 26, 26);
+      --foreground: rgb(224, 224, 224);
+      --card: rgb(42, 42, 42);
+      --card-foreground: rgb(224, 224, 224);
+      --popover: rgb(42, 42, 42);
+      --popover-foreground: rgb(224, 224, 224);
+      --primary: rgb(229, 57, 53);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(104, 159, 56);
+      --secondary-foreground: rgb(0, 0, 0);
+      --muted: rgb(37, 37, 37);
+      --muted-foreground: rgb(160, 160, 160);
+      --accent: rgb(100, 181, 246);
+      --accent-foreground: rgb(0, 0, 0);
+      --destructive: rgb(255, 160, 0);
+      --destructive-foreground: rgb(0, 0, 0);
+      --border: rgb(74, 74, 74);
+      --input: rgb(74, 74, 74);
+      --ring: rgb(229, 57, 53);
+      --chart-1: rgb(229, 57, 53);
+      --chart-2: rgb(104, 159, 56);
+      --chart-3: rgb(100, 181, 246);
+      --chart-4: rgb(255, 160, 0);
+      --chart-5: rgb(161, 136, 127);
+      --sidebar: rgb(20, 20, 20);
+      --sidebar-foreground: rgb(224, 224, 224);
+      --sidebar-primary: rgb(229, 57, 53);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(100, 181, 246);
+      --sidebar-accent-foreground: rgb(0, 0, 0);
+      --sidebar-border: rgb(74, 74, 74);
+      --sidebar-ring: rgb(229, 57, 53);
+      --font-sans: "Oxanium", sans-serif;
+      --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      --font-mono: "Source Code Pro", monospace;
+      --radius: 0px;
+      --shadow-2xs: 0px 2px 5px 0px hsl(0 0% 0% / 0.30);
+      --shadow-xs: 0px 2px 5px 0px hsl(0 0% 0% / 0.30);
+      --shadow-sm: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 1px 2px -1px hsl(0 0% 0% / 0.60);
+      --shadow: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 1px 2px -1px hsl(0 0% 0% / 0.60);
+      --shadow-md: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 2px 4px -1px hsl(0 0% 0% / 0.60);
+      --shadow-lg: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 4px 6px -1px hsl(0 0% 0% / 0.60);
+      --shadow-xl: 0px 2px 5px 0px hsl(0 0% 0% / 0.60), 0px 8px 10px -1px hsl(0 0% 0% / 0.60);
+      --shadow-2xl: 0px 2px 5px 0px hsl(0 0% 0% / 1.50);
+    }
+
+    /* 主题变量映射 */
+    @theme inline {
+      --color-background: var(--background);
+      --color-foreground: var(--foreground);
+      --color-card: var(--card);
+      --color-card-foreground: var(--card-foreground);
+      --color-popover: var(--popover);
+      --color-popover-foreground: var(--popover-foreground);
+      --color-primary: var(--primary);
+      --color-primary-foreground: var(--primary-foreground);
+      --color-secondary: var(--secondary);
+      --color-secondary-foreground: var(--secondary-foreground);
+      --color-muted: var(--muted);
+      --color-muted-foreground: var(--muted-foreground);
+      --color-accent: var(--accent);
+      --color-accent-foreground: var(--accent-foreground);
+      --color-destructive: var(--destructive);
+      --color-destructive-foreground: var(--destructive-foreground);
+      --color-border: var(--border);
+      --color-input: var(--input);
+      --color-ring: var(--ring);
+      --color-chart-1: var(--chart-1);
+      --color-chart-2: var(--chart-2);
+      --color-chart-3: var(--chart-3);
+      --color-chart-4: var(--chart-4);
+      --color-chart-5: var(--chart-5);
+      --color-sidebar: var(--sidebar);
+      --color-sidebar-foreground: var(--sidebar-foreground);
+      --color-sidebar-primary: var(--sidebar-primary);
+      --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+      --color-sidebar-accent: var(--sidebar-accent);
+      --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+      --color-sidebar-border: var(--sidebar-border);
+      --color-sidebar-ring: var(--sidebar-ring);
+
+      --font-sans: var(--font-sans);
+      --font-mono: var(--font-mono);
+      --font-serif: var(--font-serif);
+
+      --radius-sm: calc(var(--radius) - 4px);
+      --radius-md: calc(var(--radius) - 2px);
+      --radius-lg: var(--radius);
+      --radius-xl: calc(var(--radius) + 4px);
+
+      --shadow-2xs: var(--shadow-2xs);
+      --shadow-xs: var(--shadow-xs);
+      --shadow-sm: var(--shadow-sm);
+      --shadow: var(--shadow);
+      --shadow-md: var(--shadow-md);
+      --shadow-lg: var(--shadow-lg);
+      --shadow-xl: var(--shadow-xl);
+      --shadow-2xl: var(--shadow-2xl);
+    }
+
+    /* 基础样式 */
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+    }
+
+    /* 图表容器样式 */
+    .chart-container {
+      position: relative;
+      height: 400px;
+      margin: 2rem 0;
+    }
+
+    /* 动画类 */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .animated {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 自定义表格样式 */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+    
+    thead {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+    
+    th, td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+    }
+    
+    tbody tr:nth-child(odd) {
+      background-color: var(--muted);
+    }
+    
+    tbody tr:hover {
+      background-color: var(--accent);
+    }
+
+    /* 主题切换按钮样式 */
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 100;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.5rem;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    /* 手风琴样式 */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.5s ease, opacity 0.5s ease;
+    }
+
+    /* 正值差距的颜色 */
+    .positive-gap {
+      color: var(--primary);
+      font-weight: 600;
+    }
+  </style>
+
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'var(--background)',
+            foreground: 'var(--foreground)',
+            card: 'var(--card)',
+            'card-foreground': 'var(--card-foreground)',
+            primary: 'var(--primary)',
+            'primary-foreground': 'var(--primary-foreground)',
+            secondary: 'var(--secondary)',
+            'secondary-foreground': 'var(--secondary-foreground)',
+            muted: 'var(--muted)',
+            'muted-foreground': 'var(--muted-foreground)',
+            accent: 'var(--accent)',
+            'accent-foreground': 'var(--accent-foreground)',
+            border: 'var(--border)',
+          },
+          fontFamily: {
+            sans: ['Noto Sans SC', 'sans-serif'],
+            serif: ['Noto Serif SC', 'serif'],
+            mono: ['Fira Code', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body>
+  <!-- 主题切换按钮 -->
+  <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+    <i class="fas fa-sun dark:hidden"></i>
+    <i class="fas fa-moon hidden dark:inline"></i>
+  </button>
+
+  <!-- 返回首页链接 -->
+  <a href="../../index.html" class="fixed top-1 left-1 z-50 bg-card p-2 rounded-lg shadow-md hover:bg-accent transition-colors duration-300">
+    <i class="fas fa-arrow-left mr-1"></i> 返回首页
+  </a>
+
+  <!-- 页面主容器 -->
+  <div class="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+    <!-- Hero部分 -->
+    <div class="relative bg-gradient-to-br from-accent to-card rounded-xl p-8 mb-12 shadow-lg overflow-hidden">
+      <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iLjA1Ij48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCAzLjk5OC0xLjc5IDQtNHptLTE4IDE0Yy0yLjIxIDAtNCAxLjc5LTQgNHMxLjc5IDQgNCA0IDQtMS43OSA0LTQtMS43OS00LTQtNHptMC0zNmMtMi4yMSAwLTQgMS43OS00IDRzMS43OSA0IDQgNCA0LTEuNzkgNC00LTEuNzktNC00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] dark:bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ij48cGF0aCBkPSJNMzYgMzRjMC0yLjIxLTEuNzktNC00LTRzLTQgMS43OS00IDQgMS43OSA0IDQgNCAzLjk5OC0xLjc5IDQtNHptLTE4IDE0Yy0yLjIxIDAtNCAxLjc5LTQgNHMxLjc5IDQgNCA0IDQtMS43OSA0LTQtMS43OS00LTQtNHptMC0zNmMtMi4yMSAwLTQgMS43OS00IDRzMS43OSA0IDQgNCA0LTEuNzkgNC00LTEuNzktNC00LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')]"></div>
+      <div class="relative z-10">
+        <h1 id="hero-title" class="text-4xl md:text-5xl font-bold mb-4 text-center font-serif animate-on-scroll">DeepSeek-R1 vs. Qwen3-235B-A22B<br/>规模、硬件与部署深度对比</h1>
+
+        <div class="flex flex-col md:flex-row justify-center items-center gap-8 mt-8">
+          <div class="bg-card p-6 rounded-lg shadow-md text-center w-full md:w-1/2 animate-on-scroll">
+            <div class="flex justify-center space-x-2 mb-3">
+              <i class="fas fa-server text-primary text-3xl"></i>
+              <i class="fas fa-memory text-primary text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">DeepSeek-R1 (MoE)</h3>
+            <p class="text-muted-foreground">~671B 总参数 | 37B 激活 | ≥8xA100 | ~18.5GB (4-bit)</p>
+          </div>
+          <div class="text-center flex flex-col items-center justify-center animate-on-scroll">
+            <i class="fas fa-balance-scale text-2xl text-secondary-foreground mb-2"></i>
+            <div class="text-lg font-bold text-primary">硬件 vs. 能力</div>
+            <p class="text-sm text-muted-foreground">部署成本权衡</p>
+          </div>
+          <div class="bg-card p-6 rounded-lg shadow-md text-center w-full md:w-1/2 animate-on-scroll">
+            <div class="flex justify-center space-x-2 mb-3">
+              <i class="fas fa-rocket text-secondary text-3xl"></i>
+              <i class="fas fa-cogs text-secondary text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Qwen3-235B-A22B (MoE)</h3>
+            <p class="text-muted-foreground">235B 总参数 | 22B 激活 | ≥4xA100 | ~11GB (4-bit)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 可见的日期和分类信息 -->
+    <div class="text-center text-sm text-muted-foreground mb-10 -mt-6">
+      <span>发布于 2025年04月30日</span> | <span>分类：知识报告</span>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <main>
+      <!-- 模型规模与部署要点 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">模型规模与部署要点</h2>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>模型</th>
+                <th>架构</th>
+                <th>总参数</th>
+                <th>每步激活参数</th>
+                <th>典型 GPU 部署*</th>
+                <th>FP16 显存需求†</th>
+                <th>4-bit 显存需求†</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="font-semibold">DeepSeek-R1</td>
+                <td>MoE (256 Expert, 8 active/layer)</td>
+                <td>≈ 671 B</td>
+                <td>37 B</td>
+                <td>≥ 8×A100-80G (或 16×H800)</td>
+                <td>≈ 74 GB</td>
+                <td>≈ 18.5 GB</td>
+              </tr>
+              <tr>
+                <td class="font-semibold">Qwen3-235B-A22B</td>
+                <td>MoE (128 Expert, 8 active/layer)</td>
+                <td>235 B</td>
+                <td>22 B</td>
+                <td>≥ 4×A100-80G</td>
+                <td>≈ 44 GB</td>
+                <td>≈ 11 GB</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-muted-foreground mt-2">* 以全 GPU 推理、128 K 上下文、vLLM / TensorRT-LLM 为例</p>
+        <p class="text-sm text-muted-foreground mt-1">† 仅粗略估算激活参数，不含 Router / KV-Cache / Overhead</p>
+      </section>
+
+      <!-- Performance Benchmarks Table -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">性能基准对比 (参考)</h2>
+        <p class="text-sm text-muted-foreground mb-4 italic">
+            <i class="fas fa-info-circle mr-1"></i> <strong>注意:</strong> 以下分数是重要的性能参考，可能基于 Qwen-235B-A228/A22B 或 DeepSeek-R1 的公开报告或早期版本。实际表现可能因具体测试设置、模型微调和版本迭代而异。当前分析更侧重于模型规模与部署策略。
+        </p>
+        <div class="overflow-x-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Benchmark</th>
+                <th>能力侧重</th>
+                <th>Deepseek-R1</th>
+                <th>Qwen-235B-A228/A22B</th>
+                <th>差距*</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Arena-Hard</td>
+                <td>综合指令 & 对话质量</td>
+                <td>93.2</td>
+                <td class="font-semibold">95.6</td>
+                <td class="positive-gap">+2.4</td>
+              </tr>
+              <tr>
+                <td>AIME'24</td>
+                <td>高中奥数推理 (2024 题集)</td>
+                <td>79.8</td>
+                <td class="font-semibold">85.7</td>
+                <td class="positive-gap">+5.9</td>
+              </tr>
+              <tr>
+                <td>AIME'25</td>
+                <td>高中奥数推理 (2025 题集)</td>
+                <td>70.0</td>
+                <td class="font-semibold">81.5</td>
+                <td class="positive-gap">+11.5</td>
+              </tr>
+              <tr>
+                <td>LiveCodeBench</td>
+                <td>代码生成 / 自我修复</td>
+                <td>64.3</td>
+                <td class="font-semibold">70.7</td>
+                <td class="positive-gap">+6.4</td>
+              </tr>
+              <tr>
+                <td>Codeforces Elo</td>
+                <td>竞赛编程实力</td>
+                <td>2029</td>
+                <td class="font-semibold">2056</td>
+                <td class="positive-gap">+27</td>
+              </tr>
+              <tr>
+                <td>Aider</td>
+                <td>代码 + 自然语言协同编辑</td>
+                <td>56.9</td>
+                <td class="font-semibold">61.8</td>
+                <td class="positive-gap">+4.9</td>
+              </tr>
+              <tr>
+                <td>LiveBench</td>
+                <td>综合推理（多学科）</td>
+                <td>71.6</td>
+                <td class="font-semibold">77.1</td>
+                <td class="positive-gap">+5.5</td>
+              </tr>
+              <tr>
+                <td>BFCL</td>
+                <td>函数/工具调用能力</td>
+                <td>56.9</td>
+                <td class="font-semibold">70.8</td>
+                <td class="positive-gap">+13.9</td>
+              </tr>
+              <tr>
+                <td>MultiIF</td>
+                <td>多轮复杂指令遵循</td>
+                <td>67.7</td>
+                <td class="font-semibold">71.9</td>
+                <td class="positive-gap">+4.2</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-sm text-muted-foreground mt-2">*差距 = Qwen – Deepseek (正值表示 Qwen 参考分数更高)</p>
+      </section>
+
+      <!-- 数据可视化区域 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">性能对比可视化 (参考)</h2>
+        <p class="text-center text-muted-foreground italic mb-6">
+            <i class="fas fa-info-circle mr-1"></i> 图表基于上述参考性能分数生成。
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- 雷达图 -->
+          <div class="chart-container">
+            <h3 class="text-xl font-bold mb-4 text-center">性能雷达图</h3>
+            <canvas id="performance-radar"></canvas>
+            <p class="text-xs text-center text-muted-foreground mt-2 italic">
+              注意：除"竞赛编程"轴外，其他轴均大致为 0-100 线性刻度。"竞赛编程"轴分数已进行非线性缩放以在图上显示差异，Tooltip 中显示实际 Elo 分数。
+            </p>
+          </div>
+          <!-- 差距条形图 -->
+          <div class="chart-container">
+            <h3 class="text-xl font-bold mb-4 text-center">性能差距（按大小排序）</h3>
+            <canvas id="gap-chart"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- 核心结论 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">核心结论 (性能参考与部署考量)</h2>
+        <div class="bg-card rounded-lg p-6 shadow-md">
+          <ul class="space-y-4">
+            <li class="flex items-start">
+              <i class="fas fa-tachometer-alt text-primary mt-1 mr-3 text-xl"></i>
+              <div>
+                <p class="font-semibold">参考性能领先：</p>
+                <p>根据现有公开基准参考分数，Qwen-235B 在多项评测（尤其数学推理和函数调用）中表现优于 DeepSeek-R1。但这可能基于稍早或特定版本，需辩证看待。</p>
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-weight-hanging text-primary mt-1 mr-3 text-xl"></i>
+              <div>
+                <p class="font-semibold">部署成本差异显著：</p>
+                <p>DeepSeek-R1 (671B 总参数, 37B 激活) 对硬件（GPU 数量、显存、网络带宽）的要求远高于 Qwen3-235B-A22B (235B 总参数, 22B 激活)。这是选型中的关键考量因素。</p>
+              </div>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-balance-scale text-primary mt-1 mr-3 text-xl"></i>
+              <div>
+                <p class="font-semibold">权衡与选择：</p>
+                <p>若追求极致性能且预算充足，DeepSeek-R1 的潜力值得探索（尤其科研场景）。若关注成本效益、部署效率和广泛适用性，Qwen3-A22B 提供了更平衡的选择。决策应结合具体应用场景对性能的需求与可承担的硬件成本。</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 各基准简析 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">各基准简析（能力参考）</h2>
+        <!-- Add clarification note here -->
+        <p class="text-sm text-muted-foreground mb-4 italic">
+           <i class="fas fa-info-circle mr-1"></i> 注意：以下基准分析提供了模型在不同能力维度的参考，但具体得分可能基于早期或略有差异的模型版本 (如 Qwen-A228)。当前对比重点已转向模型规模与部署。
+        </p>
+        <div class="space-y-4">
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">Arena-Hard</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">从 Chatbot Arena 直播数据抽取的"困难"对话集，兼顾多任务与人类偏好一致度</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">通用助手、大型多轮对话</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <a href="https://lmsys.org/blog/2024-04-19-arena-hard/?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline pl-6">LMSYS Org (Arena-Hard Pipeline)</a>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">AIME'24/'25</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">高中奥数题 (pass@1)；极少测试污染，强调演绎与链式推理</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">复杂数学/科学问答</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <a href="https://www.vals.ai/benchmarks/aime-2025-03-24?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline pl-6">Vals AI (AIME Benchmark)</a>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">LiveCodeBench</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">400+ 近期竞赛编程题，覆盖生成、自修复、执行</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">代码自动化、在线判题</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <a href="https://arxiv.org/abs/2403.07974?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline pl-6">arXiv (LiveCodeBench Paper)</a>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">Codeforces Elo</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">与真实 Codeforces 题目对标产生的 Elo rating</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">在线竞赛 Bot、辅助解题</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <p class="text-muted-foreground italic pl-6">暂无公开链接</p>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">Aider</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">"边写边改" 的代码协同交互基准</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">IDE 智能助手</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <p class="text-muted-foreground italic pl-6">暂无公开链接 (通常集成在工具内)</p>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">LiveBench</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">新发布的跨领域大一统基准，强调无污染与客观评分</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">通用推理</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <a href="https://livebench.ai/?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline pl-6">LiveBench Official Site</a>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">BFCL</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">Berkeley Function Calling Leaderboard，评估 LLM 调用外部函数/工具的精确度</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">Agent 工程、RAG、调用后端 API</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <a href="https://gorilla.cs.berkeley.edu/blogs/8_berkeley_function_calling_leaderboard.html?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline pl-6">Gorilla (BFCL Blog Post)</a>
+            </div>
+          </details>
+
+          <details class="bg-card rounded-lg shadow-md overflow-hidden group">
+            <summary class="accordion-trigger flex justify-between items-center p-4 cursor-pointer hover:bg-accent transition-colors">
+              <span class="font-semibold text-lg">MultiIF</span>
+              <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300"></i>
+            </summary>
+            <div class="accordion-content p-4 border-t border-border">
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-bullseye mr-2"></i>测评重点:</p>
+              <p class="mb-3 text-muted-foreground pl-6">多轮、多条件指令追踪与状态保持</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-cogs mr-2"></i>典型使用场景:</p>
+              <p class="mb-3 text-muted-foreground pl-6">长链路任务编排</p>
+              <p class="font-medium mb-1 text-secondary-foreground"><i class="fas fa-link mr-2"></i>资料来源:</p>
+              <p class="text-muted-foreground italic pl-6">暂无公开链接</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- 为何 DeepSeek-R1 更"重" -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">为何 DeepSeek-R1 更"重"</h2>
+        <div class="bg-card rounded-lg p-6 shadow-md space-y-6">
+          <div>
+            <h3 class="font-semibold text-lg mb-2"><i class="fas fa-layer-group mr-2 text-primary"></i>1. 总参数规模：671 B vs 235 B</h3>
+            <p class="text-muted-foreground">DeepSeek-R1 拥有 256 个专家（Qwen 为 128 个），覆盖更细粒度的知识领域。即使每次只激活 8 个，所有权重 (671B) 都需要存储，显著增加了加载时间和存储成本。参考：
+              <a href="https://heidloff.net/article/deepseek-r1/?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">[1]</a>, 
+              <a href="https://www.modular.com/ai-resources/exploring-deepseek-r1-s-mixture-of-experts-model-architecture?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">[2]</a>
+            </p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-2"><i class="fas fa-microchip mr-2 text-primary"></i>2. 每步激活参数：37 B vs 22 B</h3>
+            <p class="text-muted-foreground">实际进入 GPU 计算的参数量，DeepSeek-R1 约为 Qwen 的 1.7 倍。这导致更高的运行时显存需求：FP16 约需 74 GB，即使 4-bit 量化也需约 18.5 GB，远超 Qwen 的约 11 GB (4-bit)。参考：
+              <a href="https://fireworks.ai/blog/deepseek-r1-deepdive?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">[3]</a>, 
+              <a href="https://huggingface.co/Qwen/Qwen3-235B-A22B?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">[4]</a>
+            </p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-2"><i class="fas fa-network-wired mr-2 text-primary"></i>3. Router 计算与通信成本</h3>
+            <p class="text-muted-foreground">DeepSeek-R1 的 256 选 8 路由器需要在更大的专家池中进行选择和通信 (All-to-All)。在多 GPU 并行时，这对节点间的网络带宽（如 NVLink, InfiniBand）提出了更高要求。</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-lg mb-2"><i class="fas fa-server mr-2 text-primary"></i>4. 推荐 GPU 数量</h3>
+            <p class="text-muted-foreground">社区经验表明，DeepSeek-R1 全精度部署通常需要 8 到 16 张 A100-80G/H800 级别的高显存 GPU，并配合复杂的并行策略。而 Qwen3-A22B 通常 4 张 A100-80G 即可满足 4-bit/FP8 量化下的 128K 上下文推理。参考：
+              <a href="https://dev.to/askyt/deepseek-r1-671b-complete-hardware-requirements-optimal-deployment-setup-2e48?utm_source=chatgpt.com" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">[5]</a>, 
+              <a href="https://www.koyeb.com/deploy/qwen-3-235b" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">[6]</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 部署层面的取舍 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">部署层面的取舍</h2>
+        <div class="overflow-x-auto mb-6">
+          <table>
+            <thead>
+              <tr>
+                <th>场景</th>
+                <th>建议</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>单机/笔记本本地试玩</td>
+                <td>选 DeepSeek-R1-Distill-Qwen/Llama (7B–32B) 或 Qwen3-30B-A3B，4-bit 即可在 1×RTX 4090 运行。</td>
+              </tr>
+              <tr>
+                <td>中小型推理服务 (&lt;100 QPS)</td>
+                <td>Qwen A22B 更合适：4×A100-80G 足够；若预算有限还可切换到 Qwen-30B-A3B (3 B 激活)。</td>
+              </tr>
+              <tr>
+                <td>科研验证 / 长链 Agent</td>
+                <td>DeepSeek-R1 拿高难数学或复杂计划任务时确有优势，但应预留 ≥8 ×A100 及高速 NVLink 网络。</td>
+              </tr>
+              <tr>
+                <td>离线微调 / 蒸馏</td>
+                <td>两者皆需巨量 CPU 内存保存完整权重；DeepSeek-R1 更吃"磁盘+内存"，可先做 Expert 剪枝或 Distill 再训练。</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <blockquote class="border-l-4 border-primary pl-4 ml-2 text-secondary-foreground bg-muted p-4 rounded-r-lg">
+            <p class="font-semibold mb-2"><i class="fas fa-lightbulb mr-1 text-primary"></i>小结:</p>
+            <ul class="list-disc pl-5 space-y-1 text-sm">
+              <li><span class="font-semibold">参数与硬件：</span>DeepSeek-R1 总参数和激活参数均大于 Qwen3-A22B，导致更高硬件需求。</li>
+              <li><span class="font-semibold">能力权衡：</span>DeepSeek-R1 在特定高难任务上可能上限更高，但 Qwen3-A22B 对多数应用而言性价比更优。</li>
+              <li><span class="font-semibold">决策关键：</span>评估是否必需 DeepSeek 的额外深度，并考虑预算、延迟、吞吐量。对成本敏感时，Qwen3-A22B 或更小版本更实际。</li>
+            </ul>
+            <p class="text-xs mt-3 italic">如有具体硬件预算或服务目标，可提供配置以获取更细化建议。</p>
+        </blockquote>
+      </section>
+
+      <!-- 局限与注意事项 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">局限与注意事项</h2>
+        <div class="bg-muted rounded-lg p-6">
+          <ul class="space-y-4">
+            <li class="flex items-start">
+              <i class="fas fa-exclamation-triangle text-secondary mr-3 mt-1"></i>
+              <p><span class="font-semibold">基准分数时效性与版本：</span>页面展示的性能分数是重要参考，但可能并非严格对应当前最新模型 (DeepSeek-R1 671B vs Qwen3-A22B)。模型迭代快，最新官方报告或自行评测更准确。</p>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-exclamation-triangle text-secondary mr-3 mt-1"></i>
+              <p><span class="font-semibold">部署复杂度：</span>表格中的 GPU 需求是基于优化框架的估算。实际部署涉及并行策略、KV Cache、网络等复杂工程挑战，远超硬件本身。</p>
+            </li>
+             <li class="flex items-start">
+              <i class="fas fa-exclamation-triangle text-secondary mr-3 mt-1"></i>
+              <p><span class="font-semibold">成本考量：</span>除了 GPU，还需考虑电力、冷却、运维及云服务溢价。DeepSeek-R1 的 TCO 显著高于 Qwen3-A22B。</p>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-exclamation-triangle text-secondary mr-3 mt-1"></i>
+              <p><span class="font-semibold">动态发展：</span>大模型领域日新月异，新技术、新模型层出不穷，选型需持续关注最新进展和社区实践。</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 决策流程图 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">模型选择决策流程 (侧重部署)</h2>
+        <div class="bg-card rounded-lg p-6 shadow-md">
+          <pre class="mermaid">
+flowchart TD
+    A["评估需求与预算"] --> B{"主要考量?"};
+    B -->|"追求最高能力上限<br>(不计成本)"| C{"能否承担<br>≥8x A100/H800<br>+高速网络?"};
+    C -->|"能"| D["选择 DeepSeek-R1 (671B)"];
+    C -->|"不能"| E["考虑 Qwen3-A22B (235B)<br>或寻求云服务商支持"];
+    B -->|"成本/性能平衡<br>(延迟/吞吐量敏感)"| F{"需要处理<br>超高难度数学/Agent?"};
+    F -->|"是"| E;
+    F -->|"否"| G["选择 Qwen3-A22B (235B)<br>或 Qwen3-30B-A3B (更低成本)"];
+    D --> H["场景: 科研探索, 复杂长链任务"];
+    G --> I["场景: 中小型服务, 通用应用, 本地微调"];
+    E --> J["场景: 高端应用但预算有限, 或需专家支持"];
+          </pre>
+        </div>
+      </section>
+
+      <!-- 延伸阅读 -->
+      <section class="mb-12 animate-on-scroll bg-card border border-border p-6 shadow-md">
+        <h2 class="text-3xl font-bold mb-6 border-b border-primary pb-2">延伸阅读</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a href="https://lmsys.org/blog/2024-04-19-arena-hard/" target="_blank" rel="noopener noreferrer" class="bg-card rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow">
+            <div class="flex items-center mb-3">
+              <i class="fas fa-external-link-alt text-primary mr-2"></i>
+              <h3 class="font-bold">Arena-Hard Pipeline</h3>
+            </div>
+            <p class="text-sm text-muted-foreground">从直播数据到高质量基准：Arena-Hard评测是如何构建的</p>
+          </a>
+          
+          <a href="https://www.vals.ai/benchmarks/aime-2025-03-24" target="_blank" rel="noopener noreferrer" class="bg-card rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow">
+            <div class="flex items-center mb-3">
+              <i class="fas fa-external-link-alt text-primary mr-2"></i>
+              <h3 class="font-bold">AIME Benchmark</h3>
+            </div>
+            <p class="text-sm text-muted-foreground">高中奥数题如何成为衡量AI数学推理能力的有效工具</p>
+          </a>
+          
+          <a href="https://gorilla.cs.berkeley.edu/blogs/8_berkeley_function_calling_leaderboard.html" target="_blank" rel="noopener noreferrer" class="bg-card rounded-lg p-5 shadow-md hover:shadow-lg transition-shadow">
+            <div class="flex items-center mb-3">
+              <i class="fas fa-external-link-alt text-primary mr-2"></i>
+              <h3 class="font-bold">Berkeley Function Calling Leaderboard</h3>
+            </div>
+            <p class="text-sm text-muted-foreground">伯克利的函数调用评测基准：评估LLM工具使用精准度</p>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="bg-muted mt-16 py-8">
+    <div class="max-w-5xl mx-auto px-4 text-center text-muted-foreground">
+      <p>发布于 2025年04月30日 | 分类：知识报告</p>
+      <div class="mt-4">
+        <p>作者姓名: 季晓康</p>
+        <p>微信公众号：凿壁</p>
+        <p>版权信息：国家健康医疗大数据研究院</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript部分 -->
+  <script>
+// 等待DOM加载完成
+document.addEventListener('DOMContentLoaded', function() {
+  // 初始化Mermaid
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+    flowchart: {
+      curve: 'basis'
+    }
+  });
+
+  // --- Theme Handling ---
+  const themeToggle = document.getElementById('theme-toggle');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  function setTheme(isDark) {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    updateVisualizationThemes(); // Update charts when theme changes
+  }
+
+  // Set initial theme
+  setTheme(prefersDark);
+
+  // Theme toggle button listener
+  if (themeToggle) {
+      themeToggle.addEventListener('click', () => {
+          setTheme(!document.documentElement.classList.contains('dark'));
+      });
+  }
+
+  // --- Chart Logic ---
+  window.chartInstances = window.chartInstances || [];
+
+  // Original Benchmark Labels (for reference and specific logic like Elo)
+  const benchmarkLabels = [
+    'Arena-Hard', 'AIME\'24', 'AIME\'25', 'LiveCodeBench',
+    'Codeforces Elo', 'Aider', 'LiveBench', 'BFCL', 'MultiIF'
+  ];
+  // Capability Labels for Charts
+  const capabilityLabels = [
+      '对话质量', '数学推理(24)', '数学推理(25)', '代码生成/修复',
+      '竞赛编程', '代码协同编辑', '综合推理', '函数调用', '复杂指令遵循'
+  ];
+
+  // Use the provided scores
+  const deepseekScores = [93.2, 79.8, 70.0, 64.3, 50, 56.9, 71.6, 56.9, 67.7]; // Using 50 as placeholder for Elo scaling
+  const qwenScores = [95.6, 85.7, 81.5, 70.7, 60, 61.8, 77.1, 70.8, 71.9]; // Using 60 as placeholder for Elo scaling
+  const qwenOriginalElo = 2056;
+  const deepseekOriginalElo = 2029;
+
+  // --- Data Scaling for Radar Chart ---
+  const ELO_VISUAL_MIN = 0;
+  const ELO_VISUAL_MAX = 3300; 
+
+  function scaleEloForRadar(actualElo) {
+    if (actualElo < ELO_VISUAL_MIN) return 0;
+    if (actualElo > ELO_VISUAL_MAX) return 100;
+    return ((actualElo - ELO_VISUAL_MIN) / (ELO_VISUAL_MAX - ELO_VISUAL_MIN)) * 100;
+  }
+
+  const deepseekScoresRadar = deepseekScores.map((score, index) => {
+    return benchmarkLabels[index] === 'Codeforces Elo' ? scaleEloForRadar(deepseekOriginalElo) : score;
+  });
+  const qwenScoresRadar = qwenScores.map((score, index) => {
+    return benchmarkLabels[index] === 'Codeforces Elo' ? scaleEloForRadar(qwenOriginalElo) : score;
+  });
+
+  // Calculate absolute and relative gaps
+  const gapData = benchmarkLabels.map((label, index) => {
+    let absoluteValue, relativeValue;
+    const qScore = qwenScores[index]; // Using the scaled scores for consistency in array
+    const dScore = deepseekScores[index];
+    
+    if (label === 'Codeforces Elo') {
+        absoluteValue = qwenOriginalElo - deepseekOriginalElo;
+        // Calculate relative diff based on original Elo scores
+        relativeValue = deepseekOriginalElo !== 0 ? ((qwenOriginalElo - deepseekOriginalElo) / deepseekOriginalElo) * 100 : 0;
+    } else {
+        absoluteValue = parseFloat((qScore - dScore).toFixed(1));
+        // Calculate relative diff based on provided scores (assuming they are comparable scales like %)
+        relativeValue = dScore !== 0 ? ((qScore - dScore) / dScore) * 100 : 0;
+    }
+    return { 
+        label: label, 
+        absoluteValue: absoluteValue, 
+        relativeValue: relativeValue 
+    }; 
+  });
+
+  // Sort gap data for the bar chart based on RELATIVE value now
+  const sortedGapData = [...gapData].sort((a, b) => b.relativeValue - a.relativeValue);
+
+  // Function to get RGB values from CSS variables (keep helper)
+  function getRgbFromCssVar(varName) {
+      const colorString = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+      if (colorString.startsWith('rgb(')) {
+          return colorString.substring(4, colorString.length - 1);
+      }
+      // Basic fallback or conversion needed if color is not in rgb() format
+      // Example fallback:
+      if (varName === '--chart-1') return '180, 83, 9';
+      if (varName === '--chart-2') return '120, 113, 108';
+      return '0, 0, 0'; // Default black
+  }
+
+  // --- Radar Chart --- 
+  // Restore Radar Chart Logic
+  const radarCtx = document.getElementById('performance-radar')?.getContext('2d');
+  if (radarCtx) {
+    const radarChartConfig = {
+      type: 'radar',
+      data: {
+        labels: capabilityLabels, // Use capability labels for the chart
+        datasets: [
+          {
+            label: 'Deepseek-R1 (参考)',
+            data: deepseekScoresRadar, // Use SCALED data for radar plot
+            borderColor: `rgb(${getRgbFromCssVar('--chart-2')})`,
+            backgroundColor: `rgba(${getRgbFromCssVar('--chart-2')}, 0.2)`,
+            borderWidth: 2,
+            pointBackgroundColor: `rgb(${getRgbFromCssVar('--chart-2')})`,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: `rgb(${getRgbFromCssVar('--chart-2')})`
+          },
+          {
+            label: 'Qwen-235B (参考)',
+            data: qwenScoresRadar, // Use SCALED data for radar plot
+            borderColor: `rgb(${getRgbFromCssVar('--chart-1')})`,
+            backgroundColor: `rgba(${getRgbFromCssVar('--chart-1')}, 0.2)`,
+            borderWidth: 2,
+            pointBackgroundColor: `rgb(${getRgbFromCssVar('--chart-1')})`,
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: `rgb(${getRgbFromCssVar('--chart-1')})`
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) { label += ': '; }
+                // Use context.dataIndex to find original label for special cases
+                const originalBenchmarkLabel = benchmarkLabels[context.dataIndex]; 
+                if (originalBenchmarkLabel === 'Codeforces Elo') {
+                    // ALWAYS show original Elo score in tooltip
+                    const originalScore = context.dataset.label.includes('Qwen') ? qwenOriginalElo : deepseekOriginalElo;
+                    label += originalScore + ' Elo'; // Show only original Elo
+                } else {
+                   // For other benchmarks, show the original (unscaled) score if needed, or the plotted value
+                   // Let's show the original score from the base arrays for consistency
+                   const originalScore = context.dataset.label.includes('Qwen') ? qwenScores[context.dataIndex] : deepseekScores[context.dataIndex];
+                   // Check if original score array value was a placeholder scale
+                   if (benchmarkLabels[context.dataIndex] === 'Codeforces Elo' && (originalScore === 50 || originalScore === 60)){
+                       // This case is handled above, but as a fallback:
+                       label += 'See Elo score'; 
+                   } else {
+                       label += originalScore.toFixed(1);
+                   }
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          r: {
+            angleLines: { color: getComputedStyle(document.documentElement).getPropertyValue('--border') },
+            grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border') },
+            pointLabels: {
+              color: getComputedStyle(document.documentElement).getPropertyValue('--foreground'),
+              font: { size: 11 } // Font size might need adjustment for longer labels
+            },
+            ticks: {
+              color: getComputedStyle(document.documentElement).getPropertyValue('--foreground'),
+              backdropColor: 'rgba(0,0,0,0)',
+              // Adjust scale for Elo if needed, e.g., suggest max based on non-Elo scores
+              min: 0,
+              max: 100,
+              stepSize: 10,
+              beginAtZero: true
+            }
+          }
+        }
+      }
+    };
+    const radarChart = new Chart(radarCtx, radarChartConfig);
+    
+    // 直接在实例化后强制设置最小和最大刻度值，并立即更新
+    radarChart.options.scales.r.min = 0;
+    radarChart.options.scales.r.max = 100;
+    radarChart.options.scales.r.beginAtZero = true;
+    
+    // 添加虚拟数据点以强制显示0-100的完整范围
+    // 这个数据点不会在图表上显示，但会强制Chart.js考虑完整的刻度范围
+    radarChart.data.datasets.push({
+      label: '范围控制',
+      data: [0, 0, 0, 0, 0, 0, 0, 0, 0], // 9个维度都设为0
+      borderColor: 'rgba(0,0,0,0)',
+      backgroundColor: 'rgba(0,0,0,0)',
+      borderWidth: 0,
+      pointRadius: 0,
+      pointHoverRadius: 0,
+      hidden: true // 隐藏这个数据集
+    });
+    
+    // 更新图表
+    radarChart.update();
+    
+    window.chartInstances.push(radarChart);
+  }
+
+  // --- Gap Bar Chart --- 
+  // Restore Gap Bar Chart Logic
+  const barCtx = document.getElementById('gap-chart')?.getContext('2d');
+  if (barCtx) {
+    // Map sorted data to include capability labels for the chart
+    const sortedGapDataWithCapabilityLabels = sortedGapData.map(item => {
+        const originalIndex = benchmarkLabels.indexOf(item.label);
+        return {
+            ...item,
+            capabilityLabel: capabilityLabels[originalIndex] || item.label // Fallback to original label if not found
+        };
+    });
+
+    const barChartConfig = {
+      type: 'bar',
+      data: {
+        labels: sortedGapDataWithCapabilityLabels.map(d => d.capabilityLabel), // Use capability labels for the chart
+        datasets: [{
+          label: 'Qwen 相对领先幅度 (%)',
+          data: sortedGapDataWithCapabilityLabels.map(d => d.relativeValue), // Use RELATIVE value
+          backgroundColor: sortedGapDataWithCapabilityLabels.map(d => {
+              const baseColorRgb = getRgbFromCssVar('--chart-1');
+              // Scale intensity based on relative value
+              const maxRelativeGap = Math.max(...sortedGapDataWithCapabilityLabels.map(item => Math.abs(item.relativeValue)));
+              // Avoid division by zero if maxRelativeGap is 0
+              const intensity = maxRelativeGap !== 0 ? Math.max(0.4, Math.min(1, Math.abs(d.relativeValue) / maxRelativeGap * 1.2)) : 0.4; 
+              return `rgba(${baseColorRgb}, ${intensity})`;
+          }),
+          borderColor: `rgb(${getRgbFromCssVar('--border')})`,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        indexAxis: 'y', 
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }, 
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                // Display relative percentage difference
+                let label = '相对领先 ';
+                if (context.parsed.x !== null) {
+                  label += '+' + context.parsed.x.toFixed(1) + '%';
+                }
+                return label;
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: '相对性能差距 (%) (Qwen vs Deepseek, 参考分数)', // Update axis title
+              color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+            },
+            grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--border') },
+            ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--foreground') }
+          },
+          y: {
+            grid: { display: false },
+            ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--foreground') }
+          }
+        }
+      }
+    };
+    const barChart = new Chart(barCtx, barChartConfig);
+    window.chartInstances.push(barChart);
+  }
+
+  // --- Accordion Logic ---
+  function setupAccordion() {
+    // Remove the click listener as the browser handles details opening
+    // document.querySelectorAll('.accordion-trigger').forEach(trigger => { ... });
+
+    document.querySelectorAll('details').forEach((detail) => {
+      // Initial setup: Get summary and content elements
+      const summary = detail.querySelector('summary');
+      const content = detail.querySelector('.accordion-content'); // Target the content div
+
+      if (!summary || !content) {
+        console.error('Accordion structure error:', detail);
+        return;
+      }
+
+      // Use the 'toggle' event on the <details> element
+      detail.addEventListener('toggle', (event) => {
+        // Check if the details element is being opened or closed
+        if (detail.open) {
+          // OPENING: Set opacity and max-height based on content scrollHeight
+          content.style.opacity = '1';
+          // Set max-height slightly larger than scrollHeight for smoother animation end
+          content.style.maxHeight = content.scrollHeight + 'px';
+        } else {
+          // CLOSING: Reset opacity and max-height to trigger transition back
+          // Ensure a reflow happens before setting maxHeight to 0 for transition to work
+          requestAnimationFrame(() => {
+            content.style.opacity = '0';
+            content.style.maxHeight = '0px';
+          });
+        }
+      });
+
+      // Optional: Ensure initial state matches CSS if JS loads late or details start open
+      // We need to ensure the transition doesn't play on initial load for closed items
+      if (!detail.open) {
+         content.style.transition = 'none'; // Disable transition initially
+         content.style.opacity = '0';
+         content.style.maxHeight = '0px';
+         // Re-enable transition slightly after load
+         setTimeout(() => {
+             content.style.transition = 'max-height 0.5s ease, opacity 0.5s ease';
+         }, 50);
+      } else {
+         // If starting open, set initial styles immediately
+         content.style.opacity = '1';
+         content.style.maxHeight = content.scrollHeight + 'px';
+      }
+    });
+  }
+  setupAccordion();
+
+
+  // --- Scroll Animation ---
+  function setupAnimations() {
+    const animatedElements = document.querySelectorAll('.animate-on-scroll');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animated');
+
+          // Special handling for counters
+          if (entry.target.querySelector('.counter-gap')) {
+              const counterElement = entry.target.querySelector('.counter-gap span');
+              const targetValue = parseFloat(entry.target.querySelector('.counter-gap').dataset.value);
+              animateCounter(counterElement, targetValue, 1500); // Animate over 1.5 seconds
+          }
+
+          observer.unobserve(entry.target); // Stop observing once animated
+        }
+      });
+    }, { threshold: 0.1 }); // Trigger animation when 10% visible
+
+    animatedElements.forEach(el => observer.observe(el));
+  }
+
+  // Counter Animation Helper
+  function animateCounter(element, targetValue, duration) {
+      let start = 0;
+      const increment = targetValue / (duration / 16); // Calculate increment per frame (approx 60fps)
+      let current = 0;
+
+      const updateCounter = () => {
+          current += increment;
+          if (current >= targetValue) {
+              element.textContent = targetValue.toFixed(1); // Ensure final value is exact
+          } else {
+              element.textContent = current.toFixed(1);
+              requestAnimationFrame(updateCounter);
+          }
+      };
+      requestAnimationFrame(updateCounter);
+  }
+
+  setupAnimations();
+
+
+  // --- Update Visualization Themes function ---
+  function updateVisualizationThemes() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const textColor = getComputedStyle(document.documentElement).getPropertyValue('--foreground');
+    const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border');
+    // Keep theme variables needed for other elements if any
+    // const chartColor1 = ...
+
+    // Update Mermaid theme
+    // mermaid.initialize({ theme: isDark ? 'dark' : 'default' });
+    // mermaid.contentLoaded(); 
+
+    // Update all Chart.js instances - Restore update logic
+    if (window.chartInstances && window.chartInstances.length) {
+      window.chartInstances.forEach(chart => {
+        // Update legend colors
+        if (chart.options.plugins && chart.options.plugins.legend) {
+          chart.options.plugins.legend.labels.color = textColor;
+        }
+
+        // Update scales (axes, grid lines, labels, ticks)
+        if (chart.options.scales) {
+          Object.values(chart.options.scales).forEach(scale => {
+            if (scale.grid) scale.grid.color = gridColor;
+            if (scale.angleLines) scale.angleLines.color = gridColor; // For radar
+            if (scale.pointLabels) scale.pointLabels.color = textColor; // For radar
+            if (scale.ticks) scale.ticks.color = textColor;
+            if (scale.title) scale.title.color = textColor;
+          });
+        }
+
+         // Update dataset colors (important for dynamic updates)
+         const chartColor1Rgb = getRgbFromCssVar('--chart-1'); // Get current theme color
+         const chartColor2Rgb = getRgbFromCssVar('--chart-2'); // Get current theme color
+         chart.data.datasets.forEach((dataset, index) => {
+            if (dataset.label.includes('Qwen')) {
+                dataset.borderColor = `rgb(${chartColor1Rgb})`;
+                dataset.backgroundColor = `rgba(${chartColor1Rgb}, 0.2)`;
+                dataset.pointBackgroundColor = `rgb(${chartColor1Rgb})`;
+                dataset.pointHoverBorderColor = `rgb(${chartColor1Rgb})`;
+            } else if (dataset.label.includes('Deepseek')) {
+                 dataset.borderColor = `rgb(${chartColor2Rgb})`;
+                 dataset.backgroundColor = `rgba(${chartColor2Rgb}, 0.2)`;
+                 dataset.pointBackgroundColor = `rgb(${chartColor2Rgb})`;
+                 dataset.pointHoverBorderColor = `rgb(${chartColor2Rgb})`;
+            }
+            // For bar chart, re-calculate background colors
+            if (chart.config.type === 'bar' && dataset.label.includes('领先幅度')) {
+                dataset.backgroundColor = sortedGapDataWithCapabilityLabels.map(d => {
+                    const baseColorRgbForBar = getRgbFromCssVar('--chart-1'); // Ensure using current theme color
+                    const maxGap = Math.max(...sortedGapDataWithCapabilityLabels.map(item => Math.abs(item.value)));
+                    const intensity = Math.max(0.4, Math.min(1, Math.abs(d.value) / maxGap * 1.2));
+                    return `rgba(${baseColorRgbForBar}, ${intensity})`;
+                });
+                 dataset.borderColor = `rgb(${getRgbFromCssVar('--border')})`;
+            }
+        });
+
+        // Apply updates
+        chart.update();
+      });
+    }
+  }
+
+  // Initial call to set chart colors correctly on load
+  updateVisualizationThemes();
+
+}); // End DOMContentLoaded
+  </script>
+</body>
+</html> 

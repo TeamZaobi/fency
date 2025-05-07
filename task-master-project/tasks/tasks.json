@@ -1,0 +1,155 @@
+{
+  "lastUpdated": "2024-05-07T08:45:00.000Z",
+  "tasks": [
+    {
+      "id": "1",
+      "title": "SOX8下游靶基因鉴定",
+      "status": "pending",
+      "priority": "high",
+      "description": "利用ChIP-seq和RNA-seq技术鉴定SOX8转录因子在软骨细胞中的直接下游靶基因",
+      "details": "设计并执行ChIP-seq实验鉴定SOX8的DNA结合位点；执行RNA-seq分析SOX8过表达/敲低对基因表达的影响；通过生物信息学分析整合ChIP-seq和RNA-seq数据，确定SOX8的直接靶基因；验证重要靶基因",
+      "testStrategy": "使用实时定量PCR、荧光素酶报告基因分析等方法验证关键靶基因",
+      "subtasks": []
+    },
+    {
+      "id": "2",
+      "title": "SOX8蛋白稳定性机制研究",
+      "status": "pending",
+      "priority": "medium",
+      "description": "探究SOX8蛋白稳定性高于SOX9的具体分子基础",
+      "details": "比较SOX8和SOX9蛋白的半衰期；分析两种蛋白的翻译后修饰模式（磷酸化、乙酰化、泛素化等）；鉴定与SOX8和SOX9相互作用的E3泛素连接酶；构建SOX8、SOX9嵌合蛋白确定稳定性关键结构域",
+      "testStrategy": "使用环状二色谱、蛋白质质谱分析、免疫共沉淀等技术",
+      "subtasks": []
+    },
+    {
+      "id": "3",
+      "title": "SOX8相互作用伙伴蛋白鉴定",
+      "status": "pending",
+      "priority": "medium",
+      "description": "鉴定SOX8在软骨细胞中的特异性相互作用伙伴蛋白",
+      "details": "在原代软骨细胞和软骨细胞系中进行SOX8的免疫沉淀；使用质谱分析鉴定与SOX8相互作用的蛋白；确认关键相互作用蛋白并分析它们在软骨发育中的功能；研究相互作用蛋白如何影响SOX8的转录活性",
+      "testStrategy": "Co-IP、质谱分析、GST pull-down、Y2H系统",
+      "subtasks": []
+    },
+    {
+      "id": "4",
+      "title": "SOX8时空表达图谱构建",
+      "status": "pending",
+      "priority": "medium",
+      "description": "构建SOX8在软骨发育不同阶段的时空表达图谱",
+      "details": "收集不同发育阶段的软骨组织样本；使用原位杂交和免疫组织化学技术检测SOX8的表达；与SOX9表达模式进行对比；开展单细胞测序分析不同软骨细胞亚群中SOX8的表达",
+      "testStrategy": "原位杂交、免疫组化、单细胞RNA-seq",
+      "subtasks": []
+    },
+    {
+      "id": "5",
+      "title": "SOX8对软骨肥大分化的影响评估",
+      "status": "pending",
+      "priority": "high",
+      "description": "评估SOX8上调对软骨细胞肥大分化标志物表达的影响",
+      "details": "在体外软骨细胞模型中过表达SOX8；检测肥大标志物（COL10A1, MMP13, RUNX2等）的表达变化；在OA模型中分析SOX8与肥大标志物的相关性；比较SOX8和SOX9对肥大分化的调控差异",
+      "testStrategy": "qPCR、Western blot、免疫组化",
+      "subtasks": []
+    },
+    {
+      "id": "6",
+      "title": "SOX8诱导透明软骨形成能力评估",
+      "status": "pending",
+      "priority": "high",
+      "description": "确定SOX8是否能诱导稳定的透明软骨形成",
+      "details": "在体外软骨分化模型中比较SOX8与SOX9诱导的软骨基质组成；长期培养分析SOX8诱导的软骨稳定性；评估联合使用SOX8和肥大抑制剂的效果；分析SOX8诱导的软骨与天然关节软骨的相似度",
+      "testStrategy": "Alcian blue/Safranin O染色、免疫组化、透射电镜分析基质超微结构",
+      "subtasks": []
+    },
+    {
+      "id": "7",
+      "title": "SOX8肥大分化控制策略开发",
+      "status": "pending",
+      "priority": "high",
+      "description": "开发控制SOX8诱导肥大分化的策略",
+      "details": "筛选能够抑制SOX8诱导肥大分化的小分子或生物制剂；设计SOX8功能域突变体以保留促软骨形成能力但减少肥大诱导；开发时空特异性SOX8表达系统；确定SOX8与其他肥大抑制因子的最佳组合",
+      "testStrategy": "高通量筛选、点突变分析、体外软骨分化模型",
+      "subtasks": []
+    },
+    {
+      "id": "8",
+      "title": "靶向关节软骨的基因递送系统开发",
+      "status": "pending",
+      "priority": "high",
+      "description": "开发能够特异靶向关节软骨的基因递送系统",
+      "details": "筛选适合关节软骨基因递送的AAV血清型；开发靶向软骨的非病毒载体（如纳米颗粒）；优化基因递送系统以提高转染效率和降低免疫原性；在体外和小型动物模型中评估基因递送系统的特异性和效率",
+      "testStrategy": "荧光标记载体跟踪、转染效率定量分析、安全性评估",
+      "subtasks": []
+    },
+    {
+      "id": "9",
+      "title": "软骨特异性SOX8表达系统设计",
+      "status": "pending",
+      "priority": "medium",
+      "description": "设计软骨细胞特异性启动子驱动的SOX8表达系统",
+      "details": "筛选和优化软骨细胞特异性启动子（如Col2a1, Acan等）；设计诱导性表达系统以实现SOX8表达的时空控制；评估不同启动子在各软骨细胞亚群中的活性；整合启动子与SOX8表达载体",
+      "testStrategy": "荧光素酶报告基因分析、体内表达谱验证",
+      "subtasks": []
+    },
+    {
+      "id": "10",
+      "title": "SOX8基因/蛋白递送生物材料开发",
+      "status": "pending",
+      "priority": "medium",
+      "description": "开发可控释放的SOX8基因/蛋白递送生物材料",
+      "details": "筛选适合软骨组织工程的生物材料支架（如透明质酸、胶原、丝素蛋白等）；开发SOX8基因/蛋白与支架材料的偶联技术；设计可控/缓慢释放系统；评估材料的生物相容性和降解特性",
+      "testStrategy": "体外释放动力学研究、原子力显微镜材料表征、生物相容性测试",
+      "subtasks": []
+    },
+    {
+      "id": "11",
+      "title": "SOX8增强MSC/iPSC软骨分化方法开发",
+      "status": "pending",
+      "priority": "high",
+      "description": "开发通过上调SOX8增强MSC/iPSC软骨分化能力的方法",
+      "details": "优化SOX8在MSC/iPSC中的表达条件；比较SOX8、SOX9和SOX三重奏(SOX5/6/8或SOX5/6/9)在软骨分化中的效果；建立SOX8诱导软骨分化的最佳方案；评估SOX8分化MSC/iPSC的功能特性",
+      "testStrategy": "软骨标志物检测、体外软骨基质定量分析",
+      "subtasks": []
+    },
+    {
+      "id": "12",
+      "title": "SOX8上调的细胞表型稳定性评估",
+      "status": "pending",
+      "priority": "medium",
+      "description": "长期评估SOX8上调对软骨细胞表型稳定性的影响",
+      "details": "长期培养SOX8过表达的软骨细胞；监测软骨标志物表达和细胞表型变化；分析表型稳定性与SOX8表达水平的关系；比较SOX8和SOX9在维持软骨表型方面的能力",
+      "testStrategy": "连续传代培养、定期表型分析、基因表达谱分析",
+      "subtasks": []
+    },
+    {
+      "id": "13",
+      "title": "SOX8与肥大抑制因子联合应用开发",
+      "status": "pending",
+      "priority": "medium",
+      "description": "开发SOX8与其他因子联合应用的细胞预处理方案",
+      "details": "筛选与SOX8协同作用的软骨促进因子；评估SOX8与PTHrP等肥大抑制剂的联合效果；开发SOX8与TGF-β/BMP等生长因子的最佳组合；优化联合用药的时间窗口和剂量",
+      "testStrategy": "正交实验设计、软骨标志物和肥大标志物分析",
+      "subtasks": []
+    },
+    {
+      "id": "14",
+      "title": "小型动物OA模型SOX8治疗评估",
+      "status": "pending",
+      "priority": "high",
+      "description": "在小型动物OA模型中测试SOX8上调治疗策略的有效性",
+      "details": "建立啮齿类动物OA模型（手术诱导或化学诱导）；使用优化的递送系统上调软骨中SOX8表达；评估治疗效果（疼痛、功能、组织学、生化指标）；比较SOX8与现有治疗方法的效果",
+      "testStrategy": "疼痛行为学测试、关节功能评估、组织学分析、微CT分析",
+      "subtasks": []
+    },
+    {
+      "id": "15",
+      "title": "大型动物模型SOX8治疗长期评估",
+      "status": "pending",
+      "priority": "medium",
+      "description": "在大型动物软骨缺损模型中评估SOX8上调方法的长期疗效和安全性",
+      "details": "在兔、猪或羊等大型动物中建立软骨缺损或OA模型；应用优化的SOX8治疗方案；长期随访评估修复组织的质量和功能；评估治疗的安全性和潜在副作用",
+      "testStrategy": "MRI评估、关节力学测试、组织学评分、安全性指标监测",
+      "subtasks": []
+    }
+  ]
+} 

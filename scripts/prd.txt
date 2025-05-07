@@ -1,0 +1,49 @@
+# 凿壁项目 React + TypeScript 重构 PRD
+
+## 项目背景
+
+凿壁项目是一个基于静态HTML、客户端JavaScript和独立内容页面的网站。为了提高开发效率、代码质量和用户体验，我们决定将其迁移到现代的React+TypeScript技术栈。
+
+## 重构目标
+
+1. 技术现代化：从原生HTML/JS迁移到React/TS生态
+2. UI/UX提升：利用shadcn/ui统一基础UI，提高开发效率和视觉一致性
+3. 组件化：将现有页面结构分解为可复用的React组件
+4. 维护性改进：通过TypeScript类型系统和React框架提高代码可维护性
+5. 保留灵活性：确保内容页面能继续实现独特的个性化设计和交互
+6. 解决动态效果不稳定问题：将LLM生成的不稳定动态效果重构为可维护的React组件
+
+## 技术栈
+
+- 框架/语言: React, TypeScript
+- UI库: shadcn/ui (基于Radix UI和Tailwind CSS)
+- 路由: react-router-dom
+- 样式: Tailwind CSS
+- 构建工具: Vite
+
+## 主要组件规划
+
+1. App.tsx: 应用根组件，设置路由和全局状态
+2. Layout.tsx: 共享布局，包含页眉、页脚和主题切换
+3. HomePage.tsx: 主页组件，替代现有index.html，负责数据获取和内容展示
+4. ContentPageWrapper.tsx: 内容页包装器，负责根据路由加载和渲染内容页面
+5. 数据流: 从metadata.json到组件状态，再到渲染
+
+## 内容渲染策略
+
+优先选择MDX方案，结合自定义React组件：
+- MDX用于承载页面的主要文本内容和结构
+- 自定义React组件用于封装动态/交互元素（图表、动画）
+- 使用专门的库（recharts, Framer Motion等）实现稳定可控的效果
+
+## 执行步骤
+
+1. 初始化：创建Vite+React+TS项目，集成Tailwind和shadcn/ui
+2. 基础布局：实现Layout组件（页眉、页脚、主题切换）
+3. 路由设置：配置基本路由结构
+4. 主页实现：开发HomePage.tsx，加载metadata.json，实现内容列表展示和筛选
+5. 内容包装器：开发ContentPageWrapper.tsx，实现内容页面的加载和渲染
+6. 内容迁移：将pages/**/*.html内容迁移到MDX或React组件
+7. 样式迁移：将自定义CSS逻辑迁移到Tailwind配置或组件级样式
+8. 测试与优化：对路由、数据加载、渲染和响应式布局进行测试
+9. 部署：配置部署流程 

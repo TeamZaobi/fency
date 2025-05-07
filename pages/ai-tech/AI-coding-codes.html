@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- === 元数据 === -->
+    <meta name="publish-date" content="2024-08-01"> <!-- 注意：实际部署时应动态更新为服务器日期 -->
+    <meta name="category" content="ai-tech">
+    <meta name="description" content="一个关于使用 Cursor + MCP 构建全栈规则体系以规范 AI 编码的综合指南，详细介绍了从 IDE 集成到设计原则、静态分析、安全合规、向量记忆和 DevOps 度量的各类工具和实践。">
+    <meta name="keywords" content="AI编程, Cursor, MCP, 编码规范, 静态分析, SAST, SCA, SonarQube, Bandit, CodeQL, SBOM, Syft, 向量数据库, Pinecone, Milvus, DORA, DevOps, LLM, 代码质量, 安全合规">
+    <!-- === 页面标题 === -->
+    <title>AI 编码规范化实战手册 (Cursor + MCP) | 凿壁</title>
+    <!-- === 外部资源 === -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion@10/dist/framer-motion.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <!-- Tippy.js (for tooltips/popovers) -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <style>
+        /* Apply Theme Variables */
+        :root {
+            --background: rgb(255, 255, 255); /* Reverted */
+            --foreground: rgb(0, 0, 0); /* Reverted */
+            --card: rgb(255, 255, 255); /* Reverted */
+            --card-foreground: rgb(0, 0, 0); /* Reverted */
+            --popover: rgb(255, 255, 255); /* Reverted */
+            --popover-foreground: rgb(0, 0, 0); /* Reverted */
+            --primary: rgb(255, 51, 51); /* Reverted */
+            --primary-foreground: rgb(255, 255, 255); /* Reverted */
+            --secondary: rgb(255, 255, 0); /* Reverted */
+            --secondary-foreground: rgb(0, 0, 0); /* Reverted */
+            --muted: rgb(240, 240, 240); /* Reverted */
+            --muted-foreground: rgb(51, 51, 51); /* Reverted */
+            --accent: rgb(0, 102, 255); /* Reverted */
+            --accent-foreground: rgb(255, 255, 255); /* Reverted */
+            --destructive: rgb(0, 0, 0); /* Reverted */
+            --destructive-foreground: rgb(255, 255, 255); /* Reverted */
+            --border: rgb(0, 0, 0); /* Reverted */
+            --input: rgb(0, 0, 0); /* Reverted */
+            --ring: rgb(255, 51, 51); /* Reverted */
+            --chart-1: rgb(255, 51, 51); /* Reverted */
+            --chart-2: rgb(255, 255, 0); /* Reverted */
+            --chart-3: rgb(0, 102, 255); /* Reverted */
+            --chart-4: rgb(0, 204, 0); /* Reverted */
+            --chart-5: rgb(204, 0, 204); /* Reverted */
+            --sidebar: rgb(240, 240, 240); /* Reverted */
+            --sidebar-foreground: rgb(0, 0, 0); /* Reverted */
+            --sidebar-primary: rgb(255, 51, 51); /* Reverted */
+            --sidebar-primary-foreground: rgb(255, 255, 255); /* Reverted */
+            --sidebar-accent: rgb(0, 102, 255); /* Reverted */
+            --sidebar-accent-foreground: rgb(255, 255, 255); /* Reverted */
+            --sidebar-border: rgb(0, 0, 0); /* Reverted */
+            --sidebar-ring: rgb(255, 51, 51); /* Reverted */
+            --font-sans: 'DM Sans', sans-serif; /* Reverted Font */
+            --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif; /* Reverted Font */
+            --font-mono: 'Space Mono', monospace; /* Reverted Font */
+            --radius: 0px; /* Reverted Radius */
+            /* Reverted Custom Shadows */
+            --shadow-custom-base: 4px 4px 0px 0px rgb(0 0 0 / 0.5);
+            --shadow-custom-md: 4px 4px 0px 0px rgb(0 0 0 / 1.0), 4px 2px 4px -1px rgb(0 0 0 / 1.0);
+            --shadow-custom-lg: 4px 4px 0px 0px rgb(0 0 0 / 1.0), 4px 4px 6px -1px rgb(0 0 0 / 1.0);
+            --shadow-custom-xl: 4px 4px 0px 0px rgb(0 0 0 / 1.0), 4px 8px 10px -1px rgb(0 0 0 / 1.0);
+            /* Keep Updated Shadows */
+            --shadow-2xs: var(--shadow-custom-base); /* Use custom shadow var */
+            --shadow-xs: var(--shadow-custom-base); /* Use custom shadow var */
+            --shadow-sm: var(--shadow-custom-md); /* Use custom shadow var */
+            --shadow: var(--shadow-custom-md); /* Use custom shadow var */
+            --shadow-md: var(--shadow-custom-md); /* Use custom shadow var */
+            --shadow-lg: var(--shadow-custom-lg); /* Use custom shadow var */
+            --shadow-xl: var(--shadow-custom-xl); /* Use custom shadow var */
+            --shadow-2xl: var(--shadow-custom-xl); /* Use custom shadow var */
+        }
+
+        /* Apply Dark Mode Variables */
+        .dark {
+            --background: rgb(0, 0, 0); /* Reverted */
+            --foreground: rgb(255, 255, 255); /* Reverted */
+            --card: rgb(51, 51, 51); /* Reverted */
+            --card-foreground: rgb(255, 255, 255); /* Reverted */
+            --popover: rgb(51, 51, 51); /* Reverted */
+            --popover-foreground: rgb(255, 255, 255); /* Reverted */
+            --primary: rgb(255, 102, 102); /* Reverted */
+            --primary-foreground: rgb(0, 0, 0); /* Reverted */
+            --secondary: rgb(255, 255, 51); /* Reverted */
+            --secondary-foreground: rgb(0, 0, 0); /* Reverted */
+            --muted: rgb(51, 51, 51); /* Reverted */
+            --muted-foreground: rgb(204, 204, 204); /* Reverted */
+            --accent: rgb(51, 153, 255); /* Reverted */
+            --accent-foreground: rgb(0, 0, 0); /* Reverted */
+            --destructive: rgb(255, 255, 255); /* Reverted */
+            --destructive-foreground: rgb(0, 0, 0); /* Reverted */
+            --border: rgb(255, 255, 255); /* Reverted */
+            --input: rgb(255, 255, 255); /* Reverted */
+            --ring: rgb(255, 102, 102); /* Reverted */
+            --chart-1: rgb(255, 102, 102); /* Reverted */
+            --chart-2: rgb(255, 255, 51); /* Reverted */
+            --chart-3: rgb(51, 153, 255); /* Reverted */
+            --chart-4: rgb(51, 204, 51); /* Reverted */
+            --chart-5: rgb(204, 51, 204); /* Reverted */
+            --sidebar: rgb(0, 0, 0); /* Reverted */
+            --sidebar-foreground: rgb(255, 255, 255); /* Reverted */
+            --sidebar-primary: rgb(255, 102, 102); /* Reverted */
+            --sidebar-primary-foreground: rgb(0, 0, 0); /* Reverted */
+            --sidebar-accent: rgb(51, 153, 255); /* Reverted */
+            --sidebar-accent-foreground: rgb(0, 0, 0); /* Reverted */
+            --sidebar-border: rgb(255, 255, 255); /* Reverted */
+            --sidebar-ring: rgb(255, 102, 102); /* Reverted */
+            /* Reverted Custom Shadows for Dark Mode */
+            --shadow-custom-base: 4px 4px 0px 0px rgb(255 255 255 / 0.3);
+            --shadow-custom-md: 4px 4px 0px 0px rgb(255 255 255 / 0.5), 4px 2px 4px -1px rgb(255 255 255 / 0.5);
+            --shadow-custom-lg: 4px 4px 0px 0px rgb(255 255 255 / 0.5), 4px 4px 6px -1px rgb(255 255 255 / 0.5);
+            --shadow-custom-xl: 4px 4px 0px 0px rgb(255 255 255 / 0.5), 4px 8px 10px -1px rgb(255 255 255 / 0.5);
+            /* Keep Updated Shadows */
+            --shadow-2xs: var(--shadow-custom-base); /* Use custom shadow var */
+            --shadow-xs: var(--shadow-custom-base); /* Use custom shadow var */
+            --shadow-sm: var(--shadow-custom-md); /* Use custom shadow var */
+            --shadow: var(--shadow-custom-md); /* Use custom shadow var */
+            --shadow-md: var(--shadow-custom-md); /* Use custom shadow var */
+            --shadow-lg: var(--shadow-custom-lg); /* Use custom shadow var */
+            --shadow-xl: var(--shadow-custom-xl); /* Use custom shadow var */
+            --shadow-2xl: var(--shadow-custom-xl); /* Use custom shadow var */
+        }
+
+        /* Inline theme for components */
+        @theme inline {
+            --color-background: var(--background);
+            --color-foreground: var(--foreground);
+            --color-card: var(--card);
+            --color-card-foreground: var(--card-foreground);
+            --color-popover: var(--popover);
+            --color-popover-foreground: var(--popover-foreground);
+            --color-primary: var(--primary);
+            --color-primary-foreground: var(--primary-foreground);
+            --color-secondary: var(--secondary);
+            --color-secondary-foreground: var(--secondary-foreground);
+            --color-muted: var(--muted);
+            --color-muted-foreground: var(--muted-foreground);
+            --color-accent: var(--accent);
+            --color-accent-foreground: var(--accent-foreground);
+            --color-destructive: var(--destructive);
+            --color-destructive-foreground: var(--destructive-foreground);
+            --color-border: var(--border);
+            --color-input: var(--input);
+            --color-ring: var(--ring);
+            --color-chart-1: var(--chart-1);
+            --color-chart-2: var(--chart-2);
+            --color-chart-3: var(--chart-3);
+            --color-chart-4: var(--chart-4);
+            --color-chart-5: var(--chart-5);
+            --color-sidebar: var(--sidebar);
+            --color-sidebar-foreground: var(--sidebar-foreground);
+            --color-sidebar-primary: var(--sidebar-primary);
+            --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+            --color-sidebar-accent: var(--sidebar-accent);
+            --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+            --color-sidebar-border: var(--sidebar-border);
+            --color-sidebar-ring: var(--sidebar-ring);
+
+            --font-sans: var(--font-sans);
+            --font-mono: var(--font-mono);
+            --font-serif: var(--font-serif);
+
+            --radius-sm: calc(var(--radius) - 4px);
+            --radius-md: calc(var(--radius) - 2px);
+            --radius-lg: var(--radius);
+            --radius-xl: calc(var(--radius) + 4px);
+
+            --shadow-2xs: var(--shadow-2xs);
+            --shadow-xs: var(--shadow-xs);
+            --shadow-sm: var(--shadow-sm);
+            --shadow: var(--shadow);
+            --shadow-md: var(--shadow-md);
+            --shadow-lg: var(--shadow-lg);
+            --shadow-xl: var(--shadow-xl);
+            --shadow-2xl: var(--shadow-2xl);
+        }
+
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--background);
+            color: var(--foreground);
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            line-height: 1.7; /* Improve Chinese readability */
+        }
+
+        /* Custom shadow utility classes */
+        .shadow-custom-base { box-shadow: var(--shadow-custom-base); } /* Reverted to use custom vars */
+        .shadow-custom-md { box-shadow: var(--shadow-custom-md); } /* Reverted to use custom vars */
+        .shadow-custom-lg { box-shadow: var(--shadow-custom-lg); } /* Reverted to use custom vars */
+        .shadow-custom-xl { box-shadow: var(--shadow-custom-xl); } /* Reverted to use custom vars */
+
+        /* Bento item base style */
+        .bento-item {
+            background-color: var(--card);
+            color: var(--card-foreground);
+            border: 1px solid var(--border);
+            padding: 1.5rem; /* p-6 */
+            display: flex;
+            flex-direction: column;
+            /* justify-content: space-between; */ /* Remove fixed space-between */
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+            position: relative;
+            overflow: hidden;
+            /* Revert radius and shadow */
+            border-radius: var(--radius); /* Reverted to original no radius */
+            box-shadow: var(--shadow-custom-base); /* Reverted to original custom shadow */
+        }
+        .bento-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-custom-lg); /* Reverted hover shadow */
+        }
+
+        /* Gradient effect - more subtle */
+        .gradient-overlay-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--primary) 0%, transparent 70%);
+            opacity: 0.15; /* Adjust transparency */
+            z-index: 0;
+            pointer-events: none; /* Allow interaction with content */
+        }
+        .gradient-overlay-accent::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--accent) 0%, transparent 70%);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .gradient-overlay-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--secondary) 0%, transparent 70%);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Ensure content is above gradient */
+        .bento-item > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Style for large numbers/text */
+        .large-metric {
+            font-size: 4rem; /* text-6xl */
+            font-weight: 700; /* bold */
+            line-height: 1;
+            color: var(--primary);
+        }
+        .large-metric-accent {
+            font-size: 4rem; /* text-6xl */
+            font-weight: 700; /* bold */
+            line-height: 1;
+            color: var(--accent);
+        }
+
+        /* Simple line icon style */
+        .line-icon {
+            stroke: var(--foreground);
+            stroke-width: 1.5;
+            fill: none;
+            max-height: 80px; /* Adjust size as needed */
+            margin-top: auto; /* Push icon to bottom if needed */
+        }
+
+        /* Ensure no radius on elements - REMOVED, using theme radius */
+        /* * {
+           border-radius: var(--radius) !important;
+        } */
+
+        /* Hide scrollbar for a cleaner look (optional) */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Style for code snippets */
+        code.inline-code {
+            font-family: var(--font-mono);
+            background-color: var(--muted);
+            color: var(--muted-foreground);
+            padding: 0.1em 0.4em;
+            border-radius: var(--radius-sm);
+            font-size: 0.875em; /* Slightly smaller */
+        }
+        pre code {
+             font-family: var(--font-mono);
+        }
+
+        /* Heading styles */
+        h1, h2, h3, h4 {
+            font-family: var(--font-serif);
+            font-weight: 700;
+        }
+        h1 { margin-bottom: 1rem; }
+        h2 { margin-bottom: 0.75rem; }
+        h3 { margin-bottom: 0.5rem; }
+
+        /* Link styles */
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: var(--ring); /* Use ring color for hover */
+        }
+
+        /* Mermaid diagram container */
+        .mermaid-container {
+            background-color: var(--card);
+            padding: 1rem;
+            /* Revert radius */
+            border-radius: var(--radius);
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: auto;
+        }
+
+        /* Tool list styling */
+        .tool-list {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 0.75rem;
+        }
+        .tool-list li {
+            border-bottom: 1px dashed var(--border);
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: center;
+        }
+         .tool-list li:last-child {
+            border-bottom: none;
+        }
+        .tool-list .tool-icon {
+            margin-right: 0.75rem;
+            color: var(--primary);
+            width: 1.5em; /* Fixed width for alignment */
+            text-align: center;
+        }
+        .tool-list .tool-name {
+            font-weight: 500;
+            color: var(--card-foreground);
+            margin-right: 0.5rem;
+        }
+        .tool-list .tool-desc {
+            font-size: 0.875em;
+            color: var(--muted-foreground);
+        }
+        .tool-list a {
+            font-size: 0.8em;
+            margin-left: auto;
+            color: var(--accent-foreground); /* Keep original contrast */
+            background-color: var(--accent);
+            padding: 0.2em 0.5em;
+            border-radius: var(--radius); /* Revert radius */
+        }
+         .tool-list a:hover {
+            background-color: var(--ring);
+            color: var(--primary-foreground); /* Keep original contrast */
+            text-decoration: none;
+         }
+
+         /* Custom Tippy.js Theme */
+         .tippy-box[data-theme~='custom-theme'] {
+             background-color: var(--card);
+             color: var(--card-foreground);
+             border: 1px solid var(--border);
+             box-shadow: var(--shadow-custom-md); /* Use custom shadow */
+             border-radius: var(--radius); /* Match page radius (0px) */
+             font-family: var(--font-sans);
+             font-size: 0.875rem; /* text-sm */
+             line-height: 1.5;
+             padding: 0.5rem 0.75rem; /* p-2 p-3 */
+         }
+         .tippy-box[data-theme~='custom-theme'][data-placement^='top'] > .tippy-arrow::before {
+             border-top-color: var(--border);
+         }
+         .tippy-box[data-theme~='custom-theme'][data-placement^='bottom'] > .tippy-arrow::before {
+             border-bottom-color: var(--border);
+         }
+         .tippy-box[data-theme~='custom-theme'][data-placement^='left'] > .tippy-arrow::before {
+             border-left-color: var(--border);
+         }
+         .tippy-box[data-theme~='custom-theme'][data-placement^='right'] > .tippy-arrow::before {
+             border-right-color: var(--border);
+         }
+         .tippy-box[data-theme~='custom-theme'] > .tippy-content {
+             padding: 0;
+         }
+
+         /* Style for interactive terms */
+         .tech-term {
+             text-decoration: underline;
+             text-decoration-style: dotted;
+             text-decoration-color: var(--primary);
+             cursor: help;
+             font-weight: 500; /* Slightly bolder */
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Navigation/Return Link -->
+    <nav class="absolute top-4 left-4 z-20">
+         <a href="../../index.html" class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-[--primary-foreground] bg-[--primary] hover:bg-[--ring] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--ring]" style="font-family: var(--font-sans);">
+            <i class="fas fa-arrow-left mr-2"></i> 返回首页
+        </a>
+    </nav>
+
+    <div class="container mx-auto px-4 py-12 md:py-20">
+
+        <!-- 页眉信息 -->
+        <header class="text-center mb-12 md:mb-20">
+            <div class="mb-4">
+                <span class="inline-block bg-[--accent] text-[--accent-foreground] text-xs font-medium mr-2 px-2.5 py-0.5 rounded" style="font-family: var(--font-sans);">
+                    <i class="fas fa-tag mr-1"></i> AI技术与生态
+                </span>
+                <span class="text-xs text-[--muted-foreground]" style="font-family: var(--font-mono);">发布日期: 2024-08-01</span>
+            </div>
+        <div
+            class="text-center mb-16 md:mb-24 motion-div"
+            data-motion-initial='{"opacity": 0, "y": -20}'
+            data-motion-animate='{"opacity": 1, "y": 0}'
+            data-motion-transition='{"duration": 0.8, "ease": "easeOut"}'
+        >
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4" style="color: var(--foreground);">
+                规范化 <span style="color: var(--primary);">Cursor + AI</span> 编码
+            </h1>
+            <p class="text-lg md:text-xl font-mono" style="color: var(--muted-foreground);">
+                The Full-Stack Rule System powered by MCP (Model Context Protocol)
+            </p>
+        </div>
+        </header>
+
+        <!-- === 引言与总览 === -->
+        <section 
+            class="mb-12 md:mb-16 p-6 md:p-8 bg-[--card] border border-[--border] shadow-custom-md motion-section"
+            data-motion-initial='{"opacity": 0, "y": 20}'
+            data-motion-animate='{"opacity": 1, "y": 0}'
+            data-motion-transition='{"duration": 0.7, "delay": 0.1, "ease": "easeOut"}'
+        >
+            <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center font-serif flex items-center justify-center">
+                <i class="fas fa-map-signs mr-3 text-[--primary]"></i>引言：为何需要规范化 AI 编码？
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
+                <div>
+                    <h3 class="text-xl font-bold mb-3 flex items-center font-serif"><i class="fas fa-bomb mr-2 text-[--destructive]"></i>核心问题</h3>
+                    <p class="text-sm mb-4" style="color: var(--muted-foreground);">
+                        直接使用 AI (如 Cursor) 加速编码虽快，但易引入诸多风险：设计模式混乱、代码质量参差不齐、潜藏安全漏洞、违反开源许可证、难以维护和协作。这些问题往往在后期才暴露，修复成本高昂。
+                    </p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-3 flex items-center font-serif"><i class="fas fa-lightbulb mr-2 text-[--chart-3]"></i>解决思路: "规则即服务"</h3>
+                    <p class="text-sm mb-4" style="color: var(--muted-foreground);">
+                        本手册提出一套基于 <strong class="tech-term" data-tippy-content="Model Context Protocol: 连接LLM与外部数据/工具的标准接口">MCP</strong> 的 <strong class="text-[--primary]">"规则即服务"</strong> 架构。核心思想是：将编码规范、设计原则、安全要求、合规策略等转化为 AI 可理解、可调用的 <strong class="tech-term" data-tippy-content="通过API提供规则检查、知识查询等服务">外部规则服务</strong>，并通过 <strong class="tech-term" data-tippy-content="AI增强型代码编辑器">Cursor IDE</strong> 在编码时 <strong class="tech-term" data-tippy-content="在软件开发生命周期的早期阶段（如编码、设计时）就引入质量和安全检查，而不是等到测试或部署阶段。">"左移"</strong> 集成这些规则，实现实时反馈与干预。
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 pt-6 border-t border-[--border]">
+                 <h3 class="text-xl font-bold mb-4 text-center font-serif"><i class="fas fa-tools mr-2 text-[--secondary]"></i>关键工具类别概览</h3>
+                 <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 text-center text-xs font-mono">
+                     <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-laptop-code fa-2x mb-1 text-[--primary]"></i><span>IDE & 协议</span>
+                     </div>
+                     <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-book-open fa-2x mb-1 text-[--accent]"></i><span>知识/提示库</span>
+                     </div>
+                     <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-shield-alt fa-2x mb-1 text-[--chart-1]"></i><span>SAST/SCA</span>
+                     </div>
+                      <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-balance-scale-left fa-2x mb-1 text-[--accent]"></i><span>合规/SBOM</span>
+                     </div>
+                      <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-file-contract fa-2x mb-1 text-[--chart-3]"></i><span>接口/模式校验</span>
+                     </div>
+                      <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-database fa-2x mb-1 text-[--primary]"></i><span>向量记忆</span>
+                     </div>
+                     <div class="flex flex-col items-center p-2 border border-dashed border-[--border]">
+                         <i class="fas fa-tachometer-alt fa-2x mb-1 text-[--secondary]"></i><span>DevOps度量</span>
+                     </div>
+                 </div>
+            </div>
+             <div class="mt-6 text-center">
+                 <h3 class="text-xl font-bold mb-3 flex items-center justify-center font-serif"><i class="fas fa-bullseye mr-2 text-[--chart-4]"></i>预期效果</h3>
+                 <p class="text-sm" style="color: var(--muted-foreground);">
+                     通过实施本手册介绍的方法和工具链，旨在实现：<strong class="text-[--foreground]">速度与规范的平衡</strong>、<strong class="text-[--foreground]">代码质量与安全性的提升</strong>、<strong class="text-[--foreground]">合规风险的降低</strong>，并通过 <strong class="tech-term" data-tippy-content="DevOps Research and Assessment 的四个关键指标">DORA</strong> 等指标实现 <strong class="text-[--foreground]">可量化的改进</strong>。
+                 </p>
+            </div>
+        </section>
+        <!-- === 引言与总览 结束 === -->
+
+        <!-- === MCP分隔器 === -->
+        <div 
+            class="relative py-8 my-12 flex items-center justify-center overflow-hidden motion-div"
+            data-motion-initial='{"opacity": 0}'
+            data-motion-animate='{"opacity": 1}'
+            data-motion-transition='{"duration": 0.5}'
+        >
+            <div class="absolute left-0 w-1/3 h-px bg-gradient-to-r from-transparent to-[--border]"></div>
+            <div class="mx-6 px-4 py-2 bg-[--card] border border-[--border] shadow-custom-base text-center z-10 flex items-center">
+                <i class="fas fa-network-wired text-[--primary] mr-2"></i>
+                <span class="font-mono text-sm">MCP Protocol Architecture</span>
+            </div>
+            <div class="absolute right-0 w-1/3 h-px bg-gradient-to-l from-transparent to-[--border]"></div>
+        </div>
+        <!-- === MCP分隔器结束 === -->
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+
+            <div
+                class="bento-item md:col-span-2 lg:col-span-2 shadow-custom-lg gradient-overlay-primary motion-div"
+                data-motion-initial='{"opacity": 0, "scale": 0.9}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "scale": 1}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.1}'
+            >
+                <h2 class="text-2xl md:text-3xl font-bold mb-3"><i class="fas fa-cogs mr-2 text-[--primary]"></i>全栈规则体系概览</h2>
+                <p class="text-sm md:text-base mb-4" style="color: var(--muted-foreground);">
+                    以 <strong style="color: var(--primary);"><span class="tech-term" data-tippy-content="Model Context Protocol: Anthropic提出的开源标准，用于将外部数据源（如API、数据库）统一接口暴露给LLM，使其能在推理时查询实时或私有信息。">MCP</span> (Model Context Protocol)</strong> 为核心，整合 <strong style="color: var(--foreground);">IDE (<span class="tech-term" data-tippy-content="集成开发环境: 提供代码编辑、调试、构建等功能的综合性软件。Cursor是其中一种AI增强型IDE。">Cursor</span>)</strong>、<strong style="color: var(--foreground);">知识库</strong>、<strong style="color: var(--foreground);"><span class="tech-term" data-tippy-content="在不实际执行程序的情况下，对其代码结构、语法、数据流等进行分析，以发现错误、漏洞或不符合规范之处。">静态分析</span></strong>、<strong style="color: var(--foreground);">安全合规</strong> 扫描器与 <strong style="color: var(--foreground);"><span class="tech-term" data-tippy-content="一组实践和工具，旨在缩短从提交代码到部署到生产环境的时间，同时保证高质量和可靠性。">DevOps</span> 度量</strong> 工具，形成一套闭环的 AI 编码规范化流程。
+                    <span class="block font-mono text-xs mt-2">Core Idea: Cursor + MCP + Knowledge + Quality Gates + Metrics</span>
+                </p>
+                 <svg class="line-icon w-24 h-auto ml-auto mt-4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 30 Q 30 10 50 30 T 90 30" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 50 Q 30 30 50 50 T 90 50" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 70 Q 30 50 50 70 T 90 70" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="10" cy="30" r="3" fill="var(--primary)"/>
+                    <circle cx="90" cy="30" r="3" fill="var(--primary)"/>
+                    <circle cx="10" cy="50" r="3" fill="var(--accent)"/>
+                    <circle cx="90" cy="50" r="3" fill="var(--accent)"/>
+                    <circle cx="10" cy="70" r="3" fill="var(--secondary)"/>
+                    <circle cx="90" cy="70" r="3" fill="var(--secondary)"/>
+                </svg>
+            </div>
+
+            <!-- Pain Points Section -->
+            <div
+                class="bento-item shadow-custom-md col-span-1 md:col-span-2 lg:col-span-3 gradient-overlay-destructive motion-div"
+                data-motion-initial='{"opacity": 0, "y": 50}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "y": 0}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.15}'
+            >
+                <h2 class="text-2xl font-bold mb-4 flex items-center"><i class="fas fa-exclamation-triangle mr-3 text-[--destructive]"></i>AI 编码的挑战痛点</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                    <div class="border border-[--border] p-3 rounded">
+                        <h4 class="font-bold mb-1"><i class="fas fa-drafting-compass mr-1 text-[--primary]"></i>设计原则缺失</h4>
+                        <p style="color: var(--muted-foreground);">LLM 难守 <span class="tech-term" data-tippy-content="面向对象设计的五个基本原则：单一职责(S)、开闭(O)、里氏替换(L)、接口隔离(I)、依赖倒置(D)。旨在提高软件的可维护性、可扩展性和可重用性。">SOLID</span>，易产出"上帝类"。</p>
+                 </div>
+                     <div class="border border-[--border] p-3 rounded">
+                        <h4 class="font-bold mb-1"><i class="fas fa-tasks mr-1 text-[--accent]"></i>质量闸门滞后</h4>
+                        <p style="color: var(--muted-foreground);">传统 <span class="tech-term" data-tippy-content="持续集成 (Continuous Integration): 开发人员频繁地将代码集成到共享仓库，每次集成都通过自动化构建和测试来验证。">CI</span> 分析发现缺陷晚。</p>
+                    </div>
+                    <div class="border border-[--border] p-3 rounded">
+                        <h4 class="font-bold mb-1"><i class="fas fa-balance-scale mr-1 text-[--secondary]"></i>合规盲区</h4>
+                        <p style="color: var(--muted-foreground);">可能混入 <span class="tech-term" data-tippy-content="通用公共许可证 (General Public License): 一种广泛使用的自由软件许可证，要求衍生作品也必须开源并使用GPL协议。">GPL</span> 等受限代码。</p>
+                    </div>
+                     <div class="border border-[--border] p-3 rounded">
+                        <h4 class="font-bold mb-1"><i class="fas fa-shield-virus mr-1 text-[--destructive]"></i>安全与性能风险</h4>
+                        <p style="color: var(--muted-foreground);">真实任务成功率低，易注入 <span class="tech-term" data-tippy-content="零日漏洞 (Zero-day Vulnerability): 已被发现但软件开发者尚未发布补丁的安全漏洞。攻击者可以利用这些漏洞进行攻击。">0-day</span> 漏洞。</p>
+                    </div>
+                 </div>
+                <p class="font-mono text-xs mt-4 pt-2 text-right text-[--muted-foreground]">Core Challenges: Design / Quality / Compliance / Security</p>
+            </div>
+
+            <div
+                class="bento-item lg:col-span-2 shadow-custom-lg gradient-overlay-primary motion-div"
+                data-motion-initial='{"opacity": 0, "scale": 0.9}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "scale": 1}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.2}'
+            >
+                <h2 class="text-2xl md:text-3xl font-bold mb-3"><i class="fas fa-project-diagram mr-2 text-[--primary]"></i>核心协议: MCP</h2>
+                 <p class="text-sm md:text-base mb-4" style="color: var(--muted-foreground);">
+                    将外部知识（文件、DB、服务）包装成统一 <strong style="color: var(--foreground);"><span class="tech-term" data-tippy-content="超文本传输协议 (Hypertext Transfer Protocol): 应用层协议，用于分布式、协作式、超媒体信息系统。是万维网数据通信的基础。">HTTP</span>/<span class="tech-term" data-tippy-content="JavaScript Object Notation: 一种轻量级的数据交换格式，易于人阅读和编写，也易于机器解析和生成。">JSON</span> <span class="tech-term" data-tippy-content="应用程序编程接口 (Application Programming Interface):一组定义、协议和工具，用于构建和集成应用程序软件。">API</span></strong>，供 <span class="tech-term" data-tippy-content="大型语言模型 (Large Language Model): 经过大量文本数据训练的深度学习模型，能够理解和生成人类语言。">LLM</span> 在推理时即时查询。
+                    <br/>它是连接 AI 与各种工具、数据的"通用插座"。
+                 </p>
+                 <div class="flex items-center justify-between mt-auto pt-4">
+                    <span class="font-mono text-xs text-[--muted-foreground]">Model Context Protocol - The Universal Data Socket</span>
+                    <svg class="line-icon w-20 h-auto" viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="5" y="5" width="30" height="50" stroke-dasharray="4 2"/> <text x="20" y="35" font-family="monospace" font-size="10" text-anchor="middle">LLM</text>
+                        <path d="M35 30 H 65" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polygon points="60,25 70,30 60,35" fill="var(--foreground)"/> <rect x="70" y="15" width="25" height="30" stroke-dasharray="4 2"/> <text x="82.5" y="33" font-family="monospace" font-size="10" text-anchor="middle">API</text>
+                    </svg>
+                 </div>
+            </div>
+
+             <div
+                class="bento-item shadow-custom-md motion-div"
+                data-motion-initial='{"opacity": 0, "y": 50}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "y": 0}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.3}'
+            >
+                <h3 class="text-xl font-bold mb-2"><i class="fas fa-plug mr-2 text-[--accent]"></i>IDE & 协议层工具</h3>
+                <p class="text-sm mb-3" style="color: var(--muted-foreground);">连接 AI 与开发环境的核心桥梁。</p>
+                <ul class="tool-list">
+                     <li>
+                        <span class="tool-icon"><i class="fas fa-laptop-code"></i></span>
+                        <span class="tool-name">Cursor:</span>
+                        <span class="tool-desc">AI Code Editor, 与 MCP 交互的前端。通过 <code class="font-mono text-xs p-1 bg-[--muted]">.cursor/rules/</code> 或 <code class="font-mono text-xs p-1 bg-[--muted]">mcp.json</code> 配置。补全前自动检索规则，注入 <span class="tech-term" data-tippy-content="给大型语言模型(LLM)的指令或输入，用于引导模型生成期望的输出。">Prompt</span>。</span>
+                        <a href="https://cursor.sh/features" target="_blank" rel="noopener noreferrer">官网</a>
+                    </li>
+                     <li>
+                        <span class="tool-icon"><i class="fas fa-network-wired"></i></span>
+                        <span class="tool-name">MCP:</span>
+                        <span class="tool-desc">模型上下文协议，统一数据源 API。</span>
+                         <a href="https://www.anthropic.com/news/model-context-protocol" target="_blank" rel="noopener noreferrer">文档</a>
+                    </li>
+                </ul>
+                 <p class="font-mono text-xs mt-auto pt-2 text-right text-[--muted-foreground]">Tools: Cursor + MCP</p>
+            </div>
+
+            <div
+                class="bento-item lg:col-span-3 shadow-custom-xl gradient-overlay-accent motion-div"
+                data-motion-initial='{"opacity": 0, "y": 50}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "y": 0}'
+                data-motion-transition='{"duration": 0.6, "delay": 0.2}'
+            >
+                <h2 class="text-2xl md:text-3xl font-bold mb-4"><i class="fas fa-book-open mr-2 text-[--primary]"></i>设计知识与提示库</h2>
+                 <p class="text-sm mb-4" style="color: var(--muted-foreground);">将设计原则和模式转化为 AI 可理解、可调用的规则，指导代码生成。</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="border p-3 border-[--border] rounded">
+                        <h4 class="font-bold mb-1"><i class="fas fa-ruler-combined mr-1 text-[--accent]"></i>设计原则库 (<span class="tech-term" data-tippy-content="一种轻量级标记语言，使用易读易写的纯文本格式编写文档，然后可以转换成有效的HTML。">Markdown</span>/JSON)</h4>
+                        <p class="text-xs" style="color: var(--muted-foreground);">提供 SOLID, <span class="tech-term" data-tippy-content="通用职责分配软件模式 (General Responsibility Assignment Software Patterns): 描述软件对象职责分配的一组原则和模式。">GRASP</span> 等原则的定义、正反例。通过 <code class="font-mono text-xs p-1 bg-[--muted]">/principles</code> 端点供 Cursor 调用，在生成前注入自检提示。</p>
+                    </div>
+                    <div class="border p-3 border-[--border] rounded">
+                        <h4 class="font-bold mb-1"><i class="fas fa-cubes mr-1 text-[--secondary]"></i>深度样例仓库 (代码片段)</h4>
+                        <p class="text-xs" style="color: var(--muted-foreground);">提供常见设计模式（如工厂、策略）的最小实现骨架。通过 <code class="font-mono text-xs p-1 bg-[--muted]">/patterns?name=strategy</code> 返回模板，指导模块化设计。</p>
+                    </div>
+                    </div>
+                <p class="font-mono text-xs mt-4 pt-2 text-right text-[--muted-foreground]">Empower LLM with Design Knowledge</p>
+                </div>
+
+            <div
+                class="bento-item lg:col-span-3 shadow-custom-xl gradient-overlay-secondary motion-div"
+                data-motion-initial='{"opacity": 0, "y": 50}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "y": 0}'
+                data-motion-transition='{"duration": 0.6, "delay": 0.3}'
+            >
+                 <h2 class="text-2xl md:text-3xl font-bold mb-4"><i class="fas fa-shield-alt mr-2 text-[--primary]"></i>静态分析与安全扫描 (<span class="tech-term" data-tippy-content="静态应用程序安全测试 (Static Application Security Testing): 在不运行代码的情况下分析源代码或字节码，以查找安全漏洞。">SAST</span>/<span class="tech-term" data-tippy-content="软件成分分析 (Software Composition Analysis): 自动识别应用程序中使用的开源组件及其许可证和已知安全漏洞。">SCA</span>)</h2>
+                 <p class="text-sm mb-4" style="color: var(--muted-foreground);">在编码早期阶段自动发现代码异味、复杂度问题、安全漏洞和敏感数据泄露风险。</p>
+                 <ul class="tool-list mb-4">
+                    <li>
+                        <span class="tool-icon"><i class="fas fa-search"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="一个开源平台，用于持续检查代码质量，执行自动审查，检测错误、代码异味和安全漏洞。">SonarQube</span>:</span>
+                        <span class="tool-desc">多语言代码质量与安全平台 (异味, 复杂度, 漏洞)。</span>
+                        <a href="https://www.sonarsource.com/products/sonarqube/" target="_blank" rel="noopener noreferrer">官网</a>
+                    </li>
+                    <li>
+                        <span class="tool-icon"><i class="fab fa-python"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="一个专注于查找Python代码中常见安全问题的工具。它通过处理每个文件的AST（抽象语法树）并对其节点运行插件来工作。">Bandit</span>:</span>
+                        <span class="tool-desc">Python <span class="tech-term" data-tippy-content="抽象语法树 (Abstract Syntax Tree): 源代码语法结构的树状表示。">AST</span> 级安全 Linter (常见弱点)。</span>
+                        <a href="https://github.com/PyCQA/bandit" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    </li>
+                     <li>
+                        <span class="tool-icon"><i class="fab fa-github"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="GitHub开发的代码分析引擎，允许开发者编写查询来查找代码库中的模式，常用于自动化安全检查、变体分析等。">CodeQL</span>:</span>
+                        <span class="tool-desc">GitHub 语义代码分析引擎 (自动化安全检查)。</span>
+                        <a href="https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql" target="_blank" rel="noopener noreferrer">文档</a>
+                    </li>
+                     <li>
+                        <span class="tool-icon"><i class="fas fa-user-secret"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="一个现代化的静态应用安全测试（SAST）工具，特别关注于检测代码中潜在的敏感数据泄露风险。">Bearer CLI</span>:</span>
+                        <span class="tool-desc">现代 SAST，聚焦敏感数据流。</span>
+                        <a href="https://www.bearer.com/" target="_blank" rel="noopener noreferrer">官网</a>
+                    </li>
+                 </ul>
+                <p class="text-sm mt-4 p-3 border border-[--border] rounded bg-[--muted]" style="color: var(--muted-foreground);"><strong class="text-[--foreground]">集成方式:</strong> 扫描结果 POST 到 <code class="font-mono text-xs p-1 bg-[--muted]">/static-analysis</code> MCP 端点。Cursor 在代码提交或 PR 时检查，对严重问题进行阻断或警告。</p>
+                <p class="font-mono text-xs mt-auto pt-2 text-right text-[--muted-foreground]">Early Detection of Issues</p>
+                    </div>
+
+            <div
+                class="bento-item md:col-span-2 shadow-custom-lg gradient-overlay-primary motion-div"
+                data-motion-initial='{"opacity": 0, "scale": 0.9}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "scale": 1}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.4}'
+            >
+                 <h2 class="text-2xl md:text-3xl font-bold mb-3"><i class="fas fa-database mr-2 text-[--primary]"></i>向量记忆与检索</h2>
+                 <p class="text-sm mb-4" style="color: var(--muted-foreground);">利用 <span class="tech-term" data-tippy-content="专门设计用于存储和查询高维向量（通常是数据的数学表示，如文本或图像的Embeddings）的数据库。">向量数据库</span> 存储历史决策、任务上下文和代码片段的 <span class="tech-term" data-tippy-content="嵌入(Embeddings): 将高维数据（如文本、图像）映射到低维连续向量空间中的表示，能捕捉数据的语义关系。">Embeddings</span>，在 LLM <span class="tech-term" data-tippy-content="指模型在处理输入和生成输出时能够考虑的先前文本（tokens）的最大数量。超出此窗口的信息通常会被忽略。">上下文窗口</span> 溢出时，通过语义相似度高效检索相关信息，实现长期记忆。</p>
+                 <ul class="tool-list">
+                    <li>
+                        <span class="tool-icon"><i class="fas fa-brain"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="一个商业化的、完全托管的向量数据库服务，设计用于大规模、低延迟的相似性搜索。">Pinecone</span>:</span>
+                        <span class="tool-desc">托管向量数据库，易于扩展。</span>
+                         <a href="https://www.pinecone.io" target="_blank" rel="noopener noreferrer">官网</a>
+                    </li>
+                    <li>
+                        <span class="tool-icon"><i class="fas fa-server"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="一个开源的向量数据库，为嵌入相似性搜索和AI应用而构建，支持多种索引类型和高级搜索功能。">Milvus</span>:</span>
+                        <span class="tool-desc">开源向量数据库，支持私有部署。</span>
+                        <a href="https://milvus.io/" target="_blank" rel="noopener noreferrer">官网</a>
+                    </li>
+                 </ul>
+                 <p class="text-sm mt-4 p-3 border border-[--border] rounded bg-[--muted]" style="color: var(--muted-foreground);"><strong class="text-[--foreground]">应用场景:</strong> 存储 <code class="font-mono text-xs p-1 bg-[--muted]">decisions.jsonl</code>, <code class="font-mono text-xs p-1 bg-[--muted]">tasks.json</code> 等上下文数据。当需要历史信息时，通过 <span class="tech-term" data-tippy-content="模型上下文协议">MCP</span> 的 <code class="font-mono text-xs p-1 bg-[--muted]">/memory-recall</code> 端点进行语义查询。</p>
+                 <p class="font-mono text-xs mt-auto pt-2 text-right text-[--muted-foreground]">Long-term Memory via Vector Search</p>
+                 </div>
+
+            <div
+                class="bento-item md:col-span-1 shadow-custom-md gradient-overlay-secondary motion-div"
+                data-motion-initial='{"opacity": 0, "y": 50}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "y": 0}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.6}'
+            >
+                <h3 class="text-xl font-bold mb-2"><i class="fas fa-tachometer-alt mr-2 text-[--secondary]"></i>DevOps 度量与反馈</h3>
+                <p class="text-sm mb-4" style="color: var(--muted-foreground);">通过 <span class="tech-term" data-tippy-content="DevOps Research and Assessment: 一项研究计划，识别了四个关键指标（部署频率、变更前置时间、变更失败率、服务恢复时间）来衡量软件交付和运营性能。">DORA</span> 四大关键指标量化 AI 辅助开发的效能，并利用可视化工具提供实时反馈。</p>
+                 <ul class="tool-list mb-4">
+                    <li>
+                        <span class="tool-icon"><i class="fas fa-key"></i></span>
+                        <span class="tool-name">Four Keys Pipeline:</span>
+                        <span class="tool-desc">自动收集 DORA 指标数据。</span>
+                        <a href="https://cloud.google.com/blog/products/devops-sre/using-the-four-keys-to-measure-your-devops-performance" target="_blank" rel="noopener noreferrer">文档</a>
+                    </li>
+                    <li>
+                        <span class="tool-icon"><i class="fas fa-chart-line"></i></span>
+                        <span class="tool-name"><span class="tech-term" data-tippy-content="Grafana: 流行的开源分析和交互式可视化Web应用程序。Loki: Grafana Labs开发的可水平扩展、高可用、多租户的日志聚合系统。">Grafana/Loki</span>:</span>
+                        <span class="tool-desc">可视化日志与指标。</span>
+                         <!-- 添加相关链接 -->
+                    </li>
+                 </ul>
+                <div class="w-full h-32 mb-4">
+                    <canvas id="doraChart"></canvas>
+                </div>
+                 <p class="text-sm p-3 border border-[--border] rounded bg-[--muted]" style="color: var(--muted-foreground);"><strong class="text-[--foreground]">集成方式:</strong> CI 过程将 DORA 指标写入 <code class="font-mono text-xs p-1 bg-[--muted]">/metrics</code> 端点。Cursor 在执行重构或大规模修改前，可查询此接口评估性能影响。</p>
+                 <p class="font-mono text-xs mt-auto pt-2 text-right text-[--muted-foreground]">Quantify & Improve AI Dev Performance</p>
+            </div>
+
+            <div
+                class="bento-item md:col-span-2 lg:col-span-2 shadow-custom-lg motion-div"
+                data-motion-initial='{"opacity": 0, "scale": 0.9}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "scale": 1}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.3}'
+            >
+                <h2 class="text-2xl md:text-3xl font-bold mb-3">实施路线</h2>
+                 <table class="w-full text-sm mt-4 border-collapse">
+                    <thead>
+                        <tr class="border-b border-[--border]">
+                            <th class="text-left p-2 font-bold">阶段</th>
+                            <th class="text-left p-2 font-bold">时间</th>
+                            <th class="text-left p-2 font-bold">关键交付物</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-[--border]">
+                            <td class="p-2 font-mono">M0</td>
+                            <td class="p-2">第 1 周</td>
+                            <td class="p-2 font-mono text-xs"><code class="font-mono text-xs p-1 bg-[--muted]">.cursor/mcp.json</code> + /principles + /license-guard (<span class="tech-term" data-tippy-content="模型上下文协议配置文件">MCP Config</span>, <span class="tech-term" data-tippy-content="设计原则知识库">Principles KB</span>, <span class="tech-term" data-tippy-content="许可证合规规则库">License Rules</span>)</td>
+                        </tr>
+                        <tr class="border-b border-[--border]">
+                            <td class="p-2 font-mono">M1</td>
+                            <td class="p-2">第 2-4 周</td>
+                            <td class="p-2 font-mono text-xs">Static Analysis (<span class="tech-term" data-tippy-content="静态分析工具集成">SAST/SCA</span>), <span class="tech-term" data-tippy-content="基于LLM的代码审查机器人">LLM-Reviewer</span>, Stage Locks (<span class="tech-term" data-tippy-content="开发阶段流程控制">Process Control</span>)</td>
+                        </tr>
+                        <tr>
+                            <td class="p-2 font-mono">M2</td>
+                            <td class="p-2">第 5-8 周</td>
+                            <td class="p-2 font-mono text-xs"><span class="tech-term" data-tippy-content="向量数据库">Vector DB</span>, <span class="tech-term" data-tippy-content="DORA指标反馈闭环">DORA Loop</span>, Security Scan Fixes (<span class="tech-term" data-tippy-content="安全扫描问题修复">Vuln Remediation</span>)</td>
+                        </tr>
+                    </tbody>
+                 </table>
+            </div>
+
+            <div
+                class="bento-item shadow-custom-md gradient-overlay-primary motion-div"
+                data-motion-initial='{"opacity": 0, "y": 50}'
+                data-motion-whileinview='true'
+                data-motion-animate='{"opacity": 1, "y": 0}'
+                data-motion-transition='{"duration": 0.5, "delay": 0.4}'
+            >
+                 <h2 class="text-2xl md:text-3xl font-bold mb-3"><i class="fas fa-check-circle mr-2 text-[--primary]"></i>结语: 构建 "规则即服务" 的 AI 编码链路</h2>
+                <p class="text-sm md:text-base mb-4" style="color: var(--muted-foreground);">
+                    本手册展示了如何通过 <strong style="color: var(--foreground);">Cursor + MCP</strong> 架构，整合一系列专业工具，构建从 <strong style="color: var(--foreground);">设计知识库</strong> 到 <strong style="color: var(--foreground);">多层质量闸门</strong> (静态分析, 安全扫描, 合规检查, 模式校验)，再到 <strong style="color: var(--foreground);">向量记忆</strong> 和 <strong style="color: var(--foreground);">DevOps 度量反馈</strong> 的完整 AI 编码规范化链路。
+                    这套"规则即服务"体系旨在将隐性经验和最佳实践转化为 AI 可计算、可执行的规则，从而在享受 AI 带来效率提升的同时，确保代码的 <strong style="color: var(--primary);">质量、安全、合规与可维护性</strong>，最终实现速度与规范的平衡。
+                </p>
+                <div class="flex items-center justify-between mt-auto pt-4">
+                    <span class="font-mono text-xs text-[--muted-foreground]">From Abstract Principles to Concrete Tools & Practices</span>
+                    <svg class="line-icon w-24 h-auto" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 80 Q 50 20 80 80" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 80 L 80 80" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="50" cy="50" r="20" stroke-dasharray="5 3"/>
+                        <path d="M50 30 V 70 M 30 50 H 70" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 页脚 -->
+         <footer class="mt-16 md:mt-24 pt-8 border-t border-[--border] text-center text-sm text-[--muted-foreground]">
+            <div>
+                <p class="mb-1">作者姓名: 季晓康</p>
+                <p class="mb-1">微信公众号：凿壁</p>
+                <p>版权信息：国家健康医疗大数据研究院</p>
+                <p class="mt-2 text-xs">页面生成时间: <span id="generation-time"></span></p>
+            </div>
+         </footer>
+
+    </div> <script>
+        // Function to get CSS variable values
+        const getCssVar = (name) => window.getComputedStyle(document.body).getPropertyValue(name).trim();
+
+        // Initialize Framer Motion-like animations for HTML elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Helper to safely parse JSON
+            const safeJSONParse = (jsonString) => {
+                try {
+                    return JSON.parse(jsonString);
+                } catch (e) {
+                    console.error('Failed to parse JSON:', jsonString);
+                    return {};
+                }
+            };
+
+            // Process immediate animations (non-scroll triggered)
+            document.querySelectorAll('.motion-section, .motion-div').forEach(element => {
+                // Skip elements that should animate on scroll
+                if (element.dataset.motionWhileinview === 'true') return;
+                
+                // Get animation properties from data attributes
+                const initial = safeJSONParse(element.dataset.motionInitial || '{}');
+                const animate = safeJSONParse(element.dataset.motionAnimate || '{}');
+                const transition = safeJSONParse(element.dataset.motionTransition || '{}');
+                
+                // Set initial styles
+                if (initial.opacity !== undefined) element.style.opacity = initial.opacity;
+                if (initial.y !== undefined) element.style.transform = `translateY(${initial.y}px)`;
+                if (initial.scale !== undefined) element.style.transform = `scale(${initial.scale})`;
+                
+                // Prepare for animation
+                element.style.transition = `opacity ${transition.duration || 0.5}s ${transition.ease || 'ease'} ${transition.delay || 0}s, transform ${transition.duration || 0.5}s ${transition.ease || 'ease'} ${transition.delay || 0}s`;
+                
+                // For regular animations, apply after a short delay to ensure styles are applied
+                setTimeout(() => {
+                    if (animate.opacity !== undefined) element.style.opacity = animate.opacity;
+                    if (animate.y !== undefined || animate.scale !== undefined) {
+                        let transform = '';
+                        if (animate.y !== undefined) transform += `translateY(${animate.y}px) `;
+                        if (animate.scale !== undefined) transform += `scale(${animate.scale})`;
+                        element.style.transform = transform;
+                    }
+                }, 50);
+            });
+            
+            // Setup scroll-triggered animations with IntersectionObserver
+            const scrollElements = document.querySelectorAll('[data-motion-whileinview="true"]');
+            scrollElements.forEach(element => {
+                const initial = safeJSONParse(element.dataset.motionInitial || '{}');
+                const animate = safeJSONParse(element.dataset.motionAnimate || '{}');
+                const transition = safeJSONParse(element.dataset.motionTransition || '{}');
+                
+                // Set initial styles for scroll elements
+                if (initial.opacity !== undefined) element.style.opacity = initial.opacity;
+                if (initial.scale !== undefined) element.style.transform = `scale(${initial.scale})`;
+                if (initial.y !== undefined) {
+                    const currentTransform = element.style.transform || '';
+                    element.style.transform = `${currentTransform} translateY(${initial.y}px)`.trim();
+                }
+                
+                // Prepare for scroll-triggered animation with nice easing and longer duration for floating effect
+                const duration = transition.duration || 0.8;
+                const delay = transition.delay || 0;
+                const ease = transition.ease || 'cubic-bezier(0.34, 1.56, 0.64, 1)'; // Spring-like easing
+                
+                element.style.transition = `opacity ${duration}s ${ease} ${delay}s, transform ${duration}s ${ease} ${delay}s`;
+                
+                // Create observer with proper threshold to trigger earlier
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Apply animated styles
+                            if (animate.opacity !== undefined) entry.target.style.opacity = animate.opacity;
+                            
+                            // Build transform properly handling both scale and translate
+                            let transformValue = '';
+                            if (animate.scale !== undefined) transformValue += `scale(${animate.scale}) `;
+                            if (animate.y !== undefined) transformValue += `translateY(${animate.y}px)`;
+                            
+                            if (transformValue) entry.target.style.transform = transformValue;
+                            
+                            // Add subtle floating animation effect for cards
+                            if (entry.target.classList.contains('bento-item')) {
+                                entry.target.classList.add('animate-float');
+                            }
+                            
+                            // Once animated, no need to observe anymore
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { 
+                    threshold: 0.15, // Trigger earlier when just 15% is visible
+                    rootMargin: '0px 0px -5% 0px' // Trigger slightly before element enters viewport
+                });
+                
+                observer.observe(element);
+            });
+        });
+
+        // Add floating animation style
+        const styleTag = document.createElement('style');
+        styleTag.textContent = `
+            @keyframes float {
+                0% { transform: translateY(0) scale(1); }
+                50% { transform: translateY(-10px) scale(1); }
+                100% { transform: translateY(0) scale(1); }
+            }
+            .animate-float {
+                animation: float 6s ease-in-out infinite;
+            }
+            .bento-item:hover {
+                transform: translateY(-4px);
+                box-shadow: var(--shadow-custom-lg);
+                animation-play-state: paused;
+            }
+        `;
+        document.head.appendChild(styleTag);
+
+        // Initialize Mermaid
+        mermaid.initialize({
+             startOnLoad: true,
+             theme: 'base', // Use 'dark' for dark mode if needed, handled by theme toggle
+             themeVariables: {
+                // Example: map CSS vars to Mermaid vars if needed
+                // primaryColor: getCssVar('--primary'),
+                // lineTextColor: getCssVar('--foreground'),
+                // ...
+             },
+             fontFamily: getCssVar('--font-sans')
+        });
+
+        // Framer Motion setup (already handled by attributes)
+        // Chart.js setup
+        const ctx = document.getElementById('doraChart');
+
+        // Check if chart canvas exists
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'bar', // Simple bar chart for DORA metrics
+                data: {
+                    labels: ['部署频率', '变更前置时间', '变更失败率', '平均恢复时间'],
+                    datasets: [{
+                        label: 'DORA 指标 (示例)',
+                        data: [85, 70, 15, 60], // Example data (higher is better for freq/time, lower for fail rate)
+                        backgroundColor: [
+                            getCssVar('--chart-1'),
+                            getCssVar('--chart-3'),
+                            getCssVar('--chart-2'), // Use secondary for failure rate (warning)
+                            getCssVar('--chart-4'),
+                        ],
+                        borderColor: getCssVar('--border'),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Horizontal bars might fit better
+                    scales: {
+                        x: {
+                             beginAtZero: true,
+                             max: 100, // Assuming a 0-100 scale for simplicity
+                             grid: {
+                                color: getCssVar('--muted') + '80' // Use muted color with transparency
+                             },
+                             ticks: {
+                                color: getCssVar('--muted-foreground'),
+                                font: {
+                                     family: getCssVar('--font-sans')
+                                }
+                             }
+                        },
+                        y: {
+                             grid: {
+                                display: false // Hide y-axis grid lines
+                             },
+                             ticks: {
+                                color: getCssVar('--foreground'),
+                                font: {
+                                     family: getCssVar('--font-sans')
+                                }
+                             }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Hide legend for cleaner look
+                        },
+                        tooltip: {
+                             bodyFont: {
+                                 family: getCssVar('--font-sans')
+                             },
+                             titleFont: {
+                                 family: getCssVar('--font-sans')
+                             }
+                        }
+                    }
+                }
+            });
+        } else {
+            console.error("Chart canvas element not found");
+        }
+
+        // Set generation time in footer
+        const generationTimeElement = document.getElementById('generation-time');
+        if (generationTimeElement) {
+            generationTimeElement.textContent = new Date().toLocaleString('zh-CN');
+        }
+
+        // Basic Framer Motion integration for scroll animations
+        // The motion.div elements with whileInView handle this automatically.
+        // No extra JS needed unless more complex scroll-linked animations are desired.
+
+        // Optional: Theme switcher logic (if you add a button)
+        // function toggleTheme() {
+        //    document.documentElement.classList.toggle('dark');
+        //    // Re-initialize Mermaid and update Chart.js colors if needed
+        //    updateVisualizationThemes();
+        // }
+
+        // Function to update viz themes (call on theme toggle)
+        // function updateVisualizationThemes() {
+        //    const isDark = document.documentElement.classList.contains('dark');
+        //    mermaid.initialize({ theme: isDark ? 'dark' : 'base', ... });
+        //    // Update Chart.js instance colors using getCssVar and chartInstance.update()
+        // }
+
+        // Initialize Tippy.js for tech terms
+        tippy('.tech-term', {
+            content(reference) {
+                const content = reference.getAttribute('data-tippy-content');
+                return content || '暂无解释'; // Default text if content is missing
+            },
+            allowHTML: true,        // Allow basic HTML in tooltips if needed
+            interactive: true,        // Allow hovering/clicking inside the tooltip
+            trigger: 'click',         // Show on click
+            placement: 'auto',       // Auto-positioning
+            theme: 'custom-theme',    // Apply custom theme
+            animation: 'scale-subtle', // Use a subtle animation
+            inertia: true,            // Add inertia to movement
+        });
+
+    </script>
+
+</body>
+</html>

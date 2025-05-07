@@ -1,0 +1,54 @@
+# Task ID: 1
+# Title: 项目初始化与基础设置
+# Status: done
+# Dependencies: 
+# Priority: high
+# Description: 创建React+TypeScript项目，集成Tailwind CSS和shadcn/ui。
+# Details:
+#   1. 使用Vite创建新的React+TypeScript项目：
+#      - 执行 `npm create vite@latest zaobi-react-app --template react-ts`
+#      - 进入项目目录 `cd zaobi-react-app`
+#      - 安装依赖 `npm install`
+#   
+#   2. 集成Tailwind CSS：
+#      - 安装Tailwind及其依赖： 
+#        `npm install -D tailwindcss postcss autoprefixer`
+#      - 初始化Tailwind配置： 
+#        `npx tailwindcss init -p`
+#      - 配置tailwind.config.js文件，添加内容路径
+#      - 在主CSS文件中添加Tailwind指令
+#   
+#   3. 集成shadcn/ui：
+#      - 执行初始化命令： 
+#        `npx shadcn-ui@latest init`
+#      - 根据提示配置globals.css、tailwind.config.js等
+#      - 安装必要的基础组件： 
+#        `npx shadcn-ui@latest add button card dropdown-menu navigation-menu`
+#   
+#   4. 安装路由库：
+#      - 执行 `npm install react-router-dom`
+#   
+#   5. 设置基本项目结构：
+#      - 创建src/components目录
+#      - 创建src/pages目录
+#      - 创建src/hooks目录
+#      - 创建src/utils目录
+#      - 创建src/types目录
+#      - 创建src/context目录
+#      - 创建src/assets目录
+#      - 创建public目录并复制现有的metadata.json
+#      - （如果选择MDX）创建content目录
+#
+# Test Strategy:
+#   1. 验证项目能够成功启动：
+#      - 执行 `npm run dev` 确保无报错
+#      - 浏览器访问本地开发服务器地址
+#   
+#   2. 验证所有依赖正确安装：
+#      - 检查package.json中是否包含所有必要依赖
+#      - 确认node_modules目录包含所有依赖
+#   
+#   3. 验证基础组件显示：
+#      - 在App.tsx中添加简单的shadcn/ui组件（如Button）进行测试
+#      - 确认组件样式正确渲染
+#      - 确认Tailwind类正常工作 

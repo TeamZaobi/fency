@@ -1,0 +1,69 @@
+# Task ID: 8
+# Title: 图表组件重构
+# Status: pending
+# Dependencies: 6, 7
+# Priority: medium
+# Description: 将现有的Chart.js图表重构为React图表组件（使用recharts或类似库）。
+# Details:
+#   1. 选择React图表库：
+#      - 评估库选项：Recharts, Nivo, Visx 等。
+#      - 考虑因素：易用性、文档、社区支持、性能、与TypeScript的集成。
+#      - 决策：推荐 Recharts 作为起点，因为它API友好且文档完善。
+#      - 安装：`npm install recharts`
+#   
+#   2. 分析现有Chart.js图表：
+#      - 识别`cursor-*.html`等页面中使用的Chart.js图表类型（雷达图、条形图等）。
+#      - 理解图表的数据结构和配置选项。
+#   
+#   3. 创建可复用的React图表组件：
+#      - 为每种图表类型创建React组件（例如`RadarChartComponent.tsx`, `BarChartComponent.tsx`）。
+#      - 组件应接收数据和配置作为props。
+#      - 使用选择的库（如Recharts）实现图表渲染逻辑。
+#      - 示例 (RadarChart): 
+#        ```tsx
+#        // src/components/charts/RadarChartComponent.tsx
+#        import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer } from 'recharts';
+#        
+#        interface RadarChartProps {
+#          data: any[]; // 定义具体的数据结构类型
+#          dataKey: string;
+#        }
+#        
+#        export const RadarChartComponent = ({ data, dataKey }: RadarChartProps) => {
+#          return (
+#            <ResponsiveContainer width="100%" height={300}>
+#              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={data}>
+#                <PolarGrid />
+#                <PolarAngleAxis dataKey="subject" />
+#                <PolarRadiusAxis />
+#                <Radar name="Score" dataKey={dataKey} stroke="#8884d8" fill="#8884d8" fillOpacity={0.6} />
+#              </RadarChart>
+#            </ResponsiveContainer>
+#          );
+#        };
+#        ```
+#   
+#   4. 处理主题和样式：
+#      - 确保图表颜色和样式与应用主题（浅色/深色）协调。
+#      - 可能需要根据主题动态调整图表颜色配置。
+#      - 使用Tailwind类或内联样式微调图表布局和外观。
+#   
+#   5. 在MDX中使用图表组件：
+#      - 在需要图表的MDX文件中导入并使用新创建的React图表组件。
+#      - 传递必要的数据props。
+#
+# Test Strategy:
+#   1. 组件渲染测试：
+#      - 验证图表组件能正确渲染，传入不同数据时表现正常。
+#      - 测试图表在各种屏幕尺寸下的响应式表现。
+#   
+#   2. 数据准确性测试：
+#      - 对比原始Chart.js图表和新React组件的渲染结果，确保数据可视化一致。
+#      - 使用已知数据集测试，验证图表数值和标签准确性。
+#   
+#   3. 交互和视觉测试：
+#      - 测试图表的Tooltip、Legend等交互功能（如果实现）。
+#      - 验证图表颜色和样式在浅色/深色主题下都清晰可读。
+#   
+#   4. MDX集成测试：
+#      - 验证图表组件在MDX页面中能正确渲染并显示数据。 
