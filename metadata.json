@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "CURRENT_ISO_TIMESTAMP",
+  "lastUpdated": "2025-05-09T03:37:40.698Z",
   "pages": [
     {
       "id": "pages/ai-tech/amie-analysis.html",
@@ -1142,6 +1142,27 @@
         "知识管理"
       ],
       "publish-date": "2024-08-15"
+    },
+    {
+      "id": "pages/ai-tech/linear-regression.html",
+      "path": "pages/ai-tech/linear-regression.html",
+      "title": "线性回归与逻辑回归的全面解析 | 凿壁",
+      "lastModifiedDate": "2025-05-09T03:37:40.698Z",
+      "category": "ai-tech",
+      "description": "基于Mehul Ligade的推文，结合学术文献，全面解析线性回归与逻辑回归，探讨其原理、假设、诊断、评估、正则化及医学应用。",
+      "keywords": [
+        "线性回归",
+        "逻辑回归",
+        "统计建模",
+        "机器学习",
+        "医学统计",
+        "正则化",
+        "模型评估",
+        "高维数据",
+        "回归分析",
+        "分类模型"
+      ],
+      "publish-date": "2025-05-09"
     }
   ]
 }
