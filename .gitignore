@@ -23,3 +23,6 @@ config.php
 # 备份文件
 *.bak
 backup/
+
+# Cursor编辑器设置（包含API密钥）
+.cursor/settings.json
