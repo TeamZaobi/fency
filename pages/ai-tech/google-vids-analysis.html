@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-06-13">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="深度分析 Google Vids：AI 驱动的企业视频创作工具的特色功能、社区评价与未来发展预测">
+  <meta name="keywords" content="Google Vids,AI视频创作,Google Workspace,视频编辑,人工智能,Gemini AI,企业协作">
+  
+  <title>Google Vids 深度分析：AI 驱动视频创作的未来 | 凿壁</title>
+  
+  <!-- External Resources -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.0.0/dist/framer-motion.min.js"></script>
+  
+  <style>
+    :root {
+      --background: rgb(240, 248, 255);
+      --foreground: rgb(55, 65, 81);
+      --card: rgb(255, 255, 255);
+      --card-foreground: rgb(55, 65, 81);
+      --primary: rgb(34, 197, 94);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(224, 242, 254);
+      --secondary-foreground: rgb(75, 85, 99);
+      --muted: rgb(243, 244, 246);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(209, 250, 229);
+      --accent-foreground: rgb(55, 65, 81);
+      --border: rgb(229, 231, 235);
+      --chart-1: rgb(34, 197, 94);
+      --chart-2: rgb(16, 185, 129);
+      --chart-3: rgb(5, 150, 105);
+      --chart-4: rgb(4, 120, 87);
+      --chart-5: rgb(6, 95, 70);
+    }
+
+    .dark {
+      --background: rgb(15, 23, 42);
+      --foreground: rgb(209, 213, 219);
+      --card: rgb(30, 41, 59);
+      --card-foreground: rgb(209, 213, 219);
+      --primary: rgb(52, 211, 153);
+      --primary-foreground: rgb(15, 23, 42);
+      --secondary: rgb(45, 55, 72);
+      --secondary-foreground: rgb(161, 161, 170);
+      --muted: rgb(30, 41, 59);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(55, 65, 81);
+      --accent-foreground: rgb(161, 161, 170);
+      --border: rgb(75, 85, 99);
+      --chart-1: rgb(52, 211, 153);
+      --chart-2: rgb(45, 212, 191);
+      --chart-3: rgb(34, 197, 94);
+      --chart-4: rgb(16, 185, 129);
+      --chart-5: rgb(5, 150, 105);
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'Noto Sans SC', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--primary), var(--chart-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--chart-2) 50%, var(--chart-3) 100%);
+    }
+
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 0.8s ease;
+    }
+
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-50 glass-effect">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center">
+          <a href="../../index.html" class="text-xl font-bold gradient-text">
+            <i class="fas fa-arrow-left mr-2"></i>返回首页
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm text-muted-foreground">AI技术与生态 • 2025-06-13</span>
+          <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+            <i class="fas fa-moon dark:hidden"></i>
+            <i class="fas fa-sun hidden dark:block"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient pt-24 pb-16 px-4">
+    <div class="max-w-4xl mx-auto text-center text-white">
+      <div class="scroll-reveal">
+        <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm mb-8">
+          <i class="fas fa-video mr-2"></i>
+          <span class="text-sm font-medium">Google Workspace 新工具深度解析</span>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          Google Vids
+          <span class="block text-3xl md:text-4xl font-normal opacity-90 mt-2">
+            AI 驱动视频创作的企业级革命
+          </span>
+        </h1>
+        <p class="text-xl md:text-2xl opacity-90 mb-8 max-w-3xl mx-auto leading-relaxed">
+          深入探析 Google 最新推出的 AI 视频创作工具，从功能特色到社区反馈，从当前局限到未来潜力，全方位解读这一可能改变企业视频制作格局的创新产品
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button class="px-8 py-4 bg-white text-gray-900 rounded-xl font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+            <i class="fas fa-play mr-2"></i>查看演示
+          </button>
+          <button class="px-8 py-4 border-2 border-white text-white rounded-xl font-semibold hover:bg-white hover:text-gray-900 transition-all">
+            <i class="fas fa-download mr-2"></i>了解详情
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    
+    <!-- 概览卡片 -->
+    <section class="mb-20">
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-magic text-white text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">AI 辅助创作</h3>
+            <p class="text-gray-600 dark:text-gray-300">利用 Gemini AI 生成故事板、脚本和视频草稿，简化创作流程</p>
+          </div>
+        </div>
+        
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-users text-white text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">协作编辑</h3>
+            <p class="text-gray-600 dark:text-gray-300">类似 Google Docs 的实时多人协作，支持评论和版本历史</p>
+          </div>
+        </div>
+        
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-video text-white text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-3">录制工作室</h3>
+            <p class="text-gray-600 dark:text-gray-300">内置屏幕录制、提词器功能，专为企业场景设计</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 主要特色详解 -->
+    <section class="mb-20">
+      <div class="scroll-reveal text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">核心功能特色</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          Google Vids 作为 Google Workspace 的新成员，专为企业和教育用户打造
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="scroll-reveal">
+          <div class="space-y-8">
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-brain text-blue-600 dark:text-blue-400"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold mb-2">AI 智能创作</h3>
+                <p class="text-gray-600 dark:text-gray-300">集成 Gemini AI，仅需输入简单提示如"解释 Q4 产品路线图"，即可自动生成故事板、脚本和视频草稿。支持从 Google Docs 等文件直接导入内容进行视频化处理。</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-layer-group text-green-600 dark:text-green-400"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold mb-2">丰富素材库</h3>
+                <p class="text-gray-600 dark:text-gray-300">提供数百万高品质免版税媒体资源，包括专业模板、图片、视频、GIF、音乐和音效。特别适合销售培训、员工入职等企业场景。</p>
+              </div>
+            </div>
+
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-microphone text-purple-600 dark:text-purple-400"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-bold mb-2">专业录制功能</h3>
+                <p class="text-gray-600 dark:text-gray-300">内置录制工作室支持屏幕分享、音频和视频录制。提词器功能确保演讲流畅，AI 语音旁白提供八种自然声音选项。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-reveal">
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-700 rounded-2xl p-8">
+            <h4 class="text-2xl font-bold mb-6 text-center">功能架构图</h4>
+            <div id="feature-architecture" class="w-full h-96"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 社区评价分析 -->
+    <section class="mb-20">
+      <div class="scroll-reveal text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">社区评价与反馈</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          基于技术博客、社交媒体和用户论坛的真实反馈分析
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12">
+        <div class="scroll-reveal">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <h3 class="text-2xl font-bold mb-6 text-center">用户反馈分布</h3>
+            <canvas id="feedbackChart" width="400" height="300"></canvas>
+          </div>
+        </div>
+
+        <div class="scroll-reveal space-y-6">
+          <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-6 rounded-r-lg">
+            <h4 class="font-bold text-green-800 dark:text-green-400 mb-2">
+              <i class="fas fa-thumbs-up mr-2"></i>正面评价
+            </h4>
+            <ul class="space-y-2 text-green-700 dark:text-green-300">
+              <li>• 界面直观友好，类似 Google Slides，学习成本低</li>
+              <li>• AI 语音旁白功能实用，适合教育场景</li>
+              <li>• 协作功能强大，支持团队实时编辑</li>
+              <li>• 模板和素材库丰富，适合快速制作</li>
+            </ul>
+          </div>
+
+          <div class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-6 rounded-r-lg">
+            <h4 class="font-bold text-red-800 dark:text-red-400 mb-2">
+              <i class="fas fa-exclamation-triangle mr-2"></i>改进空间
+            </h4>
+            <ul class="space-y-2 text-red-700 dark:text-red-300">
+              <li>• AI 模板生成效果不理想，需要大量手动调整</li>
+              <li>• 存在加载和缓冲性能问题</li>
+              <li>• 编辑功能有限，不适合专业视频制作</li>
+              <li>• 担心产品长期发展，可能步 Google Reader 后尘</li>
+            </ul>
+          </div>
+
+          <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-6 rounded-r-lg">
+            <h4 class="font-bold text-blue-800 dark:text-blue-400 mb-2">
+              <i class="fas fa-quote-left mr-2"></i>用户评价摘录
+            </h4>
+            <blockquote class="text-blue-700 dark:text-blue-300 italic">
+              "界面熟悉的菜单布局和图标便于上手，AI 语音旁白在嘈杂教室中特别实用" 
+              <cite class="block text-sm mt-2">- chrmbook.com</cite>
+            </blockquote>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 发展预测 -->
+    <section class="mb-20">
+      <div class="scroll-reveal text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">未来发展预测</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          基于行业趋势和技术发展，分析 Google Vids 的潜在发展路径
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div class="scroll-reveal">
+          <div class="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+            <h3 class="text-2xl font-bold mb-6 text-center">发展时间线预测</h3>
+            <div id="timeline-chart" class="w-full h-96"></div>
+          </div>
+        </div>
+
+        <div class="scroll-reveal space-y-6">
+          <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-xl">
+            <h4 class="font-bold text-xl mb-3">
+              <i class="fas fa-rocket mr-2"></i>短期发展 (2025-2026)
+            </h4>
+            <ul class="space-y-2">
+              <li>• 优化 AI 模板生成算法，提升生成质量</li>
+              <li>• 解决性能问题，改善加载速度</li>
+              <li>• 扩展用户范围至更多定价层级</li>
+            </ul>
+          </div>
+
+          <div class="bg-gradient-to-r from-green-500 to-teal-600 text-white p-6 rounded-xl">
+            <h4 class="font-bold text-xl mb-3">
+              <i class="fas fa-cogs mr-2"></i>中期发展 (2026-2027)
+            </h4>
+            <ul class="space-y-2">
+              <li>• 深化与 Google Drive、YouTube 整合</li>
+              <li>• 增强视频编辑功能和特效支持</li>
+              <li>• 推出移动端应用，支持纵向内容</li>
+            </ul>
+          </div>
+
+          <div class="bg-gradient-to-r from-orange-500 to-red-600 text-white p-6 rounded-xl">
+            <h4 class="font-bold text-xl mb-3">
+              <i class="fas fa-chart-line mr-2"></i>长期展望 (2027+)
+            </h4>
+            <ul class="space-y-2">
+              <li>• 集成更先进的 AI 视频生成技术</li>
+              <li>• 扩展至消费者市场，挑战 TikTok 等平台</li>
+              <li>• 建立完整的视频内容生态系统</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 功能对比分析 -->
+    <section class="mb-20">
+      <div class="scroll-reveal text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">竞品对比分析</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          与市场主要竞品的功能和定位对比
+        </p>
+      </div>
+
+      <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700">
+        <canvas id="competitorChart" width="800" height="400"></canvas>
+      </div>
+    </section>
+
+    <!-- 延伸阅读 -->
+    <section class="mb-20">
+      <div class="scroll-reveal text-center mb-16">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6 gradient-text">延伸阅读</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          深入了解 AI 视频创作和企业协作工具的发展趋势
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg mb-4 flex items-center justify-center">
+            <i class="fas fa-book text-white text-4xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">《AI 与创意产业的未来》</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">
+            深入探讨人工智能如何重塑视频制作、设计和内容创作行业，分析技术发展对创意工作者的影响与机遇。
+          </p>
+          <a href="https://www.nature.com/articles/s41467-023-44726-w" target="_blank" class="text-blue-600 hover:text-blue-800 font-semibold">
+            阅读论文 <i class="fas fa-external-link-alt ml-1"></i>
+          </a>
+        </div>
+
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-green-400 to-teal-500 rounded-lg mb-4 flex items-center justify-center">
+            <i class="fas fa-users text-white text-4xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">《企业协作工具发展报告》</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">
+            分析后疫情时代企业协作工具的发展趋势，探讨视频沟通在远程办公中的重要性和未来发展方向。
+          </p>
+          <a href="https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/the-future-of-work-in-technology" target="_blank" class="text-blue-600 hover:text-blue-800 font-semibold">
+            查看报告 <i class="fas fa-external-link-alt ml-1"></i>
+          </a>
+        </div>
+
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg mb-4 flex items-center justify-center">
+            <i class="fas fa-video text-white text-4xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">《视频内容营销指南》</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">
+            全面指导如何利用视频内容进行企业营销，包括制作技巧、平台选择和效果评估的最佳实践。
+          </p>
+          <a href="https://blog.hubspot.com/marketing/video-marketing-guide" target="_blank" class="text-blue-600 hover:text-blue-800 font-semibold">
+            阅读指南 <i class="fas fa-external-link-alt ml-1"></i>
+          </a>
+        </div>
+
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg mb-4 flex items-center justify-center">
+            <i class="fas fa-brain text-white text-4xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">《生成式 AI 技术白皮书》</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">
+            详细解析生成式人工智能的技术原理、应用场景和发展前景，重点关注多模态内容生成技术。
+          </p>
+          <a href="https://arxiv.org/abs/2312.07667" target="_blank" class="text-blue-600 hover:text-blue-800 font-semibold">
+            下载白皮书 <i class="fas fa-external-link-alt ml-1"></i>
+          </a>
+        </div>
+
+        <div class="scroll-reveal bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-shadow">
+          <div class="h-48 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-lg mb-4 flex items-center justify-center">
+            <i class="fas fa-chart-bar text-white text-4xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">《Google Workspace 生态研究》</h3>
+          <p class="text-gray-600 dark:text-gray-300 mb-4">
+            深入分析 Google Workspace 产品线的发展策略，探讨其在企业协作市场的竞争优势和挑战。
+          </p>
+          <a href="https://cloud.google.com/blog/products/workspace" target="_blank" class="text-blue-600 hover:text-blue-800 font-semibold">
+            访问博客 <i class="fas fa-external-link-alt ml-1"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="text-center">
+        <div class="mb-8">
+          <h3 class="text-2xl font-bold mb-4 gradient-text">关于作者</h3>
+          <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+            <div class="flex items-center space-x-3">
+              <i class="fas fa-user-circle text-2xl text-blue-600"></i>
+              <span class="text-lg font-semibold">作者姓名: 季晓康</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <i class="fab fa-weixin text-2xl text-green-600"></i>
+              <span class="text-lg font-semibold">微信公众号：凿壁</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-8">
+          <p class="text-gray-600 dark:text-gray-400 mb-2">
+            <i class="fas fa-copyright mr-2"></i>版权信息：国家健康医疗大数据研究院
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            本文基于公开资料和社区反馈进行分析，仅供参考交流使用
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Chart instances for theme updates
+    let chartInstances = [];
+
+    // Get current CSS variable values
+    function getCSSVariable(variable) {
+      return getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
+    }
+
+    // Theme toggle functionality
+    const themeToggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+
+    // Check for saved theme preference or default to light mode
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+      html.classList.add('dark');
+    }
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      const theme = html.classList.contains('dark') ? 'dark' : 'light';
+      localStorage.setItem('theme', theme);
+      updateVisualizationThemes();
+    });
+
+    // Mermaid initialization
+    function initializeMermaid() {
+      const theme = html.classList.contains('dark') ? 'dark' : 'base';
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: theme,
+        themeVariables: {
+          primaryColor: getCSSVariable('--primary'),
+          primaryTextColor: getCSSVariable('--foreground'),
+          primaryBorderColor: getCSSVariable('--border'),
+          lineColor: getCSSVariable('--border'),
+          secondaryColor: getCSSVariable('--secondary'),
+          tertiaryColor: getCSSVariable('--accent')
+        }
+      });
+    }
+
+    // Update visualization themes
+    function updateVisualizationThemes() {
+      // Update Mermaid theme
+      initializeMermaid();
+      
+      // Update Chart.js themes
+      chartInstances.forEach(chart => {
+        if (chart.config.options.scales) {
+          // Update scales colors
+          if (chart.config.options.scales.x) {
+            chart.config.options.scales.x.ticks.color = getCSSVariable('--muted-foreground');
+            chart.config.options.scales.x.grid.color = getCSSVariable('--border');
+          }
+          if (chart.config.options.scales.y) {
+            chart.config.options.scales.y.ticks.color = getCSSVariable('--muted-foreground');
+            chart.config.options.scales.y.grid.color = getCSSVariable('--border');
+          }
+        }
+        
+        // Update legend colors
+        if (chart.config.options.plugins && chart.config.options.plugins.legend) {
+          chart.config.options.plugins.legend.labels.color = getCSSVariable('--foreground');
+        }
+        
+        chart.update();
+      });
+    }
+
+    // Initialize charts
+    function initializeCharts() {
+      // Feedback Chart
+      const feedbackCtx = document.getElementById('feedbackChart');
+      if (feedbackCtx) {
+        const feedbackData = {
+          labels: ['界面友好', 'AI功能实用', '协作体验好', '模板丰富', '性能问题', 'AI生成质量差', '功能有限', '担心停产'],
+          datasets: [{
+            label: '用户反馈数量',
+            data: [85, 72, 68, 61, 45, 38, 33, 28],
+            backgroundColor: [
+              getCSSVariable('--chart-1'),
+              getCSSVariable('--chart-2'),
+              getCSSVariable('--chart-3'),
+              getCSSVariable('--chart-4'),
+              getCSSVariable('--chart-1'),
+              getCSSVariable('--chart-2'),
+              getCSSVariable('--chart-3'),
+              getCSSVariable('--chart-4')
+            ],
+            borderWidth: 0
+          }]
+        };
+
+        const feedbackChart = new Chart(feedbackCtx, {
+          type: 'doughnut',
+          data: feedbackData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: getCSSVariable('--foreground'),
+                  usePointStyle: true,
+                  padding: 20
+                }
+              },
+              tooltip: {
+                backgroundColor: getCSSVariable('--card'),
+                titleColor: getCSSVariable('--card-foreground'),
+                bodyColor: getCSSVariable('--card-foreground'),
+                borderColor: getCSSVariable('--border'),
+                borderWidth: 1
+              }
+            }
+          }
+        });
+        chartInstances.push(feedbackChart);
+      }
+
+      // Competitor Chart
+      const competitorCtx = document.getElementById('competitorChart');
+      if (competitorCtx) {
+        const competitorData = {
+          labels: ['AI辅助', '协作功能', '模板数量', '易用性', '企业集成', '价格优势'],
+          datasets: [
+                         {
+               label: 'Google Vids',
+               data: [85, 90, 75, 88, 95, 70],
+               backgroundColor: 'rgba(34, 197, 94, 0.2)',
+               borderColor: 'rgba(34, 197, 94, 1)',
+               borderWidth: 2,
+               pointBackgroundColor: 'rgba(34, 197, 94, 1)',
+               pointBorderColor: '#fff',
+               pointHoverBackgroundColor: '#fff',
+               pointHoverBorderColor: 'rgba(34, 197, 94, 1)'
+             },
+             {
+               label: 'Adobe Premiere Rush',
+               data: [60, 45, 85, 70, 40, 45],
+               backgroundColor: 'rgba(16, 185, 129, 0.2)',
+               borderColor: 'rgba(16, 185, 129, 1)',
+               borderWidth: 2,
+               pointBackgroundColor: 'rgba(16, 185, 129, 1)',
+               pointBorderColor: '#fff',
+               pointHoverBackgroundColor: '#fff',
+               pointHoverBorderColor: 'rgba(16, 185, 129, 1)'
+             },
+             {
+               label: 'Loom',
+               data: [30, 70, 40, 85, 60, 80],
+               backgroundColor: 'rgba(5, 150, 105, 0.2)',
+               borderColor: 'rgba(5, 150, 105, 1)',
+               borderWidth: 2,
+               pointBackgroundColor: 'rgba(5, 150, 105, 1)',
+               pointBorderColor: '#fff',
+               pointHoverBackgroundColor: '#fff',
+               pointHoverBorderColor: 'rgba(5, 150, 105, 1)'
+             },
+             {
+               label: 'Camtasia',
+               data: [25, 35, 80, 75, 50, 35],
+               backgroundColor: 'rgba(4, 120, 87, 0.2)',
+               borderColor: 'rgba(4, 120, 87, 1)',
+               borderWidth: 2,
+               pointBackgroundColor: 'rgba(4, 120, 87, 1)',
+               pointBorderColor: '#fff',
+               pointHoverBackgroundColor: '#fff',
+               pointHoverBorderColor: 'rgba(4, 120, 87, 1)'
+             }
+          ]
+        };
+
+        const competitorChart = new Chart(competitorCtx, {
+          type: 'radar',
+          data: competitorData,
+          options: {
+            responsive: true,
+            scales: {
+              r: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                  color: getCSSVariable('--muted-foreground'),
+                  stepSize: 20
+                },
+                grid: {
+                  color: getCSSVariable('--border')
+                },
+                angleLines: {
+                  color: getCSSVariable('--border')
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: getCSSVariable('--foreground'),
+                  usePointStyle: true,
+                  padding: 20
+                }
+              }
+            }
+          }
+        });
+        chartInstances.push(competitorChart);
+      }
+    }
+
+         // Mermaid diagrams
+     function renderMermaidDiagrams() {
+       // Feature Architecture Diagram
+       const architectureDiv = document.getElementById('feature-architecture');
+       if (architectureDiv) {
+         const architectureDiagram = `
+graph TD
+    A["用户输入"] --> B["Gemini AI"]
+    B --> C["故事板生成"]
+    B --> D["脚本生成"]
+    C --> E["模板库"]
+    D --> E
+    E --> F["素材库"]
+    F --> G["录制工具"]
+    G --> H["协作编辑"]
+    H --> I["最终视频"]
+    
+    J["Google Docs"] --> B
+    K["提词器"] --> G
+    L["屏幕录制"] --> G
+    M["语音旁白"] --> G
+    
+    style A fill:#22c55e,stroke:#16a34a,stroke-width:2px,color:#fff
+    style I fill:#10b981,stroke:#059669,stroke-width:2px,color:#fff
+    style B fill:#059669,stroke:#047857,stroke-width:2px,color:#fff
+    style G fill:#0d9488,stroke:#0f766e,stroke-width:2px,color:#fff
+         `;
+         
+         architectureDiv.innerHTML = `<div class="mermaid">${architectureDiagram}</div>`;
+       }
+
+       // Timeline Chart - 使用简化的flowchart代替timeline
+       const timelineDiv = document.getElementById('timeline-chart');
+       if (timelineDiv) {
+         const timelineDiagram = `
+graph TB
+    A["2024年<br/>🚀 产品发布"] --> B["2025年<br/>📈 功能扩展"]
+    B --> C["2026年<br/>🔧 技术升级"]
+    C --> D["2027+<br/>🌍 市场扩张"]
+    
+    A1["• 集成 Gemini AI<br/>• Workspace Labs 测试<br/>• 基础功能发布"] -.-> A
+    B1["• 扩展用户范围<br/>• AI 语音旁白<br/>• 性能优化"] -.-> B
+    C1["• AI 模板改进<br/>• 移动端应用<br/>• YouTube 集成"] -.-> C
+    D1["• 消费者市场<br/>• 高级 AI 生成<br/>• 完整生态系统"] -.-> D
+    
+    style A fill:#22c55e,stroke:#16a34a,stroke-width:3px,color:#fff
+    style B fill:#10b981,stroke:#059669,stroke-width:3px,color:#fff
+    style C fill:#059669,stroke:#047857,stroke-width:3px,color:#fff
+    style D fill:#047857,stroke:#065f46,stroke-width:3px,color:#fff
+    
+    style A1 fill:#dcfce7,stroke:#22c55e,stroke-width:1px
+    style B1 fill:#dcfce7,stroke:#22c55e,stroke-width:1px
+    style C1 fill:#dcfce7,stroke:#22c55e,stroke-width:1px
+    style D1 fill:#dcfce7,stroke:#22c55e,stroke-width:1px
+         `;
+         
+         timelineDiv.innerHTML = `<div class="mermaid">${timelineDiagram}</div>`;
+       }
+     }
+
+    // Scroll reveal animation
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, observerOptions);
+
+         // Initialize everything when DOM is loaded
+     document.addEventListener('DOMContentLoaded', () => {
+       // Initialize scroll reveal
+       const revealElements = document.querySelectorAll('.scroll-reveal');
+       revealElements.forEach(el => observer.observe(el));
+       
+       // Initialize Mermaid
+       initializeMermaid();
+       
+       // Wait a bit for DOM to be fully ready, then initialize charts and diagrams
+       setTimeout(() => {
+         initializeCharts();
+         renderMermaidDiagrams();
+         
+         // Re-initialize mermaid to render the diagrams
+         if (typeof mermaid !== 'undefined') {
+           mermaid.init();
+         }
+       }, 500);
+     });
+  </script>
+</body>
+</html> 

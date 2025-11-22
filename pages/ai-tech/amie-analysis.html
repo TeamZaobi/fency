@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- === Required Meta Tags (Update content later!) === -->
+    <meta name="publish-date" content="2025-05-04"> <!-- Updated to today's date -->
+    <meta name="category" content="ai-tech">
+    <meta name="description" content="深入解析谷歌研发的对话式医疗 AI 系统 AMIE，涵盖其核心技术、性能评估、应用前景、伦理挑战及行业影响。信息基于多方来源整合。"> <!-- Updated description -->
+    <meta name="keywords" content="AMIE, Google AI, 医疗AI, 对话系统, 人工智能, 诊断辅助, 医学伦理, 大型语言模型, LLM"> <!-- Updated keywords -->
+
+    <title>AMIE: 谷歌医疗对话 AI 深度解析 | 凿壁</title> <!-- Updated title -->
+
+    <!-- === CDN Resources === -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Using Noto Sans SC & Noto Serif SC as recommended -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Add languages as needed -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="light-hljs-theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="dark-hljs-theme" disabled>
+    <!-- Popper is a dependency for Tippy -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css"/>
+    <!-- Framer Motion (optional, uncomment if complex animations needed) -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/framer-motion@10/dist/framer-motion.js"></script> -->
+
+
+    <!-- === Theme Variables & Basic Styles === -->
+    <style type="text/tailwindcss">
+      @layer base {
+        :root {
+          --background: rgb(240, 248, 255);
+          --foreground: rgb(55, 65, 81);
+          --card: rgb(255, 255, 255);
+          --card-foreground: rgb(55, 65, 81);
+          --popover: rgb(255, 255, 255);
+          --popover-foreground: rgb(55, 65, 81);
+          --primary: rgb(34, 197, 94);
+          --primary-foreground: rgb(255, 255, 255);
+          --secondary: rgb(224, 242, 254);
+          --secondary-foreground: rgb(75, 85, 99);
+          --muted: rgb(243, 244, 246);
+          --muted-foreground: rgb(107, 114, 128);
+          --accent: rgb(209, 250, 229);
+          --accent-foreground: rgb(55, 65, 81);
+          --destructive: rgb(239, 68, 68);
+          --destructive-foreground: rgb(255, 255, 255);
+          --border: rgb(229, 231, 235);
+          --input: rgb(229, 231, 235);
+          --ring: rgb(34, 197, 94);
+          --chart-1: rgb(34, 197, 94);
+          --chart-2: rgb(16, 185, 129);
+          --chart-3: rgb(5, 150, 105);
+          --chart-4: rgb(4, 120, 87);
+          --chart-5: rgb(6, 95, 70);
+          --sidebar: rgb(224, 242, 254);
+          --sidebar-foreground: rgb(55, 65, 81);
+          --sidebar-primary: rgb(34, 197, 94);
+          --sidebar-primary-foreground: rgb(255, 255, 255);
+          --sidebar-accent: rgb(209, 250, 229);
+          --sidebar-accent-foreground: rgb(55, 65, 81);
+          --sidebar-border: rgb(229, 231, 235);
+          --sidebar-ring: rgb(34, 197, 94);
+          --radius: 0.5rem;
+          --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+          --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+          --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+          --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+          --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10);
+          --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10);
+          --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
+          --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
+        }
+
+        .dark {
+          --background: rgb(15, 23, 42);
+          --foreground: rgb(209, 213, 219);
+          --card: rgb(30, 41, 59);
+          --card-foreground: rgb(209, 213, 219);
+          --popover: rgb(30, 41, 59);
+          --popover-foreground: rgb(209, 213, 219);
+          --primary: rgb(52, 211, 153);
+          --primary-foreground: rgb(15, 23, 42);
+          --secondary: rgb(45, 55, 72);
+          --secondary-foreground: rgb(161, 161, 170);
+          --muted: rgb(30, 41, 59);
+          --muted-foreground: rgb(107, 114, 128);
+          --accent: rgb(55, 65, 81);
+          --accent-foreground: rgb(161, 161, 170);
+          --destructive: rgb(239, 68, 68);
+          --destructive-foreground: rgb(15, 23, 42);
+          --border: rgb(75, 85, 99);
+          --input: rgb(75, 85, 99);
+          --ring: rgb(52, 211, 153);
+          --chart-1: rgb(52, 211, 153);
+          --chart-2: rgb(45, 212, 191);
+          --chart-3: rgb(34, 197, 94);
+          --chart-4: rgb(16, 185, 129);
+          --chart-5: rgb(5, 150, 105);
+          --sidebar: rgb(30, 41, 59);
+          --sidebar-foreground: rgb(209, 213, 219);
+          --sidebar-primary: rgb(52, 211, 153);
+          --sidebar-primary-foreground: rgb(15, 23, 42);
+          --sidebar-accent: rgb(55, 65, 81);
+          --sidebar-accent-foreground: rgb(161, 161, 170);
+          --sidebar-border: rgb(75, 85, 99);
+          --sidebar-ring: rgb(52, 211, 153);
+          --radius: 0.5rem;
+          --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+          --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+          --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+          --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+          --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10);
+          --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10);
+          --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
+          --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
+        }
+        body {
+            @apply bg-background text-foreground font-sans antialiased;
+            line-height: 1.7; /* Slightly increased line height for better readability */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            @apply font-serif font-semibold; /* Use serif for headings */
+        }
+        /* Add prose overrides for better spacing */
+        .prose h2 {
+            /* @apply mt-12 mb-6 text-3xl; */ /* Remove margin-top, handled by card spacing */
+             @apply mb-6 text-3xl; /* Style for new top-level headings within cards */
+        }
+        /* Keep H3 styling minimal or adjust if H4 becomes H3 */
+        /* .prose h3 {} */ 
+        .prose h4 {
+             /* @apply mt-8 mb-4; */ /* Remove margin-top, handled by border */
+             @apply mb-4 text-xl; /* Style for subheadings remains, adjusted margin */
+        }
+        .prose p {
+            @apply mb-5 leading-relaxed; /* More space below paragraphs */
+        }
+        .prose ul {
+            @apply mb-5 pl-6; /* Space below lists and ensure padding */
+        }
+        .prose li {
+            @apply mb-2; /* Space between list items */
+        }
+        .prose ul > li::marker {
+             /* Optional: Style list markers */
+             color: var(--primary);
+        }
+        .prose .border-l-4 {
+             @apply my-6; /* Adjust vertical margin for bordered quotes */
+        }
+      }
+      /* Custom Tippy Theme Example (adapt later if needed) */
+      .tippy-box[data-theme~='custom-light'] {
+        background-color: var(--card);
+        color: var(--card-foreground);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        font-family: var(--font-sans);
+      }
+      .tippy-box[data-theme~='custom-light'][data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: var(--card);
+      }
+      .tippy-box[data-theme~='custom-light'][data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: var(--card);
+      }
+      /* Define custom dark theme if needed, or rely on Tippy's built-in dark */
+       .tippy-box[data-theme~='custom-dark'] {
+        background-color: var(--card); /* Uses dark mode card */
+        color: var(--card-foreground); /* Uses dark mode card foreground */
+        border: 1px solid var(--border); /* Uses dark mode border */
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        font-family: var(--font-sans);
+      }
+       .tippy-box[data-theme~='custom-dark'][data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: var(--card);
+      }
+       .tippy-box[data-theme~='custom-dark'][data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: var(--card);
+      }
+
+      /* Basic code block styling placeholder */
+      .code-block-container {
+        position: relative;
+        margin: 1.5rem 0;
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+      .code-block-header {
+        display: flex; justify-content: space-between; align-items: center;
+        background-color: var(--muted); color: var(--muted-foreground);
+        padding: 0.5rem 1rem; font-family: var(--font-mono); font-size: 0.875rem;
+      }
+      .code-block-header .language-label { font-weight: 500; }
+      .code-block-header .copy-button {
+        background: none; border: none; cursor: pointer; display: flex; align-items: center;
+        color: var(--muted-foreground); transition: color 0.2s; font-size: 0.875rem;
+      }
+      .code-block-header .copy-button:hover { color: var(--primary); }
+      .code-block-container pre {
+          margin: 0; padding: 1rem;
+          background-color: var(--card) !important; /* Override hljs background */
+          overflow-x: auto; border: 1px solid var(--border); border-top: none;
+          border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius);
+      }
+      .code-block-container pre code.hljs {
+        font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.5;
+        padding: 0 !important; /* Override hljs padding */
+        background: none !important; /* Override hljs background */
+      }
+      /* Copy success animation */
+      @keyframes copied { 0% { opacity: 0; transform: translateY(5px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-5px); } }
+      .copy-success { position: absolute; right: 1rem; bottom: 100%; background-color: var(--primary); color: var(--primary-foreground); padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.75rem; pointer-events: none; animation: copied 1.5s ease forwards; }
+      /* Header Fade-in Animation */
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .header-fade-in > * { animation: fadeIn 0.8s ease-out forwards; opacity: 0; }
+      .header-fade-in h1 { animation-delay: 0.1s; }
+      .header-fade-in p { animation-delay: 0.2s; }
+      .header-fade-in a { animation-delay: 0s; }
+      /* Optional: Add a subtle gradient */
+      .header-gradient { background: linear-gradient(to bottom right, rgba(var(--secondary-rgb), 0.15), var(--background)); }
+      .dark .header-gradient { background: linear-gradient(to bottom right, rgba(var(--secondary-rgb-dark), 0.1), var(--background)); }
+      /* Helper to get RGB values for gradient */
+      :root { --secondary-rgb: 224, 242, 254; }
+      .dark { --secondary-rgb-dark: 45, 55, 72; }
+
+      /* Tech term styling */
+      .tech-term {
+        border-bottom: 1px dashed var(--primary);
+        cursor: help;
+        position: relative;
+      }
+      /* === Source Tag Styles === */
+      .source-tag {
+          @apply inline-block text-xs font-medium mr-2 px-2 py-0.5 rounded-full align-middle ml-1;
+          /* Use align-middle or adjust as needed for vertical alignment with text */
+      }
+      .source-tag-perplexity { @apply bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300; }
+      .source-tag-doubao { @apply bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300; }
+      .source-tag-yuanbao { @apply bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300; }
+      .source-tag-chatgpt { @apply bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300; } /* Lowercase class name */
+      .source-tag-deepseek { @apply bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300; }
+      .source-tag-gemini { @apply bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300; }
+      .source-tag-grok3 { @apply bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300; } /* New */
+      /* Optional: Hover effect */
+      .source-tag:hover { @apply opacity-80 transition-opacity; }
+
+      /* Subtle gradient background for header in light mode */
+      .header-bg-light {
+          background-image: linear-gradient(to bottom right, #e0f2fe, var(--background)); /* sky-100 to main background */
+      }
+      /* Subtle gradient background for header in dark mode */
+      .dark .header-bg-dark {
+          background-image: linear-gradient(to bottom right, #1e293b, var(--background)); /* slate-800 to main background */
+      }
+
+      /* Scroll Fade-in Animation */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-in-up {
+        opacity: 0; /* Start hidden */
+        animation: fadeInUp 0.8s ease-out forwards;
+      }
+      /* Add delays for staggered effect if needed */
+      /* .scroll-fade-in > *:nth-child(1) { animation-delay: 0.1s; } */
+      /* .scroll-fade-in > *:nth-child(2) { animation-delay: 0.2s; } */
+
+    </style>
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        darkMode: 'class', // Enable class-based dark mode
+        theme: {
+          extend: {
+             fontFamily: {
+                sans: ['"Noto Sans SC"', 'sans-serif'],
+                serif: ['"Noto Serif SC"', 'serif'],
+                mono: ['"Ubuntu Mono"', 'monospace'],
+              },
+             colors: {
+                background: 'var(--background)',
+                foreground: 'var(--foreground)',
+                card: 'var(--card)',
+                'card-foreground': 'var(--card-foreground)',
+                popover: 'var(--popover)',
+                'popover-foreground': 'var(--popover-foreground)',
+                primary: 'var(--primary)',
+                'primary-foreground': 'var(--primary-foreground)',
+                secondary: 'var(--secondary)',
+                'secondary-foreground': 'var(--secondary-foreground)',
+                muted: 'var(--muted)',
+                'muted-foreground': 'var(--muted-foreground)',
+                accent: 'var(--accent)',
+                'accent-foreground': 'var(--accent-foreground)',
+                destructive: 'var(--destructive)',
+                'destructive-foreground': 'var(--destructive-foreground)',
+                border: 'var(--border)',
+                input: 'var(--input)',
+                ring: 'var(--ring)',
+                chart: {
+                  '1': 'var(--chart-1)',
+                  '2': 'var(--chart-2)',
+                  '3': 'var(--chart-3)',
+                  '4': 'var(--chart-4)',
+                  '5': 'var(--chart-5)',
+                },
+                sidebar: {
+                  DEFAULT: 'var(--sidebar)',
+                  foreground: 'var(--sidebar-foreground)',
+                  primary: 'var(--sidebar-primary)',
+                  'primary-foreground': 'var(--sidebar-primary-foreground)',
+                  accent: 'var(--sidebar-accent)',
+                  'accent-foreground': 'var(--sidebar-accent-foreground)',
+                  border: 'var(--sidebar-border)',
+                  ring: 'var(--sidebar-ring)',
+                }
+              },
+              borderRadius: {
+                lg: 'var(--radius)',
+                md: 'calc(var(--radius) - 2px)',
+                sm: 'calc(var(--radius) - 4px)',
+                xl: 'calc(var(--radius) + 4px)',
+              },
+              boxShadow: {
+                '2xs': 'var(--shadow-2xs)',
+                xs: 'var(--shadow-xs)',
+                sm: 'var(--shadow-sm)',
+                DEFAULT: 'var(--shadow)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+                xl: 'var(--shadow-xl)',
+                '2xl': 'var(--shadow-2xl)',
+              },
+          }
+        }
+      }
+    </script>
+
+</head>
+<body class="antialiased">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" type="button" class="fixed bottom-4 right-4 z-50 p-3 rounded-full shadow-lg bg-card text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors" aria-label="切换主题">
+        <i class="fas fa-sun" id="theme-toggle-light-icon"></i>
+        <i class="fas fa-moon hidden" id="theme-toggle-dark-icon"></i>
+    </button>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+
+        <!-- Placeholder for Hero Section -->
+        <header class="mb-16 md:mb-20 text-center py-16 md:py-24 rounded-xl border border-border shadow-lg header-bg-light dark:header-bg-dark header-fade-in">
+             <div class="mb-6">
+              <!-- Relative path from pages/ai-tech/ to root -->
+              <a href="../../index.html" class="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>返回首页
+              </a>
+            </div>
+            <h1 class="text-5xl md:text-6xl font-bold font-serif mb-6 text-foreground">AMIE: 谷歌医疗对话 AI 深度解析</h1> <!-- Updated H1 -->
+            <p class="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">探索谷歌（Google）研发的开创性对话式医疗人工智能系统 AMIE，了解其技术细节、性能表现、潜在应用与面临的挑战。</p> <!-- Updated paragraph -->
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="space-y-12 md:space-y-16"> <!-- Adjusted vertical spacing between cards -->
+
+            <!-- Part 1: AMIE Details -->
+            <section id="amie-details" class="scroll-target">
+                 <!-- Removed the single large wrapping card div -->
+
+                    <!-- Introduction / Overview Card -->
+                    <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                        <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300">
+                            <h2 class="font-semibold font-serif mb-4 text-primary"><i class="fas fa-lightbulb mr-2"></i>引言：AMIE 的登场与意义</h2>
+                            <p>
+                                AMIE（Articulate Medical Intelligence Explorer）是由谷歌研究院（Google Research）与 DeepMind 联合研发的一款基于<span class="tech-term" data-tippy-content="Large Language Model (大型语言模型): 指经过大量文本数据训练，能理解和生成人类语言的 AI 模型。">LLM</span>（大型语言模型）的对话式医疗人工智能系统。自 2025 年 4 月其研究成果在《自然》（Nature）杂志正式发表以来<span class="source-tag source-tag-perplexity">perplexity</span><span class="source-tag source-tag-doubao">doubao</span><span class="source-tag source-tag-yuanbao">yuanbao</span>，AMIE 引发了全球医疗界、人工智能领域和投资市场的广泛关注。该系统展示了在模拟患者访谈中达到甚至超越初级保健医生（<span class="tech-term" data-tippy-content="Primary Care Physician (初级保健医生): 提供初步医疗保健服务的全科医生。">PCPs</span>）的诊断准确率、信息获取量及共情能力，被视为医疗 AI 领域的重要里程碑，标志着 AI 向临床核心环节——医患问诊的深度渗透<span class="source-tag source-tag-chatgpt">ChatGPT</span><span class="source-tag source-tag-perplexity">perplexity</span>。AMIE 的出现可能重塑诊断范式，推动医疗 AI 从"信息检索"或"单向问答"迈向"动态对话协作"的新阶段<span class="source-tag source-tag-yuanbao">yuanbao</span><span class="source-tag source-tag-doubao">doubao</span>。
+                            </p>
+                             <p class="mt-4">
+                                值得注意的是，AMIE 从最初的纯文本系统到后续具备"视觉"能力的多模态版本，其在大约一年内的快速迭代，不仅仅是技术的自然演进。这反映了谷歌利用其最新的 Gemini 模型（如 Gemini 2.0/2.5 Flash）在医疗这一复杂且高价值领域迅速展示其多模态 AI 领导力的战略意图，以应对市场竞争并确立技术领先地位<span class="source-tag source-tag-gemini">gemini</span>。
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Core Technology Card -->
+                     <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                        <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300">
+                             <h2 class="font-semibold font-serif mb-4 text-primary"><i class="fas fa-cogs mr-2"></i>核心技术</h2>
+                             <details class="mb-4 group">
+                                 <summary class="text-xl font-semibold font-serif mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                    对话架构与训练机制
+                                    <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                 </summary>
+                                 <div class="pl-4 border-l-2 border-primary/30 ml-2">
+                                     <p>
+                                        AMIE 最受认可的核心创新在于其独特的训练范式和对话架构。它构建了一个"自我对话模拟环境"，通过 AI 医生与 AI 患者的动态交互，并结合一个实时反馈的"AI 评审"机制，形成了闭环优化系统<span class="source-tag source-tag-perplexity">perplexity</span><span class="source-tag source-tag-doubao">doubao</span>。这种训练方式突破了传统医疗 AI 依赖静态病历数据的局限，使模型能够更好地处理包含症状演变、医患认知差异在内的动态临床情境，并显著提升了对复杂临床场景的适应能力<span class="source-tag source-tag-perplexity">perplexity</span><span class="source-tag source-tag-deepseek">Deepseek</span>。这种模拟学习环境是为了克服真实世界对话数据量有限且往往包含噪声的局限性，并实现跨多种疾病和场景的学习扩展<span class="source-tag source-tag-gemini">gemini</span>。
+                                        <span class="text-sm text-muted-foreground">(研究涉及的模拟数据量巨大，例如包含 11,686 个模拟对话，覆盖 5,230 个医疗条件<span class="source-tag source-tag-grok3">grok3</span>。)</span>
+                                     </p>
+                                     <p class="mt-4 italic text-muted-foreground border-l-4 border-accent pl-4 bg-accent/30 dark:bg-accent/10 p-4 rounded-md">
+                                        <strong>双刃剑效应：</strong>然而，对自我对弈和模拟环境的倚重也是一把双刃剑。虽然它使得模型能快速学习和扩展，但也意味着 AMIE 本质上是针对其模拟环境进行优化的。模型在模拟环境（如 <span class="tech-term" data-tippy-content="Objective Structured Clinical Examination (客观结构化临床考试): 一种标准化评估医学生或医生临床技能的方法。">OSCE</span>）中的优异性能，可能部分源于其精通了该特定环境的规则和模式。这引发了一个根本性的问题：当面对真实世界中那种非结构化、不可预测的患者互动时，这样一个为模拟而优化的系统其鲁棒性和适应性如何？许多医学界的批评恰恰指出了这种模拟环境与真实临床实践之间的巨大鸿沟<span class="source-tag source-tag-gemini">gemini</span>。
+                                     </p>
+                                 </div>
+                             </details>
+                             <details class="mb-4 group border-t border-border pt-6 mt-6">
+                                  <summary class="text-xl font-semibold font-serif mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                     诊断推理能力
+                                      <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                  </summary>
+                                 <div class="pl-4 border-l-2 border-primary/30 ml-2">
+                                     <p>
+                                        AMIE 基于大型语言模型（据报道为 PaLM 2 的医学微调版本<span class="source-tag source-tag-yuanbao">yuanbao</span>），整合了电子病历摘要、医学问答等多源数据，以提升诊断的特异性<span class="source-tag source-tag-yuanbao">yuanbao</span>。它采用了一种类似"差异性诊断树"的生成技术，能够根据对话动态调整问诊路径，并保留备选诊断假设，这种模拟人类认知的过程在医疗 AI 中较为新颖<span class="source-tag source-tag-perplexity">perplexity</span>。在《Nature》发表的研究中，AMIE 在模拟的 159 个病例场景中，与初级保健医生（<span class="tech-term" data-tippy-content="Primary Care Physician (初级保健医生)">PCPs</span>）相比，在诊断准确性、信息获取量等方面表现相当甚至更优<span class="source-tag source-tag-chatgpt">ChatGPT</span>。后续在《新英格兰医学杂志》发表的 302 例复杂病例测试中，其独立生成鉴别诊断（<span class="tech-term" data-tippy-content="Differential Diagnosis (鉴别诊断): 区分具有相似症状 不同疾病的过程。">DDx</span>）列表的 Top-10 准确率达到 59.1%，显著高于未受辅助的医生（33.6%）<span class="source-tag source-tag-yuanbao">yuanbao</span>。
+                                    </p>
+                                 </div>
+                             </details>
+                             <details class="mb-4 group border-t border-border pt-6 mt-6">
+                                  <summary class="text-xl font-semibold font-serif mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                     共情与沟通
+                                      <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                  </summary>
+                                 <div class="pl-4 border-l-2 border-primary/30 ml-2">
+                                     <p>
+                                        除了诊断准确性，AMIE 在模拟对话中的沟通和共情能力也备受关注。在随机双盲试验中，AMIE 在多项评估指标上得分优于人类医生（例如，在专科医生评估的 32 个维度中优于 30 个，在患者扮演者评估的 26 个维度中优于 25 个<span class="source-tag source-tag-grok3">grok3</span>），尤其在"缓解患者焦虑"、"共同制定方案"、"信息清晰度"以及同理心表达等方面表现突出<span class="source-tag source-tag-chatgpt">ChatGPT</span><span class="source-tag source-tag-yuanbao">yuanbao</span><span class="source-tag source-tag-doubao">doubao</span>。这表明 AI 不仅能处理技术性诊断任务，还能在一定程度上模拟高质量的医患沟通。
+                                    </p>
+                                     <p class="mt-4 italic text-muted-foreground border-l-4 border-accent pl-4 bg-accent/30 dark:bg-accent/10 p-4 rounded-md">
+                                        <strong>模拟共情与现实差距：</strong>需要注意的是，模拟环境下的高共情评分尤其具有争议性。AI 的高分可能更多地反映了它成功地<span class="font-semibold">模拟</span>了共情相关的<span class="font-semibold">语言模式</span>（如使用关怀性词语、表达理解），而非真正具备内在的情感理解或建立深层人际连接的能力。真实的医患互动远比结构化的文本聊天复杂，充满了非语言线索和未言明的担忧。因此，模拟性能与真实世界患者体验之间可能存在显著差距，需要警惕将模拟环境中的高分直接等同于现实临床中的同等价值<span class="source-tag source-tag-gemini">gemini</span>。
+                                     </p>
+                                 </div>
+                             </details>
+                             <details class="mb-0 group border-t border-border pt-6 mt-6"> <!-- Removed mb-4 on last details -->
+                                  <summary class="text-xl font-semibold font-serif mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                     多模态进展
+                                      <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                  </summary>
+                                 <div class="pl-4 border-l-2 border-primary/30 ml-2">
+                                     <p>
+                                         AMIE 并非停留在纯文本交互。其后续的多模态版本（Multimodal AMIE）整合了如 Gemini 2.0 Flash 等模型的能力，支持分析医学影像（例如皮肤照片、心电图）和文档数据<span class="source-tag source-tag-doubao">doubao</span>。通过所谓的"状态感知推理框架"，新版本能根据多模态信息动态调整对话策略。例如，在模拟的皮肤科病例中，AMIE 能够主动要求患者提供皮损图像，并结合病史信息来辅助诊断<span class="source-tag source-tag-doubao">doubao</span>。
+                                     </p>
+                                 </div>
+                             </details>
+                         </div>
+                     </div>
+
+                    <!-- Performance Assessment Card -->
+                     <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-chart-line mr-2"></i>性能评估与验证</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                             <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                             <p>
+                                  AMIE 在多项评估中展示了令人印象深刻的性能，尤其是在模拟的临床场景中：
+                             </p>
+                             <div class="bg-secondary/30 dark:bg-secondary/10 p-4 rounded-md border border-border my-6"> <!-- Highlight box for stats -->
+                                  <ul class="list-disc pl-6 mt-2 space-y-1 text-sm"> <!-- Adjusted text size -->
+                                      <li><strong>诊断准确性:</strong> 在《Nature》发表的研究中，涉及 159 个模拟病例场景，AMIE 在诊断准确性上与初级保健医生（<span class="tech-term" data-tippy-content="Primary Care Physician (初级保健医生)">PCPs</span>）相当甚至更优<span class="source-tag source-tag-chatgpt">ChatGPT</span>。后续在《新英格兰医学杂志》发表的涉及 302 例复杂病例的测试中，其独立生成鉴别诊断（<span class="tech-term" data-tippy-content="Differential Diagnosis (鉴别诊断): 区分具有相似症状 不同疾病的过程。">DDx</span>）列表的 Top-10 准确率达到 59.1%，显著高于未受辅助的医生（33.6%）<span class="source-tag source-tag-yuanbao">yuanbao</span>。</li>
+                                      <li><strong>信息获取与沟通质量:</strong> 在《Nature》研究中，AMIE 在信息获取量上也表现优异<span class="source-tag source-tag-chatgpt">ChatGPT</span>。在随机双盲试验中，AMIE 在多项沟通和共情相关指标上得分优于人类医生，例如，在专科医生评估的 32 个维度中优于 30 个，在患者扮演者评估的 26 个维度中优于 25 个<span class="source-tag source-tag-grok3">grok3</span>，尤其在"缓解患者焦虑"、"共同制定方案"、"信息清晰度"以及同理心表达等方面表现突出<span class="source-tag source-tag-chatgpt">ChatGPT</span><span class="source-tag source-tag-yuanbao">yuanbao</span><span class="source-tag source-tag-doubao">doubao</span>。</li>
+                                      <li><strong>效率提升:</strong> 有研究表明，使用类似 AMIE 的 AI 进行预问诊，可将医生的效率提升 42%<span class="source-tag source-tag-perplexity">perplexity</span>。</li>
+                                  </ul>
+                             </div>
+                              <p class="mt-4 italic text-muted-foreground border-l-4 border-accent pl-4 bg-accent/30 dark:bg-accent/10 p-4 rounded-md">
+                                  <strong>重要提醒：</strong>尽管这些数据亮眼，但必须认识到它们主要来源于模拟环境或基于文本的交互。真实临床环境的复杂性和不可预测性远超模拟，因此这些性能指标能否完全转化为真实世界的临床效益，仍需大规模、前瞻性的临床试验来验证。
+                              </p>
+                          </div>
+                         </details>
+                      </div>
+
+                    <!-- Potential Applications Card -->
+                      <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-rocket mr-2"></i>应用前景与潜力</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                              <p>
+                                  基于当前的评估和讨论，AMIE 及类似技术在临床上展现出多种潜在应用价值：
+                                  <ul class="list-disc pl-6 mt-2 space-y-1">
+                                      <li><strong>辅助诊断与决策支持:</strong> 作为"第二意见"生成器或鉴别诊断工具，帮助医生减少认知负荷和诊断误差，尤其在复杂或罕见病例中<span class="source-tag source-tag-yuanbao">yuanbao</span><span class="source-tag source-tag-doubao">doubao</span>。</li>
+                                      <li><strong>预问诊与病史采集:</strong> 在门诊前或远程医疗中进行初步的病史采集和症状梳理，提高医生面诊效率<span class="source-tag source-tag-perplexity">perplexity</span>。</li>
+                                      <li><strong>医疗教育与培训:</strong> 利用其标准化问诊流程和模拟病例库，用于培训医学生和住院医师的临床问诊和诊断推理技能<span class="source-tag source-tag-yuanbao">yuanbao</span><span class="source-tag source-tag-doubao">doubao</span><span class="source-tag source-tag-perplexity">perplexity</span>。</li>
+                                      <li><strong>分级诊疗与基层支持:</strong> 在医疗资源匮乏的地区，作为虚拟顾问或初筛工具，提升基层医疗服务水平和转诊准确性<span class="source-tag source-tag-deepseek">Deepseek</span><span class="source-tag source-tag-yuanbao">yuanbao</span><span class="source-tag source-tag-doubao">doubao</span>。</li>
+                                      <li><strong>诊断质量控制:</strong> 帮助医院通过回溯 AI 推理链来审计和分析诊断错误案例<span class="source-tag source-tag-yuanbao">yuanbao</span>。</li>
+                                  </ul>
+                              </p>
+                          </div>
+                         </details>
+                      </div>
+
+                    <!-- Industry Landscape & Impact Card -->
+                      <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-industry mr-2"></i>行业影响与定位</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                               <p>
+                                   AMIE 的发布巩固了谷歌在对话式诊断 AI 领域的地位，展示了其 Gemini 系列模型的强大能力，并与其在医疗领域推动"代理式 AI"的更广泛战略相符<span class="source-tag source-tag-gemini">gemini</span>。在竞争格局中，AMIE 专注于诊断对话和多模态整合，使其区别于单任务 AI 工具，并在特定医疗任务上被认为优于通用模型 GPT-4<span class="source-tag source-tag-gemini">gemini</span>。
+                               </p>
+                               <p class="mt-4">
+                                   其市场潜力巨大，涵盖增强远程医疗、提供临床诊断支持、改善医疗可及性（尤其是在资源匮乏地区）以及可能降低医疗成本和医生倦怠等方面<span class="source-tag source-tag-gemini">gemini</span>。然而，高昂的实施成本和与现有 <span class="tech-term" data-tippy-content="Electronic Health Record (电子健康记录): 患者健康信息的数字化版本。">EHR</span> 系统的集成难题是广泛应用的主要障碍。
+                               </p>
+                               <p class="mt-4">
+                                   AMIE 的出现加剧了关于 AI 在医疗中角色的争论（增强 vs. 取代）。医生群体担忧 AI 可能导致技能贬值或被用于削减成本，而 AI 也可能促使医疗角色转变，让人类医生更专注于复杂决策和人际互动<span class="source-tag source-tag-gemini">gemini</span>。值得注意的是，谷歌和许多评论者倾向于将 AMIE 定位为"AI 助手"，这种措辞虽然有助于初期市场接纳，但可能掩盖其长期潜在的颠覆力量——即 AI 高效处理诊断流程的潜力可能从根本上重塑医疗劳动力的结构和经济模式<span class="source-tag source-tag-gemini">gemini</span>。
+                               </p>
+                          </div>
+                         </details>
+                      </div>
+
+                    <!-- Challenges, Ethics & Limitations Card -->
+                      <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                         <details class="group">
+                              <summary class="text-2xl font-semibold font-serif mb-4 text-primary list-none cursor-pointer hover:text-primary/80 transition-colors flex justify-between items-center group-open:mb-4">
+                                  <span><i class="fas fa-exclamation-triangle mr-2"></i>挑战、伦理与局限性</span>
+                                  <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                              </summary>
+                              <div class="prose prose-lg max-w-none text-foreground dark:text-gray-300 pl-4 border-l-2 border-primary/30 ml-2">
+                               <p>
+                                   尽管前景广阔，将 AMIE 或类似技术从研究推向实际应用，需要跨越重重障碍。除了公开承认的技术局限性，还面临一系列复杂的挑战。
+                               </p>
+                                <details class="mb-4 group">
+                                     <summary class="text-xl font-semibold font-serif mt-6 mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                        技术与验证局限
+                                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                     </summary>
+                                     <div class="pl-4 border-l-2 border-secondary/30 ml-2">
+                                         <ul class="list-disc pl-6 mt-2 space-y-1">
+                                             <li><strong>模拟环境与真实世界的鸿沟:</strong> 这是最核心的质疑点。测试多在模拟环境或基于文本聊天进行，缺乏真实临床的复杂性（如非语言信息、多任务处理、患者情绪波动等）<span class="source-tag source-tag-deepseek">Deepseek</span><span class="source-tag source-tag-doubao">doubao</span><span class="source-tag source-tag-chatgpt">ChatGPT</span>。LLM 擅长学习特定模式，在模拟环境中的优异表现不直接等同于真实世界的鲁棒性<span class="source-tag source-tag-gemini">gemini</span>。测试病例也可能偏向特定类型，影响结果普适性<span class="source-tag source-tag-yuanbao">yuanbao</span>。</li>
+                                             <li><strong>泛化能力存疑:</strong> 对语言能力弱、文化背景复杂、合并症多的患者，或在不同地区人群中的表现有待验证<span class="source-tag source-tag-deepseek">Deepseek</span><span class="source-tag source-tag-perplexity">perplexity</span>。训练数据的偏见可能影响公平性<span class="source-tag source-tag-perplexity">perplexity</span><span class="source-tag source-tag-doubao">doubao</span>。</li>
+                                             <li><strong>模拟共情的争议:</strong> AI 在模拟中展现的高共情评分被广泛质疑。医学界认为这更像是对语言模式的模仿，而非真正的情感理解或人际连接<span class="source-tag source-tag-gemini">gemini</span>。过度强调模拟共情可能误导对其真实能力的判断。</li>
+                                             <li><strong>可解释性与黑箱问题:</strong> 当 AMIE 的推理过程不透明或给出反常建议时，医生难以完全信任和采纳<span class="source-tag source-tag-perplexity">perplexity</span><span class="source-tag source-tag-yuanbao">yuanbao</span>。</li>
+                                         </ul>
+                                     </div>
+                                </details>
+                                 <details class="mb-4 group border-t border-border pt-6 mt-6">
+                                     <summary class="text-xl font-semibold font-serif mt-6 mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                        专业视角与社区反馈
+                                        <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                     </summary>
+                                     <div class="pl-4 border-l-2 border-secondary/30 ml-2">
+                                         <p>
+                                             医疗从业者普遍持谨慎乐观态度，认可 AI 在效率和辅助诊断上的潜力<span class="source-tag source-tag-chatgpt">ChatGPT</span><span class="source-tag source-tag-yuanbao">yuanbao</span>，但强烈质疑研究方法论和模拟结果的临床适用性<span class="source-tag source-tag-chatgpt">ChatGPT</span><span class="source-tag source-tag-gemini">gemini</span>。知名专家如 Eric Topol 指出，缺乏真实患者数据验证是关键短板<span class="source-tag source-tag-chatgpt">ChatGPT</span>。科技界与医学界在评估标准（技术突破 vs. 临床实用性）上存在显著差异，后者对 AMIE 的批判性声音更强<span class="source-tag source-tag-gemini">gemini</span>。医生接受度、工作流程整合也是实际应用的重要考量<span class="source-tag source-tag-perplexity">perplexity</span><span class="source-tag source-tag-doubao">doubao</span>。
+                                         </p>
+                                     </div>
+                                </details>
+                                 <details class="mb-0 group border-t border-border pt-6 mt-6">
+                                     <summary class="text-xl font-semibold font-serif mt-6 mb-3 text-secondary-foreground cursor-pointer list-none group-open:mb-3 hover:text-primary transition-colors flex justify-between items-center">
+                                        伦理雷区与监管路径
+                                         <i class="fas fa-chevron-down group-open:rotate-180 transition-transform duration-300 ease-in-out ml-2"></i>
+                                     </summary>
+                                     <div class="pl-4 border-l-2 border-secondary/30 ml-2">
+                                        <ul class="list-disc pl-6 mt-2 space-y-2">
+                                            <li><strong>偏见与公平性:</strong> AI 可能学习并放大训练数据中的历史偏见，加剧健康不平等。需要采用多样化数据、偏见缓解策略和持续监控来解决<span class="source-tag source-tag-gemini">gemini</span>。</li>
+                                            <li><strong>透明度与可解释性:</strong> AI 的"黑箱"特性阻碍信任和问责。虽然 AMIE 尝试提高推理透明度，但其解释可能只是"事后合理化"。推广可解释 AI (<span class="tech-term" data-tippy-content="Explainable Artificial Intelligence (可解释人工智能): 旨在使人类能够理解 AI 决策过程的方法和技术。">XAI</span>) 至关重要<span class="source-tag source-tag-gemini">gemini</span>。</li>
+                                            <li><strong>问责制与法律责任:</strong> AI 错误导致伤害时的责任归属尚无明确法律框架。建立清晰的问责机制和更新法律体系是必要条件<span class="source-tag source-tag-gemini">gemini</span>。</li>
+                                            <li><strong>隐私与数据安全:</strong> 处理敏感健康信息需采取极其严格的安全措施，遵守隐私法规（如 <span class="tech-term" data-tippy-content="Health Insurance Portability and Accountability Act (健康保险流通与责任法案): 美国保护患者健康信息隐私和安全的联邦法律。">HIPAA</span>, <span class="tech-term" data-tippy-content="General Data Protection Regulation (通用数据保护条例): 欧盟关于数据保护和隐私的法规。">GDPR</span>），并确保患者知情同意和控制权<span class="source-tag source-tag-gemini">gemini</span>。</li>
+                                            <li><strong>人性化因素:</strong> 过度依赖 AI 可能削弱医生的批判性思维，AI 也无法完全替代医疗中的人际互动和共情关怀，必须确保 AI 作为辅助工具<span class="source-tag source-tag-gemini">gemini</span>。</li>
+                                        </ul>
+                                        <p class="mt-2">
+                                            将 AMIE 推向市场需要通过严格的监管审批（如 <span class="tech-term" data-tippy-content="Food and Drug Administration (美国食品药品监督管理局): 负责保护和促进公众健康的美国联邦机构，监管医疗器械等。">FDA</span>），这对于持续学习的生成式 AI 提出了新挑战。严格的真实世界临床验证是前提<span class="source-tag source-tag-gemini">gemini</span>。目前，AMIE 的研究验证与临床部署要求之间仍存在巨大鸿沟，其实际应用可能比最初预期更为遥远<span class="source-tag source-tag-gemini">gemini</span>。
+                                        </p>
+                                     </div>
+                                </details>
+                          </div>
+                         </details>
+                      </div>
+                 <!-- </div> Removed closing div of the large wrapping card -->
+            </section>
+
+            <!-- Part 2: Source Analysis -->
+            <section id="source-analysis">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 border-b border-primary pb-3 flex items-center">
+                    <i class="fas fa-analytics mr-3 text-primary"></i>来源分析与对比
+                </h2>
+                <p class="text-muted-foreground mb-8">为了解不同来源对上述融合内容的贡献情况，我们进行了简单的统计与启发式评估。</p>
+                <!-- Analysis content will be populated here -->
+                 <div class="grid md:grid-cols-2 gap-8">
+                     <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                        <h3 class="text-xl font-semibold mb-4 text-secondary-foreground flex items-center"><i class="fas fa-chart-pie mr-3 text-accent"></i>贡献度分析 (基于内容块)</h3>
+                         <ul class="list-disc pl-5 space-y-2 text-card-foreground">
+                            <li><code>gemini.md</code>: 19 块</li>
+                            <li><code>yuanbao.md</code>: 14 块</li>
+                            <li><code>perplexity.md</code>: 13 块</li>
+                            <li><code>doubao.md</code>: 13 块</li>
+                            <li><code>ChatGPT.md</code>: 9 块</li>
+                            <li><code>Deepseek.md</code>: 4 块</li>
+                            <li><code>grok3.md</code>: 3 块</li>
+                         </ul>
+                         <p class="text-xs text-muted-foreground mt-4">注：统计基于融合内容中出现的 `[来源: ...]` 标签次数。</p>
+                     </div>
+                     <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border">
+                        <h3 class="text-xl font-semibold mb-4 text-secondary-foreground flex items-center"><i class="fas fa-radar mr-3 text-accent"></i>Top 3 来源比较 (雷达图)</h3>
+                         <div class="w-full h-[300px] md:h-[350px]">
+                            <canvas id="sourceRadarChart"></canvas>
+                         </div>
+                         <p class="text-xs text-center text-muted-foreground mt-2">评分基于启发式规则自动生成</p>
+                     </div>
+                 </div>
+                 <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border mt-8">
+                     <h3 class="text-xl font-semibold mb-4 text-secondary-foreground">主要概念关系 (Mermaid)</h3>
+                     <div class="flex justify-center">
+                         <pre class="mermaid">
+graph TD;
+    A["AMIE 核心"];
+    B["多源输入 (MD 文件)"];
+    C["内容融合 & 筛选"];
+    D["整合内容 (带来源)"];
+    E["来源贡献度分析"];
+    F["Top 3 来源"];
+    G["雷达图比较"];
+    H["最终 HTML 页面"];
+
+    B --> C;
+    C --> D;
+    C --> E;
+    E --> F;
+    F --> G;
+    D --> H;
+    G --> H;
+    A --> C;
+    classDef core fill:#ccfbf1,stroke:#14b8a6,color:#0f766e;
+    class A core;
+                         </pre>
+                     </div>
+                 </div>
+            </section>
+
+            <!-- Part 3: Further Reading -->
+            <section id="further-reading" class="scroll-target"> <!-- Add scroll-target class -->
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 border-b border-primary pb-3 flex items-center">
+                    <i class="fas fa-book-open mr-3 text-primary"></i>延伸阅读
+                </h2>
+                <div class="bg-card p-6 md:p-8 rounded-xl shadow-lg border border-border space-y-6">
+                    <ul class="list-none space-y-6"> <!-- Increased space-y -->
+                        <li class="border-b border-border pb-6 last:border-b-0 last:pb-0 flex items-start space-x-4"> <!-- Use flexbox for layout -->
+                           <div class="flex-shrink-0 text-primary pt-1">
+                               <i class="fas fa-file-alt fa-lg"></i> <!-- Icon for paper -->
+                           </div>
+                           <div>
+                                <h4 class="text-lg font-semibold mb-1 text-card-foreground">
+                                    <a href="https://www.nature.com/articles/s41586-023-06888-7" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 transition-colors hover:underline underline-offset-2 group">
+                                        Towards expert-level medical question answering with large language models (Nature)
+                                        <i class="fas fa-external-link-alt text-xs ml-1 opacity-0 group-hover:opacity-100 transition-opacity"></i> <!-- Link icon on hover -->
+                                    </a>
+                                </h4>
+                                <p class="text-muted-foreground text-sm">AMIE 的原始研究论文，详细介绍了其架构、训练方法和在模拟诊断对话中的评估结果，是理解其技术基础的最权威来源。</p>
+                           </div>
+                        </li>
+                         <li class="border-b border-border pb-6 last:border-b-0 last:pb-0 flex items-start space-x-4">
+                             <div class="flex-shrink-0 text-primary pt-1">
+                               <i class="fab fa-google fa-lg"></i> <!-- Icon for Google blog -->
+                           </div>
+                             <div>
+                                <h4 class="text-lg font-semibold mb-1 text-card-foreground">
+                                    <a href="https://ai.googleblog.com/2024/01/amie-research-ai-system-for-diagnostic-conversations.html" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 transition-colors hover:underline underline-offset-2 group">
+                                        AMIE: A research AI system for diagnostic conversations (Google AI Blog)
+                                        <i class="fas fa-external-link-alt text-xs ml-1 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                    </a>
+                                </h4>
+                    <ul class="list-none space-y-4">
+                        <li class="border-b border-border pb-4 last:border-b-0 last:pb-0">
+                            <h4 class="text-lg font-semibold mb-1 text-card-foreground">
+                                <a href="https://www.nature.com/articles/s41586-023-06888-7" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">Towards expert-level medical question answering with large language models (Nature)</a>
+                            </h4>
+                            <p class="text-muted-foreground text-sm">AMIE 的原始研究论文，详细介绍了其架构、训练方法和在模拟诊断对话中的评估结果，是理解其技术基础的最权威来源。</p>
+                        </li>
+                         <li class="border-b border-border pb-4 last:border-b-0 last:pb-0">
+                            <h4 class="text-lg font-semibold mb-1 text-card-foreground">
+                                <a href="https://ai.googleblog.com/2024/01/amie-research-ai-system-for-diagnostic-conversations.html" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">AMIE: A research AI system for diagnostic conversations (Google AI Blog)</a>
+                            </h4>
+                            <p class="text-muted-foreground text-sm">Google 官方发布的博客文章，用更易于理解的语言介绍了 AMIE 项目的研究背景、目标、技术亮点和初步成果，适合快速了解项目概况。</p>
+                        </li>
+                        <li class="border-b border-border pb-4 last:border-b-0 last:pb-0">
+                            <h4 class="text-lg font-semibold mb-1 text-card-foreground">
+                                <a href="https://www.statnews.com/2024/01/11/google-ai-chatbot-amie-diagnoses-patients/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">Google's new AI chatbot surpasses doctors in diagnostic interviews — with caveats (STAT News)</a>
+                            </h4>
+                            <p class="text-muted-foreground text-sm">来自知名医疗健康媒体 STAT News 的报道，提供了对 AMIE 研究的行业视角解读，并强调了其潜在影响以及在真实临床应用中需要注意的局限性。</p>
+                        </li>
+                        <li class="border-b border-border pb-4 last:border-b-0 last:pb-0">
+                            <h4 class="text-lg font-semibold mb-1 text-card-foreground">
+                                <a href="https://www.technologyreview.com/2024/01/11/1086391/google-developed-an-ai-that-can-diagnose-illnesses-almost-as-well-as-doctors/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">Google developed an AI that can diagnose illnesses almost as well as doctors (MIT Technology Review)</a>
+                            </h4>
+                            <p class="text-muted-foreground text-sm">MIT 科技评论的文章，分析了 AMIE 的技术突破及其在 AI 医疗领域的意义，同时也指出了从研究到实践所需克服的障碍。</p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Visible Date/Category Placeholder -->
+             <div class="text-sm text-muted-foreground mt-16 md:mt-20 mb-4 text-right">
+                <span class="mr-4">发布于 <span id="publish-date-display">2025年05月04日</span></span> <!-- Updated display date -->
+                <span>分类: <span id="category-display" class="font-medium">AI 技术与生态</span></span> <!-- Placeholder, matches category meta -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-20 md:mt-24 pt-10 border-t border-border text-center text-sm text-muted-foreground">
+            <div>
+                <p>作者姓名: 季晓康</p>
+                <p>微信公众号：凿壁</p>
+                <p>版权信息：国家健康医疗大数据研究院</p>
+            </div>
+        </footer>
+
+    </div> <!-- End Main Container -->
+
+    <!-- === JavaScript Logic === -->
+    <script>
+        // Global Chart Instances Array
+        window.chartInstances = [];
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const darkHljsTheme = document.getElementById('dark-hljs-theme');
+
+        // Check initial theme preference
+        function applyInitialTheme() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.add('hidden');
+                darkIcon.classList.remove('hidden');
+                darkHljsTheme.disabled = false;
+            } else {
+                document.documentElement.classList.remove('dark');
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
+                darkHljsTheme.disabled = true;
+            }
+        }
+
+        applyInitialTheme(); // Apply theme immediately
+
+        themeToggleBtn.addEventListener('click', () => {
+            // toggle icons first
+            lightIcon.classList.toggle('hidden');
+            darkIcon.classList.toggle('hidden');
+
+            // toggle theme class
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+
+            // update visualizations
+            updateVisualizationThemes();
+        });
+
+        // Function to Update Visualization Themes
+        function updateVisualizationThemes() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const newMermaidTheme = isDarkMode ? 'dark' : 'default';
+            const tippyTheme = isDarkMode ? 'custom-dark' : 'custom-light';
+
+            console.log(`Updating themes. Dark mode: ${isDarkMode}`);
+
+            // --- Helper to get RGB from theme ---
+            function getRgbValues(colorString) {
+                const match = colorString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                if (match) {
+                    return `${match[1]}, ${match[2]}, ${match[3]}`;
+                }
+                console.warn("Could not parse RGB color:", colorString);
+                return '0, 0, 0'; // Fallback
+            }
+
+            // --- Update CSS RGB Variables for Charts ---
+            const rootStyle = document.documentElement.style;
+            const chart1Color = getComputedStyle(document.documentElement).getPropertyValue('--chart-1').trim();
+            const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+            const chart4Color = getComputedStyle(document.documentElement).getPropertyValue('--chart-4').trim();
+
+            rootStyle.setProperty('--chart-1-rgb', getRgbValues(chart1Color));
+            rootStyle.setProperty('--accent-rgb', getRgbValues(accentColor));
+            rootStyle.setProperty('--chart-4-rgb', getRgbValues(chart4Color));
+            console.log("Updated CSS RGB variables for charts.");
+
+            // --- Mermaid Theme ---
+            try {
+                mermaid.initialize({
+                    startOnLoad: false,
+                    theme: newMermaidTheme,
+                     // Get computed styles AFTER theme class is toggled
+                    themeVariables: {
+                        primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+                        mainBkg: getComputedStyle(document.documentElement).getPropertyValue('--background').trim(),
+                        textColor: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim(),
+                        lineColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(), // Example: Use border color for lines
+                        // Add other variables as needed
+                    },
+                    fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-sans'), // Use the correct CSS variable name if needed
+                    logLevel: 'error' // Keep log level minimal
+                });
+
+                // Re-render might be needed if initialize doesn't fully refresh visuals
+                 document.querySelectorAll('.mermaid').forEach(el => {
+                   // Avoid infinite loops if init causes errors
+                   if (!el.getAttribute('data-processed')) {
+                       try {
+                           mermaid.init(undefined, el);
+                       } catch (e) {
+                           console.error("Error re-initializing Mermaid element:", e, el);
+                       }
+                   } else {
+                       // If already processed, try to signal refresh differently if possible
+                       // Or simply rely on initialize() - this part is tricky with Mermaid updates
+                       el.removeAttribute('data-processed'); // Allow re-processing
+                       try {
+                            mermaid.init(undefined, el);
+                       } catch (e) {
+                           console.error("Error re-initializing Mermaid element (retry):", e, el);
+                       }
+                   }
+                 });
+                console.log("Mermaid config updated.");
+            } catch (error) {
+                console.error("Error updating Mermaid theme:", error);
+            }
+
+            // --- Highlight.js Theme ---
+            darkHljsTheme.disabled = !isDarkMode;
+
+            // --- Chart.js Theme ---
+            window.chartInstances.forEach(chart => {
+                 if (!chart || typeof chart.options === 'undefined') {
+                    console.warn("Skipping invalid chart instance for theme update:", chart);
+                    return; // Skip if chart instance is not valid
+                }
+                try {
+                    const options = chart.options;
+                     // Dynamically get colors AFTER theme toggle
+                    const foregroundColor = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+                    const mutedForegroundColor = getComputedStyle(document.documentElement).getPropertyValue('--muted-foreground').trim();
+                    const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+                    const cardColor = getComputedStyle(document.documentElement).getPropertyValue('--card').trim();
+                    const cardForegroundColor = getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim();
+
+
+                    // Update scales colors (check if scales exist)
+                    if (options.scales) {
+                         if (options.scales.r) { // Specific for Radar chart
+                            if (options.scales.r.ticks) options.scales.r.ticks.color = mutedForegroundColor;
+                            if (options.scales.r.pointLabels) options.scales.r.pointLabels.color = foregroundColor;
+                             if (options.scales.r.angleLines) options.scales.r.angleLines.color = borderColor;
+                            if (options.scales.r.grid) options.scales.r.grid.color = borderColor;
+                        }
+                         // Add general logic for other potential chart types (x/y scales)
+                         ['x', 'y'].forEach(axis => {
+                             if(options.scales[axis]) {
+                                 if (options.scales[axis].ticks) options.scales[axis].ticks.color = mutedForegroundColor;
+                                 if (options.scales[axis].grid) options.scales[axis].grid.color = borderColor;
+                             }
+                         });
+                    }
+
+                    // Update legend and title colors (check if plugins exist)
+                    if (options.plugins) {
+                        if (options.plugins.legend && options.plugins.legend.labels) {
+                             options.plugins.legend.labels.color = foregroundColor;
+                        }
+                        if (options.plugins.title && options.plugins.title.color) {
+                             options.plugins.title.color = foregroundColor;
+                        }
+                         // Update tooltip colors
+                        if (options.plugins.tooltip) {
+                            options.plugins.tooltip.backgroundColor = cardColor;
+                            options.plugins.tooltip.titleColor = cardForegroundColor;
+                            options.plugins.tooltip.bodyColor = cardForegroundColor;
+                            options.plugins.tooltip.borderColor = borderColor;
+                            options.plugins.tooltip.borderWidth = 1;
+                        }
+                    }
+
+                    // --- NEW: Update Dataset Colors ---
+                    if (chart.data && chart.data.datasets) {
+                        // Use fixed RGB colors regardless of theme for datasets
+                        const fixedColors = [
+                            { // Perplexity - Green (Index 0)
+                                bg: 'rgba(0, 255, 0, 0.15)',
+                                border: 'rgb(0, 255, 0)'
+                            },
+                            { // Yuanbao - Blue (Index 1)
+                                bg: 'rgba(0, 0, 255, 0.15)',
+                                border: 'rgb(0, 0, 255)'
+                            },
+                            { // Gemini - Red (Index 2)
+                                bg: 'rgba(255, 0, 0, 0.15)',
+                                border: 'rgb(255, 0, 0)'
+                            }
+                        ];
+
+                        chart.data.datasets.forEach((dataset, index) => {
+                            if (fixedColors[index]) {
+                                dataset.backgroundColor = fixedColors[index].bg;
+                                dataset.borderColor = fixedColors[index].border;
+                                dataset.pointBackgroundColor = fixedColors[index].border; // Use border color for points
+                                dataset.pointBorderColor = '#fff'; // Keep point border white for contrast
+                                dataset.pointHoverBorderColor = fixedColors[index].border; // Hover border same as line
+                            }
+                        });
+                         console.log("Chart dataset colors updated for chart:", chart.id);
+                    }
+                    // --- End NEW Dataset Colors ---
+
+
+                    chart.update();
+                     console.log("Chart theme updated for chart:", chart.id);
+                } catch (error) {
+                     console.error("Error updating chart theme:", error, chart);
+                }
+            });
+
+            // --- Tippy.js Theme ---
+            // Update theme for existing instances if needed (usually CSS handles this)
+             document.querySelectorAll('[data-tippy-root]').forEach(root => {
+                const instance = root._tippy;
+                if (instance) {
+                    instance.setProps({ theme: tippyTheme });
+                }
+            });
+             console.log("Tippy themes potentially updated.");
+        }
+
+        // Copy code function
+        function copyCode(button) {
+            const pre = button.closest('.code-block-container').querySelector('pre code');
+            const code = pre.textContent;
+             // Use Clipboard API
+            navigator.clipboard.writeText(code)
+                .then(() => {
+                    const successMsg = document.createElement('span');
+                    successMsg.className = 'copy-success';
+                    successMsg.textContent = '复制成功!';
+                    button.appendChild(successMsg);
+                    setTimeout(() => successMsg.remove(), 1500); // Remove after 1.5s
+                })
+                .catch(err => {
+                    console.error('复制失败:', err);
+                    const errorMsg = document.createElement('span');
+                    errorMsg.className = 'copy-success';
+                    errorMsg.style.backgroundColor = 'var(--destructive)';
+                    errorMsg.textContent = '复制失败';
+                    button.appendChild(errorMsg);
+                    setTimeout(() => errorMsg.remove(), 1500);
+                });
+        }
+
+         // Initialize Highlight.js and potentially style code blocks
+         function initializeCodeHighlighting() {
+             try {
+                 hljs.highlightAll();
+                 styleCodeBlocks(); // Apply container/header after highlighting
+             } catch (error) {
+                 console.error("Error initializing Highlight.js:", error);
+             }
+         }
+
+        // Style code blocks dynamically (ensure this runs after hljs)
+        function styleCodeBlocks() {
+            document.querySelectorAll('pre code.hljs').forEach((block) => {
+                const pre = block.parentNode;
+                 // Avoid double-wrapping
+                 if (pre.parentNode.classList.contains('code-block-container')) return;
+
+                const container = document.createElement('div');
+                container.className = 'code-block-container';
+
+                const header = document.createElement('div');
+                header.className = 'code-block-header';
+
+                // Extract language
+                 let language = 'code'; // Default
+                 const classes = block.className.split(' ');
+                 const langClass = classes.find(cls => cls.startsWith('language-'));
+                 if (langClass) {
+                     language = langClass.replace('language-', '');
+                 }
+
+                const langLabel = document.createElement('span');
+                langLabel.className = 'language-label';
+                langLabel.textContent = language.charAt(0).toUpperCase() + language.slice(1);
+
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.innerHTML = '<i class="fas fa-copy mr-1"></i> 复制代码';
+                copyButton.setAttribute('aria-label', '复制代码');
+                copyButton.onclick = () => copyCode(copyButton); // Use arrow function
+
+                header.appendChild(langLabel);
+                header.appendChild(copyButton);
+
+                // Wrap pre element
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(header);
+                container.appendChild(pre); // Move pre inside container
+            });
+        }
+
+
+        // DOMContentLoaded Listener
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Mermaid Configuration FIRST
+            try {
+                 // Initial config, theme will be set/updated by updateVisualizationThemes
+                mermaid.initialize({
+                    startOnLoad: false, // We control rendering
+                    securityLevel: 'loose',
+                    logLevel: 'error',
+                    fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-sans'),
+                });
+                console.log("Mermaid configured.");
+            } catch (error) {
+                console.error("Mermaid configuration error:", error);
+            }
+
+             // Initialize Chart.js (Placeholder Radar Chart)
+            try {
+                const radarCtx = document.getElementById('sourceRadarChart');
+                if (radarCtx) {
+                    const ctx = radarCtx.getContext('2d');
+
+                    // Function to convert rgb(r, g, b) to r, g, b string
+                    function getRgbValues(colorString) {
+                        const match = colorString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+                        if (match) {
+                            return `${match[1]}, ${match[2]}, ${match[3]}`;
+                        }
+                        console.warn("Could not parse RGB color:", colorString);
+                        return '0, 0, 0'; // Fallback
+                    }
+
+                    // Dynamically set RGB variables based on computed styles
+                    const rootStyle = document.documentElement.style;
+                    const chart1Color = getComputedStyle(document.documentElement).getPropertyValue('--chart-1').trim();
+                    const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+                    const chart4Color = getComputedStyle(document.documentElement).getPropertyValue('--chart-4').trim();
+
+                    rootStyle.setProperty('--chart-1-rgb', getRgbValues(chart1Color));
+                    rootStyle.setProperty('--accent-rgb', getRgbValues(accentColor));
+                    rootStyle.setProperty('--chart-4-rgb', getRgbValues(chart4Color));
+
+                    const radarData = {
+                        labels: ["数据翔实", "内容全面", "逻辑清晰", "独特观察", "文字贴切"], // Example dimensions
+                        datasets: [
+                            {
+                                label: 'perplexity.md',
+                                data: [75, 80, 80, 70, 85], // Scores for Perplexity
+                                fill: true,
+                                backgroundColor: 'rgba(0, 255, 0, 0.15)', // GREEN with 15% opacity fill
+                                borderColor: 'rgb(0, 255, 0)', // Solid GREEN line
+                                borderWidth: 2, // Thinner line
+                                pointBackgroundColor: 'rgb(0, 255, 0)', // Solid GREEN points
+                                pointBorderColor: '#fff', // White border around points
+                                pointRadius: 4, // Adjust point size
+                                pointBorderWidth: 1, // Thinner point border
+                                pointHoverRadius: 6, // Larger point on hover
+                                pointHoverBorderWidth: 1, // Thinner hover border
+                                pointHoverBackgroundColor: '#fff', // White background on hover
+                                pointHoverBorderColor: 'rgb(0, 255, 0)' // GREEN border on hover
+                            },
+                            {
+                                label: 'yuanbao.md', // Was 'doubao.md'
+                                data: [90, 85, 85, 75, 85], // Scores for Yuanbao
+                                fill: true,
+                                backgroundColor: 'rgba(0, 0, 255, 0.15)', // BLUE with 15% opacity fill
+                                borderColor: 'rgb(0, 0, 255)', // Solid BLUE line
+                                borderWidth: 2, // Thinner line
+                                pointBackgroundColor: 'rgb(0, 0, 255)', // Solid BLUE points
+                                pointBorderColor: '#fff', // White border around points
+                                pointRadius: 4, // Adjust point size
+                                pointBorderWidth: 1, // Thinner point border
+                                pointHoverRadius: 6, // Larger point on hover
+                                pointHoverBorderWidth: 1, // Thinner hover border
+                                pointHoverBackgroundColor: '#fff', // White background on hover
+                                pointHoverBorderColor: 'rgb(0, 0, 255)' // BLUE border on hover
+                            },
+                            {
+                                label: 'gemini.md', // Was 'perplexity.md'
+                                data: [70, 95, 90, 95, 90], // Scores for Gemini
+                                fill: true,
+                                backgroundColor: 'rgba(255, 0, 0, 0.15)', // RED with 15% opacity fill
+                                borderColor: 'rgb(255, 0, 0)', // Solid RED line
+                                borderWidth: 2, // Thinner line
+                                pointBackgroundColor: 'rgb(255, 0, 0)', // Solid RED points
+                                pointBorderColor: '#fff', // White border around points
+                                pointRadius: 4, // Adjust point size
+                                pointBorderWidth: 1, // Thinner point border
+                                pointHoverRadius: 6, // Larger point on hover
+                                pointHoverBorderWidth: 1, // Thinner hover border
+                                pointHoverBackgroundColor: '#fff', // White background on hover
+                                pointHoverBorderColor: 'rgb(255, 0, 0)' // RED border on hover
+                            }
+                        ]
+                    };
+
+                    const radarConfig = {
+                        type: 'radar',
+                        data: radarData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            elements: {
+                                line: {
+                                    borderWidth: 3
+                                }
+                            },
+                            scales: {
+                                r: {
+                                    // Ensure scale is 0-100
+                                    min: 0,
+                                    max: 100,
+                                    beginAtZero: true,
+                                    angleLines: {
+                                         color: getComputedStyle(document.documentElement).getPropertyValue('--border').trim() // Initial color
+                                    },
+                                    grid: {
+                                         color: getComputedStyle(document.documentElement).getPropertyValue('--border').trim() // Initial color
+                                    },
+                                    pointLabels: {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim(), // Initial color
+                                        font: {
+                                            size: 13, // Adjust font size
+                                            family: getComputedStyle(document.documentElement).getPropertyValue('--font-sans')
+                                        }
+                                    },
+                                    ticks: {
+                                        backdropColor: 'rgba(0,0,0,0)', // Transparent backdrop
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--muted-foreground').trim(), // Initial color
+                                        stepSize: 20 // Adjust step size
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                     position: 'top',
+                                     labels: {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim() // Initial color
+                                     }
+                                },
+                                tooltip: {
+                                     backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card').trim(),
+                                     titleColor: getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim(),
+                                     bodyColor: getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim(),
+                                     borderColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+                                     borderWidth: 1,
+                                }
+                            }
+                        }
+                    };
+
+                    const radarChart = new Chart(ctx, radarConfig);
+                    window.chartInstances.push(radarChart);
+                    console.log("Radar Chart initialized successfully");
+                } else {
+                    console.error("Could not find canvas element with id 'sourceRadarChart'");
+                }
+            } catch (error) {
+                console.error("Error initializing chart:", error);
+            }
+
+            // Initialize Tippy.js
+            try {
+                tippy('.tech-term', {
+                    // Use different themes for light/dark
+                    theme: document.documentElement.classList.contains('dark') ? 'custom-dark' : 'custom-light',
+                    placement: 'top',
+                    arrow: true,
+                    animation: 'scale-subtle', // Smoother animation
+                    duration: [250, 200], // Faster entry/exit
+                    trigger: 'mouseenter focus', // Standard trigger
+                    interactive: true, // Allow interaction with tooltip content
+                    appendTo: () => document.body // Append to body to avoid z-index issues
+                });
+                 console.log("Tippy initialized.");
+            } catch (error) {
+                 console.error("Error initializing Tippy.js:", error);
+            }
+
+
+            // Initialize Highlight.js and style code blocks
+            initializeCodeHighlighting();
+
+            // --- Intersection Observer for Scroll Animations --- 
+            const observerOptions = {
+                root: null, // relative to document viewport 
+                rootMargin: '0px',
+                threshold: 0.1 // trigger when 10% of the element is visible
+            };
+
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in-up');
+                        observer.unobserve(entry.target); // Stop observing once animated
+                    }
+                });
+            };
+
+            const scrollObserver = new IntersectionObserver(observerCallback, observerOptions);
+
+            document.querySelectorAll('.scroll-target').forEach(el => {
+                scrollObserver.observe(el);
+            });
+            // --- End Intersection Observer --- 
+
+            // Update themes for all visualizations (applies initial theme correctly)
+            updateVisualizationThemes(); // Call AFTER charts are initialized
+
+            // Manually render Mermaid Diagrams LAST
+            try {
+                mermaid.init(undefined, '.mermaid');
+                console.log("Mermaid diagrams rendered manually.");
+            } catch(error) {
+                console.error("Error rendering Mermaid diagrams manually:", error);
+            }
+        });
+
+    </script>
+</body>
+</html> 

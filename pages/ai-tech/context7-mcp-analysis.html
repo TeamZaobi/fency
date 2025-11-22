@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Metadata -->
+    <meta name="publish-date" content="2025-04-26"> <!-- 请确认或修改为实际发布日期 -->
+    <meta name="category" content="ai-tech">
+    <meta name="description" content="深入分析 Context7 MCP 应用自发布以来的社区评价、实际使用案例及改进建议，重点探讨其在 Cursor 和 Claude Desktop 中与其他 MCP 结合使用的协同增效机制与优势。">
+    <meta name="keywords" content="Context7, MCP, 模型上下文协议, AI 辅助开发, Cursor, Claude Desktop, 协同增效, Upstash, 开发者工具, LLM">
+
+    <title>Context7 MCP 应用评估：社区反馈、使用案例及与其他 MCP 的协同增效分析 | 凿壁</title>
+
+    <!-- External Resources -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/framer-motion"></script> <!-- 引入 Framer Motion -->
+
+    <!-- Highlight.js -->
+    <link id="hljs-light-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link id="hljs-dark-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Optional: Add languages explicitly if needed -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script> -->
+
+    <style>
+        /* New Theme Variables */
+        :root {
+            --background: rgb(245, 247, 250);
+            --foreground: rgb(26, 34, 56);
+            --card: rgb(227, 234, 242);
+            --card-foreground: rgb(26, 34, 56);
+            --popover: rgb(255, 251, 230);
+            --popover-foreground: rgb(26, 34, 56);
+            --primary: rgb(58, 91, 160);
+            --primary-foreground: rgb(255, 251, 230);
+            --secondary: rgb(247, 200, 115);
+            --secondary-foreground: rgb(26, 34, 56);
+            --muted: rgb(229, 229, 223);
+            --muted-foreground: rgb(58, 91, 160);
+            --accent: rgb(110, 163, 193);
+            --accent-foreground: rgb(255, 251, 230);
+            --destructive: rgb(45, 30, 47);
+            --destructive-foreground: rgb(255, 251, 230);
+            --border: rgb(176, 184, 193);
+            --input: rgb(110, 163, 193);
+            --ring: rgb(247, 200, 115);
+            --chart-1: rgb(58, 91, 160);
+            --chart-2: rgb(247, 200, 115);
+            --chart-3: rgb(110, 163, 193);
+            --chart-4: rgb(176, 184, 193);
+            --chart-5: rgb(45, 30, 47);
+            --sidebar: rgb(227, 234, 242);
+            --sidebar-foreground: rgb(26, 34, 56);
+            --sidebar-primary: rgb(58, 91, 160);
+            --sidebar-primary-foreground: rgb(255, 251, 230);
+            --sidebar-accent: rgb(247, 200, 115);
+            --sidebar-accent-foreground: rgb(26, 34, 56);
+            --sidebar-border: rgb(176, 184, 193);
+            --sidebar-ring: rgb(247, 200, 115);
+            --font-sans: 'Libre Baskerville', serif; /* Updated Font */
+            --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --radius: 0.5rem;
+            /* Shadows (Optional - Tailwind might handle these) */
+            --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+            --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+            --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+            --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+            --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+            --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+            --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
+            --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+        }
+
+        .dark {
+            --background: rgb(24, 26, 36);
+            --foreground: rgb(230, 234, 243);
+            --card: rgb(35, 36, 58);
+            --card-foreground: rgb(230, 234, 243);
+            --popover: rgb(35, 36, 58);
+            --popover-foreground: rgb(255, 224, 102);
+            --primary: rgb(58, 91, 160);
+            --primary-foreground: rgb(255, 224, 102);
+            --secondary: rgb(255, 224, 102);
+            --secondary-foreground: rgb(35, 36, 58);
+            --muted: rgb(35, 36, 58);
+            --muted-foreground: rgb(122, 136, 161);
+            --accent: rgb(188, 205, 240);
+            --accent-foreground: rgb(24, 26, 36);
+            --destructive: rgb(160, 74, 108);
+            --destructive-foreground: rgb(255, 224, 102);
+            --border: rgb(45, 46, 62);
+            --input: rgb(58, 91, 160);
+            --ring: rgb(255, 224, 102);
+            --chart-1: rgb(58, 91, 160);
+            --chart-2: rgb(255, 224, 102);
+            --chart-3: rgb(110, 163, 193);
+            --chart-4: rgb(122, 136, 161);
+            --chart-5: rgb(160, 74, 108);
+            --sidebar: rgb(35, 36, 58);
+            --sidebar-foreground: rgb(230, 234, 243);
+            --sidebar-primary: rgb(58, 91, 160);
+            --sidebar-primary-foreground: rgb(255, 224, 102);
+            --sidebar-accent: rgb(255, 224, 102);
+            --sidebar-accent-foreground: rgb(35, 36, 58);
+            --sidebar-border: rgb(45, 46, 62);
+            --sidebar-ring: rgb(255, 224, 102);
+            --font-sans: 'Libre Baskerville', serif; /* Updated Font */
+            --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+            --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --radius: 0.5rem;
+            /* Shadows (Optional) */
+            --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+            --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+            --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+            --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+            --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+            --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+            --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
+            --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: var(--font-sans); /* Using the new sans font */
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-serif); /* Using the new serif font */
+        }
+
+        /* Basic theme toggle button style */
+        #theme-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: var(--secondary);
+            color: var(--secondary-foreground);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 9999px; /* 圆形 */
+            cursor: pointer;
+            z-index: 50;
+            width: 2.5rem; /* 固定宽度 */
+            height: 2.5rem; /* 固定高度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        #theme-toggle:hover {
+            filter: brightness(1.1);
+        }
+        #theme-toggle i {
+             font-size: 1.25rem; /* 图标大小 */
+        }
+
+    </style>
+
+    <!-- Tailwind Config (Optional - update font families if needed) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'var(--background)',
+                        foreground: 'var(--foreground)',
+                        card: 'var(--card)',
+                        cardForeground: 'var(--card-foreground)',
+                        popover: 'var(--popover)',
+                        popoverForeground: 'var(--popover-foreground)',
+                        primary: 'var(--primary)',
+                        primaryForeground: 'var(--primary-foreground)',
+                        secondary: 'var(--secondary)',
+                        secondaryForeground: 'var(--secondary-foreground)',
+                        muted: 'var(--muted)',
+                        mutedForeground: 'var(--muted-foreground)',
+                        accent: 'var(--accent)',
+                        accentForeground: 'var(--accent-foreground)',
+                        destructive: 'var(--destructive)',
+                        destructiveForeground: 'var(--destructive-foreground)',
+                        border: 'var(--border)',
+                        input: 'var(--input)',
+                        ring: 'var(--ring)',
+                    },
+                    fontFamily: {
+                        sans: ['var(--font-sans)', 'serif'], // Update to match CSS variable
+                        serif: ['var(--font-serif)', 'serif'],
+                        mono: ['var(--font-mono)', 'monospace'],
+                    },
+                    borderRadius: {
+                      lg: 'var(--radius)',
+                      md: 'calc(var(--radius) - 2px)',
+                      sm: 'calc(var(--radius) - 4px)',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="antialiased">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" title="切换深色/浅色模式">
+        <i class="fas fa-sun"></i> <!-- Initial icon (will be changed by JS) -->
+    </button>
+
+    <!-- Main Content Area -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Back to Home Link -->
+        <div class="mb-8">
+            <a href="../../index.html" class="text-primary hover:underline">&larr; 返回首页</a>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="mb-12 rounded-lg overflow-hidden shadow-lg bg-gradient-to-br from-primary via-accent to-secondary text-primary-foreground p-8 md:p-12 relative">
+            <div class="absolute inset-0 bg-black opacity-20 z-0"></div> <!-- Subtle overlay -->
+            <div class="relative z-10">
+                 <h1 class="text-5xl lg:text-6xl font-serif font-bold mb-6">
+                    Context7 MCP 应用评估与协同分析
+                </h1>
+                <p class="text-xl leading-relaxed opacity-80">
+                    深入分析 Context7 MCP 应用自发布以来的社区评价、实际使用案例及改进建议，重点探讨其在 Cursor 和 Claude Desktop 中与其他 MCP 结合使用的协同增效机制与优势。
+                </p>
+                 <!-- Optional: Add an icon or small visual element -->
+                 <div class="mt-6 text-3xl opacity-80">
+                      <i class="fas fa-puzzle-piece"></i> + <i class="fas fa-book-open"></i> + <i class="fas fa-sync-alt"></i>
+                 </div>
+            </div>
+        </div>
+
+        <!-- Main Content Sections - Fine-grained Cards -->
+        <div class="space-y-10 mt-12">
+
+            <!-- === Section 1: Introduction === -->
+            <div class="text-center mb-12">
+                 <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">1. 引言：AI 辅助开发的挑战与机遇</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <!-- Card 1.1a: The Problem -->
+                <div class="bg-card text-card-foreground border border-destructive/30 rounded-lg shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-exclamation-triangle text-destructive text-3xl mr-4"></i>
+                        <h3 class="text-2xl font-semibold font-serif">核心痛点：LLM 的"时效性"鸿沟</h3>
+                    </div>
+                    <p class="text-foreground/80 mb-4">尽管 LLM 功能强大，但其训练数据往往滞后于日新月异的软件库和框架，导致生成过时甚至错误的代码<sup class="text-xs text-primary">[1]</sup>，<strong>浪费开发时间于调试和验证</strong>。</p>
+                    <!-- Mermaid Diagram: Problem -> Solution -->
+                    <div class="mt-4 bg-background/50 p-2 rounded border border-border/30">
+                        <pre class="mermaid text-sm">
+                            graph LR
+                                A[LLM 训练数据滞后] --> B(生成过时/错误代码);
+                                C{外部工具/数据} -- MCP --> D(AI 应用);
+                                D -- 安全/统一交互 --> C;
+                                E[Context7] -- 注入最新文档 --> D;
+                                B --> F((痛点));
+                                D --> G((解决方案));
+                        </pre>
+                    </div>
+                </div>
+
+                <!-- Card 1.1b: MCP Intro -->
+                <div class="bg-gradient-to-r from-accent to-primary text-accent-foreground rounded-lg shadow-md p-6 italic border-l-4 border-secondary">
+                     <div class="flex items-center mb-3">
+                         <i class="fas fa-plug text-secondary text-2xl mr-3"></i>
+                         <h3 class="text-2xl font-semibold font-serif">MCP：AI 的"USB 接口"<sup class="text-xs font-light text-secondary">[3]</sup></h3>
+                     </div>
+                     <blockquote class="border-none pl-0 text-lg">
+                        <p>模型上下文协议 (MCP) 定义了一个开放标准，允许 <strong>AI 应用、模型和代理</strong>以统一、安全的方式连接和交互外部工具与数据<sup class="text-xs text-secondary">[3]</sup>，<strong>解决了以往 AI 应用与外部资源集成时缺乏统一标准、安全性难以保证的问题</strong>。</p>
+                     </blockquote>
+                </div>
+
+                 <!-- Card 1.1c: Context7 Intro -->
+                <div class="md:col-span-2 bg-card text-card-foreground border border-border rounded-lg shadow-md p-6 flex items-center">
+                    <i class="fas fa-book-reader text-primary text-4xl mr-5"></i>
+                    <div>
+                        <h3 class="text-2xl font-semibold font-serif mb-2">Context7：实时文档注入器 (服务端应用)</h3>
+                        <p class="text-foreground/80">由 Upstash 开发<sup class="text-xs text-primary">[2]</sup>，基于 MCP 构建的<strong>服务端应用</strong>，Context7 专注于**在用户与 LLM 交互时**，动态地将**最新、特定版本**的官方文档和代码示例注入到模型的上下文窗口中<sup class="text-xs text-primary">[2]</sup>，解决 LLM 的文档过时问题<sup class="text-xs text-primary">[1, 2]</sup>，显著提升 AI 辅助开发的准确性与实用性<sup class="text-xs text-primary">[4]</sup>。</p>
+                    </div>
+                </div>
+                
+                 <!-- Card 1.2a: Report Purpose -->
+                 <div class="bg-card text-card-foreground border border-border rounded-lg shadow-sm p-6">
+                     <div class="flex items-center mb-3">
+                         <i class="fas fa-bullseye text-primary text-3xl mr-4"></i>
+                         <h3 class="text-xl font-semibold font-serif">报告目的</h3>
+                     </div>
+                     <p class="text-foreground/80 text-sm">深入分析 Context7 的社区评价、使用案例与建议，并重点探讨在 <strong>Cursor、Claude Desktop 等客户端</strong>中，与其他 MCP 结合使用的<strong>协同增效机制与效果</strong>。</p>
+                 </div>
+
+                 <!-- Card 1.2b: Research Scope -->
+                 <div class="bg-card text-card-foreground border border-border rounded-lg shadow-sm p-6">
+                     <h3 class="text-xl font-semibold font-serif mb-3"><i class="fas fa-search text-primary mr-2"></i>研究范围</h3>
+                     <ul class="list-disc list-outside pl-5 space-y-1 text-sm text-muted-foreground">
+                         <li>社区反馈梳理</li>
+                         <li>实际案例整理</li>
+                         <li>功能建议收集</li>
+                         <li>客户端能力分析 (Cursor/Claude)</li>
+                         <li>潜在 MCP 组合识别</li>
+                         <li>协同机制与效果研究</li>
+                         <li>具体组合方案总结</li>
+                     </ul>
+                 </div>
+            </div>
+
+            <!-- === Section 2: Overview === -->
+             <div class="text-center mt-16 mb-12">
+                 <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">2. Context7 概览：工作原理与优势</h2>
+            </div>
+
+            <div class="space-y-8">
+                <!-- Card 2.1: Core Mechanism -->
+                <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                     <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-cogs text-primary mr-2"></i>核心机制：动态注入最新文档</h3>
+                     <p class="mb-4 text-foreground/80">当开发者在提示中加入 <code class="bg-muted text-muted-foreground px-1.5 py-0.5 rounded text-sm font-mono">use context7</code><sup class="text-xs text-primary">[1]</sup>，服务器将自动执行一系列操作：<strong>首先，识别提示中的库 (如 FastAPI)；接着，查找最新官方文档；然后，解析提取最相关部分；最后，将处理后的信息注入 LLM 上下文</strong><sup class="text-xs text-primary">[2]</sup>。</p>
+                    <!-- Mermaid Flowchart: Core Mechanism -->
+                     <div class="mt-4 bg-background/50 p-3 rounded border border-border/30 overflow-x-auto">
+                        <pre class="mermaid">
+                            graph LR
+                                A["用户提示 + 'use context7'"];
+                                B["Context7 服务器激活"];
+                                C["识别库 (如 FastAPI)"];
+                                D["查找最新官方文档"];
+                                E["解析提取相关部分"];
+                                F["注入LLM上下文窗口"];
+                                G["发送给 LLM"];
+                                
+                                A --> B;
+                                B --> C;
+                                C --> D;
+                                D --> E;
+                                E --> F;
+                                F --> G;
+                        </pre>
+                    </div>
+                     <p class="mt-4 text-sm text-muted-foreground italic">整个过程毫秒级完成，无需离开编码环境<sup class="text-xs text-primary">[8]</sup>，确保 LLM 基于最新信息工作<sup class="text-xs text-primary">[1, 2]</sup>。</p>
+                 </div>
+
+                <!-- Card 2.2: Advantages -->
+                 <div class="bg-gradient-to-b from-primary/80 to-primary text-primary-foreground rounded-lg shadow-xl p-6">
+                     <h3 class="text-2xl font-semibold font-serif mb-4 text-center"><i class="fas fa-star mr-2"></i>主要优势</h3>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                         <div class="flex items-start"><i class="fas fa-check-circle mr-2 mt-1 flex-shrink-0 opacity-90"></i><span><strong>实时文档访问:</strong> 无需切换窗口，保持心流<sup class="text-xs opacity-70">[8]</sup></span></div>
+                         <div class="flex items-start"><i class="fas fa-check-circle mr-2 mt-1 flex-shrink-0 opacity-90"></i><span><strong>版本特定代码示例:</strong> 避免兼容错误<sup class="text-xs opacity-70">[8]</sup></span></div>
+                         <div class="flex items-start"><i class="fas fa-check-circle mr-2 mt-1 flex-shrink-0 opacity-90"></i><span><strong>提高生产力:</strong> 减少搜索与调试时间<sup class="text-xs opacity-70">[8]</sup></span></div>
+                         <div class="flex items-start"><i class="fas fa-check-circle mr-2 mt-1 flex-shrink-0 opacity-90"></i><span><strong>减少错误/幻觉:</strong> 提升代码可靠性<sup class="text-xs opacity-70">[1]</sup></span></div>
+                         <div class="flex items-start"><i class="fas fa-check-circle mr-2 mt-1 flex-shrink-0 opacity-90"></i><span><strong>广泛客户端兼容</strong><sup class="text-xs opacity-70">[8]</sup></span></div>
+                         <div class="flex items-start"><i class="fas fa-check-circle mr-2 mt-1 flex-shrink-0 opacity-90"></i><span><strong>免费个人使用</strong><sup class="text-xs opacity-70">[10]</sup></span></div>
+                     </div>
+                 </div>
+
+                <!-- Card 2.3: Tech Implementation -->
+                 <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                     <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-microchip text-primary mr-2"></i>技术实现：高效处理流程</h3>
+                     <p class="text-foreground/80 mb-4">Context7 为了高效地提供高质量文档，采用了一套复杂的数据处理流程，旨在提供<strong>简洁、相关且无干扰</strong>的信息<sup class="text-xs text-primary">[10]</sup>：</p>
+                     <!-- Mermaid Sequence Diagram: Tech Implementation & MCP Interaction -->
+                     <div class="mt-4 bg-background/50 p-3 rounded border border-border/30 overflow-x-auto">
+                         <pre class="mermaid">
+                            sequenceDiagram
+                                participant User as 用户
+                                participant Host as MCP 主机 (如 Cursor)
+                                participant C7 as Context7 MCP 服务器
+                                participant Cache as 向量库/缓存(Redis)
+                                participant LLM as 语言模型
+
+                                %% --- 文档预处理阶段 (后台) ---
+                                note right of C7: 后台: 解析(Src)->丰富->向量化->存入Cache
+
+                                %% --- 用户请求处理阶段 ---
+                                User->>Host: 提示 + `use context7` + topic
+                                activate Host
+                                Host->>C7: **MCP 请求:** get-library-docs(topic)
+                                activate C7
+                                C7->>Cache: 搜索相关向量
+                                activate Cache
+                                Cache-->>C7: 返回候选ID
+                                deactivate Cache
+                                C7->>C7: Rerank 候选结果
+                                opt 获取完整内容
+                                    C7->>Cache: 获取文档片段
+                                    activate Cache
+                                    Cache-->>C7: 返回文档片段
+                                    deactivate Cache
+                                end
+                                C7-->>Host: **MCP 响应:** 相关文档内容
+                                deactivate C7
+                                Host->>Host: 整合提示 + 文档内容
+                                Host->>LLM: 发送合并后的上下文
+                                activate LLM
+                                LLM-->>Host: 返回生成结果
+                                deactivate LLM
+                                Host-->>User: 显示最终结果
+                                deactivate Host
+                        </pre>
+                    </div>
+                     <p class="text-foreground/80 mt-6">目标是提供简洁、相关的信息，尤其适用于 Next.js 等快速迭代框架或小众库<sup class="text-xs text-primary">[10]</sup>。还能自动为开源包创建优化的 <code class="bg-muted text-muted-foreground px-1.5 py-0.5 rounded text-sm font-mono">llms.txt</code> 摘要，<strong>用于特定主题搜索以提高效率</strong><sup class="text-xs text-primary">[10]</sup>。</p>
+                 </div>
+            </div>
+
+            <!-- === Section 3: Community Feedback === -->
+            <div class="text-center mt-16 mb-12">
+                 <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">3. 社区反馈与评价</h2>
+            </div>
+
+            <div class="space-y-10">
+                <!-- Card 3.1: Positive Feedback -->
+                <div class="bg-gradient-to-br from-accent/70 via-card to-accent/70 border border-primary/50 rounded-xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-semibold font-serif mb-6 text-center"><i class="fas fa-thumbs-up text-primary mr-2"></i>正面评价与认可</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="text-center md:text-left">
+                            <p class="text-4xl font-bold text-primary mb-2">让Cursor"智能 10 倍"<sup class="text-xs font-light">[1]</sup></p>
+                            <p class="text-lg font-semibold text-foreground/90 mb-3">消除文档麻烦的最强工具之一<sup class="text-xs font-light">[11]</sup></p>
+                            <p class="text-muted-foreground">用户称赞 Context7 提供实时、准确、版本特定的文档，解决了 LLM 依赖过时数据的核心痛点<sup class="text-xs font-light">[1]</sup>。<strong>(来自社区、博客、YouTube<sup class="text-xs font-light">[1]</sup>)</strong></p>
+                        </div>
+                        <div class="bg-primary/10 rounded-lg p-4 border border-primary/30">
+                             <p class="font-semibold text-primary mb-2"><i class="fas fa-gamepad mr-1"></i> 改变 AI 编码游戏规则<sup class="text-xs font-light">[1]</sup></p>
+                             <p class="text-sm text-foreground/80">通过即时接入海量文档源<sup class="text-xs font-light">[12]</sup> (<strong>无需手动抓取/嵌入</strong>)，显著提升 <strong>AI 代理/助手</strong>的实用性、可靠性，节省开发者时间并减少错误<sup class="text-xs font-light">[8]</sup>。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3.2: Limitations & Criticism -->
+                <div class="bg-card border border-destructive/60 rounded-xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-semibold font-serif mb-6 text-center text-destructive"><i class="fas fa-exclamation-circle mr-2"></i>局限性与批评 (源自社区及 GitHub Issues<sup class="text-xs font-light">[15]</sup>)</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Limitation 1: Accuracy -->
+                        <div class="border border-border/50 rounded-lg p-4 bg-background/50">
+                             <h4 class="font-semibold mb-2 text-foreground/90"><i class="fas fa-crosshairs text-muted-foreground mr-2"></i>准确性问题</h4>
+                             <p class="text-sm text-muted-foreground">有时未能拉取正确文档；<strong>其如何从众多可能性中准确识别出所需库（例如在复杂项目中识别出 Vue<sup class="text-xs font-light">[13]</sup>）有时令人困惑，并对其扩展性表示担忧</strong>。</p>
+                         </div>
+                         <!-- Limitation 2: Coverage -->
+                        <div class="border border-border/50 rounded-lg p-4 bg-background/50">
+                             <h4 class="font-semibold mb-2 text-foreground/90"><i class="fas fa-map-marked-alt text-muted-foreground mr-2"></i>覆盖范围/解析</h4>
+                             <p class="text-sm text-muted-foreground"><strong>新 SDK (如 Amazon Bedrock SDK<sup class="text-xs font-light">[14]</sup>, Dart 相关文档) 或特定规范 (如 Docusign REST API OpenAPI<sup class="text-xs font-light">[15]</sup>) 暂不支持或解析出错</strong>；文档解析过程中存页面限制问题<sup class="text-xs font-light">[15]</sup>。</p>
+                         </div>
+                        <!-- Limitation 3: Quality Feedback -->
+                        <div class="border border-border/50 rounded-lg p-4 bg-background/50">
+                             <h4 class="font-semibold mb-2 text-foreground/90"><i class="fas fa-comments text-muted-foreground mr-2"></i>结果质量需反馈</h4>
+                             <p class="text-sm text-muted-foreground">用户请求增加结果反馈机制<sup class="text-xs font-light">[15]</sup>，暗示结果质量并非总是最优。</p>
+                         </div>
+                    </div>
+                    <!-- Chart.js Doughnut Chart -->
+                    <div class="mt-6 flex justify-center">
+                        <div class="max-w-xs w-full">
+                             <canvas id="limitationsChart"></canvas>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-destructive/80 mt-6 italic">核心理念获认可，其潜力巨大，但在实际执行层面，尤其是在处理非主流库、复杂规范或确保结果始终准确方面，仍面临挑战。<strong>其有效性可能因具体的库、版本或查询的复杂性而异。</strong></p>
+                </div>
+
+                <!-- Card 3.3: Feature Requests -->
+                <div class="bg-card border border-secondary rounded-xl shadow-lg p-6 md:p-8">
+                    <h3 class="text-2xl font-semibold font-serif mb-6 text-center text-secondary-foreground"><i class="fas fa-lightbulb text-secondary mr-2"></i>功能请求与改进领域 (来自 GitHub Issues<sup class="text-xs font-light">[15]</sup>)</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-secondary/20 rounded-lg p-3 text-center transition-transform hover:scale-105">
+                            <i class="fas fa-file-alt text-3xl text-primary mb-2"></i>
+                            <p class="text-sm font-medium text-foreground/90">支持更多格式 (如 AsciiDoc)</p>
+                        </div>
+                         <div class="bg-secondary/20 rounded-lg p-3 text-center transition-transform hover:scale-105">
+                            <i class="fas fa-server text-3xl text-primary mb-2"></i>
+                            <p class="text-sm font-medium text-foreground/90">自托管后端选项<br><span class="text-xs text-muted-foreground">(<strong>可能出于数据隐私、内部文档集成或定制化需求</strong><sup class="text-xs font-light">[15]</sup>)</span></p>
+                        </div>
+                         <div class="bg-secondary/20 rounded-lg p-3 text-center transition-transform hover:scale-105">
+                            <i class="fas fa-filter text-3xl text-primary mb-2"></i>
+                            <p class="text-sm font-medium text-foreground/90">增加过滤参数<br><span class="text-xs text-muted-foreground">(<strong>以便更精确地控制返回的文档内容</strong><sup class="text-xs font-light">[15]</sup>)</span></p>
+                        </div>
+                        <div class="bg-secondary/20 rounded-lg p-3 text-center transition-transform hover:scale-105">
+                             <i class="fas fa-flag text-3xl text-primary mb-2"></i>
+                            <p class="text-sm font-medium text-foreground/90">结果质量反馈机制<br><span class="text-xs text-muted-foreground">(改进排序/质量)</span></p>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-muted-foreground mt-6 italic"><strong>这些请求表明用户看到了工具的进一步潜力，期望更大的灵活性、适用性与控制能力；显示出积极的社区参与度，尽管目前存在一些局限性。</strong></p>
+                </div>
+            </div>
+
+        </div> <!-- End of Main Content Sections -->
+
+        <!-- Card Section Example -->
+        <div class="mt-12">
+            <h3 class="text-2xl font-semibold mb-6">卡片效果示例</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-cogs text-primary text-2xl mr-3"></i>
+                        <h4 class="text-xl font-semibold">卡片标题 1</h4>
+                    </div>
+                    <p class="text-sm text-muted-foreground">
+                        这是卡片内容的示例文字。卡片通常用于组织和展示块状信息，提供清晰的视觉分隔。
+                    </p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md">
+                     <div class="flex items-center mb-4">
+                        <i class="fas fa-chart-line text-primary text-2xl mr-3"></i>
+                        <h4 class="text-xl font-semibold">卡片标题 2</h4>
+                    </div>
+                    <p class="text-sm text-muted-foreground">
+                        可以使用不同的图标和标题来区分卡片。背景、边框和阴影效果由主题变量控制。
+                    </p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md">
+                     <div class="flex items-center mb-4">
+                        <i class="fas fa-lightbulb text-primary text-2xl mr-3"></i>
+                        <h4 class="text-xl font-semibold">卡片标题 3</h4>
+                    </div>
+                    <p class="text-sm text-muted-foreground">
+                        响应式网格布局确保卡片在不同屏幕尺寸下都能良好显示 (md: 2列, lg: 3列)。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Placeholder for Animation Target -->
+        <!-- Removing placeholder as animations are implemented -->
+        <!-- 
+        <div class="mt-12">
+             <h3 id="animated-heading" class="text-2xl font-semibold">这是一个带动画的标题占位符</h3>
+        </div> 
+        -->
+
+        <!-- === Section 4: Actual Deployment & Usage === -->
+        <div class="text-center mt-16 mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">4. 实际部署与使用案例</h2>
+        </div>
+
+        <div class="space-y-10">
+            <!-- Card 4.1: Implementation & Configuration -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-6"><i class="fas fa-cogs text-primary mr-2"></i>4.1 实现与配置：MCP 的集成</h3>
+                <p class="text-foreground/80 mb-6">将 Context7 集成到支持 MCP 的客户端（如 Cursor, Claude Desktop, VS Code 等）涉及配置这些客户端，告知它们如何启动和与 Context7 MCP 服务器通信<sup class="text-xs text-primary">[17]</sup>。这通常通过编辑客户端的 JSON 配置文件或使用其提供的工具来完成。</p>
+
+                <!-- Cursor and Claude Desktop Specifics -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-muted/30 dark:bg-gray-800/40 p-4 rounded-lg border border-border/40 shadow-inner">
+                        <h4 class="font-semibold text-foreground/90 mb-2 flex items-center"><i class="fas fa-mouse-pointer text-accent mr-2"></i>Cursor 配置</h4>
+                        <ul class="text-sm space-y-2 text-foreground/80">
+                            <li><strong>JSON 编辑 (推荐):</strong> 编辑 <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">~/.cursor/mcp.json</code>，在 <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">mcpServers</code> 对象中添加 Context7 条目<sup class="text-xs text-primary">[1]</sup>。</li>
+                            <li><strong>UI 添加:</strong> 通过设置 > MCP > Add Server，输入 Name: <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">context7</code>, Cmd: <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">npx</code>, Args: <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">-y</code>, <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">@upstash/context7-mcp@latest</code><sup class="text-xs text-primary">[2]</sup>。</li>
+                        </ul>
+                        <p class="text-xs text-muted-foreground mt-3 italic">JSON 方法更灵活，允许配置更多参数。</p>
+                    </div>
+                    <div class="bg-muted/30 dark:bg-gray-800/40 p-4 rounded-lg border border-border/40 shadow-inner">
+                        <h4 class="font-semibold text-foreground/90 mb-2 flex items-center"><img src="https://raw.githubusercontent.com/anthropics/claude-desktop/main/icon.png" alt="Claude Logo" class="w-4 h-4 mr-2 inline"> Claude Desktop 配置</h4>
+                        <ul class="text-sm space-y-2 text-foreground/80">
+                            <li><strong>JSON 编辑:</strong> 手动编辑 <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">claude_desktop_config.json</code> 文件，添加 <code class="text-xs font-mono bg-background/70 dark:bg-gray-700 px-1 py-0.5 rounded">mcpServers</code> 条目<sup class="text-xs text-primary">[1]</sup>。</li>
+                            <li class="mt-2">
+                                <strong>Smithery CLI (推荐)<sup class="text-xs text-primary">[1]</sup>:</strong> 使用以下命令简化安装：
+                                <div class="code-block-container bg-background dark:bg-gray-800 rounded-lg shadow-inner border border-border/30 overflow-hidden relative mt-2">
+                                    <div class="flex justify-between items-center px-3 py-1 bg-muted/30 dark:bg-gray-700 border-b border-border/30">
+                                        <span class="text-xs font-semibold text-muted-foreground dark:text-gray-400">Bash</span>
+                                        <button class="code-block-copy-button text-xs text-muted-foreground dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors p-1 rounded hover:bg-muted dark:hover:bg-gray-600" title="复制代码">
+                                            <i class="far fa-copy mr-1"></i>复制代码
+                                        </button>
+                                    </div>
+                                    <pre class="p-3 text-xs font-mono overflow-x-auto"><code class="language-bash">npx -y @smithery/cli install @upstash/context7-mcp --client claude</code></pre>
+                                </div>
+                            </li>
+                        </ul>
+                         <p class="text-xs text-muted-foreground mt-3 italic">Smithery CLI 自动化了部分配置过程。</p>
+                    </div>
+                </div>
+
+                <!-- Other Clients Configuration Summary -->
+                <h4 class="font-semibold mb-4 text-foreground/90 text-center"><i class="fas fa-tools text-primary mr-2"></i>其他客户端配置摘要</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- VS Code Card -->
+                    <div class="bg-card text-card-foreground border border-border/50 rounded-lg shadow-sm overflow-hidden transition-shadow hover:shadow-md flex flex-col">
+                        <div class="p-4 border-b border-border/50 bg-muted/50">
+                            <h5 class="font-semibold text-foreground/90 flex items-center"><i class="fas fa-code text-blue-500 mr-2"></i>VS Code</h5>
+                            <p class="text-xs text-muted-foreground">JSON 编辑 (<code class="text-xs font-mono bg-muted/90 dark:bg-gray-700 px-1 py-0.5 rounded">mcp.json</code>)<sup class="text-xs text-primary">[1]</sup></p>
+                        </div>
+                        <div class="p-4 flex-grow">
+                            <div class="code-block-container bg-background dark:bg-gray-800 rounded-lg shadow-inner border border-border/30 overflow-hidden relative h-full">
+                                <div class="flex justify-between items-center px-3 py-1 bg-muted/30 dark:bg-gray-700 border-b border-border/30">
+                                    <span class="text-xs font-semibold text-muted-foreground dark:text-gray-400">JSON (mcp.json)</span>
+                                    <button class="code-block-copy-button text-xs text-muted-foreground dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors p-1 rounded hover:bg-muted dark:hover:bg-gray-600" title="复制代码">
+                                        <i class="far fa-copy mr-1"></i>复制代码
+                                    </button>
+                                </div>
+                                <pre class="p-3 text-xs font-mono overflow-x-auto h-[calc(100%-2.25rem)]"><code class="language-json">{
+  "Context7": {
+    "type": "stdio",
+    "command": "npx",
+    "args": ["-y", "@upstash/context7-mcp@latest"]
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Windsurf Card -->
+                    <div class="bg-card text-card-foreground border border-border/50 rounded-lg shadow-sm overflow-hidden transition-shadow hover:shadow-md flex flex-col">
+                        <div class="p-4 border-b border-border/50 bg-muted/50">
+                             <h5 class="font-semibold text-foreground/90 flex items-center"><i class="fas fa-wind text-teal-500 mr-2"></i>Windsurf</h5>
+                             <p class="text-xs text-muted-foreground">JSON 编辑<sup class="text-xs text-primary">[1]</sup></p>
+                         </div>
+                         <div class="p-4 flex-grow">
+                            <p class="text-sm text-foreground/80 mb-2">配置方式类似于 Cursor，需编辑其配置文件中的 <code class="text-xs font-mono bg-muted/90 dark:bg-gray-700 px-1 py-0.5 rounded">mcpServers</code> 条目。</p>
+                            <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded block mt-auto">mcpServers["context7"] = { ... }</code>
+                         </div>
+                     </div>
+
+                     <!-- Zed Card -->
+                     <div class="bg-card text-card-foreground border border-border/50 rounded-lg shadow-sm overflow-hidden transition-shadow hover:shadow-md flex flex-col">
+                         <div class="p-4 border-b border-border/50 bg-muted/50">
+                             <h5 class="font-semibold text-foreground/90 flex items-center"><i class="fas fa-z text-purple-500 mr-2"></i>Zed</h5>
+                             <p class="text-xs text-muted-foreground">JSON 编辑 (<code class="text-xs font-mono bg-muted/90 dark:bg-gray-700 px-1 py-0.5 rounded">settings.json</code>)<sup class="text-xs text-primary">[1]</sup></p>
+                         </div>
+                         <div class="p-4 flex-grow flex flex-col">
+                            <p class="text-sm text-foreground/80 mb-2">编辑 <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">settings.json</code> 添加配置。注意 <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">npx</code> 的路径可能需要调整为绝对路径。</p>
+                            <div class="code-block-container bg-background dark:bg-gray-800 rounded-lg shadow-inner border border-border/30 overflow-hidden relative mt-auto flex-grow">
+                                <div class="flex justify-between items-center px-3 py-1 bg-muted/30 dark:bg-gray-700 border-b border-border/30">
+                                    <span class="text-xs font-semibold text-muted-foreground dark:text-gray-400">JSON (settings.json - Snippet)</span>
+                                    <button class="code-block-copy-button text-xs text-muted-foreground dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors p-1 rounded hover:bg-muted dark:hover:bg-gray-600" title="复制代码">
+                                        <i class="far fa-copy mr-1"></i>复制代码
+                                    </button>
+                                </div>
+                                <pre class="p-3 text-xs font-mono overflow-x-auto h-[calc(100%-2.25rem)]"><code class="language-json">{
+  "mcp": {
+    "servers": {
+      "context7": {
+        "command": {
+          "command": "/path/to/npx", // 可能需要绝对路径
+          "args": ["-y", "@upstash/context7-mcp@latest"]
+        }
+      }
+    }
+  }
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Claude Code Card -->
+                    <div class="bg-card text-card-foreground border border-border/50 rounded-lg shadow-sm overflow-hidden transition-shadow hover:shadow-md flex flex-col">
+                        <div class="p-4 border-b border-border/50 bg-muted/50">
+                            <h5 class="font-semibold text-foreground/90 flex items-center"><i class="fas fa-terminal text-gray-500 mr-2"></i>Claude Code</h5>
+                            <p class="text-xs text-muted-foreground">CLI 命令<sup class="text-xs text-primary">[2]</sup></p>
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col">
+                            <p class="text-sm text-foreground/80 mb-2">使用 Claude CLI 工具添加 MCP 服务器。</p>
+                            <div class="code-block-container bg-background dark:bg-gray-800 rounded-lg shadow-inner border border-border/30 overflow-hidden relative mt-auto flex-grow">
+                                <div class="flex justify-between items-center px-3 py-1 bg-muted/30 dark:bg-gray-700 border-b border-border/30">
+                                    <span class="text-xs font-semibold text-muted-foreground dark:text-gray-400">Bash</span>
+                                    <button class="code-block-copy-button text-xs text-muted-foreground dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors p-1 rounded hover:bg-muted dark:hover:bg-gray-600" title="复制代码">
+                                        <i class="far fa-copy mr-1"></i>复制代码
+                                    </button>
+                                </div>
+                                <pre class="p-3 text-xs font-mono overflow-x-auto h-[calc(100%-2.25rem)]"><code class="language-bash">claude mcp add context7 -- npx -y @upstash/context7-mcp@latest</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Docker Card -->
+                    <div class="bg-card text-card-foreground border border-border/50 rounded-lg shadow-sm overflow-hidden transition-shadow hover:shadow-md flex flex-col">
+                        <div class="p-4 border-b border-border/50 bg-muted/50">
+                            <h5 class="font-semibold text-foreground/90 flex items-center"><i class="fab fa-docker text-blue-600 mr-2"></i>Docker</h5>
+                            <p class="text-xs text-muted-foreground">客户端 JSON 编辑<sup class="text-xs text-primary">[1]</sup></p>
+                        </div>
+                        <div class="p-4 flex-grow flex flex-col">
+                            <p class="text-sm text-foreground/80 mb-2">在支持 Docker 的客户端配置中，指定使用 Docker 命令运行。需要先自行构建 <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">context7-mcp</code> 镜像。</p>
+                            <div class="code-block-container bg-background dark:bg-gray-800 rounded-lg shadow-inner border border-border/30 overflow-hidden relative mt-auto flex-grow">
+                                <div class="flex justify-between items-center px-3 py-1 bg-muted/30 dark:bg-gray-700 border-b border-border/30">
+                                    <span class="text-xs font-semibold text-muted-foreground dark:text-gray-400">JSON (Client Config Snippet)</span>
+                                    <button class="code-block-copy-button text-xs text-muted-foreground dark:text-gray-400 hover:text-primary dark:hover:text-white transition-colors p-1 rounded hover:bg-muted dark:hover:bg-gray-600" title="复制代码">
+                                        <i class="far fa-copy mr-1"></i>复制代码
+                                    </button>
+                                </div>
+                                <pre class="p-3 text-xs font-mono overflow-x-auto h-[calc(100%-2.25rem)]"><code class="language-json">{
+  "command": "docker",
+  "args": ["run", "-i", "--rm", "context7-mcp"]
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <p class="text-xs text-muted-foreground mt-4 text-center italic">注：JSON 结构和字段名 (<code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">mcpServers</code> vs <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">mcp.servers</code>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Context7</code> vs <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">context7</code>) 可能因客户端版本或具体配置而略有差异，请参考对应客户端的最新文档。</p>
+             </div>
+
+             <!-- Card 4.2: Core Usage -->
+             <div class="bg-gradient-to-r from-primary/70 to-accent/70 text-primary-foreground rounded-lg shadow-lg p-6">
+                 <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-keyboard mr-2 opacity-90"></i>核心用法：简单的 <code class="bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded text-sm font-mono">use context7</code> 指令</h3>
+                 <p class="mb-4 opacity-90">配置完成后，在兼容客户端中调用 Context7 非常直观：只需在自然语言提示中添加 <code class="bg-secondary text-secondary-foreground px-1.5 py-0.5 rounded text-sm font-mono">use context7</code> 指令即可触发<sup class="text-xs opacity-70">[1]</sup>。</p>
+                 <h4 class="font-semibold mb-2 opacity-90">示例提示：</h4>
+                <div class="space-y-2 text-sm">
+                    <p class="bg-primary/20 p-2 rounded"><code class="opacity-80">"创建一个使用 app router 的基础 Next.js 项目。use context7"</code><sup class="text-xs opacity-70">[1]</sup></p>
+                    <p class="bg-primary/20 p-2 rounded"><code class="opacity-80">"如何在 React 中实现 useState hook？use context7"</code><sup class="text-xs opacity-70">[2]</sup></p>
+                    <p class="bg-primary/20 p-2 rounded"><code class="opacity-80">"编写一个 Python 脚本，使用 requests 库发送 JSON 数据。use context7"</code><sup class="text-xs opacity-70">[2]</sup></p>
+                     <p class="bg-primary/20 p-2 rounded"><code class="opacity-80">"给定 PostgreSQL 凭据，创建一个脚本来删除 city 为空字符串的行。use context7"</code><sup class="text-xs opacity-70">[1]</sup></p>
+                 </div>
+             </div>
+
+            <!-- Card 4.3: Application Demo -->
+             <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                 <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-laptop-code text-primary mr-2"></i>应用演示：辅助特定库开发</h3>
+                 <p class="text-foreground/80 mb-4">Context7 的价值在处理具体库和框架时尤为突出，能够提供准确、最新的信息，尤其对于更新频繁的框架或模型未充分训练的库<sup class="text-xs text-primary">[10]</sup>：</p>
+                 <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fab fa-react text-accent mr-1"></i> <strong class="text-foreground">React:</strong> 准确解释 <code class="text-xs">useState</code><sup class="text-xs text-primary">[2]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fas fa-bolt text-accent mr-1"></i> <strong class="text-foreground">Next.js:</strong> App Router 或 Hono API 最新信息<sup class="text-xs text-primary">[1]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fas fa-database text-accent mr-1"></i> <strong class="text-foreground">Upstash Redis:</strong> 获取较新 <code class="text-xs">stream trim</code> 命令用法<sup class="text-xs text-primary">[10]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fab fa-python text-accent mr-1"></i> <strong class="text-foreground">Python requests:</strong> 提供现代 <code class="text-xs">requests.post()</code> JSON 示例<sup class="text-xs text-primary">[2]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fas fa-fire text-accent mr-1"></i> <strong class="text-foreground">FastAPI:</strong> 获取最新文档<sup class="text-xs text-primary">[9]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fas fa-database text-accent mr-1"></i> <strong class="text-foreground">Supabase:</strong> 提供订阅 Postgress 变更的 JS 代码<sup class="text-xs text-primary">[11]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fab fa-node-js text-accent mr-1"></i> <strong class="text-foreground">Node.js:</strong> 获取新函数/弃用信息<sup class="text-xs text-primary">[11]</sup></li>
+                     <li class="bg-background/50 p-3 rounded border border-border/30"><i class="fas fa-database text-accent mr-1"></i> <strong class="text-foreground">PostgreSQL:</strong> 生成操作脚本<sup class="text-xs text-primary">[1]</sup></li>
+                 </ul>
+             </div>
+
+            <!-- Card 4.4: Advanced Usage -->
+             <div class="bg-card text-card-foreground border border-secondary rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-cogs text-secondary mr-2"></i>高级用法：通过 API 端点进行编程访问<sup class="text-xs text-primary">[1]</sup></h3>
+                <p class="text-foreground/80 mb-4">除了交互式使用，Context7 还暴露了 API 端点 (MCP 工具)，允许更程序化的集成，为构建自定义开发流程或内部工具提供了可能<sup class="text-xs text-primary">[8]</sup>。主要端点包括：</p>
+                <div class="space-y-4">
+                    <div class="border border-border/50 rounded p-3 bg-background/30">
+                        <h4 class="font-mono text-sm font-semibold text-primary">resolve-library-id</h4>
+                        <p class="text-xs text-muted-foreground mb-1">将通用库名转为 Context7 内部 ID (内部步骤)。</p>
+                        <p class="text-xs"><strong class="text-foreground/80">参数:</strong> <code class="bg-muted text-muted-foreground px-1 rounded">libraryName</code> (string, 必需)<sup class="text-xs text-primary">[1]</sup></p>
+                    </div>
+                    <div class="border border-border/50 rounded p-3 bg-background/30">
+                        <h4 class="font-mono text-sm font-semibold text-primary">get-library-docs</h4>
+                         <p class="text-xs text-muted-foreground mb-1">获取指定库的文档片段或代码示例。</p>
+                         <p class="text-xs mb-1"><strong class="text-foreground/80">参数:</strong></p>
+                        <ul class="list-disc list-outside pl-5 space-y-0.5 text-xs">
+                            <li><code class="bg-muted text-muted-foreground px-1 rounded">context7CompatibleLibraryID</code> (string, 必需): 由 <code class="text-xs">resolve-library-id</code> 获取<sup class="text-xs text-primary">[1]</sup></li>
+                            <li><code class="bg-muted text-muted-foreground px-1 rounded">topic</code> (string, 可选): 缩小搜索范围 (如 "routing")<sup class="text-xs text-primary">[1]</sup></li>
+                            <li><code class="bg-muted text-muted-foreground px-1 rounded">tokens</code> (integer, 可选, 默认 5000): 限制返回 token 数<sup class="text-xs text-primary">[1]</sup></li>
+                        </ul>
+                     </div>
+                 </div>
+                 <p class="text-sm text-muted-foreground mt-4 italic">这些 API 为自动化工作流 (如 CI/CD 检查、内部文档门户) 奠定了基础，使 Context7 有潜力成为文档即服务 (DaaS) 的后端组件。</p>
+            </div>
+        </div>
+
+        <!-- === Section 5: Synergy: Combining Context7 with Other MCPs === -->
+        <div class="text-center mt-20 mb-12">
+             <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">5. 协同增效：结合 Context7 与其他 MCP</h2>
+             <p class="mt-4 text-lg text-muted-foreground">在 Cursor & Claude Desktop 等环境中释放更大潜力</p>
+        </div>
+
+        <div class="space-y-10">
+            <!-- Card 5.1: Cursor/Claude MCP Capabilities -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-network-wired text-primary mr-2"></i>5.1 Cursor & Claude Desktop 的 MCP 能力：多服务器协调</h3>
+                <p class="text-foreground/80 mb-4">Cursor 和 Claude Desktop 作为 MCP 主机 (Host)<sup class="text-xs text-primary">[3]</sup>，核心优势在于其**原生支持同时处理和协调多个 MCP 服务器**<sup class="text-xs text-primary">[2, 17]</sup>。这通过它们的配置文件 (<code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">mcp.json</code> / <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">claude_desktop_config.json</code> 中的 <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">mcpServers</code> 对象) 得以体现<sup class="text-xs text-primary">[17]</sup>。</p>
+                <p class="text-foreground/80 mb-4">用户可以在 UI 中选择工具<sup class="text-xs text-primary">[20]</sup>，AI 模型/代理则能智能调用来自不同服务器的工具<sup class="text-xs text-primary">[25]</sup> (尽管可能有工具数量限制<sup class="text-xs text-primary">[35]</sup>)，协同完成复杂任务（例如：<span class="italic">Filesystem 读取 &rarr; Context7 获取文档 &rarr; GitHub 创建 PR</span>）。</p>
+                <p class="text-sm text-muted-foreground italic">这种多服务器架构是实现不同 MCP 应用（如 Context7 与其他工具）之间协同增效的基础，为构建功能更强大、上下文更丰富的 AI 开发体验打开了大门。</p>
+            </div>
+
+            <!-- Card 5.2: Principles of Combining MCPs -->
+             <div class="bg-gradient-to-r from-accent/70 to-primary/70 text-foreground rounded-lg shadow-lg p-6 border-l-4 border-secondary">
+                 <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-puzzle-piece text-secondary mr-2"></i>5.2 结合 MCP 的基本原理：互补的上下文与能力</h3>
+                 <p class="mb-4">结合 Context7 与其他 MCP 的核心在于**互补性**。Context7 专注于提供权威的库/API 文档上下文<sup class="text-xs text-primary">[1]</sup>，但这通常不足以完成复杂的开发任务。</p>
+                 <p class="mb-4">开发者还需要：</p>
+                 <ul class="list-disc list-outside pl-5 space-y-1 text-sm mb-4">
+                     <li>了解代码如何应用于**当前项目** (需访问文件系统)</li>
+                     <li>查找**社区解决方案**或边缘案例 (需网页搜索<sup class="text-xs text-primary">[14]</sup>)</li>
+                     <li>直接与**外部服务**交互 (Jira, Slack, DB 等)</li>
+                     <li>**执行代码**进行验证或调试<sup class="text-xs text-primary">[14]</sup></li>
+                 </ul>
+                 <p class="mb-4">结合提供这些互补能力的 MCP 服务器，相当于为 LLM 构建了一个更丰富、多维度的"感知"系统<sup class="text-xs text-primary">[4]</sup>。LLM 可以同时"看到"项目代码、网络信息、API 状态，并"操作"它们，从而进行更有效的推理，处理跨领域任务。</p>
+                 <p class="text-sm text-muted-foreground italic">对开发者而言，这意味着在单一界面完成多应用任务，减少上下文切换，提高工作流畅度<sup class="text-xs text-primary">[31]</sup>。</p>
+            </div>
+
+            <!-- Section 5.3: High-Potential Combinations -->
+            <div class="mt-10">
+                <h3 class="text-2xl font-semibold font-serif mb-6 text-center"><i class="fas fa-lightbulb text-primary mr-2"></i>5.3 高潜力组合分析</h3>
+                <div class="space-y-8">
+                    <!-- Combination 1: Context7 + Search -->
+                    <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-muted/50 dark:bg-gray-700 p-4 border-b border-border/50">
+                            <h4 class="text-xl font-semibold flex items-center"><i class="fas fa-search text-accent mr-3"></i> Context7 + 搜索类 MCP</h4>
+                            <p class="text-xs text-muted-foreground dark:text-gray-400 mt-1">例如: Firecrawl<sup class="text-xs">[39]</sup>, Brave Search<sup class="text-xs">[37]</sup>, DuckDuckGo Search<sup class="text-xs">[30]</sup></p>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <p><strong>机制:</strong> Context7 提供官方细节，搜索 MCP 提供广泛网络上下文 (博客、教程、SO 讨论、GitHub Issues)<sup class="text-xs text-primary">[14]</sup>。Firecrawl 可抓取特定网页转为结构化数据<sup class="text-xs text-primary">[39]</sup>。</p>
+                            <p><strong>协同效应:</strong> 交叉验证官方信息与社区实践；补充 Context7 未覆盖或覆盖不佳的库/错误；查找特定 API 的最新讨论或替代方案。</p>
+                            <div class="bg-background/50 dark:bg-gray-800/30 p-3 rounded border border-border/30">
+                                <p class="text-xs font-semibold text-primary mb-1">示例提示 (Cursor/Claude):</p>
+                                <p class="text-xs italic">"使用 Context7 获取 Next.js 中间件基本设置，然后用 Brave Search 查找近期关于 Next.js 中间件处理身份验证的社区讨论或教程。"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Combination 2: Context7 + Code/FS -->
+                    <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-muted/50 dark:bg-gray-700 p-4 border-b border-border/50">
+                            <h4 class="text-xl font-semibold flex items-center"><i class="far fa-folder-open text-accent mr-3"></i> Context7 + 代码/文件系统类 MCP</h4>
+                             <p class="text-xs text-muted-foreground dark:text-gray-400 mt-1">例如: Filesystem<sup class="text-xs">[17]</sup>, Git<sup class="text-xs">[37]</sup>, GitHub<sup class="text-xs">[31]</sup></p>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <p><strong>机制:</strong> Context7 提供通用文档，文件/代码 MCP 提供对本地项目代码、结构、依赖和版本历史的访问<sup class="text-xs text-primary">[17]</sup>。</p>
+                            <p><strong>协同效应:</strong> 生成符合最新 API 且贴合项目风格的代码；调试时对比实际代码与文档；确保库版本一致；跨仓库调试<sup class="text-xs text-primary">[31]</sup>。</p>
+                             <div class="bg-background/50 dark:bg-gray-800/30 p-3 rounded border border-border/30">
+                                <p class="text-xs font-semibold text-primary mb-1">示例提示 (Cursor/Claude):</p>
+                                <p class="text-xs italic">"用 Context7 查找 React Router v6 受保护路由的最新 API。然后，用 Filesystem 读取 <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1 rounded">src/routes/index.js</code>，根据新 API 重构，保持现有风格。"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Combination 3: Context7 + API/Service -->
+                    <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-muted/50 dark:bg-gray-700 p-4 border-b border-border/50">
+                            <h4 class="text-xl font-semibold flex items-center"><i class="fas fa-plug text-accent mr-3"></i> Context7 + API/服务类 MCP</h4>
+                             <p class="text-xs text-muted-foreground dark:text-gray-400 mt-1">例如: Apidog<sup class="text-xs">[8]</sup>, GitHub<sup class="text-xs">[37]</sup>, Zapier<sup class="text-xs">[43]</sup>, Notion<sup class="text-xs">[42]</sup>, Slack<sup class="text-xs">[37]</sup>, Jira<sup class="text-xs">[43]</sup>, PostgreSQL<sup class="text-xs">[37]</sup>, Neon<sup class="text-xs">[18]</sup>, Browserbase<sup class="text-xs">[39]</sup></p>
+                        </div>
+                         <div class="p-6 space-y-3">
+                            <p><strong>机制:</strong> Context7 提供 API 文档，服务 MCP 允许 AI 直接与外部服务交互 (创建 issue, 发消息, 查数据库等)<sup class="text-xs text-primary">[8]</sup>。</p>
+                            <p><strong>协同效应:</strong> 理解 API 用法 (Context7) 后立即执行操作 (服务 MCP)；自动化涉及文档查询和服务调用的工作流（例如：查 DB 语法 &rarr; 执行查询）。</p>
+                             <div class="bg-background/50 dark:bg-gray-800/30 p-3 rounded border border-border/30">
+                                <p class="text-xs font-semibold text-primary mb-1">示例提示 (Cursor/Claude):</p>
+                                <p class="text-xs italic">"用 Context7 查找创建带标签 GitHub issue 的 API 端点和参数。然后，用 GitHub MCP 在 'my-project' 仓库创建标题 '登录流程 Bug'、标签 'bug', 'ui' 的 issue。"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Combination 4: Context7 + Execution -->
+                    <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-muted/50 dark:bg-gray-700 p-4 border-b border-border/50">
+                            <h4 class="text-xl font-semibold flex items-center"><i class="fas fa-play-circle text-accent mr-3"></i> Context7 + 执行类 MCP</h4>
+                            <p class="text-xs text-muted-foreground dark:text-gray-400 mt-1">例如: MCP Code Executor<sup class="text-xs">[42]</sup>, Puppeteer<sup class="text-xs">[31]</sup>, Browserbase<sup class="text-xs">[39]</sup></p>
+                        </div>
+                        <div class="p-6 space-y-3">
+                            <p><strong>机制:</strong> Context7 提供代码示例或预期行为文档，执行 MCP 允许在安全环境运行代码或自动化浏览器操作<sup class="text-xs text-primary">[31]</sup>。</p>
+                            <p><strong>协同效应:</strong> 生成代码 (Context7) 后立即测试验证 (执行 MCP)；通过运行代码对比实际输出与文档描述进行调试；测试 UI 更改。</p>
+                             <div class="bg-background/50 dark:bg-gray-800/30 p-3 rounded border border-border/30">
+                                <p class="text-xs font-semibold text-primary mb-1">示例提示 (Cursor/Claude):</p>
+                                <p class="text-xs italic">"用 Context7 获取计算 SHA256 哈希的 Python 示例。然后，用 Code Executor 运行此示例，输入 'hello world'，并告诉我输出。"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table 2: Potential Synergistic Combinations -->
+            <div class="mt-10">
+                <h4 class="font-semibold mb-3 text-foreground/90 text-center"><i class="fas fa-table text-primary mr-2"></i>表 2：Context7 与其他 MCP 的潜在协同组合</h4>
+                <div class="overflow-x-auto border border-border rounded-lg shadow-sm">
+                    <table class="w-full text-sm text-left divide-y divide-border/30 table-auto">
+                        <thead class="bg-muted dark:bg-gray-700">
+                            <tr>
+                                <th scope="col" class="px-4 py-3 font-bold text-foreground dark:text-gray-200 uppercase tracking-wider">MCP 类型</th>
+                                <th scope="col" class="px-4 py-3 font-bold text-foreground dark:text-gray-200 uppercase tracking-wider">示例服务器</th>
+                                <th scope="col" class="px-4 py-3 font-bold text-foreground dark:text-gray-200 uppercase tracking-wider">核心功能 & 协同增效</th>
+                                <th scope="col" class="px-4 py-3 font-bold text-foreground dark:text-gray-200 uppercase tracking-wider">客户端相关性</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border/30">
+                            <tr class="hover:bg-accent/20 dark:hover:bg-accent/10 transition-colors">
+                                <td class="px-4 py-3 align-top font-semibold"><i class="fas fa-search text-accent mr-2"></i>搜索 (Search)</td>
+                                <td class="px-4 py-3 align-top"><code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Firecrawl</code><sup class="text-xs">[39]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Brave Search</code><sup class="text-xs">[37]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">DuckDuckGo</code><sup class="text-xs">[30]</sup></td>
+                                <td class="px-4 py-3 align-top">网页搜索、内容抓取。补充社区知识、教程、问题讨论；验证信息；覆盖 Context7 未支持库。</td>
+                                <td class="px-4 py-3 align-top text-center"><span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">高</span></td>
+                            </tr>
+                            <tr class="bg-card/50 dark:bg-card/30 hover:bg-accent/20 dark:hover:bg-accent/10 transition-colors">
+                                <td class="px-4 py-3 align-top font-semibold"><i class="far fa-folder-open text-accent mr-2"></i>文件/代码 (FS)</td>
+                                <td class="px-4 py-3 align-top"><code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Filesystem</code><sup class="text-xs">[17]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Git</code><sup class="text-xs">[37]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">GitHub</code><sup class="text-xs">[31]</sup></td>
+                                <td class="px-4 py-3 align-top">访问本地/远程项目文件、代码、版本历史。使生成代码符合项目上下文；对比实际代码与文档；跨仓库调试。</td>
+                                <td class="px-4 py-3 align-top text-center"><span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">高</span></td>
+                            </tr>
+                            <tr class="hover:bg-accent/20 dark:hover:bg-accent/10 transition-colors">
+                                <td class="px-4 py-3 align-top font-semibold"><i class="fas fa-plug text-accent mr-2"></i>API/服务 (API)</td>
+                                <td class="px-4 py-3 align-top"><code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Apidog</code><sup class="text-xs">[8]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">GitHub</code><sup class="text-xs">[37]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Zapier</code><sup class="text-xs">[43]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Notion</code><sup class="text-xs">[42]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Slack</code><sup class="text-xs">[37]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Jira</code><sup class="text-xs">[43]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">PostgreSQL</code><sup class="text-xs">[37]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Neon</code><sup class="text-xs">[18]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Browserbase</code><sup class="text-xs">[39]</sup></td>
+                                <td class="px-4 py-3 align-top">与外部 SaaS、DB、平台 API 交互。理解 API 用法 (Context7) 后立即执行操作 (服务 MCP)；自动化工作流。</td>
+                                <td class="px-4 py-3 align-top text-center"><span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">高</span></td>
+                            </tr>
+                            <tr class="bg-card/50 dark:bg-card/30 hover:bg-accent/20 dark:hover:bg-accent/10 transition-colors">
+                                <td class="px-4 py-3 align-top font-semibold"><i class="fas fa-play-circle text-accent mr-2"></i>执行 (Exec)</td>
+                                <td class="px-4 py-3 align-top"><code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">MCP Code Executor</code><sup class="text-xs">[42]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Puppeteer</code><sup class="text-xs">[31]</sup>, <code class="text-xs font-mono bg-muted/70 dark:bg-gray-600 px-1.5 py-0.5 rounded">Browserbase</code><sup class="text-xs">[39]</sup></td>
+                                <td class="px-4 py-3 align-top">在沙箱运行代码、自动化浏览器。生成代码 (Context7) 后立即测试/验证 (执行 MCP)；调试；测试 UI。</td>
+                                <td class="px-4 py-3 align-top text-center"><span class="inline-block bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">高</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                 </div>
+            </div>
+
+            <!-- Card 5.4: Synergy Principles Summary -->
+             <div class="bg-card text-card-foreground border border-primary/50 rounded-lg shadow-lg p-6 mt-10">
+                 <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-project-diagram text-primary mr-2"></i>5.4 MCP 工作流协同原理总结</h3>
+                 <p class="text-foreground/80 mb-4">Context7 与其他 MCP 结合产生协同效应的核心在于：</p>
+                 <ul class="space-y-3">
+                     <li class="flex items-start">
+                         <i class="fas fa-puzzle-piece text-accent mr-3 mt-1 flex-shrink-0"></i>
+                         <div>
+                             <strong class="text-foreground">互补性 (Complementarity):</strong> 不同 MCP 提供不同种类、通常不重叠的上下文或能力 (文档 vs. 项目代码 vs. 搜索 vs. API 调用)<sup class="text-xs text-primary">[31]</sup>。
+                         </div>
+                     </li>
+                     <li class="flex items-start">
+                        <i class="fas fa-link text-accent mr-3 mt-1 flex-shrink-0"></i>
+                        <div>
+                            <strong class="text-foreground">组合性 (Composability):</strong> 标准化接口允许串联/组合不同服务器的工具调用，构建复杂的多步骤工作流<sup class="text-xs text-primary">[4]</sup>。AI 代理可动态编排这些工具<sup class="text-xs text-primary">[29]</sup>。
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-brain text-accent mr-3 mt-1 flex-shrink-0"></i>
+                        <div>
+                             <strong class="text-foreground">上下文丰富化 (Context Enrichment):</strong> 整合多源信息 (文档、文件、搜索等) 为 LLM 提供更全面的"世界模型"，做出更优决策<sup class="text-xs text-primary">[4]</sup>。
+                        </div>
+                    </li>
+                 </ul>
+                 <p class="text-sm text-muted-foreground mt-6 italic text-center">真正的力量源自根据任务需求对 MCP 模块（Context7 是其中之一）进行深思熟虑的组合，由 AI 代理在 Cursor/Claude Desktop 等客户端中编排<sup class="text-xs text-primary">[31]</sup>。</p>
+            </div>
+        </div>
+
+        <!-- === Section 6: Current Limitations & Future Development === -->
+        <div class="text-center mt-20 mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">6. 当前局限与未来发展</h2>
+            <p class="mt-4 text-lg text-muted-foreground">持续演进中的工具</p>
+        </div>
+
+        <div class="space-y-10">
+             <!-- Card 6.1: Known Gaps -->
+            <div class="bg-card text-card-foreground border border-destructive/50 rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-4 text-destructive"><i class="fas fa-exclamation-triangle mr-2"></i>6.1 已知差距：覆盖、解析与可靠性</h3>
+                <p class="text-foreground/80 mb-4">尽管 Context7 价值显著，但社区反馈和 GitHub Issues<sup class="text-xs text-primary">[15]</sup> 指出了当前存在的一些挑战：</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="border border-border/40 rounded p-4 bg-background/40 space-y-2">
+                         <h4 class="font-semibold text-foreground/90"><i class="fas fa-crosshairs text-muted-foreground mr-1.5"></i>准确性与可靠性</h4>
+                         <p class="text-sm text-muted-foreground">有时拉取错误文档<sup class="text-xs text-primary">[13]</sup> 或未能成功检索<sup class="text-xs text-primary">[14]</sup>，可靠性并非 100%。</p>
+                     </div>
+                     <div class="border border-border/40 rounded p-4 bg-background/40 space-y-2">
+                        <h4 class="font-semibold text-foreground/90"><i class="fas fa-map-marked-alt text-muted-foreground mr-1.5"></i>覆盖范围</h4>
+                        <p class="text-sm text-muted-foreground">尚未覆盖所有库/SDK (尤其较新/小众<sup class="text-xs text-primary">[14]</sup>)；对旧版本<sup class="text-xs text-primary">[10]</sup>和私有包<sup class="text-xs text-primary">[10]</sup>的支持仍在计划中。</p>
+                    </div>
+                    <div class="border border-border/40 rounded p-4 bg-background/40 space-y-2">
+                        <h4 class="font-semibold text-foreground/90"><i class="fas fa-file-code text-muted-foreground mr-1.5"></i>解析能力</h4>
+                        <p class="text-sm text-muted-foreground">解析特定/复杂格式 (如部分 OpenAPI 规范<sup class="text-xs text-primary">[15]</sup>) 时可能存在问题；用户请求支持更多格式 (如 AsciiDoc<sup class="text-xs text-primary">[15]</sup>)。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 6.2: Roadmap -->
+            <div class="bg-gradient-to-b from-primary/80 to-accent/80 text-primary-foreground rounded-lg shadow-xl p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-6 text-center"><i class="fas fa-route mr-2 opacity-90"></i>6.2 Context7 路线图：计划中的增强功能<sup class="text-xs opacity-70">[10]</sup></h3>
+                <p class="text-center mb-6 opacity-90">根据官方信息，Context7 未来计划包括直接回应社区反馈的关键项目：</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="bg-primary/20 dark:bg-primary/30 text-foreground dark:text-primary-foreground p-4 rounded-lg shadow-sm transition-transform hover:scale-105">
+                        <i class="fas fa-server text-2xl text-accent mb-2"></i>
+                        <h4 class="font-semibold mb-1">公共 MCP 服务器</h4>
+                        <p class="text-xs opacity-80">公开发布，简化使用。</p>
+                    </div>
+                     <div class="bg-primary/20 dark:bg-primary/30 text-foreground dark:text-primary-foreground p-4 rounded-lg shadow-sm transition-transform hover:scale-105">
+                        <i class="fas fa-code text-2xl text-accent mb-2"></i>
+                        <h4 class="font-semibold mb-1">API / SDK</h4>
+                        <p class="text-xs opacity-80">方便编程访问与集成。</p>
+                    </div>
+                    <div class="bg-primary/20 dark:bg-primary/30 text-foreground dark:text-primary-foreground p-4 rounded-lg shadow-sm transition-transform hover:scale-105">
+                        <i class="fas fa-history text-2xl text-accent mb-2"></i>
+                        <h4 class="font-semibold mb-1">支持旧版本/私有包</h4>
+                        <p class="text-xs opacity-80">扩展覆盖范围。</p>
+                    </div>
+                     <div class="bg-primary/20 dark:bg-primary/30 text-foreground dark:text-primary-foreground p-4 rounded-lg shadow-sm transition-transform hover:scale-105">
+                        <i class="fas fa-search-location text-2xl text-accent mb-2"></i>
+                        <h4 class="font-semibold mb-1">代码片段搜索</h4>
+                        <p class="text-xs opacity-80">增强搜索能力。</p>
+                    </div>
+                    <div class="bg-primary/20 dark:bg-primary/30 text-foreground dark:text-primary-foreground p-4 rounded-lg shadow-sm transition-transform hover:scale-105">
+                         <i class="fas fa-cubes text-2xl text-accent mb-2"></i>
+                        <h4 class="font-semibold mb-1">多包支持</h4>
+                        <p class="text-xs opacity-80">更好处理复杂提示。</p>
+                    </div>
+                    <div class="bg-primary/20 dark:bg-primary/30 text-foreground dark:text-primary-foreground p-4 rounded-lg shadow-sm transition-transform hover:scale-105">
+                         <i class="fas fa-filter text-2xl text-accent mb-2"></i>
+                        <h4 class="font-semibold mb-1">按语言过滤</h4>
+                        <p class="text-xs opacity-80">允许过滤文档结果。</p>
+                    </div>
+                </div>
+                <p class="text-center text-xs opacity-80 mt-6 italic">路线图表明开发团队正积极改进工具，弥补差距，扩展能力。</p>
+            </div>
+        </div>
+
+        <!-- === Section 7: Conclusion & Strategic Recommendations === -->
+        <div class="text-center mt-20 mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">7. 结论与战略建议</h2>
+        </div>
+
+        <div class="space-y-10">
+            <!-- Card 7.1: Overall Value Assessment -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-balance-scale text-primary mr-2"></i>7.1 Context7 价值定位的总体评估</h3>
+                <p class="text-foreground/80 mb-4">Context7 针对 AI 辅助开发中的核心痛点——LLM 知识库陈旧性——提供了创新且有价值的解决方案。通过 MCP 集成，它能无缝融入现代 AI 编程环境 (如 Cursor, Claude Desktop)，动态提供最新、版本特定的官方文档上下文，显著提高 AI 生成代码的准确性与可靠性，减少开发者查阅文档和调试的时间。</p>
+                <p class="text-foreground/80">然而，Context7 并非完美：在库覆盖范围、检索准确性及复杂文档解析能力方面仍存局限。其当前价值在处理文档齐全、更新频繁的流行库/框架时最为突出。</p>
+            </div>
+
+            <!-- Card 7.2: Recommendations for Developers/Teams -->
+            <div class="bg-gradient-to-r from-accent/70 to-primary/70 text-foreground rounded-lg shadow-lg p-6 border-l-4 border-secondary">
+                 <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-users-cog text-secondary mr-2"></i>7.2 对评估 Context7 的开发者/团队的建议</h3>
+                 <p class="mb-4">对于考虑采用 Context7 的开发者或团队，建议：</p>
+                 <ul class="list-disc list-outside pl-5 space-y-2 text-sm mb-4">
+                    <li><strong>评估覆盖范围:</strong> 首先测试对项目中关键库/框架的支持情况和文档质量。</li>
+                    <li><strong>利用免费层级:</strong> 充分利用免费个人版进行深入评估<sup class="text-xs text-primary">[10]</sup>。</li>
+                    <li><strong>设定合理预期:</strong> 视为强大辅助工具，而非绝对权威，尤其处理复杂或不常见库时需验证输出<sup class="text-xs text-primary">[13]</sup>。</li>
+                    <li><strong>融入工作流:</strong> 配置到偏好的 MCP 客户端 (Cursor, Claude Desktop 等)<sup class="text-xs text-primary">[1]</sup>。</li>
+                    <li><strong>积极提供反馈:</strong> 通过 GitHub Issues<sup class="text-xs text-primary">[15]</sup> 等渠道报告问题、请求支持，参与改进。</li>
+                </ul>
+             </div>
+
+            <!-- Card 7.3: Guidance on Utilizing MCP Combinations -->
+            <div class="bg-card text-card-foreground border border-primary/50 rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-directions text-primary mr-2"></i>7.3 关于利用协同 MCP 组合的指导</h3>
+                <p class="text-foreground/80 mb-4"><strong>强烈推荐</strong>开发者探索在 Cursor 或 Claude Desktop 中将 Context7 与其他 MCP 服务器结合使用。这是释放 AI 助手更大潜力、实现显著生产力提升和高级功能的关键<sup class="text-xs text-primary">[31]</sup>。</p>
+                 <p class="text-foreground/80 mb-4">建议：</p>
+                 <ol class="list-decimal list-outside pl-5 space-y-2 text-sm">
+                     <li>识别开发工作流中需要多种类型上下文（文档 + 项目代码 + 搜索 + API 交互等）的瓶颈环节。</li>
+                    <li>寻找能满足需求的 MCP 服务器 (参考 <a href="#table2" class="text-primary hover:underline">表 2</a>)。</li>
+                     <li>从简单组合开始 (如 Context7 + Filesystem 或 Context7 + Firecrawl)，逐步构建更复杂、强大的自动化工作流。</li>
+                </ol>
+             </div>
+
+             <!-- Card 7.4: Role in Evolving AI Dev Tool Ecosystem -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg shadow-md p-6">
+                <h3 class="text-2xl font-semibold font-serif mb-4"><i class="fas fa-chart-line text-primary mr-2"></i>7.4 Context7 在演进中的 AI 开发者工具生态中的角色</h3>
+                <p class="text-foreground/80 mb-4">Context7 是当前 AI 开发者工具领域重要趋势的典型代表：工具正朝着更**上下文感知**、更**专业化**的方向发展，并通过 MCP 等协议进行**集成**。它专注于解决"提供准确代码文档"这一特定问题，并允许与其他专业工具协同工作。</p>
+                 <p class="text-foreground/80">总而言之，Context7 (尤其与其他 MCP 结合时) 代表了使 AI 编码助手更可靠、更实用方面迈出的重要一步。它推动 AI 从提供泛泛建议，转向成为能理解具体项目和库上下文、提供更精准支持的开发伙伴。Context7 的持续发展及围绕 MCP 构建的更广泛生态系统，将是未来值得密切关注的关键因素。</p>
+             </div>
+        </div>
+
+    </div> <!-- End of Main Content Area -->
+
+    <!-- === Section: Further Reading === -->
+    <section class="mt-16 mb-12">
+        <div class="text-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-bold font-serif border-b-2 border-primary inline-block pb-2">延伸阅读</h2>
+        </div>
+        <div id="further-reading-cards" class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Resource 1 -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md flex flex-col">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-link text-primary text-xl mr-3"></i>
+                    <h4 class="text-lg font-semibold">MCP: The Model Context Protocol</h4>
+                </div>
+                <p class="text-sm text-muted-foreground flex-grow mb-4">
+                    了解模型上下文协议 (MCP) 的官方规范和设计理念，这是 Context7 等工具构建的基础。
+                </p>
+                <a href="https://mcp.context.ai/" target="_blank" rel="noopener noreferrer" class="text-sm text-primary hover:underline self-start">访问官网 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+            <!-- Resource 2 -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md flex flex-col">
+                 <div class="flex items-center mb-4">
+                    <i class="fas fa-book text-primary text-xl mr-3"></i>
+                    <h4 class="text-lg font-semibold">Upstash Blog: Introducing Context7</h4>
+                </div>
+                <p class="text-sm text-muted-foreground flex-grow mb-4">
+                    阅读 Context7 的官方发布博客文章，深入了解其创建背景、目标和技术细节。
+                </p>
+                 <a href="https://upstash.com/blog/context7" target="_blank" rel="noopener noreferrer" class="text-sm text-primary hover:underline self-start">阅读博客 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+            <!-- Resource 3 -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md flex flex-col">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-lightbulb text-primary text-xl mr-3"></i>
+                    <h4 class="text-lg font-semibold">The Expanding Dark Forest and Generative AI</h4>
+                </div>
+                <p class="text-sm text-muted-foreground flex-grow mb-4">
+                    探讨生成式 AI 对网络信息生态的影响，有助于理解 Context7 这类工具在确保信息准确性方面的重要性。
+                </p>
+                <a href="https://maggieappleton.com/the-dark-forest-and-generative-ai" target="_blank" rel="noopener noreferrer" class="text-sm text-primary hover:underline self-start">阅读文章 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+            <!-- Resource 4 (Optional Example) -->
+            <div class="bg-card text-card-foreground border border-border rounded-lg p-6 shadow-sm transition-shadow hover:shadow-md flex flex-col">
+                <div class="flex items-center mb-4">
+                    <i class="fab fa-github text-primary text-xl mr-3"></i>
+                    <h4 class="text-lg font-semibold">Context7 GitHub Issues</h4>
+                </div>
+                <p class="text-sm text-muted-foreground flex-grow mb-4">
+                    直接查看社区反馈、Bug 报告和功能请求，了解 Context7 的实际使用情况和发展方向。
+                </p>
+                <a href="https://github.com/upstash/context7/issues" target="_blank" rel="noopener noreferrer" class="text-sm text-primary hover:underline self-start">查看 GitHub <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- === Section: Cited Sources === -->
+    <section id="cited-sources" class="mt-16 mb-12">
+        <div class="text-center mb-6">
+            <button id="toggle-citations" class="text-primary hover:underline text-lg font-semibold" aria-expanded="false" aria-controls="citation-list">
+                参考文献 (Cited Sources) <i class="fas fa-chevron-down text-sm ml-1 transition-transform"></i>
+            </button>
+        </div>
+        <div id="citation-list-container" class="max-w-4xl mx-auto hidden overflow-hidden border border-border rounded-lg shadow-sm bg-card/50 dark:bg-card/20">
+            <ol id="citation-list" class="list-decimal list-outside space-y-3 p-6 text-sm text-muted-foreground divide-y divide-border/30">
+                <!-- Citations will be dynamically inserted here if possible, example structure: -->
+                <!-- 
+                <li id="citation-1" class="pt-3 first:pt-0">
+                    [<a href="#citation-marker-1-1" title="Back to text" class="hover:underline text-primary">^</a>] 
+                    <span class="font-semibold text-foreground/80">upstash.com:</span> 
+                    <a href="https://upstash.com/blog/context7" target="_blank" rel="noopener noreferrer" class="hover:underline break-all">Introducing Context7: Up-to-Date Docs for LLMs and AI Code ...</a> 
+                </li> 
+                -->
+            </ol>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-16 py-8 border-t border-border text-center text-muted-foreground text-sm">
+        <div>
+            <p>作者姓名: 季晓康</p>
+            <p>微信公众号：凿壁</p>
+            <p>版权信息：国家健康医疗大数据研究院</p>
+            <p class="mt-2">发布日期: 2024-08-01 | 分类: AI技术与生态</p> <!-- Visible date/category -->
+        </div>
+    </footer>
+
+    <!-- JavaScript for Theme Toggle and Initializations -->
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const toggleIcon = themeToggle.querySelector('i');
+        const htmlElement = document.documentElement;
+        const currentTheme = localStorage.getItem('theme');
+
+        // Function to set theme
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                htmlElement.classList.add('dark');
+                toggleIcon.classList.remove('fa-sun');
+                toggleIcon.classList.add('fa-moon');
+            } else {
+                htmlElement.classList.remove('dark');
+                toggleIcon.classList.remove('fa-moon');
+                toggleIcon.classList.add('fa-sun');
+            }
+            // Update visualizations after theme change
+            if (typeof updateVisualizationThemes === 'function') {
+                 // Delay slightly to allow CSS variables to update
+                setTimeout(updateVisualizationThemes, 50);
+            }
+        }
+
+        // Apply the initial theme
+        if (currentTheme) {
+            setTheme(currentTheme);
+        } else {
+            // Default to light theme if no preference saved
+            // Or check system preference: window.matchMedia('(prefers-color-scheme: dark)').matches
+            setTheme('light');
+        }
+
+        // Add event listener for the toggle button
+        themeToggle.addEventListener('click', () => {
+            const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        // Global array to hold chart instances
+        window.chartInstances = window.chartInstances || [];
+
+        // Central function to update visualization themes
+        function updateVisualizationThemes() {
+            const isDarkMode = htmlElement.classList.contains('dark');
+            const currentMermaidTheme = isDarkMode ? 'dark' : 'default';
+            const lightHljsTheme = document.getElementById('hljs-light-theme');
+            const darkHljsTheme = document.getElementById('hljs-dark-theme');
+
+            console.log(`Updating themes. Dark mode: ${isDarkMode}`);
+
+            // Update Highlight.js theme link
+            if (lightHljsTheme && darkHljsTheme) {
+                lightHljsTheme.disabled = isDarkMode;
+                darkHljsTheme.disabled = !isDarkMode;
+                console.log(`Highlight.js theme updated. Dark theme enabled: ${isDarkMode}`);
+            }
+
+            // Update Mermaid theme
+            if (typeof mermaid !== 'undefined') {
+                console.log(`Initializing Mermaid with theme: ${currentMermaidTheme}`);
+                 // Re-initialize Mermaid with the correct theme
+                mermaid.initialize({ startOnLoad: false, theme: currentMermaidTheme });
+                mermaid.init(undefined, document.querySelectorAll('.mermaid')); // Re-render existing diagrams
+            }
+
+            // Update Chart.js instances
+            if (window.chartInstances && window.chartInstances.length > 0) {
+                const computedStyle = getComputedStyle(document.documentElement);
+                const textColor = computedStyle.getPropertyValue('--foreground').trim();
+                const gridColor = computedStyle.getPropertyValue('--border').trim();
+                const chartColors = [
+                    computedStyle.getPropertyValue('--chart-1').trim(),
+                    computedStyle.getPropertyValue('--chart-2').trim(),
+                    computedStyle.getPropertyValue('--chart-3').trim(),
+                    computedStyle.getPropertyValue('--chart-4').trim(),
+                    computedStyle.getPropertyValue('--chart-5').trim(),
+                ];
+
+                window.chartInstances.forEach((chart, index) => {
+                    console.log(`Updating chart ${index}`);
+                    if (chart.options.scales) {
+                        Object.values(chart.options.scales).forEach(scale => {
+                            if (scale.ticks) scale.ticks.color = textColor;
+                            if (scale.grid) scale.grid.color = gridColor;
+                            if (scale.pointLabels) scale.pointLabels.color = textColor;
+                        });
+                    }
+                    if (chart.options.plugins && chart.options.plugins.legend) {
+                        chart.options.plugins.legend.labels.color = textColor;
+                    }
+                    if (chart.options.plugins && chart.options.plugins.title) {
+                         chart.options.plugins.title.color = textColor;
+                    }
+
+                    // Update dataset colors (example for bar/pie)
+                    if (chart.data.datasets && chart.data.datasets.length > 0) {
+                        chart.data.datasets.forEach((dataset, i) => {
+                            if (dataset.backgroundColor) {
+                                // Handle single color or array of colors
+                                if (Array.isArray(dataset.backgroundColor)) {
+                                     dataset.backgroundColor = dataset.backgroundColor.map((_, j) => chartColors[j % chartColors.length]);
+                                } else {
+                                    dataset.backgroundColor = chartColors[i % chartColors.length];
+                                }
+                            }
+                            if (dataset.borderColor) {
+                                if (Array.isArray(dataset.borderColor)) {
+                                     dataset.borderColor = dataset.borderColor.map(() => gridColor);
+                                } else {
+                                    dataset.borderColor = gridColor;
+                                }
+                            }
+                            if (dataset.pointBackgroundColor) {
+                                dataset.pointBackgroundColor = chartColors[i % chartColors.length];
+                            }
+                            if (dataset.pointBorderColor) {
+                                dataset.pointBorderColor = gridColor;
+                            }
+                        });
+                    }
+
+                    chart.update();
+                });
+            }
+        }
+
+        // Placeholder for visualization and animation setup (will be added in next steps)
+        document.addEventListener('DOMContentLoaded', () => {
+             // Initial theme update needed for Mermaid if not using startOnLoad
+            if (typeof updateVisualizationThemes === 'function') {
+                 updateVisualizationThemes();
+            }
+
+            // Initialize Chart.js charts
+            setupCharts();
+            
+            // Initialize Framer Motion animations (Example)
+            setupAnimations();
+
+            // Initialize Highlight.js
+            hljs.highlightAll();
+
+            // Setup copy-to-clipboard buttons for code blocks
+            setupCopyButtons();
+
+            // Setup citation list and links
+            setupCitations();
+        });
+
+        // Chart.js Setup Function
+        function setupCharts() {
+            const ctxLimitations = document.getElementById('limitationsChart')?.getContext('2d');
+            if (ctxLimitations) {
+                const computedStyle = getComputedStyle(document.documentElement);
+                const chartColors = [
+                    computedStyle.getPropertyValue('--destructive').trim(), // For Accuracy
+                    computedStyle.getPropertyValue('--secondary').trim(), // For Coverage
+                    computedStyle.getPropertyValue('--muted-foreground').trim(), // For Quality Feedback
+                ];
+                const textColor = computedStyle.getPropertyValue('--foreground').trim();
+
+                const limitationsChart = new Chart(ctxLimitations, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['准确性问题', '覆盖范围待完善', '结果质量需反馈'],
+                        datasets: [{
+                            label: '局限性分类',
+                            data: [35, 45, 20], // Example distribution percentages
+                            backgroundColor: chartColors,
+                            borderColor: computedStyle.getPropertyValue('--card').trim(), // Use card background for border
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: textColor,
+                                    padding: 15,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '社区反馈局限性分布 (示例)',
+                                color: textColor,
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed !== null) {
+                                            label += context.parsed + '%';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                window.chartInstances.push(limitationsChart);
+            } else {
+                console.warn('Canvas element for limitations chart not found.');
+            }
+             // Remove or update the placeholder chart init if it exists
+            const placeholderCanvas = document.getElementById('chartPlaceholder');
+            if (placeholderCanvas) {
+                placeholderCanvas.parentElement.parentElement.style.display = 'none'; // Hide placeholder section
+            } 
+        }
+        
+        // Framer Motion Setup Function (Example)
+        function setupAnimations() {
+            // Correctly access Framer Motion globals provided by CDN
+            
+            // Check if framerMotion object and its functions exist globally
+            if (typeof framerMotion !== 'object' || typeof framerMotion.motion !== 'function' || typeof framerMotion.animate !== 'function') {
+                console.warn('Framer Motion object (framerMotion) or its functions (motion, animate) not found globally. Animations might not work.');
+                return; 
+            }
+            // Destructure for convenience after check
+            const { motion, animate } = framerMotion;
+
+            // --- 1. Heading Animation (on load) ---
+            const heading = document.getElementById('animated-heading');
+            if (heading) { 
+                const headingText = heading.textContent;
+                heading.innerHTML = ''; 
+                headingText.split('').forEach((char, index) => {
+                    const span = document.createElement('span');
+                    span.textContent = char === ' ' ? '\u00A0' : char; 
+                    span.style.display = 'inline-block';
+                    span.style.opacity = 0;
+                    span.style.transform = 'translateY(20px)';
+                    heading.appendChild(span);
+                    animate(span, 
+                        { opacity: 1, y: 0 }, 
+                        { duration: 0.5, delay: index * 0.03 + 0.5, ease: 'easeOut' }
+                    );
+                });
+            }
+            
+             // --- 2. Scroll-Triggered Animations for Cards/Sections ---
+             const elementsToAnimate = document.querySelectorAll('.space-y-10 > div, .space-y-8 > div, .mt-10 > .space-y-8 > div, #further-reading-cards > div, #cited-sources'); // Select direct div children of main content sections and specific containers
+
+             const observerOptions = {
+                root: null, // Use the viewport as the root
+                rootMargin: '0px', // No margin
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            };
+
+            const observerCallback = (entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                         // Apply animation using framerMotion.animate
+                         animate(target, 
+                            { opacity: 1, y: 0 }, 
+                            { duration: 0.6, delay: 0.1, ease: 'easeOut' }
+                         );
+                         // Stop observing the element after animation is triggered
+                         observer.unobserve(target);
+                    }
+                });
+            };
+
+            const scrollObserver = new IntersectionObserver(observerCallback, observerOptions);
+
+            elementsToAnimate.forEach(el => {
+                // Set initial state for animation
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(30px)'; // Slightly larger initial offset
+                // Start observing the element
+                scrollObserver.observe(el);
+            });
+            
+            // Remove the previous direct animation for .transition-transform elements
+            /*
+             const cardsToAnimate = document.querySelectorAll('.transition-transform'); 
+             cardsToAnimate.forEach((card, index) => {
+                 card.style.opacity = 0;
+                 card.style.transform = 'translateY(15px)';
+                 animate(card, 
+                    { opacity: 1, y: 0 }, 
+                    { duration: 0.4, delay: index * 0.05 + 0.3, ease: 'easeOut' }
+                 );
+             });
+             */
+        }
+
+        // Function to setup copy buttons for code blocks
+        function setupCopyButtons() {
+            const copyButtonLabel = "复制代码";
+            document.querySelectorAll('.code-block-copy-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const codeBlock = button.closest('.code-block-container').querySelector('code');
+                    if (codeBlock) {
+                        const codeText = codeBlock.innerText;
+                        navigator.clipboard.writeText(codeText).then(() => {
+                            button.textContent = '已复制!';
+                            button.classList.add('text-green-400');
+                            setTimeout(() => {
+                                button.textContent = copyButtonLabel;
+                                button.classList.remove('text-green-400');
+                            }, 2000);
+                        }).catch(err => {
+                            console.error('无法复制:', err);
+                            button.textContent = '复制失败';
+                            setTimeout(() => {
+                                button.textContent = copyButtonLabel;
+                            }, 2000);
+                        });
+                    }
+                });
+            });
+        }
+
+        // Function to setup citations
+        function setupCitations() {
+            const citationToggle = document.getElementById('toggle-citations');
+            const citationListContainer = document.getElementById('citation-list-container');
+            const citationList = document.getElementById('citation-list');
+            const toggleIcon = citationToggle.querySelector('i');
+
+            // --- Data from sourses.md (Processed) ---
+            // Ideally, this data would be fetched or pre-processed.
+            // For now, manually defining based on the provided sourses.md content.
+            // NOTE: This is a simplified extraction, actual URLs might need more work.
+            // NOTE: The order and mapping to [N] in text is assumed based on sourses.md order after deduplication.
+            const rawSources = [
+                "apidog.com How to Install and Use Context7 MCP Server", // Assume first line is title/url
+                "github.com wong2/awesome-mcp-servers",
+                // Skip duplicate apidog.com
+                "github.com upstash/context7: Context7 MCP Server",
+                "reddit.com Best AI tool for web research, that ACTUALLY crawls the web?",
+                "upstash.com Introducing Context7: Up-to-Date Docs for LLMs and AI Code", // Used for [1], [2] etc. in text
+                "huggingface.co How to Install Context7 MCP Server",
+                "camel-ai.org How to Use MCP with the OWL Framework",
+                "reddit.com Context7 MCP AI Agent: How To 10X Your Code Quality", // Used for [1] in text? Ambiguous
+                "lilys.ai Building Agents with Model Context Protocol",
+                "youtube.com This is Hands Down the BEST MCP Server", // Used for [1] ?
+                "youtube.com Context7 is the perfect example of a good MCP", // Used for [11] ?
+                "getguru.com What Is Gmail MCP?", // Used for [3] ?
+                "digitalocean.com MCP Server in Python", // Used for [14] ?
+                "youtube.com Context7 + Cline & RooCode: 100X MORE EFFECTIVE!", // Used for [1] ?
+                "gist.github.com MCP Server Hub Database", // Used for [16] ?
+                "composio.dev How to connect Cursor to 100+ MCP Servers", // Used for [17] ?
+                "reddit.com How to use Claude with multiple MCP servers?", // Used for [18] ?
+                "forum.cursor.com [Guide] A Simpler, More Autonomous AI Workflow", // Used for [19] ?
+                "docs.anthropic.com Claude Code tutorials", // Used for [20] ?
+                "forum.cursor.com Issue with Adding Multiple MCP Servers in Cursor AI", // Used for [21] ?
+                "code.visualstudio.com Use MCP servers in VS Code (Preview)", // Used for [22] ?
+                "forum.cursor.com Tools limited to 40 total", // Used for [35] ?
+                "firecrawl.dev 15 Best MCP Servers You Can Add to Cursor", // Used for [39] ?
+                "forum.cursor.com Issue with Adding Multiple MCP Servers - #8 by T1000", // Used for [25] ?
+                "reddit.com Explain actual real life use cases where mcp servers help", // Used for [26] ?
+                "getmesa.com Connect Claude to MCP Servers for Better AI Capabilities", // Used for [27] ?
+                "blog.promptlayer.com Claude MCP: Integration, Features, and How to Build", // Used for [28] ?
+                "youtube.com Zapier MCP: The Only MCP Server That Cursor Needs", // Used for [43] ?
+                "neon.tech Get started with Claude Desktop and Neon MCP Server", // Used for [18] again? Mapping issue.
+                "reddit.com Claude Desktop: How do I specify which MCP server runs?", // Used for [31] ?
+                "scottspence.com Getting MCP Server Working with Claude Desktop in WSL",
+                "boomi.com How to Use Model Context Protocol the Right Way",
+                "youtube.com Combining MCP Servers + Claude Projects", // Used for [34] ?
+                "youtube.com Turn Claude into a BEAST with MCP", // Used for [36] ?
+                "mindsdb.com Unified Model Context Protocol (MCP) Server", // Used for [37] ?
+                "wwt.com Model Context Protocol (MCP) - A Deep Dive", // Used for [38] ?
+                "dev.to Model Context Protocol (MCP): 8 MCP Servers", // Used for [8] ? Ambiguous
+                "merge.dev What you need to know about the Model Context Protocol (MCP)", // Used for [40] ?
+                "github.com model-context-protocol-resources/guides/mcp-server-development-guide.md", // Used for [41] ?
+                "dailydoseofds.com Visual Guide to Model Context Protocol (MCP)", // Used for [42] ?
+                "keywordsai.co A Complete Guide to the Model Context Protocol (MCP) in 2025", // Used for [4] ? Ambiguous
+                "grizzlypeaksoftware.com Understanding the Model Context Protocol (MCP)",
+                "siddharthbharath.com The Ultimate Guide to Model Context Protocol, Part 3",
+                "github.com Issues · upstash/context7" // Used for [15] ? Ambiguous
+            ];
+
+            const uniqueSources = [];
+            const seenDomainsOrTitles = new Set();
+
+            rawSources.forEach(sourceLine => {
+                const parts = sourceLine.split(' ');
+                const domain = parts[0];
+                const titleOrPath = parts.slice(1).join(' ');
+                // Simple deduplication based on domain + start of title/path
+                const key = domain + titleOrPath.substring(0, 20); 
+                if (!seenDomainsOrTitles.has(key)) {
+                     // Basic URL construction (heuristic)
+                    let url = `https://${domain}`;
+                    if (domain.includes('github.com') && titleOrPath.includes('/')) {
+                       url = `https://github.com/${titleOrPath.split(' ')[0]}`; // Guess repo path
+                    } else if (domain === 'youtube.com') {
+                       // Cannot reliably get URL from title
+                       url = `https://www.youtube.com/results?search_query=${encodeURIComponent(titleOrPath)}`; 
+                    } else if (domain === 'reddit.com' && titleOrPath.includes(': r/')) {
+                         // Cannot reliably get URL
+                       url = `https://${domain}/search/?q=${encodeURIComponent(titleOrPath.split(':')[0])}`;
+                    } else if (titleOrPath.includes('http')) {
+                       // If a full URL is somehow in the title part
+                       url = titleOrPath.split(' ').find(p => p.startsWith('http'));
+                    } else {
+                       // Best guess - might be wrong for blog posts etc.
+                       url = `https://${domain}`;
+                    }
+
+                    uniqueSources.push({ domain, title: titleOrPath, url });
+                    seenDomainsOrTitles.add(key);
+                }
+            });
+
+            // --- Populate Citation List ---
+            if (citationList) {
+                citationList.innerHTML = ''; // Clear existing
+                uniqueSources.forEach((source, index) => {
+                    const citationNumber = index + 1;
+                    const li = document.createElement('li');
+                    li.id = `citation-${citationNumber}`;
+                    li.className = 'pt-3 first:pt-0'; // Add padding top to all but first
+
+                    // Sanitize title slightly
+                    const displayTitle = source.title.replace('Opens in a new window', '').trim();
+
+                    li.innerHTML = `
+                        <a href="#citation-marker-${citationNumber}-1" title="回到文本" class="hover:underline text-primary mr-1">[${citationNumber}]</a> 
+                        <span class="font-semibold text-foreground/80">${source.domain}:</span> 
+                        <a href="${source.url}" target="_blank" rel="noopener noreferrer" class="hover:underline break-words">${displayTitle || source.url}</a>
+                    `;
+                    citationList.appendChild(li);
+
+                    // --- Modify Inline Citations ---
+                    const inlineMarkers = document.querySelectorAll(`sup`);
+                    let markerCount = 0;
+                    inlineMarkers.forEach(sup => {
+                        // Match exact format like [N] or [N, M]
+                         const citationRegex = new RegExp(`\\[(${citationNumber})(?:,\\s*\\d+)?\\]`); // Match [N] or [N, M]
+                         const secondaryRegex = new RegExp(`\\[\\d+,\\s*(${citationNumber})\\]`); // Match [M, N]
+                        
+                         if (citationRegex.test(sup.textContent) || secondaryRegex.test(sup.textContent)) {
+                             // Find the specific number N within the sup
+                             const match = sup.innerHTML.match(new RegExp(`\\[?(${citationNumber})\\]?`));
+                            if (match && match[1] === String(citationNumber)) {
+                                markerCount++;
+                                const markerId = `citation-marker-${citationNumber}-${markerCount}`;
+                                // Check if already linked
+                                if (!sup.querySelector('a.citation-link')) {
+                                    // Wrap the first occurrence of the number in a link
+                                     sup.innerHTML = sup.innerHTML.replace(
+                                         `[${citationNumber}]`, // Be specific
+                                         `<a href="#citation-${citationNumber}" id="${markerId}" class="citation-link text-primary hover:underline">[${citationNumber}]</a>`
+                                     );
+                                     // Set the backlink in the citation list to this first marker
+                                    if (markerCount === 1) {
+                                        const backLink = li.querySelector(`a[href="#citation-marker-${citationNumber}-1"]`);
+                                        if (backLink) backLink.innerHTML = `^`; // Use ^ symbol for backlink
+                                    }
+                                } else {
+                                     // If already linked (e.g., by a previous number in [N, M]), just add id
+                                     const existingLink = sup.querySelector(`a[href="#citation-${citationNumber}"]`);
+                                    if (existingLink && !existingLink.id) {
+                                         existingLink.id = markerId;
+                                         // Update backlink if this is the first one found for this number
+                                        if (markerCount === 1) {
+                                             const backLink = li.querySelector(`a[href="#citation-marker-${citationNumber}-1"]`);
+                                             if (backLink) backLink.innerHTML = `^`;
+                                         }
+                                     }
+                                }
+                            }
+                         }
+                    });
+                     // If no markers found for this citation number, remove the backlink placeholder
+                    if (markerCount === 0) {
+                         const backLink = li.querySelector(`a[href="#citation-marker-${citationNumber}-1"]`);
+                        if (backLink) backLink.remove(); // Or hide it
+                    } else {
+                         // Ensure backlink target is set if markers were found
+                         const backLink = li.querySelector(`a[href="#citation-marker-${citationNumber}-1"]`);
+                         if (backLink && backLink.innerHTML !== `^`) {
+                             // If marker was found but somehow backlink wasn't set (e.g. complex replace failed)
+                             backLink.innerHTML = `^`; 
+                         }
+                     }
+                });
+            } else {
+                console.error("Citation list element not found.");
+            }
+
+
+            // --- Toggle Functionality ---
+            if (citationToggle && citationListContainer) {
+                citationToggle.addEventListener('click', () => {
+                    const isExpanded = citationToggle.getAttribute('aria-expanded') === 'true';
+                    citationToggle.setAttribute('aria-expanded', !isExpanded);
+                    citationListContainer.classList.toggle('hidden');
+                    toggleIcon.classList.toggle('fa-chevron-down');
+                    toggleIcon.classList.toggle('fa-chevron-up');
+                    // Optional: Add smooth transition (requires more complex CSS/JS)
+                });
+            }
+
+            // --- Smooth Scrolling ---
+            document.querySelectorAll('a.citation-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        // Ensure the citation list is visible before scrolling
+                        if (citationListContainer && citationListContainer.classList.contains('hidden')) {
+                             citationToggle.click(); // Open the list
+                            // Wait a moment for visibility change before scrolling
+                             setTimeout(() => {
+                                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                             }, 150); // Adjust timing if needed
+                         } else {
+                             targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                         }
+                         // Optional: Add a temporary highlight to the target citation
+                        targetElement.classList.add('bg-accent/30', 'dark:bg-accent/20', 'transition-colors', 'duration-1000');
+                        setTimeout(() => {
+                            targetElement.classList.remove('bg-accent/30', 'dark:bg-accent/20', 'transition-colors', 'duration-1000');
+                        }, 1500);
+                    }
+                });
+            });
+            // Smooth scroll for backlinks from citation list to text marker
+             if (citationList) {
+                 citationList.addEventListener('click', function(e) {
+                     if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#citation-marker-')) {
+                         e.preventDefault();
+                         const targetId = e.target.getAttribute('href').substring(1);
+                         const targetElement = document.getElementById(targetId);
+                         if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            // Optional: Highlight target marker
+                            targetElement.classList.add('bg-accent/30', 'dark:bg-accent/20', 'transition-colors', 'duration-1000', 'rounded', 'px-0.5');
+                             setTimeout(() => {
+                                 targetElement.classList.remove('bg-accent/30', 'dark:bg-accent/20', 'transition-colors', 'duration-1000', 'rounded', 'px-0.5');
+                             }, 1500);
+                         }
+                     }
+                 });
+             }
+        }
+
+    </script>
+
+</body>
+</html> 

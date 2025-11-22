@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="publish-date" content="2025-07-10">
+  <meta name="category" content="research">
+  <meta name="description" content="探索SOX8在软骨修复中的关键作用、信号通路以及治疗潜力，包括与SOX9的协同作用和在骨关节炎中的应用前景。">
+  <meta name="keywords" content="SOX8,软骨修复,转录因子,骨关节炎,软骨再生,SOX9,软骨发育">
+  <title>SOX8在软骨修复中的关键作用 | 凿壁</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --background: rgb(241, 240, 229);
+      --foreground: rgb(86, 69, 63);
+      --card: rgb(241, 240, 229);
+      --card-foreground: rgb(86, 69, 63);
+      --popover: rgb(255, 255, 255);
+      --popover-foreground: rgb(86, 69, 63);
+      --primary: rgb(163, 119, 100);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(186, 171, 146);
+      --secondary-foreground: rgb(255, 255, 255);
+      --muted: rgb(228, 199, 184);
+      --muted-foreground: rgb(138, 101, 90);
+      --accent: rgb(228, 199, 184);
+      --accent-foreground: rgb(86, 69, 63);
+      --destructive: rgb(31, 26, 23);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(186, 171, 146);
+      --input: rgb(186, 171, 146);
+      --ring: rgb(163, 119, 100);
+      --chart-1: rgb(163, 119, 100);
+      --chart-2: rgb(138, 101, 90);
+      --chart-3: rgb(195, 158, 136);
+      --chart-4: rgb(186, 171, 146);
+      --chart-5: rgb(162, 135, 119);
+      --sidebar: rgb(235, 214, 203);
+      --sidebar-foreground: rgb(86, 69, 63);
+      --sidebar-primary: rgb(163, 119, 100);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(195, 158, 136);
+      --sidebar-accent-foreground: rgb(255, 255, 255);
+      --sidebar-border: rgb(162, 135, 119);
+      --sidebar-ring: rgb(163, 119, 100);
+      --font-sans: 'Noto Sans SC', sans-serif;
+      --font-serif: 'Noto Serif SC', serif;
+      --font-mono: Menlo, monospace;
+      --radius: 0.5rem;
+    }
+
+    .dark {
+      --background: rgb(45, 37, 33);
+      --foreground: rgb(241, 240, 229);
+      --card: rgb(60, 51, 46);
+      --card-foreground: rgb(241, 240, 229);
+      --popover: rgb(60, 51, 46);
+      --popover-foreground: rgb(241, 240, 229);
+      --primary: rgb(195, 158, 136);
+      --primary-foreground: rgb(45, 37, 33);
+      --secondary: rgb(138, 101, 90);
+      --secondary-foreground: rgb(241, 240, 229);
+      --muted: rgb(86, 69, 63);
+      --muted-foreground: rgb(197, 170, 155);
+      --accent: rgb(186, 171, 146);
+      --accent-foreground: rgb(45, 37, 33);
+      --destructive: rgb(229, 115, 115);
+      --destructive-foreground: rgb(45, 37, 33);
+      --border: rgb(86, 69, 63);
+      --input: rgb(86, 69, 63);
+      --ring: rgb(195, 158, 136);
+      --chart-1: rgb(195, 158, 136);
+      --chart-2: rgb(186, 171, 146);
+      --chart-3: rgb(163, 119, 100);
+      --chart-4: rgb(138, 101, 90);
+      --chart-5: rgb(162, 135, 119);
+      --sidebar: rgb(31, 26, 23);
+      --sidebar-foreground: rgb(241, 240, 229);
+      --sidebar-primary: rgb(195, 158, 136);
+      --sidebar-primary-foreground: rgb(31, 26, 23);
+      --sidebar-accent: rgb(186, 171, 146);
+      --sidebar-accent-foreground: rgb(31, 26, 23);
+      --sidebar-border: rgb(86, 69, 63);
+      --sidebar-ring: rgb(195, 158, 136);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--foreground);
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .serif-font {
+      font-family: var(--font-serif);
+    }
+
+    /* 设置基础间距和排版 */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* 主题切换按钮样式 */
+    .theme-toggle {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 50;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--card);
+      color: var(--card-foreground);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    /* Hero部分样式 */
+    .hero {
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 6rem 0;
+    }
+
+    /* 标题动画 */
+    .hero h1 {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards 0.3s;
+    }
+
+    .hero p {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards 0.6s;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 卡片样式 */
+    .card {
+      background-color: var(--card);
+      color: var(--card-foreground);
+      border-radius: var(--radius);
+      padding: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* 数据可视化区域 */
+    .viz-container {
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+    }
+
+    /* 表格样式 */
+    .research-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .research-table th {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      padding: 1rem;
+      text-align: left;
+    }
+
+    .research-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .research-table tr:hover {
+      background-color: var(--muted);
+    }
+
+    /* 首字下沉效果 */
+    .first-letter::first-letter {
+      font-family: var(--font-serif);
+      font-size: 3.5rem;
+      float: left;
+      line-height: 0.8;
+      margin-right: 0.5rem;
+      color: var(--primary);
+    }
+
+    /* 滚动动画效果 */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .scroll-reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 阅读进度条 */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background-color: var(--primary);
+      width: 0%;
+      z-index: 100;
+      transition: width 0.1s ease;
+    }
+
+    /* 引用样式 */
+    blockquote {
+      border-left: 4px solid var(--primary);
+      padding-left: 1.5rem;
+      font-style: italic;
+      margin: 2rem 0;
+      color: var(--muted-foreground);
+    }
+
+    /* 返回顶部按钮 */
+    .back-to-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 9999px;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .back-to-top.visible {
+      opacity: 1;
+    }
+
+    .back-to-top:hover {
+      transform: translateY(-5px);
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 4rem 0;
+      }
+      .container {
+        padding: 0 1rem;
+      }
+      .hero h1 {
+        font-size: 2.25rem;
+      }
+    }
+
+    /* Mermaid图表样式覆盖 */
+    .mermaid {
+      background-color: var(--card);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body class="bg-background text-foreground font-sans antialiased">
+
+  <!-- 进度条 -->
+  <div class="progress-bar"></div>
+
+  <!-- 主题切换按钮 -->
+  <div class="theme-toggle" id="themeToggle">
+    <i class="fas fa-sun theme-icon-light"></i>
+    <i class="fas fa-moon theme-icon-dark hidden"></i>
+  </div>
+
+  <!-- 返回首页按钮 -->
+  <div class="fixed top-6 left-6 z-50">
+    <a href="../../index.html" class="flex items-center text-sm font-medium py-2 px-4 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all">
+      <i class="fas fa-home mr-2"></i> 返回首页
+    </a>
+  </div>
+
+  <!-- 返回顶部按钮 -->
+  <div class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <!-- 目录将在后续添加 -->
+
+  <!-- Hero Section -->
+  <section class="relative py-20 md:py-32 lg:py-40 text-center hero-gradient text-primary-foreground overflow-hidden">
+     <div class="absolute inset-0 bg-gradient-to-b from-transparent to-background/30 dark:to-background/50"></div>
+     <div class="container relative z-10 mx-auto px-4 md:px-6">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-serif mb-4 tracking-tight">SOX8在软骨修复中的关键作用与治疗潜力探索</h1>
+        <p class="text-lg md:text-xl lg:text-2xl text-primary-foreground/90 max-w-3xl mx-auto mb-8">深入解析SOX8转录因子在软骨发育、维持及损伤修复中的复杂机制，探讨其作为未来软骨再生治疗新靶点的可能性与挑战。</p>
+        <div class="flex justify-center items-center space-x-4 text-sm text-primary-foreground/80">
+          <span class="inline-flex items-center">
+            <i class="fas fa-calendar-alt mr-1.5"></i>发布日期: 2025-07-10
+          </span>
+          <span class="inline-flex items-center">
+            <i class="fas fa-tag mr-1.5"></i>分类: 科研辅助
+          </span>
+        </div>
+     </div>
+  </section>
+
+  <!-- Main Content Area -->
+  <main class="container mx-auto px-4 md:px-6 py-12 md:py-16 lg:py-20 max-w-4xl">
+    <!-- Content will be added here based on the markdown structure -->
+    <article class="prose dark:prose-invert lg:prose-xl max-w-none">
+        <p class="text-muted-foreground text-center">[内容将在后续步骤中填充]</p>
+        <!-- Example: Introduction Section Placeholder -->
+        <section id="introduction" class="mb-12">
+          <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">引言：软骨损伤的挑战</h2>
+          <p class="text-lg leading-relaxed">[引言内容]</p>
+        </section>
+
+         <section id="sox8-biology" class="mb-12">
+          <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">SOX8的生物学功能</h2>
+          <p class="text-lg leading-relaxed">[SOX8生物学功能内容]</p>
+          <!-- Subsections will go here -->
+        </section>
+
+         <section id="sox8-cartilage-repair" class="mb-12">
+          <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">SOX8在软骨修复中的作用</h2>
+           <p class="text-lg leading-relaxed">[SOX8在软骨修复中的作用内容]</p>
+           <!-- Subsections will go here -->
+        </section>
+
+        <section id="therapeutic-potential" class="mb-12">
+          <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">治疗潜力与挑战</h2>
+           <p class="text-lg leading-relaxed">[治疗潜力与挑战内容]</p>
+           <!-- Subsections will go here -->
+        </section>
+
+        <section id="future-directions" class="mb-12">
+          <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">未来研究方向</h2>
+           <p class="text-lg leading-relaxed">[未来研究方向内容]</p>
+        </section>
+
+        <!-- Data Visualization Placeholder -->
+        <section id="visualization" class="mb-12">
+             <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">数据与概念可视化</h2>
+             <div class="bg-card p-6 rounded-lg shadow-md border border-border">
+                <p class="text-muted-foreground">[图表将在此处添加，例如使用Chart.js或Mermaid.js]</p>
+                <canvas id="exampleChart" class="mt-4"></canvas>
+                 <pre class="mermaid mt-4">
+graph TD;
+    A[SOX8] -->|促进| B(软骨细胞分化);
+    A -->|调控| C(细胞外基质合成);
+    B --> D{软骨形成};
+    C --> D;
+    E(软骨损伤) -->|激活?| A;
+    A -->|潜在靶点| F[基因治疗];
+    A -->|结合| G[生物材料];
+    F --> H(软骨修复);
+    G --> H;
+                </pre>
+            </div>
+        </section>
+
+         <!-- Further Reading Placeholder -->
+        <section id="further-reading" class="mb-12">
+             <h2 class="text-3xl font-serif font-semibold mb-6 border-l-4 border-primary pl-4">进一步阅读</h2>
+              <div class="space-y-4">
+                 <div class="bg-card p-4 rounded-lg shadow-sm border border-border">
+                    <h3 class="text-xl font-semibold mb-1 text-primary">资源标题 1</h3>
+                    <p class="text-muted-foreground text-sm mb-2">简要说明为何推荐...</p>
+                    <a href="#" class="text-primary hover:underline">访问链接 &rarr;</a>
+                </div>
+                 <!-- Add 2-4 more resources -->
+             </div>
+        </section>
+
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-secondary text-secondary-foreground py-8 mt-16">
+    <div class="container mx-auto px-4 md:px-6 text-center">
+      <p>作者姓名: 季晓康</p>
+      <p>微信公众号：凿壁</p>
+      <p>版权信息：国家健康医疗大数据研究院</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+   <script>
+      // Basic Theme Toggle Logic
+      const themeToggle = document.getElementById('themeToggle');
+      const sunIcon = themeToggle.querySelector('.fa-sun');
+      const moonIcon = themeToggle.querySelector('.fa-moon');
+      const userPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const currentTheme = localStorage.getItem('theme');
+
+      function applyTheme(theme) {
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+          sunIcon.classList.add('hidden');
+          moonIcon.classList.remove('hidden');
+          localStorage.setItem('theme', 'dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+          sunIcon.classList.remove('hidden');
+          moonIcon.classList.add('hidden');
+          localStorage.setItem('theme', 'light');
+        }
+         // Re-initialize Mermaid if necessary after theme change
+         if (window.mermaid) {
+             mermaid.initialize({ startOnLoad: false, theme: theme === 'dark' ? 'dark' : 'default' });
+             mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+         }
+      }
+
+      // Apply initial theme
+      if (currentTheme) {
+        applyTheme(currentTheme);
+      } else if (userPrefersDark) {
+        applyTheme('dark');
+      } else {
+         applyTheme('light');
+      }
+
+
+      themeToggle.addEventListener('click', () => {
+        const theme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(theme);
+      });
+
+       // Initialize Mermaid
+       mermaid.initialize({ startOnLoad: true, theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default' });
+
+        // Placeholder for Chart.js
+        // const ctx = document.getElementById('exampleChart');
+        // if (ctx) {
+        //      new Chart(ctx, {
+        //          type: 'bar', // Example chart type
+        //          data: { /* chart data */ },
+        //          options: { /* chart options */ }
+        //      });
+        // }
+
+        // Placeholder for GSAP animations (to be added later)
+        gsap.registerPlugin(ScrollTrigger);
+        console.log("GSAP and ScrollTrigger loaded.");
+
+   </script>
+
+</body>
+</html> 

@@ -1,0 +1,37 @@
+#!/usr/bin/expect
+
+set timeout 300
+set password "791123"
+set user "jxkcook"
+set host "101.200.131.64"
+set port "2279"
+set key "/Users/jixiaokang/.ssh/id_ed25519"
+set local_dir "aliyun_snapshot/"
+set remote_base "/var/www/"
+
+# Ensure local directory exists
+exec mkdir -p $local_dir
+
+# 1. Fetch index.html
+spawn rsync -avz -e "ssh -p $port -i $key" $user@$host:${remote_base}index.html $local_dir
+expect {
+    "Enter passphrase for key" { send "$password\r"; exp_continue }
+    "password:" { send "$password\r"; exp_continue }
+    eof
+}
+
+# 2. Fetch metadata.json
+spawn rsync -avz -e "ssh -p $port -i $key" $user@$host:${remote_base}metadata.json $local_dir
+expect {
+    "Enter passphrase for key" { send "$password\r"; exp_continue }
+    "password:" { send "$password\r"; exp_continue }
+    eof
+}
+
+# 3. Fetch pages directory
+spawn rsync -avz -e "ssh -p $port -i $key" $user@$host:${remote_base}pages/ ${local_dir}pages/
+expect {
+    "Enter passphrase for key" { send "$password\r"; exp_continue }
+    "password:" { send "$password\r"; exp_continue }
+    eof
+}

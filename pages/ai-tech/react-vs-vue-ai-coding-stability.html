@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Essential Meta Tags (from plan) -->
+  <meta name="publish-date" content="2025-05-01"> <!-- Placeholder: Replace with actual publish date -->
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="深入分析 React 与 Vue 在 AI 增强编码新范式下的差异，评估两者在结构一致性、上下文注入、规则驱动开发、大规模协作及与 Cursor、Context7 等工具集成时的适应性与稳定性。">
+  <meta name="keywords" content="React, Vue, AI编码, 代码生成, 上下文注入, Context7, Cursor AI, RAG, 前端框架对比, 开发稳定性">
+
+  <title>React vs Vue 在 AI 增强编码稳定性范式下的分析 | 凿壁</title>
+
+  <!-- Tailwind CSS (Play CDN - IMPORTANT!) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome -->
+  <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Google Fonts (Noto Sans SC & Noto Serif SC) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+
+  <!-- Framer Motion (Example CDN - replace with preferred/stable one if needed) -->
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@10/dist/motion.umd.min.js"></script>
+
+  <!-- Highlight.js (Core + Common Languages + Themes) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-light-theme">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-dark-theme" disabled>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <!-- Add languages if needed, e.g., bash, json -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+
+
+  <!-- Tippy.js (Core + CSS - for tooltips) -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css"/>
+  <!-- Optional: Tippy themes -->
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css"/>
+
+  <!-- Placeholder for custom styles & theme variables -->
+  <style>
+/* CSS variables from web-dev.mdc */
+:root {
+  --background: rgb(240, 248, 255); /* Alice Blue */
+  --foreground: rgb(55, 65, 81); /* Slate 600 */
+  --card: rgb(255, 255, 255); /* White */
+  --card-foreground: rgb(55, 65, 81); /* Slate 600 */
+  --popover: rgb(255, 255, 255); /* White */
+  --popover-foreground: rgb(55, 65, 81); /* Slate 600 */
+  --primary: rgb(34, 197, 94); /* Green 500 */
+  --primary-foreground: rgb(255, 255, 255); /* White */
+  --secondary: rgb(224, 242, 254); /* Sky 100 */
+  --secondary-foreground: rgb(75, 85, 99); /* Gray 500 */
+  --muted: rgb(243, 244, 246); /* Gray 100 */
+  --muted-foreground: rgb(107, 114, 128); /* Gray 500 */
+  --accent: rgb(209, 250, 229); /* Emerald 100 */
+  --accent-foreground: rgb(55, 65, 81); /* Slate 600 */
+  --destructive: rgb(239, 68, 68); /* Red 500 */
+  --destructive-foreground: rgb(255, 255, 255); /* White */
+  --border: rgb(229, 231, 235); /* Gray 200 */
+  --input: rgb(229, 231, 235); /* Gray 200 */
+  --ring: rgb(34, 197, 94); /* Green 500 */
+  --chart-1: rgb(34, 197, 94);
+  --chart-2: rgb(16, 185, 129);
+  --chart-3: rgb(5, 150, 105);
+  --chart-4: rgb(4, 120, 87);
+  --chart-5: rgb(6, 95, 70);
+  --radius: 0.5rem;
+  /* Adding custom shadows based on debug-exp.md */
+  --shadow-custom-base: 4px 4px 0px 0px rgb(0 0 0 / 0.5);
+  --shadow-custom-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06); /* Example Tailwind md shadow */
+  /* Text shadow for titles */
+  --text-shadow-base: 1px 1px 3px rgba(55, 65, 81, 0.25);
+}
+
+.dark {
+  --background: rgb(15, 23, 42); /* Slate 900 */
+  --foreground: rgb(209, 213, 219); /* Gray 300 */
+  --card: rgb(30, 41, 59); /* Slate 800 */
+  --card-foreground: rgb(209, 213, 219); /* Gray 300 */
+  --popover: rgb(30, 41, 59); /* Slate 800 */
+  --popover-foreground: rgb(209, 213, 219); /* Gray 300 */
+  --primary: rgb(52, 211, 153); /* Emerald 400 */
+  --primary-foreground: rgb(15, 23, 42); /* Slate 900 */
+  --secondary: rgb(45, 55, 72); /* Slate 700 */
+  --secondary-foreground: rgb(161, 161, 170); /* Zinc 400 */
+  --muted: rgb(30, 41, 59); /* Slate 800 */
+  --muted-foreground: rgb(107, 114, 128); /* Gray 500 */
+  --accent: rgb(55, 65, 81); /* Slate 600 */
+  --accent-foreground: rgb(161, 161, 170); /* Zinc 400 */
+  --destructive: rgb(239, 68, 68); /* Red 500 */
+  --destructive-foreground: rgb(15, 23, 42); /* Slate 900 */
+  --border: rgb(75, 85, 99); /* Gray 600 */
+  --input: rgb(75, 85, 99); /* Gray 600 */
+  --ring: rgb(52, 211, 153); /* Emerald 400 */
+  --chart-1: rgb(52, 211, 153);
+  --chart-2: rgb(45, 212, 191);
+  --chart-3: rgb(34, 197, 94);
+  --chart-4: rgb(16, 185, 129);
+  --chart-5: rgb(5, 150, 105);
+   /* Adding custom shadows based on debug-exp.md */
+  --shadow-custom-base: 4px 4px 0px 0px rgb(255 255 255 / 0.3);
+  --shadow-custom-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06); /* Keep same definition or adjust for dark mode */
+  /* Text shadow for titles */
+  --text-shadow-base: 1px 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Basic body styles */
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+  line-height: 1.7; /* Increased line height for better Chinese readability (from debug-exp.md) */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noto Serif SC', serif;
+}
+
+/* Style for tech terms needing tooltips (from debug-exp.md) */
+.tech-term {
+  border-bottom: 1px dashed var(--primary); /* Use primary color for underline */
+  cursor: help;
+  /* Optional: slight transparency */
+  /* opacity: 0.85; */
+}
+
+/* Custom Tippy.js theme (from debug-exp.md) */
+.tippy-box[data-theme~='custom-theme'] {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-custom-md); /* Using custom shadow */
+  padding: 0.5rem 0.75rem;
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.875rem; /* text-sm */
+  line-height: 1.5;
+}
+.tippy-box[data-theme~='custom-theme'][data-placement^='top'] > .tippy-arrow::before {
+  border-top-color: var(--card);
+}
+.tippy-box[data-theme~='custom-theme'][data-placement^='bottom'] > .tippy-arrow::before {
+  border-bottom-color: var(--card);
+}
+.tippy-box[data-theme~='custom-theme'][data-placement^='left'] > .tippy-arrow::before {
+  border-left-color: var(--card);
+}
+.tippy-box[data-theme~='custom-theme'][data-placement^='right'] > .tippy-arrow::before {
+  border-right-color: var(--card);
+}
+.tippy-box[data-theme~='custom-theme'] .tippy-content {
+    padding: 0; /* Reset default Tippy padding */
+}
+
+/* Class for title 3D effect */
+.title-3d {
+  text-shadow: var(--text-shadow-base);
+}
+
+/* Add utility classes for chart colors */
+.text-chart-color-1 { color: var(--chart-1); }
+.text-chart-color-2 { color: var(--chart-2); }
+.text-chart-color-3 { color: var(--chart-3); }
+.text-chart-color-4 { color: var(--chart-4); }
+.text-chart-color-5 { color: var(--chart-5); }
+
+/* Increase Mermaid font size */
+.mermaid svg text {
+  font-size: 1rem !important; /* Tailwind text-base, use !important to override potential inline styles */
+}
+  </style>
+
+</head>
+<body>
+    <!-- Theme Toggle Button (Example: Fixed bottom-right) -->
+<button id="theme-toggle" class="fixed bottom-4 right-4 z-50 p-2 rounded-full bg-card text-card-foreground shadow-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background transition-colors" aria-label="Toggle theme">
+    <i class="fas fa-sun text-lg"></i> <!-- Default to light mode icon -->
+  </button>
+  <!-- Main Content Container -->
+  <main class="max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+
+    <!-- Back to Home Link -->
+    <div class="mb-6">
+      <a href="../../index.html" class="text-primary hover:underline text-sm flex items-center">
+        <i class="fas fa-arrow-left mr-2"></i> <!-- Font Awesome icon -->
+        返回首页
+      </a>
+    </div>
+
+    <!-- Page content starts here -->
+    <div class="space-y-12"> <!-- Increased spacing between major sections -->
+
+      <!-- Hero Section -->
+      <section data-animate-section class="text-center py-16 md:py-24 bg-gradient-to-br from-sky-100 via-white to-emerald-50 dark:from-slate-800 dark:via-slate-900 dark:to-emerald-900 rounded-lg shadow-lg overflow-hidden">
+        <div class="container mx-auto px-4">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-4 leading-tight">
+            React vs Vue
+          </h1>
+          <h2 class="text-2xl md:text-3xl font-serif text-primary dark:text-emerald-400 mb-6">
+            在 AI 增强编码稳定性范式下的分析
+          </h2>
+          <p class="max-w-3xl mx-auto text-lg text-foreground dark:text-gray-300 mb-8 leading-relaxed">
+            现代 AI 编码工具正通过注入大量文档与上下文来提升代码生成质量。本文深入对比 React 与 Vue 在代码结构、语义稳定、上下文集成、规则驱动及大规模协作中的差异，评估两者在 AI 增强编码新范式下的适应性与生产稳定性。
+          </p>
+          <div class="flex justify-center space-x-4">
+             <span class="inline-block bg-accent dark:bg-accent text-accent-foreground dark:text-accent-foreground px-4 py-1 rounded-full text-sm font-medium">#AI编码</span>
+             <span class="inline-block bg-accent dark:bg-accent text-accent-foreground dark:text-accent-foreground px-4 py-1 rounded-full text-sm font-medium">#前端框架</span>
+             <span class="inline-block bg-accent dark:bg-accent text-accent-foreground dark:text-accent-foreground px-4 py-1 rounded-full text-sm font-medium">#稳定性</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 1: Code Structure & Semantic Stability -->
+      <section data-animate-section class="bg-card dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-md">
+        <h2 class="title-3d text-3xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-8 border-l-4 border-primary dark:border-emerald-400 pl-4">
+          <i class="fas fa-cubes mr-3 text-chart-color-2"></i> 1. 代码结构一致性与语义稳定性差异
+        </h2>
+
+        <!-- Comparison Points using Cards/Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <!-- Card 1: Structure & Organization -->
+          <div class="bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow-md border border-border dark:border-slate-600 flex flex-col">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+              <i class="fas fa-puzzle-piece mr-3 text-lg text-chart-color-2"></i> 代码结构与组织
+            </h3>
+            <div class="flex-grow space-y-3 text-sm">
+              <div>
+                <strong class="block text-gray-600 dark:text-gray-300 text-base mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue (SFC):</strong>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-check-circle text-green-500 mr-2"></i>统一的<code class="tech-term" data-tippy-content="Single-File Component: 一种将模板、逻辑和样式封装在单个 .vue 文件中的 Vue 组件格式。">单文件组件</code>格式，关注点分离清晰。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-ruler-combined text-green-500 mr-2"></i>结构一致性高，利于 AI 遵循范式。</p>
+                 <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-user-graduate text-green-500 mr-2"></i>易于初学者上手。</p>
+              </div>
+              <div class="border-t border-border dark:border-slate-600 my-3 pt-3">
+                <strong class="block text-gray-600 dark:text-gray-300 text-base mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React (JSX):</strong>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-arrows-alt-h text-blue-500 mr-2"></i>灵活的<code class="tech-term" data-tippy-content="JavaScript XML: 一种 JavaScript 的语法扩展，允许在代码中编写类似 HTML 的标记。">JSX</code>结构，模板与逻辑混合。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-users-cog text-blue-500 mr-2"></i>一致性依赖团队规范，AI 需适应项目约定。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-code-branch text-blue-500 mr-2"></i>代码风格可能多样化。</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2: Stability & Data Flow -->
+          <div class="bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow-md border border-border dark:border-slate-600 flex flex-col">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+              <i class="fas fa-stream mr-3 text-lg text-chart-color-2"></i> 语义稳定性与数据流
+            </h3>
+            <div class="flex-grow space-y-3 text-sm">
+               <div>
+                <strong class="block text-gray-600 dark:text-gray-300 text-base mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-arrow-down text-blue-500 mr-2"></i>强调<code class="tech-term" data-tippy-content="数据只能从父组件流向子组件，子组件不能直接修改父组件的状态。">单向数据流</code>和不可变状态。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-bullseye text-blue-500 mr-2"></i>行为可预测性高，利于 AI 保持逻辑稳定，避免副作用。</p>
+              </div>
+               <div class="border-t border-border dark:border-slate-600 my-3 pt-3">
+                <strong class="block text-gray-600 dark:text-gray-300 text-base mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-sync-alt text-green-500 mr-2"></i>提供<code class="tech-term" data-tippy-content="当数据变化时，视图会自动更新；反之，当视图中的数据（如表单输入）变化时，绑定的数据也会自动更新。">响应式数据绑定</code>，支持<code class="tech-term" data-tippy-content="例如使用 v-model 指令，可以方便地将表单输入值与组件数据属性关联起来，实现双向同步。">双向绑定</code> (如 <code>v-model</code>)。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>便捷但需AI理解其体系，谨慎处理以防意外耦合。</p>
+              </div>
+              <blockquote class="border-l-4 border-accent dark:border-accent-foreground pl-4 italic text-muted-foreground dark:text-gray-400 mt-2">
+                "Vue 通过双向绑定简化了响应式编程，而 React 专注于可预测的单向数据流。" <cite class="text-xs not-italic block mt-1">- CodeParrot.ai</cite>
+              </blockquote>
+            </div>
+          </div>
+
+          <!-- Card 3: Context Embedding -->
+          <div class="bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow-md border border-border dark:border-slate-600 flex flex-col">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+              <i class="fas fa-crosshairs mr-3 text-lg text-chart-color-2"></i> 上下文嵌入点
+            </h3>
+            <div class="flex-grow space-y-3 text-sm">
+              <p class="text-foreground dark:text-gray-300"><i class="fas fa-map-marker-alt mr-2 text-purple-500"></i>指在组件边界或模块依赖处注入知识（文档、规则）的关键位置。</p>
+              <div>
+                <strong class="block text-gray-600 dark:text-gray-300 text-base mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue (SFC):</strong>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-box-open text-green-500 mr-2"></i>组件封装性强，适合作为原子上下文单元 (UI+逻辑)。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-link text-green-500 mr-2"></i>依赖在脚本区注册/导入。</p>
+              </div>
+               <div class="border-t border-border dark:border-slate-600 my-3 pt-3">
+                <strong class="block text-gray-600 dark:text-gray-300 text-base mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-file-import text-blue-500 mr-2"></i>显式的 <code>import</code> 依赖，方便 AI 关联库/组件上下文。</p>
+                <p class="text-foreground dark:text-gray-300 pl-5"><i class="fas fa-sitemap text-blue-500 mr-2"></i>逻辑可能分散在自定义 Hooks 或辅助模块。</p>
+              </div>
+              <p class="text-foreground dark:text-gray-300"><i class="fas fa-check-double mr-2 text-indigo-500"></i>两者都提供明确组件边界，利于 AI 按组件粒度管理上下文（如 PRD 需求映射到 <code>LoginForm</code> 组件）。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enhanced Comparison Table -->
+        <div>
+          <h3 class="text-2xl font-semibold font-serif text-gray-800 dark:text-gray-100 mb-4">详细对比</h3>
+           <div class="overflow-x-auto bg-white dark:bg-slate-700/50 p-4 rounded-lg shadow-inner border border-border dark:border-slate-600 my-6">
+            <table class="w-full text-left border-collapse min-w-[600px]">
+              <thead class="border-b-2 border-primary dark:border-emerald-400">
+                <tr>
+                  <th class="p-3 font-bold text-lg text-primary dark:text-emerald-400">比较维度</th>
+                  <th class="p-3 font-bold text-lg text-primary dark:text-emerald-400">React (JSX 模式)</th>
+                  <th class="p-3 font-bold text-lg text-primary dark:text-emerald-400">Vue (单文件组件SFC)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="hover:bg-accent dark:hover:bg-accent transition-colors duration-150 group">
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top font-semibold text-gray-600 dark:text-gray-300 group-hover:text-foreground dark:group-hover:text-gray-100">组件代码结构</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">JSX将模板嵌于JS，灵活但依赖团队约定（结构一致性稍弱）；<br>代码风格多样，AI需适应项目习惯。</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">模板、脚本、样式分区，统一单文件格式（结构一致性强）；<br>模式固定，AI易按固定格式生成代码。</td>
+                </tr>
+                <tr class="bg-secondary/30 dark:bg-slate-600/30 hover:bg-accent dark:hover:bg-accent transition-colors duration-150 group">
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top font-semibold text-gray-600 dark:text-gray-300 group-hover:text-foreground dark:group-hover:text-gray-100">数据流与状态管理</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">单向数据流+不可变状态，逻辑清晰可预测；<br>AI更容易保持状态更新语义稳定，不引入隐含副作用。</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">内置响应式系统，支持双向绑定，开发便捷；<br>需慎控双向修改范围，AI生成代码时要避免意外全局副作用。</td>
+                </tr>
+                 <tr class="hover:bg-accent dark:hover:bg-accent transition-colors duration-150 group">
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top font-semibold text-gray-600 dark:text-gray-300 group-hover:text-foreground dark:group-hover:text-gray-100">依赖引用显式性</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">组件依赖通过import导入，引用关系清晰；<br>AI易据此查找相关库文档或现有组件，提高引用准确性。</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">组件在脚本部分声明/注册依赖，模板直接使用子组件标签；<br>AI需确保在脚本区正确引入注册，保持模板引用有效。</td>
+                </tr>
+                <tr class="bg-secondary/30 dark:bg-slate-600/30 hover:bg-accent dark:hover:bg-accent transition-colors duration-150 group">
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top font-semibold text-gray-600 dark:text-gray-300 group-hover:text-foreground dark:group-hover:text-gray-100">语义稳定性</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300">强调纯函数组件与<code class="tech-term" data-tippy-content="允许你在不编写 class 的情况下使用 state 以及其他的 React 特性（如生命周期方法）的函数。">Hooks</code>，鼓励无副作用逻辑；<br>AI按规范输出，更容易保证行为与预期一致。</td>
+                  <td class="border-t border-border dark:border-slate-600 p-4 align-top text-foreground dark:text-gray-300"><code class="tech-term" data-tippy-content="Vue 2 的主要 API 风格，将组件逻辑按选项（data, methods, computed 等）组织。">选项API</code>封装数据/方法，或<code class="tech-term" data-tippy-content="Vue 3 引入的 API 风格，允许更灵活地组织和复用逻辑代码。">Composition API</code>灵活组合；<br>结构清晰但具有隐式反应链，AI需全面理解上下文避免语义偏差。</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="text-sm text-muted-foreground dark:text-gray-400 italic mt-4">（注：上表中的比较基于框架默认用法，具体项目实践可能有所不同。）</p>
+        </div>
+      </section>
+
+      <!-- Section 2: Context Injection Tool Support (Detailed Bento Grid Style) -->
+      <section data-animate-section class="bg-card dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-md">
+        <h2 class="title-3d text-3xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-8 border-l-4 border-primary dark:border-emerald-400 pl-4">
+          <i class="fas fa-plug mr-3 text-chart-color-2"></i> 2. 对稳定上下文注入工具的支持性比较
+        </h2>
+
+        <!-- Detailed Bento Grid Container -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-auto"><!-- Using auto-rows for flexibility -->
+
+          <!-- Cell 1: Overview -->
+          <div class="md:col-span-2 bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow border border-border dark:border-slate-600">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fas fa-tools mr-2 text-lg text-chart-color-3"></i> AI上下文注入工具概述
+            </h3>
+            <p class="text-sm text-foreground dark:text-gray-300 space-y-2">
+              <span>近期涌现的多种AI编码辅助工具，如 <strong class="text-accent-foreground dark:text-gray-200"><code class="tech-term" data-tippy-content="一个 VS Code 扩展，提供自主编码代理功能，可读写项目文件。">RooCode</code></strong>、<strong class="text-accent-foreground dark:text-gray-200"><code class="tech-term" data-tippy-content="一个提供最新库文档和代码片段以供 LLM 使用的 MCP (Managed Context Provider) 服务。">Context7 MCP</code></strong> 等，旨在通过<strong class="text-accent-foreground dark:text-gray-200"><code class="tech-term" data-tippy-content="检索增强生成 (Retrieval-Augmented Generation): 一种结合信息检索和文本生成的技术，让 LLM 能利用外部知识库回答问题或生成内容。">检索增强生成（RAG）</code></strong>等手段，将<strong>最新文档、代码片段</strong>注入大型语言模型的上下文，解决模型知识截止、代码幻觉等问题。</span>
+              <span>例如，Context7 可以获取<strong>特定版本</strong>的框架文档与示例代码，并在对话中提供给AI，以避免其使用过时API或捏造不存在的接口 (<a href="https://upstash.com/blog/context7-llmtxt-cursor#:~:text=Context7%20provides%20your%20coding%20assistants,Cursor%2C%20Claude%2C%20or%20any%20LLM" target="_blank" rel="noopener noreferrer" class="hover:underline"><i class="fas fa-link text-xs"></i> ref</a>)。RooCode 则是VSCode扩展中的自治编码代理，可读取/写入项目文件，结合自然语言指令完成开发任务，也支持利用项目上下文和文档来提高准确度。</span>
+            </p>
+          </div>
+
+          <!-- Cell 2: React Docs & API Context -->
+          <div class="bg-muted dark:bg-slate-600 p-6 rounded-lg shadow border border-border dark:border-slate-500">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fab fa-react mr-2 text-lg text-blue-500"></i> React文档 & API上下文
+            </h3>
+            <p class="text-sm text-foreground dark:text-gray-300 space-y-2">
+              <span>由Meta维护，社区庞大，文档完善。生态更新快，LLM若<strong>训练数据截止较早</strong>，对新版API可能不熟悉 (<a href="https://upstash.com/blog/context7-llmtxt-cursor#:~:text=The%20Problem%20with%20Cursor%2C%20Windsurf%2C,and%20LLMs%20in%20General" target="_blank" rel="noopener noreferrer" class="hover:underline"><i class="fas fa-link text-xs"></i> ref</a>)。</span>
+              <span>Context7允许检索<strong>最新版文档</strong>回答，解决此问题。React 项目常涉更多外围库，对多源文档检索需求更高。</span>
+            </p>
+          </div>
+
+          <!-- Cell 3: Vue Docs & API Context -->
+          <div class="bg-muted dark:bg-slate-600 p-6 rounded-lg shadow border border-border dark:border-slate-500">
+            <blockquote class="italic text-sm text-accent-foreground dark:text-emerald-100">
+              <i class="fas fa-lightbulb mr-2 text-yellow-400"></i> 在<strong>文档RAG</strong>维度，两者均可利用Context7获取精准文档。React更依赖多源检索，Vue更聚焦官方。
+            </blockquote>
+          </div>
+
+          <!-- Cell 4: RAG Conclusion -->
+           <div class="md:col-span-2 bg-accent dark:bg-emerald-900/30 p-6 rounded-lg shadow border border-emerald-200 dark:border-emerald-700 flex flex-col justify-center">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+              <i class="fab fa-vuejs mr-2 text-lg text-green-500"></i> Vue文档 & API上下文
+          </h3>
+          <p class="text-sm text-foreground dark:text-gray-300 space-y-2">
+             <span>由官方/社区维护，文档细致。Vue3重大更新 (<code class="tech-term" data-tippy-content="Vue 3 引入的一套基于函数的 API，用于组织和复用组件逻辑。">Composition API</code>)也可能超出旧LLM知识。</span>
+             <span>Context7等工具同样支持Vue，提供特定版本用法。Vue生态相对一体化，AI可能更聚焦官方配套文档 (<a href="https://codeparrot.ai/blogs/vue-vs-react-comparing-features-community-and-more#:~:text=,a%20broad%20range%20of%20choices" target="_blank" rel="noopener noreferrer" class="hover:underline"><i class="fas fa-link text-xs"></i> ref</a>)。</span>
+          </p>
+          </div>
+
+          <!-- Cell 5: Context Window & Scale -->
+          <div class="md:col-span-2 bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow border border-border dark:border-slate-600">
+             <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fas fa-window-maximize mr-2 text-lg text-chart-color-3"></i> 上下文窗口 & 项目规模
+            </h3>
+             <p class="text-sm text-foreground dark:text-gray-300 space-y-2">
+                <span>大型项目中，文件和代码本身是重要上下文。Cursor等IDE提供部分代码，MCP工具（如<code class="tech-term" data-tippy-content="一个可能的 MCP 工具名称，用于将项目上下文注入 LLM。">Jinni</code>）可注入更多片段甚至整个项目，提升<strong>上下文可控性</strong>和<strong>引用准确性</strong> (<a href="https://forum.cursor.com/t/tired-of-cursor-not-putting-what-you-want-into-context-solved/75682#:~:text=Just%20add%20the%20MCP%20server%2C,can%20pull%20in%20specific%20components" target="_blank" rel="noopener noreferrer" class="hover:underline"><i class="fas fa-link text-xs"></i> ref</a>)。这对两框架均适用。</span>
+                <span>不同点：<strong>Vue SFC</strong>文件自包含 (模板+逻辑)，AI易获取全貌。<strong>React组件</strong>逻辑可能分散（<code class="tech-term" data-tippy-content="React 中用于封装和复用状态逻辑的函数。">自定义Hook</code>等），AI或需加载多文件获取完整上下文。</span>
+             </p>
+              <blockquote class="mt-4 border-l-4 border-accent dark:border-accent-foreground pl-3 italic text-xs text-muted-foreground dark:text-gray-400">
+                <i class="fas fa-retweet mr-1 text-yellow-400"></i> 两者皆可良好运用注入工具。React数据/工具多；Vue语法简单AI易上手。<a href="https://mvineetsharma.medium.com/react-vs-vue-vs-angular-in-2025-which-framework-should-you-choose-e64a60b99505#:~:text=,AI%2C%20but%20can%20feel%20rigid" target="_blank" rel="noopener noreferrer" class="ml-1"><i class="fas fa-link text-xs"></i></a>
+              </blockquote>
+          </div>
+
+          <!-- Cell 6: Agent Compatibility -->
+          <div class="bg-muted dark:bg-slate-600 p-6 rounded-lg shadow border border-border dark:border-slate-500">
+            <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fas fa-robot mr-2 text-lg text-chart-color-3"></i> 对 RooCode 等代理的兼容
+            </h3>
+            <p class="text-sm text-foreground dark:text-gray-300 space-y-2">
+                <span>RooCode等自主代理对框架无偏见。因 **React** 更常见，示例/集成可能更多。但Vue项目同样受益，工具可读写<code>.vue</code>文件 (<a href="https://github.com/vuejs/core/discussions/10342#:~:text=Why%20Tea%3F" target="_blank" rel="noopener noreferrer" class="hover:underline"><i class="fas fa-link text-xs"></i> ref: Tea Tool</a>)。</span>
+                 <blockquote class="mt-3 border-l-4 border-accent dark:border-accent-foreground pl-3 italic text-xs text-muted-foreground dark:text-gray-400">
+                  <i class="fas fa-balance-scale mr-1 text-yellow-400"></i> 结论：无绝对优劣。React集成稍多，Vue正跟进。通用方案(Context7)使两者都能获取精准上下文。
+                </blockquote>
+            </p>
+          </div>
+
+          <!-- Cell 7: Key Takeaway -->
+           <div class="md:col-span-3 bg-primary dark:bg-emerald-600 text-primary-foreground dark:text-emerald-50 p-6 rounded-lg shadow-lg border border-emerald-600 dark:border-emerald-400 flex items-center justify-center text-center">
+             <p class="font-semibold text-lg">
+                <i class="fas fa-star text-yellow-300 mr-2"></i> 利用工具提供精准、最新的上下文是 AI 编码稳定性的核心！
+             </p>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- Section 3: Rule-Driven Development & Auto-Refactoring -->
+      <section data-animate-section class="bg-card dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-md">
+        <h2 class="title-3d text-3xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-8 border-l-4 border-primary dark:border-emerald-400 pl-4">
+           <i class="fas fa-ruler-combined mr-3 text-chart-color-4"></i> 3. 规则驱动开发与自动重构
+        </h2>
+
+        <!-- Content for Section 3 - Mixed Layout -->
+        <div class="space-y-8"> <!-- Add spacing between layout parts -->
+
+          <!-- Part 1: Grid for Linter & Testing -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Card 1: Rules/Linter Integration -->
+            <div class="bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow-md border border-border dark:border-slate-600 flex flex-col">
+              <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                 <i class="fas fa-pencil-ruler mr-2 text-chart-color-5"></i> 规则/Linter集成
+              </h3>
+              <div class="flex-grow space-y-4 text-sm text-foreground dark:text-gray-300">
+                  <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                      <ul class="list-disc list-inside pl-5 space-y-1">
+                         <li>生态提供丰富的 <code class="tech-term" data-tippy-content="一种用于识别和报告 ECMAScript/JavaScript 代码中模式匹配的工具，目标是使代码更加一致并避免错误。">ESLint</code> 插件 (如 <code class="tech-term" data-tippy-content="Airbnb JavaScript 风格指南的 ESLint 配置。">Airbnb</code>)。</li>
+                         <li>AI 可基于明确规则生成规范代码。</li>
+                         <li><code class="tech-term" data-tippy-content="React Hooks 的规则，例如只能在顶层调用 Hooks，只能在 React 函数组件或自定义 Hook 中调用 Hooks。">Hooks 规则</code>有助 AI 理解正确用法。</li>
+                      </ul>
+                  </div>
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                      <ul class="list-disc list-inside pl-5 space-y-1">
+                         <li>官方 <code class="tech-term" data-tippy-content="Vue.js 官方 ESLint 插件，用于检查 .vue 文件和 Vue 特定语法。">eslint-plugin-vue</code>，覆盖 SFC 等。</li>
+                         <li>规则集针对 Vue 特性，助 AI 遵循实践。</li>
+                         <li>模板 lint 助 AI 生成结构正确模板。</li>
+                      </ul>
+                  </div>
+                 <blockquote class="mt-3 border-l-4 border-accent dark:border-accent-foreground pl-3 italic text-xs text-muted-foreground dark:text-gray-400">
+                    <i class="fas fa-lightbulb mr-1 text-yellow-400"></i> 两者 Linter 支持强大，AI 结合反馈生成规范代码。React 生态更广，Vue 官方更聚焦。
+                 </blockquote>
+              </div>
+            </div>
+
+            <!-- Card 2: Testing Support -->
+            <div class="bg-secondary dark:bg-slate-700 p-6 rounded-lg shadow-md border border-border dark:border-slate-600 flex flex-col">
+              <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                 <i class="fas fa-vial mr-2 text-chart-color-5"></i> 测试生成支持
+              </h3>
+              <div class="flex-grow space-y-4 text-sm text-foreground dark:text-gray-300">
+                 <div>
+                    <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                    <ul class="list-disc list-inside pl-5 space-y-1">
+                       <li>生态成熟 (<code class="tech-term" data-tippy-content="一个流行的 JavaScript 测试框架。">Jest</code>, <code class="tech-term" data-tippy-content="一套用于测试 React 组件的实用工具库，鼓励编写用户中心的测试。">RTL</code>)。</li>
+                       <li>RTL 鼓励用户行为测试，AI 易理解意图。</li>
+                       <li>纯函数组件易于单元测试。</li>
+                    </ul>
+                 </div>
+                 <div>
+                    <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                    <ul class="list-disc list-inside pl-5 space-y-1">
+                       <li>官方 <code class="tech-term" data-tippy-content="Vue.js 官方的单元测试实用工具库。">Vue Test Utils</code> (配 Jest/Vitest)。</li>
+                       <li>同样可结合 Testing Library。</li>
+                       <li>SFC 文件需特定工具链处理。</li>
+                    </ul>
+                 </div>
+                 <blockquote class="mt-3 border-l-4 border-accent dark:border-accent-foreground pl-3 italic text-xs text-muted-foreground dark:text-gray-400">
+                    <i class="fas fa-lightbulb mr-1 text-yellow-400"></i> 两者测试生态完善。AI 生成关键在理解目标和库 API。RTL 理念或更利于 AI 生成行为测试。
+                 </blockquote>
+              </div>
+            </div>
+
+          </div> <!-- End Grid for Linter & Testing -->
+
+          <!-- Part 2: Full-Width Section for Auto-Refactoring -->
+          <div class="bg-muted dark:bg-slate-700/50 p-6 rounded-lg shadow-inner border border-border dark:border-slate-600">
+             <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                <i class="fas fa-magic mr-2 text-chart-color-4"></i> 自动重构适应性
+             </h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-foreground dark:text-gray-300">
+                <div>
+                   <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                   <ul class="list-disc list-inside pl-5 space-y-1">
+                      <li>组件化和 <code class="tech-term" data-tippy-content="React 中一种常见的代码重构模式，将组件内的逻辑提取到可复用的自定义 Hook 中。">自定义 Hook</code> 天然适合 AI 提取逻辑/拆分组件。</li>
+                      <li>函数式倾向，纯逻辑易于 AI 理解和移动。</li>
+                      <li>重构操作（提取到新组件/Hook）边界清晰。</li>
+                   </ul>
+                </div>
+                <div>
+                   <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                   <ul class="list-disc list-inside pl-5 space-y-1">
+                      <li>SFC 结构清晰，AI 易于定位进行局部修改。</li>
+                      <li><code class="tech-term" data-tippy-content="Vue 3 的 Composition API 使得逻辑可以更容易地被组织和提取到独立的、可复用的函数（组合式函数）中。">Composition API</code> 提高逻辑复用/提取灵活性，AI 更易进行类似 Hooks 重构。</li>
+                      <li>选项式 API 封装强，跨选项重构对 AI 挑战或更大。</li>
+                   </ul>
+                </div>
+             </div>
+             <blockquote class="mt-4 border-l-4 border-accent dark:border-accent-foreground pl-3 italic text-xs text-muted-foreground dark:text-gray-400">
+                 <i class="fas fa-lightbulb mr-1 text-yellow-400"></i> React Hooks/函数式对逻辑单元重构 AI 友好度或略高。Vue Composition API 改进此点，SFC 对文件单元重构友好。
+             </blockquote>
+          </div>
+
+          <!-- Part 3: Overall Conclusion Quote -->
+          <blockquote class="border-l-4 border-primary dark:border-emerald-400 pl-4 italic text-muted-foreground dark:text-gray-400 text-sm">
+             <i class="fas fa-check-double mr-2"></i> 核心观点：规则和测试是保障 AI 生成代码质量的关键围栏。两框架都提供了良好的基础，AI 的有效性更多取决于 Linter 配置的完善度和测试库的选用策略。
+          </blockquote>
+
+        </div> <!-- End space-y container -->
+      </section>
+
+      <!-- Section 4: Large-Scale Collaboration & Ecosystem Support -->
+      <section data-animate-section class="bg-card dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-md">
+         <h2 class="title-3d text-3xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-8 border-l-4 border-primary dark:border-emerald-400 pl-4">
+            <i class="fas fa-users mr-3 text-chart-color-1"></i> 4. 大规模协作与生态系统支持
+         </h2>
+
+         <!-- Content for Section 4 - Simplified Cards with Emphasis -->
+         <div class="space-y-6">
+           <p class="text-foreground dark:text-gray-300 mb-8">选择框架不仅关乎技术特性，更要考虑其在团队协作、项目扩展以及长期发展中的支撑能力。AI 辅助开发也需依托于强大的生态和稳定的治理。</p>
+
+           <!-- Grid for the three cards -->
+           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+             <!-- Card 1: Collaboration & Scalability -->
+             <div class="border border-border dark:border-slate-600 rounded-lg p-6 shadow-sm bg-card dark:bg-slate-800">
+                <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                   <i class="fas fa-sitemap mr-2 text-chart-color-2"></i> 团队协作与可伸缩性
+                </h3>
+                <div class="space-y-4 text-sm text-foreground dark:text-gray-300">
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                      <ul class="space-y-1 pl-1">
+                         <li><i class="fas fa-check-circle text-blue-400 mr-2"></i><strong class="text-primary dark:text-emerald-400">组件化理念</strong>利于大型团队分工协作。</li>
+                         <li><i class="fas fa-exclamation-circle text-yellow-500 mr-2"></i>生态庞大，解决方案多样，但也可能导致<strong class="text-destructive dark:text-red-400">技术选型碎片化</strong>，增加 AI 理解项目特定技术栈的难度。</li>
+                         <li><i class="fas fa-check-circle text-blue-400 mr-2"></i>对 <strong class="text-primary dark:text-emerald-400">TypeScript 支持成熟</strong>，强类型有助 AI 理解意图、减少错误。</li>
+                      </ul>
+                   </div>
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                      <ul class="space-y-1 pl-1">
+                         <li><i class="fas fa-check-circle text-green-400 mr-2"></i><strong class="text-primary dark:text-emerald-400">渐进式框架</strong>设计，易于引入或逐步采用。</li>
+                         <li><i class="fas fa-check-circle text-green-400 mr-2"></i>官方提供更全面的配套库 (Router, Pinia/Vuex)，<strong class="text-primary dark:text-emerald-400">技术栈相对统一</strong>，AI 更易掌握整体架构。</li>
+                         <li><i class="fas fa-check-circle text-green-400 mr-2"></i>Vue 3 <strong class="text-primary dark:text-emerald-400">TypeScript 支持大幅改进</strong>，对大型项目和 AI 友好。</li>
+                      </ul>
+                   </div>
+                   <blockquote class="mt-3 pt-2 border-t border-border dark:border-slate-600 italic text-xs text-muted-foreground dark:text-gray-400">
+                       <i class="fas fa-lightbulb mr-1 text-yellow-400"></i> 两者都适合大型项目。React 生态选择多但需规范；Vue 官方方案全，技术栈更内聚。<strong class="text-accent-foreground dark:text-gray-200">TypeScript 支持至关重要</strong>。
+                   </blockquote>
+                </div>
+             </div>
+
+             <!-- Card 2: Community & Ecosystem -->
+             <div class="border border-border dark:border-slate-600 rounded-lg p-6 shadow-sm bg-card dark:bg-slate-800">
+                <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                   <i class="fas fa-globe-americas mr-2 text-chart-color-3"></i> 社区与生态系统
+                </h3>
+                 <div class="space-y-4 text-sm text-foreground dark:text-gray-300">
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                      <ul class="space-y-1 pl-1">
+                         <li><i class="fas fa-star text-yellow-400 mr-2"></i>拥有<strong class="text-primary dark:text-emerald-400">最大、最活跃</strong>的社区之一，资源、教程、库极为丰富。</li>
+                         <li><i class="fas fa-check-circle text-blue-400 mr-2"></i>问题解决更容易找到现有方案，AI 也易找到信息（但需注意<strong class="text-yellow-500">信息过载/过时</strong>）。</li>
+                         <li><i class="fas fa-building text-blue-400 mr-2"></i><strong class="text-primary dark:text-emerald-400">大公司 (Meta) 支持</strong>，生态成熟稳定。</li>
+                      </ul>
+                   </div>
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                      <ul class="space-y-1 pl-1">
+                         <li><i class="fas fa-users text-green-400 mr-2"></i>社区同样庞大活跃，尤其在亚洲。</li>
+                         <li><i class="fas fa-book-open text-green-400 mr-2"></i><strong class="text-primary dark:text-emerald-400">官方文档质量极高</strong>，AI 获取权威信息首选。</li>
+                         <li><i class="fas fa-link text-green-400 mr-2"></i>生态系统日益完善，核心库官方维护，<strong class="text-primary dark:text-emerald-400">一致性较好</strong>。</li>
+                      </ul>
+                   </div>
+                   <blockquote class="mt-3 pt-2 border-t border-border dark:border-slate-600 italic text-xs text-muted-foreground dark:text-gray-400">
+                       <i class="fas fa-lightbulb mr-1 text-yellow-400"></i> React 生态更广，选择更多。Vue 生态更聚焦，官方支持更全面。AI 都需工具确保信息时效性。
+                   </blockquote>
+                </div>
+             </div>
+
+             <!-- Card 3: Long-Term Stability & Governance -->
+             <div class="border border-border dark:border-slate-600 rounded-lg p-6 shadow-sm bg-card dark:bg-slate-800">
+                 <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 flex items-center">
+                   <i class="fas fa-shield-alt mr-2 text-chart-color-4"></i> 长期稳定性与治理
+                 </h3>
+                 <div class="space-y-4 text-sm text-foreground dark:text-gray-300">
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-react mr-1 text-blue-500"></i> React:</strong>
+                      <ul class="space-y-1 pl-1">
+                         <li><i class="fas fa-building text-blue-400 mr-2"></i>由 <strong class="text-primary dark:text-emerald-400">Meta 支持</strong>，更新活跃，但可能带来<strong class="text-yellow-500">破坏性更新</strong>（虽努力兼容）。</li>
+                         <li><i class="fas fa-history text-blue-400 mr-2"></i>版本发布相对谨慎，<strong class="text-primary dark:text-emerald-400">核心 API 较稳定</strong>。</li>
+                      </ul>
+                   </div>
+                   <div>
+                      <strong class="block text-gray-600 dark:text-gray-300 mb-1"><i class="fab fa-vuejs mr-1 text-green-500"></i> Vue:</strong>
+                      <ul class="space-y-1 pl-1">
+                         <li><i class="fas fa-users-cog text-green-400 mr-2"></i>由<strong class="text-primary dark:text-emerald-400">核心团队和社区驱动</strong> (尤雨溪)。</li>
+                         <li><i class="fas fa-tasks text-green-400 mr-2"></i>Vue 3 带来显著改进，有<strong class="text-primary dark:text-emerald-400">明确的 LTS 计划</strong>。</li>
+                         <li><i class="fas fa-route text-green-400 mr-2"></i>版本迭代清晰，迁移路径通常支持较好。</li>
+                      </ul>
+                   </div>
+                   <blockquote class="mt-3 pt-2 border-t border-border dark:border-slate-600 italic text-xs text-muted-foreground dark:text-gray-400">
+                       <i class="fas fa-lightbulb mr-1 text-yellow-400"></i> 两者都具良好长期稳定性。React 背靠大公司；Vue 治理模型清晰+LTS。都是可靠选择。AI 需关注版本特性。
+                   </blockquote>
+                </div>
+             </div>
+
+           </div> <!-- End Grid for the three cards -->
+
+           <!-- Overall Section Conclusion -->
+           <blockquote class="mt-8 border-l-4 border-primary dark:border-emerald-400 pl-4 italic text-muted-foreground dark:text-gray-400 text-sm">
+              <i class="fas fa-check-double mr-2"></i> 核心观点：强大的社区、完善的生态和稳定的治理是框架生命力的保障。AI 工具的效果很大程度上也依赖于这些外部因素提供的资源和规范。
+           </blockquote>
+         </div>
+      </section>
+
+      <!-- Section 5: Conclusion -->
+      <section data-animate-section class="bg-gradient-to-r from-primary to-emerald-600 dark:from-emerald-700 dark:to-green-800 text-primary-foreground p-8 rounded-lg shadow-lg my-12">
+          <h2 class="text-3xl font-bold font-serif mb-4 text-center">总结与建议</h2>
+          <p class="text-center max-w-3xl mx-auto leading-relaxed">React 和 Vue 都是优秀的现代前端框架，都能有效利用 AI 编码工具提升开发效率和稳定性。选择哪个框架更多地取决于团队的特定需求、技术栈偏好和项目规模。</p>
+          <ul class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto text-sm">
+              <li class="bg-white/20 dark:bg-black/20 p-4 rounded flex items-start space-x-3">
+                  <i class="fab fa-react text-blue-300 text-xl mt-1"></i>
+                  <span><strong>React:</strong> 更适合需要<strong class="text-yellow-200">极致灵活性、庞大生态支持</strong>和<strong class="text-yellow-200">严格遵循函数式、单向数据流</strong>范式的团队。AI 需适应其多样的生态和潜在的规范差异。</span>
+              </li>
+              <li class="bg-white/20 dark:bg-black/20 p-4 rounded flex items-start space-x-3">
+                  <i class="fab fa-vuejs text-green-300 text-xl mt-1"></i>
+                  <span><strong>Vue:</strong> 更适合偏好<strong class="text-yellow-200">官方统一方案、结构一致性高</strong>和<strong class="text-yellow-200">渐进式采用</strong>的团队。其清晰的 SFC 结构和官方生态对 AI 更友好，上手可能更快。</span>
+              </li>
+          </ul>
+          <p class="text-center text-xs mt-6 opacity-80">最终，无论选择哪个框架，<strong class="font-semibold">善用 Linter、强类型 (TypeScript) 以及 Context7 等上下文注入工具</strong>，都是确保 AI 稳定输出高质量代码的关键。</p>
+      </section>
+
+      <!-- Section 6: Visualizations -->
+      <section data-animate-section class="bg-card dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-md my-12">
+          <h2 class="title-3d text-3xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-8 border-l-4 border-primary dark:border-emerald-400 pl-4">
+             <i class="fas fa-chart-pie mr-3 text-chart-color-5"></i> 5. 可视化对比
+          </h2>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8"> <!-- Changed to lg:grid-cols-3 -->
+              <!-- Chart.js Radar Chart -->
+              <div class="lg:col-span-1 bg-secondary dark:bg-slate-700 p-4 rounded-lg border border-border dark:border-slate-600"> <!-- Set to lg:col-span-1 -->
+                  <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 text-center">框架特性雷达图</h3>
+                  <div class="relative h-80 md:h-96"> <!-- Set a height for the canvas container -->
+                     <canvas id="frameworkRadarChart"></canvas>
+                  </div>
+                  <p class="text-xs text-muted-foreground dark:text-gray-400 text-center mt-2">注：评分基于本文分析，为主观评估。</p>
+              </div>
+
+              <!-- Mermaid.js Diagram -->
+              <div class="lg:col-span-2 bg-secondary dark:bg-slate-700 p-4 rounded-lg border border-border dark:border-slate-600 min-h-[500px]"> <!-- Set to lg:col-span-2 -->
+                  <h3 class="text-xl font-semibold font-serif mb-4 text-gray-700 dark:text-gray-200 text-center">AI 辅助选型考量</h3>
+                  <pre class="mermaid bg-transparent text-center w-full h-full overflow-auto text-sm">graph LR
+    A["选择前端框架 (AI 辅助背景)"] --> B{"主要考量因素"};
+    B --> C["结构一致性"];
+    B --> D["上下文注入"];
+    B --> E["重构与测试"];
+    B --> F["生态与协作"];
+
+    C --&gt; C_Vue["Vue (SFC): 结构统一"'];
+    C --&gt; C_React["React (JSX): 灵活依赖规范"];
+
+    D --&gt; D_Both["两者皆可 (需工具)"];
+    D_Both --&gt; D_React["React: 多源检索需求高"];
+    D_Both --&gt; D_Vue["Vue: 聚焦官方文档"];
+
+    E --&gt; E_React["React (Hooks): 逻辑提取友好"];
+    E --&gt; E_Vue["Vue (Comp API): 逻辑提取改进"];
+    E --&gt; E_Test["测试: 两者生态完善 (RTL)"];
+
+    F --&gt; F_React["React: 社区最大, 选择多"];
+    F --&gt; F_Vue["Vue: 官方方案全, 栈内聚"];
+    F --&gt; F_TS["TypeScript 支持 (关键)"];
+
+    style C_Vue fill:#dbfdea,stroke:#333,stroke-width:1px
+    style C_React fill:#dbeafe,stroke:#333,stroke-width:1px
+    style D_React fill:#dbeafe,stroke:#333,stroke-width:1px
+    style D_Vue fill:#dbfdea,stroke:#333,stroke-width:1px
+    style E_React fill:#dbeafe,stroke:#333,stroke-width:1px
+    style E_Vue fill:#dbfdea,stroke:#333,stroke-width:1px
+    style F_React fill:#dbeafe,stroke:#333,stroke-width:1px
+    style F_Vue fill:#dbfdea,stroke:#333,stroke-width:1px
+
+</pre>
+              </div>
+          </div>
+      </section>
+
+      <!-- Section 7: Further Reading -->
+      <section data-animate-section class="bg-card dark:bg-slate-800 p-6 md:p-8 rounded-lg shadow-md my-12">
+          <h2 class="title-3d text-3xl font-bold font-serif text-gray-800 dark:text-gray-100 mb-8 border-l-4 border-primary dark:border-emerald-400 pl-4">
+             <i class="fas fa-book-reader mr-3 text-chart-color-1"></i> 6. 进一步阅读
+          </h2>
+          <ul class="space-y-4 list-none">
+             <!-- Further reading items will be added here -->
+             <li class="border-b border-border dark:border-slate-700 pb-4 last:border-b-0">
+                 <h4 class="font-semibold text-lg mb-1"><a href="https://dev.to/robin-ivi/react-vs-vue-choosing-the-right-frontend-framework-1p7" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">React vs Vue: Choosing the Right Frontend Framework (Dev.to)</a></h4>
+                 <p class="text-sm text-muted-foreground dark:text-gray-400">提供了对 React 和 Vue 在架构、性能、生态系统和学习曲线方面的详细比较，为理解两者基础差异提供了良好起点。评论区的讨论也很有启发性。</p>
+             </li>
+             <li class="border-b border-border dark:border-slate-700 pb-4 last:border-b-0">
+                 <h4 class="font-semibold text-lg mb-1"><a href="https://www.scalablepath.com/front-end/vue-vs-react" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Vue vs React: An In-Depth Comparison (Scalable Path)</a></h4>
+                 <p class="text-sm text-muted-foreground dark:text-gray-400">从项目规模、复杂性、团队技能等角度对比 Vue 和 React，并提及两者在处理更新和性能优化方面的不同，有助于理解在不同项目场景下的适应性。</p>
+             </li>
+             <li class="border-b border-border dark:border-slate-700 pb-4 last:border-b-0">
+                 <h4 class="font-semibold text-lg mb-1"><a href="https://brainhub.eu/library/vue-vs-react" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Vue vs React for Team Leaders - Detailed Study (Brainhub)</a></h4>
+                 <p class="text-sm text-muted-foreground dark:text-gray-400">从团队领导者视角详细对比，涵盖人才可用性、框架哲学、工具链选择、技术演进等，对考虑团队协作和项目长期维护有价值。</p>
+             </li>
+             <!-- Add more items if needed -->
+          </ul>
+      </section>
+
+
+    </div> <!-- End Page content -->
+
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-8 border-t border-border text-sm text-muted-foreground">
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <!-- Left Side: Author Info -->
+        <div class="text-center sm:text-left">
+          <p>作者姓名: 季晓康</p>
+          <p>微信公众号：凿壁</p>
+          <p>版权信息：国家健康医疗大数据研究院</p>
+        </div>
+        <!-- Right Side: Metadata Info -->
+        <div class="text-center sm:text-right">
+           <p>分类：<span class="font-medium text-foreground">AI技术与生态</span></p>
+           <!-- Use a placeholder for date initially, JS could update this later if needed -->
+           <p>发布于: <span class="font-medium text-foreground">2025年05月01日</span></p>
+        </div>
+      </div>
+    </footer>
+
+  </main> <!-- End Main Content Container -->
+
+  <script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+    const lightThemeIcon = themeToggleBtn.querySelector('.fa-sun');
+    const darkThemeIconClass = 'fa-moon'; // We'll swap class lists
+  
+    // Initialize chart instances array (for later use)
+    window.chartInstances = window.chartInstances || [];
+  
+    // Function to get CSS variable (Helper)
+    function getCssVar(varName) {
+      return getComputedStyle(htmlElement).getPropertyValue(varName).trim();
+    }
+  
+    // Function to update theme for visualizations and code blocks
+    function updateVisualizationThemes() {
+      const isDarkMode = htmlElement.classList.contains('dark');
+      const newTheme = isDarkMode ? 'dark' : 'default'; // Use 'default' or 'base' for Mermaid light
+  
+      console.log(`Updating themes. Dark mode: ${isDarkMode}`);
+  
+      // 1. Update Mermaid theme
+      if (typeof mermaid !== 'undefined') {
+        try {
+           // Reinitialize Mermaid with the correct theme
+           // Note: Reinitialization might be heavy. Consider mermaid.initialize({theme: newTheme}) only if needed.
+           // For now, we assume mermaid.run() will handle theme changes based on body class or we handle it manually if needed.
+           // Let's first try relying on CSS variables if Mermaid themes support them, or re-render if needed.
+           // TODO: Verify Mermaid theme update strategy later when diagrams are added.
+           // mermaid.initialize({ theme: newTheme, startOnLoad: false });
+           // mermaid.run(); // Re-render diagrams with new theme? Needs testing.
+           console.log(`Attempting to set Mermaid theme to: ${newTheme}`);
+           // Temporary: Just log, actual update needs verification
+        } catch (error) {
+           console.error("Error updating Mermaid theme:", error);
+        }
+      } else {
+        console.log("Mermaid not defined yet.");
+      }
+  
+  
+      // 2. Update Highlight.js theme
+      const lightThemeLink = document.getElementById('hljs-light-theme');
+      const darkThemeLink = document.getElementById('hljs-dark-theme');
+      if (lightThemeLink && darkThemeLink) {
+        lightThemeLink.disabled = isDarkMode;
+        darkThemeLink.disabled = !isDarkMode;
+        console.log(`Highlight.js theme set to: ${isDarkMode ? 'dark' : 'light'}`);
+      } else {
+         console.log("Highlight.js theme links not found.");
+      }
+  
+      // 3. Update Chart.js instances (if any)
+      if (window.chartInstances && window.chartInstances.length > 0) {
+         console.log(`Updating ${window.chartInstances.length} chart instance(s)...`);
+         window.chartInstances.forEach((chart, index) => {
+           try {
+             // Example: Update colors based on CSS variables
+             const foregroundColor = getCssVar('--foreground');
+             const gridColor = getCssVar('--border');
+             const primaryColor = getCssVar('--primary');
+  
+             // Update specific options - ADJUST THESE based on the actual charts used later!
+             if (chart.options.scales && chart.options.scales.r) { // Example for Radar chart
+                chart.options.scales.r.pointLabels.color = foregroundColor;
+                chart.options.scales.r.angleLines.color = gridColor;
+                chart.options.scales.r.grid.color = gridColor;
+                chart.options.scales.r.ticks.color = foregroundColor; // Adjust if ticks need different color
+                chart.options.scales.r.ticks.backdropColor = getCssVar('--card'); // Example background for ticks
+             }
+             if (chart.options.plugins && chart.options.plugins.legend) {
+                chart.options.plugins.legend.labels.color = foregroundColor;
+             }
+             // Update dataset colors if needed (Example for radar)
+             chart.data.datasets.forEach(dataset => {
+                // You might need more specific logic here based on dataset type
+                // dataset.borderColor = primaryColor; // Example: Set all borders to primary? Maybe not ideal.
+                // dataset.backgroundColor = primaryColor + '33'; // Example with alpha
+             });
+  
+  
+             chart.update();
+             console.log(`Chart instance ${index} updated.`);
+           } catch(error) {
+              console.error(`Error updating Chart.js instance ${index}:`, error);
+           }
+         });
+      } else {
+         console.log("No Chart.js instances to update yet.");
+      }
+    }
+  
+    // Function to set theme (applies class, updates button, saves preference)
+    function setTheme(isDark) {
+      htmlElement.classList.toggle('dark', isDark);
+      // Update icon: remove existing, add the other one
+      const iconElement = themeToggleBtn.querySelector('i');
+      if (isDark) {
+        iconElement.classList.remove('fa-sun');
+        iconElement.classList.add(darkThemeIconClass);
+      } else {
+        iconElement.classList.remove(darkThemeIconClass);
+        iconElement.classList.add('fa-sun');
+      }
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      // Update visualizations after setting theme
+      updateVisualizationThemes();
+    }
+  
+    // Event listener for the toggle button
+    themeToggleBtn.addEventListener('click', () => {
+      const isDarkMode = htmlElement.classList.contains('dark');
+      setTheme(!isDarkMode);
+    });
+  
+    // Apply initial theme on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const initialDark = savedTheme === 'dark' || (savedTheme === null && prefersDark);
+  
+      // Apply initial theme WITHOUT calling updateVisualizationThemes yet,
+      // as libraries might not be ready.
+      htmlElement.classList.toggle('dark', initialDark);
+       const iconElement = themeToggleBtn.querySelector('i');
+       if (initialDark) {
+        iconElement.classList.remove('fa-sun');
+        iconElement.classList.add(darkThemeIconClass);
+      } else {
+        iconElement.classList.remove(darkThemeIconClass);
+        iconElement.classList.add('fa-sun');
+      }
+  
+      // Initialize libraries that need DOM ready
+      try {
+        if (typeof hljs !== 'undefined') {
+          hljs.highlightAll();
+          console.log("Highlight.js initialized.");
+        } else {
+          console.log("Highlight.js not defined yet.");
+        }
+      } catch(error) {
+         console.error("Error initializing Highlight.js:", error);
+      }
+  
+       try {
+         if (typeof tippy !== 'undefined') {
+           tippy('.tech-term', {
+             theme: 'custom-theme', // Use our custom theme
+             trigger: 'click', // Click to trigger
+             interactive: true, // Allow interaction within the tooltip
+             allowHTML: true, // If content needs HTML
+             // content: element => element.getAttribute('data-tippy-content'), // Already default behavior
+           });
+           console.log("Tippy.js initialized for .tech-term elements.");
+         } else {
+           console.log("Tippy.js not defined yet.");
+         }
+       } catch(error) {
+           console.error("Error initializing Tippy.js:", error);
+       }
+  
+       try {
+         if (typeof mermaid !== 'undefined') {
+           // Initialize Mermaid (startOnLoad: false recommended if we manually call run)
+           // The theme should be picked up automatically based on CSS variables if the theme supports it,
+           // or needs to be set here if using specific named themes ('dark', 'default'). Let's start simple.
+           mermaid.initialize({ startOnLoad: true, theme: initialDark ? 'dark' : 'default' });
+           // mermaid.run(); // Call run if startOnLoad is false or for dynamic updates
+           console.log("Mermaid initialized.");
+         } else {
+           console.log("Mermaid not defined yet.");
+         }
+       } catch (error) {
+         console.error("Error initializing Mermaid:", error);
+       }
+  
+      // --- Chart.js Radar Chart Initialization ---
+      const radarCtx = document.getElementById('frameworkRadarChart');
+      if (radarCtx) {
+          const radarChartData = {
+              labels: [
+                  '结构一致性',
+                  '上下文支持',
+                  '重构友好度',
+                  '生态广度',
+                  '官方治理'
+              ],
+              datasets: [{
+                  label: 'React',
+                  data: [3, 4, 4, 5, 4], // Subjective scores (1-5)
+                  fill: true,
+                  // Colors will be set dynamically based on theme
+                  borderWidth: 2
+              }, {
+                  label: 'Vue',
+                  data: [5, 4, 3.5, 4, 5], // Subjective scores (1-5)
+                  fill: true,
+                  // Colors will be set dynamically based on theme
+                  borderWidth: 2
+              }]
+          };
+
+          const radarChartConfig = {
+              type: 'radar',
+              data: radarChartData,
+              options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                      legend: {
+                          position: 'top',
+                          labels: {
+                              // Color set in updateVisualizationThemes
+                          }
+                      },
+                      tooltip: {
+                          callbacks: {
+                              label: function(context) {
+                                  let label = context.dataset.label || '';
+                                  if (label) {
+                                      label += ': ';
+                                  }
+                                  if (context.parsed.r !== null) {
+                                      label += context.parsed.r.toFixed(1); // Show one decimal place
+                                  }
+                                  return label;
+                              }
+                          }
+                      }
+                  },
+                  scales: {
+                      r: {
+                          angleLines: {
+                              // Color set in updateVisualizationThemes
+                          },
+                          grid: {
+                              // Color set in updateVisualizationThemes
+                          },
+                          pointLabels: {
+                              font: {
+                                  size: 11 // Slightly smaller font for point labels
+                              },
+                              // Color set in updateVisualizationThemes
+                          },
+                          ticks: {
+                            display: false, // Hide the radial ticks (numbers)
+                            stepSize: 1 // Ensure scale is 0-5 if max is 5
+                          },
+                           suggestedMin: 0,
+                           suggestedMax: 5
+                      }
+                  },
+                  elements: {
+                     line: {
+                        borderWidth: 2
+                     },
+                     point: {
+                         radius: 3,
+                         hoverRadius: 5
+                     }
+                  }
+              }
+          };
+
+          try {
+            const frameworkRadarChart = new Chart(radarCtx.getContext('2d'), radarChartConfig);
+            // Add the new chart instance to the global array for theme updates
+            window.chartInstances = window.chartInstances || [];
+            window.chartInstances.push(frameworkRadarChart);
+            console.log("Radar chart initialized and added to instances.");
+          } catch (error) {
+              console.error("Error initializing Radar Chart:", error);
+          }
+      } else {
+          console.warn("Canvas element for radar chart not found.");
+      }
+      // --- End Chart.js Radar Chart Initialization ---
+
+
+      // NOW call updateVisualizationThemes to set initial state for charts etc.
+      // Put in timeout to ensure rendering cycle completes? Maybe not needed.
+      // setTimeout(updateVisualizationThemes, 0);
+      updateVisualizationThemes();
+
+      // --- Framer Motion Initialization ---
+      // const { motion, useScroll, useTransform } = Motion; // Remove this line - Motion is not defined
+
+      // Simple fade-in-up animation for sections
+      document.querySelectorAll('section[data-animate-section]').forEach((section) => {
+          // We might need a more robust way to trigger animations on scroll
+          // Using a simple initial animation for now
+          // Consider Intersection Observer API for triggering on scroll
+          // Let's apply initial animation directly for simplicity first
+          // section.style.opacity = 0; // Managed by Intersection Observer now
+          // section.style.transform = 'translateY(20px)'; // Managed by Intersection Observer now
+
+          // Basic example: animate when the script runs (can be improved with scroll triggers)
+          // motion(section, { // Remove this block - Motion is not defined
+          //     initial: { opacity: 0, y: 20 },
+          //     animate: { opacity: 1, y: 0 },
+          //     transition: { duration: 0.6, ease: "easeOut" }
+          // });
+
+           // Correct usage requires integrating Framer Motion properly, likely with React
+           // or custom JavaScript hooks. The above is a conceptual placeholder.
+           // For standalone HTML, we'll stick to CSS transitions triggered by JS/Intersection Observer
+           // Or, use a library designed for scroll animations like AOS.js or ScrollReveal.js
+
+           // --- Let's revert to a simpler JS + CSS approach for now --- 
+            section.classList.add('opacity-0', 'translate-y-5', 'transform', 'transition-all', 'duration-700', 'ease-out');
+      });
+
+       // Use Intersection Observer to trigger animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.remove('opacity-0', 'translate-y-5');
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            observer.unobserve(entry.target); // Optional: stop observing once animated
+          }
+        });
+      }, {
+        threshold: 0.1 // Trigger when 10% of the element is visible
+      });
+
+      document.querySelectorAll('section[data-animate-section]').forEach(section => {
+        observer.observe(section);
+      });
+
+      console.log("Scroll animations initialized using Intersection Observer.");
+      // --- End Animation Initialization ---
+
+
+        console.log("Initial theme applied and libraries initialized.");
+      });
+  
+  </script>
+</body>
+</html>

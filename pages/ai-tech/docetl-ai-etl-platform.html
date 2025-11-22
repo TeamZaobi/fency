@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-01-23">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="深入探索DocETL：一个革命性的AI驱动ETL平台，专为复杂文档处理而设计。了解其核心功能、技术创新和在医疗、法律等领域的实际应用，以及相比传统ETL工具的显著优势。">
+  <meta name="keywords" content="DocETL,AI驱动ETL,文档处理,Python库,数据处理,人工智能,医疗记录分析,法律合同处理">
+  
+  <title>DocETL：AI驱动的文档处理ETL平台深度解析 | 凿壁</title>
+  
+  <!-- 外部资源引用 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --background: rgb(240, 248, 255);
+      --foreground: rgb(55, 65, 81);
+      --card: rgb(255, 255, 255);
+      --card-foreground: rgb(55, 65, 81);
+      --primary: rgb(34, 197, 94);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(224, 242, 254);
+      --secondary-foreground: rgb(75, 85, 99);
+      --muted: rgb(243, 244, 246);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(209, 250, 229);
+      --accent-foreground: rgb(55, 65, 81);
+      --border: rgb(229, 231, 235);
+      --chart-1: rgb(34, 197, 94);
+      --chart-2: rgb(16, 185, 129);
+      --chart-3: rgb(5, 150, 105);
+      --chart-4: rgb(4, 120, 87);
+      --chart-5: rgb(6, 95, 70);
+    }
+
+    .dark {
+      --background: rgb(15, 23, 42);
+      --foreground: rgb(209, 213, 219);
+      --card: rgb(30, 41, 59);
+      --card-foreground: rgb(209, 213, 219);
+      --primary: rgb(52, 211, 153);
+      --primary-foreground: rgb(15, 23, 42);
+      --secondary: rgb(45, 55, 72);
+      --secondary-foreground: rgb(161, 161, 170);
+      --muted: rgb(30, 41, 59);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(55, 65, 81);
+      --accent-foreground: rgb(161, 161, 170);
+      --border: rgb(75, 85, 99);
+      --chart-1: rgb(52, 211, 153);
+      --chart-2: rgb(45, 212, 191);
+      --chart-3: rgb(34, 197, 94);
+      --chart-4: rgb(16, 185, 129);
+      --chart-5: rgb(5, 150, 105);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Noto Sans SC", sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      background-color: var(--card);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--primary), var(--chart-2));
+      color: white;
+      padding: 4rem 0;
+      margin-bottom: 3rem;
+      border-radius: 0 0 2rem 2rem;
+    }
+
+    .hero h1 {
+      font-family: "Noto Serif SC", serif;
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero p {
+      font-size: 1.25rem;
+      opacity: 0.9;
+      max-width: 600px;
+    }
+
+    .section-title {
+      font-family: "Noto Serif SC", serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--primary);
+      text-align: center;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .theme-toggle:hover {
+      background: var(--primary);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .nav-breadcrumb {
+      padding: 1rem 0;
+      margin-bottom: 2rem;
+    }
+
+    .nav-breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .nav-breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .meta-info {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: var(--muted-foreground);
+      flex-wrap: wrap;
+    }
+
+    .meta-info span {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 400px;
+      margin: 2rem 0;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .feature-item {
+      padding: 1.5rem;
+      border-left: 4px solid var(--primary);
+      background: var(--card);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .hero p {
+        font-size: 1rem;
+      }
+      
+      .container {
+        padding: 0 15px;
+      }
+      
+      .meta-info {
+        flex-direction: column;
+        align-items: start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 主题切换按钮 -->
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <i class="fas fa-moon" id="theme-icon"></i>
+  </div>
+
+  <!-- 导航面包屑 -->
+  <div class="container">
+    <nav class="nav-breadcrumb">
+      <a href="../../index.html"><i class="fas fa-home"></i> 首页</a>
+      <span> / </span>
+      <a href="#">AI技术与生态</a>
+      <span> / DocETL平台解析</span>
+    </nav>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="fade-in">
+        <h1>DocETL：AI驱动的文档处理革命</h1>
+        <p>探索新一代ETL平台如何通过人工智能技术，彻底改变复杂文档处理的方式，为医疗、法律等领域提供前所未有的数据处理能力。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- 元信息 -->
+    <div class="meta-info fade-in">
+      <span><i class="fas fa-calendar"></i> 2025-01-23</span>
+      <span><i class="fas fa-tag"></i> AI技术与生态</span>
+      <span><i class="fas fa-clock"></i> 15分钟阅读</span>
+    </div>
+
+    <!-- 关键要点 -->
+    <section class="card fade-in">
+      <h2 class="section-title">核心亮点</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="feature-item">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-robot text-primary text-2xl mr-3"></i>
+            <h3 class="text-xl font-semibold">AI驱动的ETL</h3>
+          </div>
+          <p>DocETL是一个专为复杂文档处理设计的Python库，集成了最新的AI技术，特别适用于ETL工作流。</p>
+        </div>
+        <div class="feature-item">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-desktop text-primary text-2xl mr-3"></i>
+            <h3 class="text-xl font-semibold">交互式界面</h3>
+          </div>
+          <p>DocWrangler交互式UI允许用户通过实验不同提示并实时查看结果，逐步构建和优化管道。</p>
+        </div>
+        <div class="feature-item">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-hospital text-primary text-2xl mr-3"></i>
+            <h3 class="text-xl font-semibold">医疗应用</h3>
+          </div>
+          <p>在医疗记录分析中表现出色，能够提取药物信息、解决命名冲突并生成结构化报告。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 技术架构图 -->
+    <section class="card fade-in">
+      <h2 class="section-title">技术架构</h2>
+      <div class="mermaid">
+        graph TD
+          A["文档输入"] --> B["DocWrangler UI"]
+          A --> C["Python API"]
+          B --> D["提示实验"]
+          B --> E["实时预览"]
+          C --> F["生产管道"]
+          D --> G["代理重写"]
+          E --> G
+          F --> G
+          G --> H["优化算法"]
+          H --> I["结果输出"]
+          I --> J["医疗记录"]
+          I --> K["法律合同"]
+          I --> L["生物医学数据"]
+          
+          style A fill:#e1f5fe
+          style B fill:#f3e5f5
+          style C fill:#f3e5f5
+          style G fill:#e8f5e8
+          style H fill:#e8f5e8
+          style I fill:#fff3e0
+      </div>
+    </section>
+
+    <!-- 性能对比图表 -->
+    <section class="card fade-in">
+      <h2 class="section-title">性能优势对比</h2>
+      <p class="text-center mb-6 text-gray-600">DocETL在多个任务中相比传统方法的性能提升</p>
+      <div class="chart-container">
+        <canvas id="performanceChart"></canvas>
+      </div>
+    </section>
+
+    <!-- 详细功能介绍 -->
+    <section class="card fade-in">
+      <h2 class="section-title">核心功能详解</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6 mb-8">
+        <div class="card">
+          <h3 class="text-2xl font-semibold mb-4 flex items-center">
+            <i class="fas fa-magic text-primary mr-3"></i>
+            DocWrangler 交互式UI
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>实时提示实验和结果预览</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>可视化数据处理仪表板</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>逐步构建和优化管道</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>支持多种文档格式</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h3 class="text-2xl font-semibold mb-4 flex items-center">
+            <i class="fas fa-code text-primary mr-3"></i>
+            Python 生产包
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>命令行和Python代码运行</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>大规模自动化处理</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>生产级管道部署</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+              <span>支持并行处理</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 应用案例 -->
+    <section class="card fade-in">
+      <h2 class="section-title">实际应用案例</h2>
+      
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="card border-l-4 border-blue-500">
+          <h3 class="text-xl font-semibold mb-3 text-blue-600">医疗记录分析</h3>
+          <p class="mb-4">分析医生和患者对话，提取药物信息，解决相似药物名称问题，生成副作用和治疗用途总结。</p>
+          <div class="text-sm text-gray-600">
+            <i class="fas fa-chart-line mr-2"></i>
+            <span>准确率提升25-80%</span>
+          </div>
+        </div>
+        
+        <div class="card border-l-4 border-green-500">
+          <h3 class="text-xl font-semibold mb-3 text-green-600">法律合同处理</h3>
+          <p class="mb-4">自动化法律合同分析，提取关键条款，识别潜在风险，生成合规性报告。</p>
+          <div class="text-sm text-gray-600">
+            <i class="fas fa-shield-alt mr-2"></i>
+            <span>F1分数达到0.477</span>
+          </div>
+        </div>
+        
+        <div class="card border-l-4 border-purple-500">
+          <h3 class="text-xl font-semibold mb-3 text-purple-600">生物医学分类</h3>
+          <p class="mb-4">处理生物医学论文，进行自动分类和标注，支持大规模文献分析。</p>
+          <div class="text-sm text-gray-600">
+            <i class="fas fa-microscope mr-2"></i>
+            <span>RP@25达到0.371</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 技术创新 -->
+    <section class="card fade-in">
+      <h2 class="section-title">核心技术创新</h2>
+      
+      <div class="space-y-6">
+        <div class="card bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900 dark:to-blue-900">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-brain text-green-600 mr-3"></i>
+            代理式重写技术
+          </h3>
+          <p class="mb-4">引入13个新的重写指令，代理可以自动合成提示和参数，将复杂任务分解为多个简单步骤。</p>
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+            <code class="text-sm">
+              例如：将"总结不当行为实例" → "提取实例" + "生成总结"
+            </code>
+          </div>
+        </div>
+        
+        <div class="card bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900 dark:to-pink-900">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-search text-purple-600 mr-3"></i>
+            代理驱动的计划评估
+          </h3>
+          <p class="mb-4">代理合成任务特定的验证提示，无需用户提供示例，自动评估处理结果质量。</p>
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+            <code class="text-sm">
+              验证提示示例："这个总结是否包括所有不当行为的实例？"
+            </code>
+          </div>
+        </div>
+        
+        <div class="card bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900 dark:to-orange-900">
+          <h3 class="text-xl font-semibold mb-3 flex items-center">
+            <i class="fas fa-cogs text-yellow-600 mr-3"></i>
+            机会主义子计划优化
+          </h3>
+          <p class="mb-4">采用自上而下的搜索策略，分解易出错的操作，通过成对比较评估前6个计划。</p>
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+            <code class="text-sm">
+              优化流程：识别问题 → 分解任务 → 生成方案 → 评估比较 → 选择最优
+            </code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 成本效益分析 -->
+    <section class="card fade-in">
+      <h2 class="section-title">成本效益分析</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="chart-container">
+          <h3 class="text-xl font-semibold mb-4 text-center">运行成本对比</h3>
+          <canvas id="costChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3 class="text-xl font-semibold mb-4 text-center">处理时间对比</h3>
+          <canvas id="timeChart"></canvas>
+        </div>
+      </div>
+      <div class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900 rounded-lg">
+        <h4 class="font-semibold mb-2 flex items-center">
+          <i class="fas fa-lightbulb text-yellow-600 mr-2"></i>
+          成本优化策略
+        </h4>
+        <p class="text-sm">
+          优化成本约为100美元，但可通过处理数十万文档摊销。随着模型成本降低（如GPT-4o-mini比之前便宜100倍），优化成本将进一步减少。
+        </p>
+      </div>
+    </section>
+
+    <!-- 进一步阅读 -->
+    <section class="card fade-in">
+      <h2 class="section-title">延伸阅读资源</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div class="card border-l-4 border-blue-500">
+            <h3 class="font-semibold mb-2">
+              <i class="fas fa-book mr-2 text-blue-600"></i>
+              官方文档
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">完整的安装指南、使用教程和API文档</p>
+            <a href="https://ucbepic.github.io/docetl/" class="text-blue-600 hover:underline text-sm">
+              <i class="fas fa-external-link-alt mr-1"></i>
+              访问官方文档
+            </a>
+          </div>
+          
+          <div class="card border-l-4 border-green-500">
+            <h3 class="font-semibold mb-2">
+              <i class="fab fa-github mr-2 text-green-600"></i>
+              GitHub 仓库
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">开源代码、开发指南和社区贡献</p>
+            <a href="https://github.com/ucbepic/docetl" class="text-green-600 hover:underline text-sm">
+              <i class="fas fa-external-link-alt mr-1"></i>
+              查看源代码
+            </a>
+          </div>
+          
+          <div class="card border-l-4 border-purple-500">
+            <h3 class="font-semibold mb-2">
+              <i class="fas fa-file-alt mr-2 text-purple-600"></i>
+              技术论文
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">详细的技术实现和评估结果</p>
+            <a href="https://arxiv.org/abs/2410.12189" class="text-purple-600 hover:underline text-sm">
+              <i class="fas fa-external-link-alt mr-1"></i>
+              阅读ArXiv论文
+            </a>
+          </div>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="card border-l-4 border-orange-500">
+            <h3 class="font-semibold mb-2">
+              <i class="fas fa-download mr-2 text-orange-600"></i>
+              PyPI 安装
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">快速安装和环境配置指南</p>
+            <a href="https://pypi.org/project/docetl/" class="text-orange-600 hover:underline text-sm">
+              <i class="fas fa-external-link-alt mr-1"></i>
+              查看安装包
+            </a>
+          </div>
+          
+          <div class="card border-l-4 border-red-500">
+            <h3 class="font-semibold mb-2">
+              <i class="fas fa-globe mr-2 text-red-600"></i>
+              项目官网
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">项目概览和使用案例展示</p>
+            <a href="https://www.docetl.org/" class="text-red-600 hover:underline text-sm">
+              <i class="fas fa-external-link-alt mr-1"></i>
+              访问官网
+            </a>
+          </div>
+          
+          <div class="card border-l-4 border-indigo-500">
+            <h3 class="font-semibold mb-2">
+              <i class="fab fa-twitter mr-2 text-indigo-600"></i>
+              社区讨论
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">最新动态和用户反馈</p>
+            <a href="https://x.com/mdancho84/status/1933124741247684990" class="text-indigo-600 hover:underline text-sm">
+              <i class="fas fa-external-link-alt mr-1"></i>
+              查看讨论
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 作者与版权信息 -->
+  <footer class="bg-gray-100 dark:bg-gray-800 mt-16 py-8">
+    <div class="container">
+      <div class="text-center">
+        <p class="mb-2"><strong>作者姓名:</strong> 季晓康</p>
+        <p class="mb-2"><strong>微信公众号:</strong> 凿壁</p>
+        <p><strong>版权信息:</strong> 国家健康医疗大数据研究院</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 全局变量存储图表实例
+    let chartInstances = {};
+
+    // 主题切换功能
+    function toggleTheme() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('theme-icon');
+      
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        themeIcon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'light');
+      } else {
+        html.classList.add('dark');
+        themeIcon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'dark');
+      }
+      
+      // 更新所有可视化主题
+      updateVisualizationThemes();
+    }
+
+    // 初始化主题
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('theme-icon').className = 'fas fa-sun';
+      }
+    }
+
+    // 获取当前主题的颜色
+    function getThemeColors() {
+      return {
+        background: getComputedStyle(document.documentElement).getPropertyValue('--background').trim(),
+        foreground: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim(),
+        primary: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+        chart1: getComputedStyle(document.documentElement).getPropertyValue('--chart-1').trim(),
+        chart2: getComputedStyle(document.documentElement).getPropertyValue('--chart-2').trim(),
+        chart3: getComputedStyle(document.documentElement).getPropertyValue('--chart-3').trim(),
+        chart4: getComputedStyle(document.documentElement).getPropertyValue('--chart-4').trim(),
+        chart5: getComputedStyle(document.documentElement).getPropertyValue('--chart-5').trim(),
+        border: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+        muted: getComputedStyle(document.documentElement).getPropertyValue('--muted-foreground').trim()
+      };
+    }
+
+    // 初始化性能对比图表
+    function initPerformanceChart() {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      const colors = getThemeColors();
+      
+      const data = {
+        labels: ['法律合同分析', '游戏评论分析', '解密文章分析', '生物医学分类'],
+        datasets: [
+          {
+            label: 'DocETL (优化后)',
+            data: [0.477, 0.650, 1.000, 0.371],
+            backgroundColor: colors.chart1,
+            borderColor: colors.chart1,
+            borderWidth: 2
+          },
+          {
+            label: 'DocETL (未优化)',
+            data: [0.379, 0.450, 0.800, 0.250],
+            backgroundColor: colors.chart2,
+            borderColor: colors.chart2,
+            borderWidth: 2
+          },
+          {
+            label: '传统方法',
+            data: [0.190, 0.300, 0.600, 0.180],
+            backgroundColor: colors.chart3,
+            borderColor: colors.chart3,
+            borderWidth: 2
+          }
+        ]
+      };
+
+      const config = {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 1.0,
+              ticks: {
+                color: colors.foreground,
+                callback: function(value) {
+                  return (value * 100).toFixed(0) + '%';
+                }
+              },
+              grid: {
+                color: colors.border
+              }
+            },
+            x: {
+              ticks: {
+                color: colors.foreground
+              },
+              grid: {
+                color: colors.border
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.foreground
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + (context.parsed.y * 100).toFixed(1) + '%';
+                }
+              }
+            }
+          }
+        }
+      };
+
+      chartInstances.performanceChart = new Chart(ctx, config);
+    }
+
+    // 初始化成本对比图表
+    function initCostChart() {
+      const ctx = document.getElementById('costChart').getContext('2d');
+      const colors = getThemeColors();
+      
+      const data = {
+        labels: ['DocETL (优化后)', 'DocETL (未优化)', 'LOTUS', '传统方法'],
+        datasets: [{
+          label: '成本 ($)',
+          data: [1.46, 0.08, 0.07, 0.00],
+          backgroundColor: [colors.chart1, colors.chart2, colors.chart3, colors.chart4],
+          borderColor: [colors.chart1, colors.chart2, colors.chart3, colors.chart4],
+          borderWidth: 2
+        }]
+      };
+
+      const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.foreground
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ': $' + context.parsed.toFixed(2);
+                }
+              }
+            }
+          }
+        }
+      };
+
+      chartInstances.costChart = new Chart(ctx, config);
+    }
+
+    // 初始化时间对比图表
+    function initTimeChart() {
+      const ctx = document.getElementById('timeChart').getContext('2d');
+      const colors = getThemeColors();
+      
+      const data = {
+        labels: ['DocETL (优化后)', 'DocETL (未优化)', 'LOTUS', '传统方法'],
+        datasets: [{
+          label: '运行时间 (秒)',
+          data: [180.30, 23.43, 28.12, 217.99],
+          backgroundColor: colors.chart2,
+          borderColor: colors.chart1,
+          borderWidth: 2,
+          fill: false
+        }]
+      };
+
+      const config = {
+        type: 'line',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: colors.foreground,
+                callback: function(value) {
+                  return value + 's';
+                }
+              },
+              grid: {
+                color: colors.border
+              }
+            },
+            x: {
+              ticks: {
+                color: colors.foreground
+              },
+              grid: {
+                color: colors.border
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.foreground
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + '秒';
+                }
+              }
+            }
+          }
+        }
+      };
+
+      chartInstances.timeChart = new Chart(ctx, config);
+    }
+
+    // 更新所有可视化主题
+    function updateVisualizationThemes() {
+      // 更新 Mermaid 主题
+      const isDark = document.documentElement.classList.contains('dark');
+      mermaid.initialize({
+        theme: isDark ? 'dark' : 'base',
+        themeVariables: {
+          primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+          primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim(),
+          primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+          lineColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+          secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(),
+          tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+        }
+      });
+
+      // 更新所有 Chart.js 实例
+      const colors = getThemeColors();
+      
+      Object.keys(chartInstances).forEach(chartKey => {
+        const chart = chartInstances[chartKey];
+        
+        // 更新图表颜色
+        if (chart.options.scales) {
+          if (chart.options.scales.y) {
+            chart.options.scales.y.ticks.color = colors.foreground;
+            chart.options.scales.y.grid.color = colors.border;
+          }
+          if (chart.options.scales.x) {
+            chart.options.scales.x.ticks.color = colors.foreground;
+            chart.options.scales.x.grid.color = colors.border;
+          }
+        }
+        
+        if (chart.options.plugins && chart.options.plugins.legend) {
+          chart.options.plugins.legend.labels.color = colors.foreground;
+        }
+        
+        // 更新数据集颜色
+        if (chartKey === 'performanceChart') {
+          chart.data.datasets[0].backgroundColor = colors.chart1;
+          chart.data.datasets[0].borderColor = colors.chart1;
+          chart.data.datasets[1].backgroundColor = colors.chart2;
+          chart.data.datasets[1].borderColor = colors.chart2;
+          chart.data.datasets[2].backgroundColor = colors.chart3;
+          chart.data.datasets[2].borderColor = colors.chart3;
+        } else if (chartKey === 'costChart') {
+          chart.data.datasets[0].backgroundColor = [colors.chart1, colors.chart2, colors.chart3, colors.chart4];
+          chart.data.datasets[0].borderColor = [colors.chart1, colors.chart2, colors.chart3, colors.chart4];
+        } else if (chartKey === 'timeChart') {
+          chart.data.datasets[0].backgroundColor = colors.chart2;
+          chart.data.datasets[0].borderColor = colors.chart1;
+        }
+        
+        chart.update();
+      });
+    }
+
+    // 添加滚动动画
+    function addScrollAnimations() {
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.animationDelay = '0.1s';
+            entry.target.classList.add('fade-in');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.fade-in').forEach(el => {
+        observer.observe(el);
+      });
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      initTheme();
+      
+      // 初始化 Mermaid
+      const isDark = document.documentElement.classList.contains('dark');
+      mermaid.initialize({
+        theme: isDark ? 'dark' : 'base',
+        themeVariables: {
+          primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+          primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim()
+        }
+      });
+      
+      // 初始化图表
+      setTimeout(() => {
+        initPerformanceChart();
+        initCostChart();
+        initTimeChart();
+      }, 100);
+      
+      // 添加滚动动画
+      addScrollAnimations();
+    });
+  </script>
+</body>
+</html> 

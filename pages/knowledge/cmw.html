@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMW框架：医疗健康领域大模型质量提升路径研究</title>
+    <meta name="publish-date" content="2025-05-23"> <!-- 请手动替换为当前服务器日期 -->
+    <meta name="category" content="knowledge">
+    <meta name="description" content="本文提出"CMW"框架——由Context Engineering（上下文工程）、Model Fit（模型适配）、Workflow Design（流程设计）三要素组成，旨在系统性提升大模型在医疗场景下的响应准确性、推理可靠性与结果稳定性。">
+    <meta name="keywords" content="CMW框架, 大语言模型, LLM, 医疗健康, 上下文工程, 模型适配, 流程设计, AI质量提升">
+    
+    <!-- 外部资源 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --background: rgb(255, 249, 245);
+            --foreground: rgb(61, 52, 54);
+            --card: rgb(255, 255, 255);
+            --card-foreground: rgb(61, 52, 54);
+            --primary: rgb(255, 126, 95);
+            --primary-foreground: rgb(255, 255, 255);
+            --secondary: rgb(255, 237, 234);
+            --secondary-foreground: rgb(179, 83, 64);
+            --muted: rgb(255, 240, 235);
+            --muted-foreground: rgb(120, 113, 108);
+            --accent: rgb(254, 180, 123);
+            --accent-foreground: rgb(61, 52, 54);
+            --border: rgb(255, 224, 214);
+            --chart-1: rgb(255, 126, 95);
+            --chart-2: rgb(254, 180, 123);
+            --chart-3: rgb(255, 202, 167);
+            --chart-4: rgb(255, 173, 143);
+            --chart-5: rgb(206, 106, 87);
+        }
+
+        .dark {
+            --background: rgb(42, 32, 36);
+            --foreground: rgb(242, 233, 228);
+            --card: rgb(57, 47, 53);
+            --card-foreground: rgb(242, 233, 228);
+            --primary: rgb(255, 126, 95);
+            --primary-foreground: rgb(255, 255, 255);
+            --secondary: rgb(70, 58, 65);
+            --secondary-foreground: rgb(242, 233, 228);
+            --muted: rgb(57, 47, 53);
+            --muted-foreground: rgb(215, 198, 188);
+            --accent: rgb(254, 180, 123);
+            --accent-foreground: rgb(42, 32, 36);
+            --border: rgb(70, 58, 65);
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+            font-family: "Noto Sans SC", sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .dark .section-card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .dark .theme-toggle {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: var(--primary-foreground);
+            transform: scale(1.1);
+        }
+
+        h1, h2, h3 {
+            font-family: "Noto Serif SC", serif;
+        }
+
+        /* 深色模式下的特殊样式 */
+        .dark .hero-gradient {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+
+        /* 确保Canvas图表在深色模式下正常显示 */
+        .dark canvas {
+            background: transparent;
+        }
+
+        /* 移动端菜单样式 */
+        #mobile-menu {
+            background: var(--card);
+            border-color: var(--border);
+        }
+
+        .dark #mobile-menu {
+            background: var(--card);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 统计卡片数字样式 */
+        .stat-card [data-count] {
+            font-weight: 700;
+            font-size: 2rem;
+        }
+
+        /* 返回顶部按钮深色模式 */
+        .dark #backToTop {
+            background: var(--primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--muted);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+
+        /* 链接悬停效果 */
+        a {
+            transition: all 0.3s ease;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .hero-gradient {
+                min-height: 90vh;
+            }
+            
+            #hero-title {
+                font-size: 3rem;
+            }
+            
+            #hero-subtitle {
+                font-size: 1.25rem;
+            }
+            
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="theme-icon"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <!-- 背景装饰SVG -->
+            <svg class="w-full h-full" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+                        <path d="M 50 0 L 0 0 0 50" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)"/>
+                <circle cx="200" cy="150" r="5" fill="currentColor" opacity="0.6">
+                    <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="800" cy="250" r="3" fill="currentColor" opacity="0.4">
+                    <animate attributeName="opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="600" cy="600" r="4" fill="currentColor" opacity="0.5">
+                    <animate attributeName="opacity" values="0.5;0.9;0.5" dur="2.5s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+        
+        <div class="container mx-auto px-6 text-center text-white relative z-10">
+            <div class="hero-content">
+                <h1 class="text-5xl md:text-7xl font-bold mb-6" id="hero-title">
+                    CMW框架
+                </h1>
+                <p class="text-xl md:text-2xl mb-8" id="hero-subtitle">
+                    医疗健康领域大模型质量提升路径研究
+                </p>
+                <div class="flex justify-center space-x-8 mb-12" id="hero-stats">
+                    <div class="glass-card px-6 py-4 rounded-lg">
+                        <div class="text-3xl font-bold">3</div>
+                        <div class="text-sm">核心要素</div>
+                    </div>
+                    <div class="glass-card px-6 py-4 rounded-lg">
+                        <div class="text-3xl font-bold">10+</div>
+                        <div class="text-sm">主流模型</div>
+                    </div>
+                    <div class="glass-card px-6 py-4 rounded-lg">
+                        <div class="text-3xl font-bold">2025</div>
+                        <div class="text-sm">最新研究</div>
+                    </div>
+                </div>
+                <div id="hero-cta">
+                    <button onclick="scrollToContent()" class="bg-white text-gray-800 px-8 py-3 rounded-full font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-arrow-down mr-2"></i>探索框架
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 滚动指示器 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-white text-2xl opacity-70"></i>
+        </div>
+    </section>
+
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-200 dark:bg-gray-900/90 dark:border-gray-700">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="font-bold text-xl"><a href="../../index.html" class="hover:text-orange-500 transition-colors">CMW框架</a></div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="../../index.html" class="hover:text-orange-500 transition-colors">返回首页</a>
+                    <a href="#overview" class="hover:text-orange-500 transition-colors">框架概述</a>
+                    <a href="#context" class="hover:text-orange-500 transition-colors">上下文工程</a>
+                    <a href="#model" class="hover:text-orange-500 transition-colors">模型适配</a>
+                    <a href="#workflow" class="hover:text-orange-500 transition-colors">流程设计</a>
+                    <a href="#challenges" class="hover:text-orange-500 transition-colors">技术挑战</a>
+                    <a href="#comparison" class="hover:text-orange-500 transition-colors">模型对比</a>
+                    <a href="#ethics" class="hover:text-orange-500 transition-colors">伦理挑战</a>
+                    <a href="#resources" class="hover:text-orange-500 transition-colors">延伸阅读</a>
+                    <a href="#conclusion" class="hover:text-orange-500 transition-colors">研究结论</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-orange-500 transition-colors">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 py-4">
+                <div class="flex flex-col space-y-3">
+                    <a href="../../index.html" class="block px-4 py-2 hover:text-orange-500 transition-colors">返回首页</a>
+                    <a href="#overview" class="hover:text-orange-500 transition-colors">框架概述</a>
+                    <a href="#context" class="hover:text-orange-500 transition-colors">上下文工程</a>
+                    <a href="#model" class="hover:text-orange-500 transition-colors">模型适配</a>
+                    <a href="#workflow" class="hover:text-orange-500 transition-colors">流程设计</a>
+                    <a href="#challenges" class="hover:text-orange-500 transition-colors">技术挑战</a>
+                    <a href="#comparison" class="hover:text-orange-500 transition-colors">模型对比</a>
+                    <a href="#ethics" class="hover:text-orange-500 transition-colors">伦理挑战</a>
+                    <a href="#resources" class="hover:text-orange-500 transition-colors">延伸阅读</a>
+                    <a href="#conclusion" class="hover:text-orange-500 transition-colors">研究结论</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-6 py-12" id="content">
+        <div class="mb-8 p-4 border-l-4 border-orange-500 bg-orange-50 dark:bg-gray-800 dark:border-orange-400 rounded-md">
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+                <span class="font-semibold">发布日期:</span> 2025-05-23 | <span class="font-semibold">分类:</span> 知识报告
+            </p>
+        </div>
+        <!-- 框架概述 -->
+        <section id="overview" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">CMW框架概述</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    CMW框架由Context Engineering（上下文工程）、Model Fit（模型适配）、Workflow Design（流程设计）三要素组成，
+                    旨在系统性提升大模型在医疗场景下的响应准确性、推理可靠性与结果稳定性。
+                </p>
+            </div>
+
+            <!-- CMW三要素可视化 -->
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="section-card p-8 rounded-xl hover:shadow-lg transition-all duration-300 cmw-card">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-cogs text-orange-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-orange-500">Context Engineering</h3>
+                        <p class="text-gray-600">上下文工程</p>
+                    </div>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>检索增强生成（RAG）</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>思维链提示（CoT）</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>角色扮演提示</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>自我反思机制</li>
+                    </ul>
+                </div>
+
+                <div class="section-card p-8 rounded-xl hover:shadow-lg transition-all duration-300 cmw-card">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-brain text-blue-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-blue-500">Model Fit</h3>
+                        <p class="text-gray-600">模型适配</p>
+                    </div>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>专业知识覆盖度</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>推理链条完整性</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>安全稳定性</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>HIPAA合规性</li>
+                    </ul>
+                </div>
+
+                <div class="section-card p-8 rounded-xl hover:shadow-lg transition-all duration-300 cmw-card">
+                    <div class="text-center mb-6">
+                        <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-project-diagram text-purple-500 text-2xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-purple-500">Workflow Design</h3>
+                        <p class="text-gray-600">流程设计</p>
+                    </div>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>多Agent协同</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>工具增强Agent</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>专家监督机制</li>
+                        <li><i class="fas fa-check text-green-500 mr-2"></i>人在回路设计</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- CMW框架流程图 -->
+            <div class="section-card p-8 rounded-xl">
+                <h3 class="text-2xl font-bold text-center mb-8">CMW框架工作流程</h3>
+                <div class="cmw-flow-diagram">
+                    <svg viewBox="0 0 800 400" class="w-full h-auto">
+                        <!-- 背景 -->
+                        <defs>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:rgb(255,126,95);stop-opacity:0.1" />
+                                <stop offset="100%" style="stop-color:rgb(254,180,123);stop-opacity:0.1" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Context Engineering -->
+                        <rect x="50" y="50" width="150" height="80" rx="10" fill="url(#grad1)" stroke="rgb(255,126,95)" stroke-width="2"/>
+                        <text x="125" y="85" text-anchor="middle" class="text-sm font-medium">Context Engineering</text>
+                        <text x="125" y="105" text-anchor="middle" class="text-xs">上下文工程</text>
+                        
+                        <!-- Model Fit -->
+                        <rect x="325" y="50" width="150" height="80" rx="10" fill="url(#grad1)" stroke="rgb(254,180,123)" stroke-width="2"/>
+                        <text x="400" y="85" text-anchor="middle" class="text-sm font-medium">Model Fit</text>
+                        <text x="400" y="105" text-anchor="middle" class="text-xs">模型适配</text>
+                        
+                        <!-- Workflow Design -->
+                        <rect x="600" y="50" width="150" height="80" rx="10" fill="url(#grad1)" stroke="rgb(255,202,167)" stroke-width="2"/>
+                        <text x="675" y="85" text-anchor="middle" class="text-sm font-medium">Workflow Design</text>
+                        <text x="675" y="105" text-anchor="middle" class="text-xs">流程设计</text>
+                        
+                        <!-- 箭头 -->
+                        <path d="M 200 90 Q 250 90 275 90" stroke="rgb(255,126,95)" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                        <path d="M 475 90 Q 525 90 550 90" stroke="rgb(254,180,123)" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+                        
+                        <!-- 输出 -->
+                        <rect x="250" y="250" width="300" height="100" rx="15" fill="rgba(255,126,95,0.1)" stroke="rgb(255,126,95)" stroke-width="2"/>
+                        <text x="400" y="280" text-anchor="middle" class="text-lg font-bold">高质量医疗AI系统</text>
+                        <text x="400" y="300" text-anchor="middle" class="text-sm">准确性 • 可靠性 • 安全性</text>
+                        <text x="400" y="320" text-anchor="middle" class="text-sm">可解释性 • 合规性</text>
+                        
+                        <!-- 反馈箭头 -->
+                        <path d="M 400 250 Q 400 200 400 150" stroke="rgb(255,126,95)" stroke-width="2" fill="none" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+                        <text x="420" y="200" class="text-xs">持续优化</text>
+                        
+                        <!-- 箭头标记 -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="rgb(255,126,95)" />
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Context Engineering 详细介绍 -->
+        <section id="context" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">上下文工程</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    通过提示词优化、角色扮演、检索增强（RAG）、知识注入等手段构造高质量输入内容，
+                    是对模型"认知前提"的工程化管控。
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <!-- RAG技术 -->
+                <div class="section-card p-8 rounded-xl context-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-search text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">检索增强生成（RAG）</h3>
+                            <p class="text-gray-600">Contextual RAG</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                            <span>连接最新医学指南、研究文献和EHR数据，弥补LLM知识陈旧问题</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-shield-alt text-blue-500 mr-2 mt-1"></i>
+                            <span>显著减少"幻觉"信息，提高事实准确性</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-link text-purple-500 mr-2 mt-1"></i>
+                            <span>提供可验证的源文档引用，增强透明度和可信度</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- CoT提示 -->
+                <div class="section-card p-8 rounded-xl context-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-sitemap text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">思维链提示（CoT）</h3>
+                            <p class="text-gray-600">Chain-of-Thought Prompting</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-brain text-pink-500 mr-2 mt-1"></i>
+                            <span>引导LLM进行一步一步的推理过程</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-stethoscope text-red-500 mr-2 mt-1"></i>
+                            <span>对复杂医学诊断或治疗计划制定至关重要</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-lightbulb text-yellow-500 mr-2 mt-1"></i>
+                            <span>显著提升复杂推理能力，输出更具逻辑性</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 角色扮演 -->
+                <div class="section-card p-8 rounded-xl context-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-user-md text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">角色扮演提示</h3>
+                            <p class="text-gray-600">Role Prompting</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-graduation-cap text-indigo-500 mr-2 mt-1"></i>
+                            <span>为LLM分配特定医疗专家角色</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-comments text-green-500 mr-2 mt-1"></i>
+                            <span>引导模型产生更具领域特异性的回答</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-chart-line text-orange-500 mr-2 mt-1"></i>
+                            <span>在诊断推理任务中被证明有效</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 自我反思 -->
+                <div class="section-card p-8 rounded-xl context-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-sync-alt text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">自我反思机制</h3>
+                            <p class="text-gray-600">Self-Reflection</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start">
+                            <i class="fas fa-eye text-cyan-500 mr-2 mt-1"></i>
+                            <span>指示LLM回顾和优化自身输出</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-double text-green-500 mr-2 mt-1"></i>
+                            <span>增强医学信息的准确性和可靠性</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 mr-2 mt-1"></i>
+                            <span>在错误可能导致严重后果的医疗领域尤为重要</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Fit 详细介绍 -->
+        <section id="model" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">模型适配</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    模型本身的能力决定了输出的理论上限。关键在于根据任务目标选择最合适的模型并进行针对性评估与微调。
+                </p>
+            </div>
+
+            <!-- 模型评估标准 -->
+            <div class="section-card p-8 rounded-xl mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">医疗领域模型适配关键标准</h3>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="text-center model-criterion">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-book-medical text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">专业知识覆盖度</h4>
+                        <p class="text-sm text-gray-600">医学术语、疾病分类、标准治疗方案理解能力</p>
+                    </div>
+                    <div class="text-center model-criterion">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-route text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">推理链条完整性</h4>
+                        <p class="text-sm text-gray-600">临床逻辑推断、鉴别诊断能力</p>
+                    </div>
+                    <div class="text-center model-criterion">
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">安全稳定性</h4>
+                        <p class="text-sm text-gray-600">高准确性、强安全机制、性能稳定可靠</p>
+                    </div>
+                    <div class="text-center model-criterion">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-balance-scale text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">偏见缓解</h4>
+                        <p class="text-sm text-gray-600">减少人口统计学相关偏见，确保公平性</p>
+                    </div>
+                    <div class="text-center model-criterion">
+                        <div class="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-lock text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">HIPAA合规性</h4>
+                        <p class="text-sm text-gray-600">严格遵守医疗数据隐私法规</p>
+                    </div>
+                    <div class="text-center model-criterion">
+                        <div class="w-16 h-16 bg-gradient-to-br from-teal-400 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-server text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2">本地部署能力</h4>
+                        <p class="text-sm text-gray-600">支持本地化部署，保护数据隐私</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Workflow Design 详细介绍 -->
+        <section id="workflow" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">流程设计</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    通过Agent机制、多步推理链设计、工具调用、角色协作等手段，
+                    提升模型处理复杂医疗任务的能力。
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <!-- 多Agent协同 -->
+                <div class="section-card p-8 rounded-xl workflow-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-indigo-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">多Agent协同</h3>
+                            <p class="text-gray-600">Multi-Agent Collaboration</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">
+                        多个专业化AI智能体协作解决复杂医疗问题，不同智能体分别负责信息提取、推理决策、文书撰写等专门任务。
+                    </p>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-xs font-semibold text-gray-700 mb-2">协同模式示例：</div>
+                        <div class="space-y-1 text-xs">
+                            <div class="flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-2"></span>诊断Agent</div>
+                            <div class="flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>治疗规划Agent</div>
+                            <div class="flex items-center"><span class="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>患者沟通Agent</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工具增强Agent -->
+                <div class="section-card p-8 rounded-xl workflow-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-tools text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">工具增强Agent</h3>
+                            <p class="text-gray-600">Tool-Enhanced Agent</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">
+                        智能体能够调用数据库、文献、图像模型等外部资源，并验证工具输出的正确性，扩展Agent能力边界。
+                    </p>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-xs font-semibold text-gray-700 mb-2">可调用工具：</div>
+                        <div class="grid grid-cols-2 gap-1 text-xs">
+                            <div class="flex items-center"><i class="fas fa-database text-blue-500 mr-1"></i>医学数据库</div>
+                            <div class="flex items-center"><i class="fas fa-image text-green-500 mr-1"></i>医学影像</div>
+                            <div class="flex items-center"><i class="fas fa-calculator text-orange-500 mr-1"></i>医学计算器</div>
+                            <div class="flex items-center"><i class="fas fa-file-alt text-purple-500 mr-1"></i>EHR系统</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 专家监督机制 -->
+                <div class="section-card p-8 rounded-xl workflow-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-user-check text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">专家监督机制</h3>
+                            <p class="text-gray-600">Expert Supervision</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">
+                        在关键决策点引入人类医生或验证Agent进行审校，确保患者安全，符合医疗伦理要求。
+                    </p>
+                    <div class="flex items-center justify-between bg-gradient-to-r from-red-50 to-red-100 p-4 rounded-lg">
+                        <div class="text-xs">
+                            <div class="font-semibold text-red-700">Human-in-the-Loop</div>
+                            <div class="text-red-600">人类专家最终决策</div>
+                        </div>
+                        <i class="fas fa-user-md text-red-500 text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- 错误检测与恢复 -->
+                <div class="section-card p-8 rounded-xl workflow-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-yellow-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">错误检测与恢复</h3>
+                            <p class="text-gray-600">Error Detection & Recovery</p>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">
+                        智能体应能识别自身或工具的错误，并具备回溯、重试或寻求人类帮助的恢复策略。
+                    </p>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-xs font-semibold text-yellow-800 mb-2">恢复策略：</div>
+                        <div class="space-y-1 text-xs text-yellow-700">
+                            <div>• 自动错误检测</div>
+                            <div>• 回溯重新生成</div>
+                            <div>• 寻求人工干预</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技术挑战与限制分析 -->
+        <section id="challenges" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">技术挑战与限制分析</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    深入分析CMW框架各组件在实际医疗应用中面临的技术挑战和局限性
+                </p>
+            </div>
+
+            <!-- 上下文工程技术对比表 -->
+            <div class="section-card p-8 rounded-xl mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">上下文工程技术详细对比</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse border border-gray-300">
+                        <thead class="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">技术类型</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">典型医疗应用</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">核心优势</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">主要局限性</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">适用模型类型</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-900">
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">零样本提示</td>
+                                <td class="border border-gray-300 px-4 py-3">简单医疗问答、基本术语解释</td>
+                                <td class="border border-gray-300 px-4 py-3">快速部署，无需额外训练数据</td>
+                                <td class="border border-gray-300 px-4 py-3">对复杂任务效果有限，高度依赖模型预训练知识</td>
+                                <td class="border border-gray-300 px-4 py-3">通用型、医学微调型</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">少样本提示</td>
+                                <td class="border border-gray-300 px-4 py-3">临床记录摘要、生成合成病历、特定格式报告</td>
+                                <td class="border border-gray-300 px-4 py-3">相比零样本能处理更复杂任务，引导输出风格</td>
+                                <td class="border border-gray-300 px-4 py-3">示例质量关键，可能引入偏见，增加提示长度</td>
+                                <td class="border border-gray-300 px-4 py-3">通用型、医学微调型</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">思维链提示 (CoT)</td>
+                                <td class="border border-gray-300 px-4 py-3">复杂病例诊断、治疗方案规划、医学影像解读</td>
+                                <td class="border border-gray-300 px-4 py-3">显著提升复杂推理能力，输出更具逻辑性和可解释性</td>
+                                <td class="border border-gray-300 px-4 py-3">可能增加响应延迟，提示设计复杂</td>
+                                <td class="border border-gray-300 px-4 py-3">具有较强推理能力的LLM</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">角色扮演提示</td>
+                                <td class="border border-gray-300 px-4 py-3">模拟医患对话、专科咨询意见、患者教育</td>
+                                <td class="border border-gray-300 px-4 py-3">引导输出更符合特定领域的语气和知识深度</td>
+                                <td class="border border-gray-300 px-4 py-3">角色设定需精准，否则可能导致不准确输出</td>
+                                <td class="border border-gray-300 px-4 py-3">通用型、医学微调型</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">检索增强生成 (RAG)</td>
+                                <td class="border border-gray-300 px-4 py-3">临床决策支持、药物相互作用查询、最新研究整合</td>
+                                <td class="border border-gray-300 px-4 py-3">提供最新可验证信息，减少幻觉，提高准确性</td>
+                                <td class="border border-gray-300 px-4 py-3">知识库质量关键，增加系统复杂性和成本</td>
+                                <td class="border border-gray-300 px-4 py-3">通用型、医学微调型（与外部知识库结合）</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 模型适配评估矩阵 -->
+            <div class="section-card p-8 rounded-xl mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">主流LLM医疗适配能力评估矩阵</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse border border-gray-300">
+                        <thead class="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">LLM模型系列</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center font-medium">上下文适应</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center font-medium">医疗核心能力</th>
+                                <th class="border border-gray-300 px-4 py-3 text-center font-medium">流程适配性</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">合规安全说明</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-900">
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">OpenAI GPT-4.x/o系列</td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>较高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">提供HIPAA BAA，持续安全测试</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">Anthropic Claude 3.x/4.x</td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>中高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>较高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">宪法AI设计，强调安全性和减少有害输出</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">Google Med-PaLM 2/MedGemma</td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>较高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-1"></span>高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>较高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">Google Cloud符合HIPAA，专为医疗优化</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">DeepSeek R1/V3系列</td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>中高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>中高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>中高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">开源特性支持本地部署，有利隐私保护</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">通义千问 Qwen系列</td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>中高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-1"></span>中
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3 text-center">
+                                    <span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-1"></span>中高
+                                </td>
+                                <td class="border border-gray-300 px-4 py-3">国内代表性模型，中文医疗语境优势</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-4 text-sm text-gray-600">
+                    <p><strong>评估等级说明：</strong></p>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                        <div class="flex items-center"><span class="inline-block w-3 h-3 bg-green-500 rounded-full mr-2"></span>高</div>
+                        <div class="flex items-center"><span class="inline-block w-3 h-3 bg-green-400 rounded-full mr-2"></span>较高/中高</div>
+                        <div class="flex items-center"><span class="inline-block w-3 h-3 bg-yellow-400 rounded-full mr-2"></span>中</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 流程设计原则表 -->
+            <div class="section-card p-8 rounded-xl">
+                <h3 class="text-2xl font-bold mb-6 text-center">医疗智能体流程设计核心原则</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse border border-gray-300">
+                        <thead class="bg-gray-50 dark:bg-gray-800">
+                            <tr>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">设计原则</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">医疗应用示例</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">质量影响</th>
+                                <th class="border border-gray-300 px-4 py-3 text-left font-medium">利用的LLM能力</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white dark:bg-gray-900">
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">清晰目标定义与分解</td>
+                                <td class="border border-gray-300 px-4 py-3">诊断辅助：症状提取→病史分析→检查建议→文献检索→诊断排序</td>
+                                <td class="border border-gray-300 px-4 py-3">提高任务准确性，减少目标模糊错误</td>
+                                <td class="border border-gray-300 px-4 py-3">规划能力、任务理解</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">稳健规划与推理</td>
+                                <td class="border border-gray-300 px-4 py-3">治疗方案：根据最新检查结果动态调整治疗步骤</td>
+                                <td class="border border-gray-300 px-4 py-3">确保决策逻辑连贯性和适应性</td>
+                                <td class="border border-gray-300 px-4 py-3">思维链推理、逻辑演绎</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">经验证的工具集成</td>
+                                <td class="border border-gray-300 px-4 py-3">药物检查：调用数据库API，交叉验证，标记高风险结果</td>
+                                <td class="border border-gray-300 px-4 py-3">扩展能力，确保外部信息准确性</td>
+                                <td class="border border-gray-300 px-4 py-3">函数调用、信息整合</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">全面记忆管理</td>
+                                <td class="border border-gray-300 px-4 py-3">慢性病管理：记住患者历史咨询和偏好，提供个性化建议</td>
+                                <td class="border border-gray-300 px-4 py-3">提高个性化和连续性护理体验</td>
+                                <td class="border border-gray-300 px-4 py-3">上下文窗口管理、知识检索</td>
+                            </tr>
+                            <tr>
+                                <td class="border border-gray-300 px-4 py-3 font-medium">错误检测与恢复</td>
+                                <td class="border border-gray-300 px-4 py-3">EHR摘要：发现逻辑矛盾时重新生成或标记人工审核</td>
+                                <td class="border border-gray-300 px-4 py-3">增强系统韧性，减少错误传播</td>
+                                <td class="border border-gray-300 px-4 py-3">自我批判、不确定性评估</td>
+                            </tr>
+                            <tr class="bg-gray-50 dark:bg-gray-800">
+                                <td class="border border-gray-300 px-4 py-3 font-medium">人类监督机制</td>
+                                <td class="border border-gray-300 px-4 py-3">影像辅助：AI标记可疑发现，最终诊断由放射科医生确认</td>
+                                <td class="border border-gray-300 px-4 py-3">保障患者安全，确保专家主导</td>
+                                <td class="border border-gray-300 px-4 py-3">人机协作、指令理解</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模型对比数据可视化 -->
+        <section id="comparison" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">主流医疗AI模型对比分析</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    基于CMW框架对主流闭源与开源模型在医疗任务中的综合表现评估
+                </p>
+            </div>
+
+            <!-- 模型性能雷达图 -->
+            <div class="section-card p-8 rounded-xl mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">模型综合能力评估</h3>
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <div>
+                        <canvas id="modelRadarChart" width="400" height="400"></canvas>
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <h4 class="text-lg font-bold mb-4">评估维度说明</h4>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-red-500 rounded-full mr-3"></div>
+                                <span><strong>医学知识：</strong>专业知识覆盖度与准确性</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                <span><strong>推理能力：</strong>逻辑推理与思维链完整性</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                <span><strong>安全性：</strong>输出稳定性与风险控制</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                                <span><strong>上下文理解：</strong>复杂提示理解与执行</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                                <span><strong>工具集成：</strong>外部工具调用与协作能力</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-pink-500 rounded-full mr-3"></div>
+                                <span><strong>合规性：</strong>数据隐私与法规遵循</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USMLE成绩对比 -->
+            <div class="section-card p-8 rounded-xl mb-8">
+                <h3 class="text-2xl font-bold mb-6 text-center">USMLE医学考试成绩对比</h3>
+                <div class="mb-4">
+                    <canvas id="usmleBarchart" width="800" height="400"></canvas>
+                </div>
+                <div class="text-sm text-gray-600 text-center">
+                    *数据来源于公开研究报告，及格线约为60%
+                </div>
+            </div>
+        </section>
+
+        <!-- 伦理挑战与责任归属 -->
+        <section id="ethics" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">伦理挑战与责任归属</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    探讨医疗AI系统在实际部署中面临的伦理难题和责任分配问题
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8 mb-12">
+                <!-- 系统性风险评估 -->
+                <div class="section-card p-8 rounded-xl ethics-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">系统性风险评估</h3>
+                            <p class="text-gray-600">Systemic Risk Assessment</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-red-800 mb-2">突现行为风险</h4>
+                            <p class="text-sm text-red-700">
+                                智能体AI涉及LLM与环境、人类及其他智能体的交互，可能产生无法从单个LLM性能中预测的突现行为和反馈循环。
+                            </p>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-orange-800 mb-2">效率优化风险</h4>
+                            <p class="text-sm text-orange-700">
+                                为提高效率而设计的智能体可能会找到不安全的捷径，或在多Agent交互中产生不可预见的集体行为。
+                            </p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-yellow-800 mb-2">系统论视角需求</h4>
+                            <p class="text-sm text-yellow-700">
+                                需要从整个智能体系统与复杂动态医疗环境交互的角度评估风险，而非仅关注单个LLM能力。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 责任归属框架 -->
+                <div class="section-card p-8 rounded-xl ethics-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-balance-scale text-blue-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">责任归属框架</h3>
+                            <p class="text-gray-600">Accountability Framework</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-blue-800 mb-2">多层责任主体</h4>
+                            <div class="space-y-2 text-sm text-blue-700">
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                    <span>LLM开发者：模型安全性</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                    <span>智能体设计者：流程可靠性</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                    <span>医疗机构：部署监管</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                    <span>临床医生：最终决策</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-2">监管框架挑战</h4>
+                            <p class="text-sm text-purple-700">
+                                现有医疗事故和FDA医疗设备指导方针仍在努力适应复杂自主系统的学习和适应型突现行为。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据隐私与合规 -->
+                <div class="section-card p-8 rounded-xl ethics-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-shield-alt text-green-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">数据隐私与合规</h3>
+                            <p class="text-gray-600">Privacy & Compliance</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-green-800 mb-2">HIPAA合规要求</h4>
+                            <ul class="space-y-1 text-sm text-green-700">
+                                <li>• 受保护健康信息(PHI)处理规范</li>
+                                <li>• 属性访问控制(ABAC)机制</li>
+                                <li>• PHI净化管道设计</li>
+                                <li>• 审计、完整性和传输安全</li>
+                            </ul>
+                        </div>
+                        <div class="bg-teal-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-teal-800 mb-2">本地化部署优势</h4>
+                            <p class="text-sm text-teal-700">
+                                开源模型支持本地化部署，提供更好的数据控制权和隐私保护，减少对外部服务的依赖。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 偏见缓解策略 -->
+                <div class="section-card p-8 rounded-xl ethics-item">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                            <i class="fas fa-users text-purple-600 text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">偏见缓解策略</h3>
+                            <p class="text-gray-600">Bias Mitigation</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-purple-800 mb-2">人口统计学偏见</h4>
+                            <p class="text-sm text-purple-700">
+                                评估并缓解基于种族、性别、年龄等人口统计学特征的偏见，确保医疗服务的公平可及性。
+                            </p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-indigo-800 mb-2">代表性不足群体</h4>
+                            <p class="text-sm text-indigo-700">
+                                针对医疗数据中代表性不足的患者群体，开发专门的偏见检测和补偿机制。
+                            </p>
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-pink-800 mb-2">选择性优化框架</h4>
+                            <p class="text-sm text-pink-700">
+                                采用选择性优化技术减少医学文本生成中的偏见，平衡准确性与公平性。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 伦理决策框架 -->
+            <div class="section-card p-8 rounded-xl">
+                <h3 class="text-2xl font-bold mb-6 text-center">医疗AI伦理决策框架</h3>
+                <div class="grid md:grid-cols-4 gap-6">
+                    <div class="text-center ethics-principle">
+                        <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-heart text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-red-600">善行原则</h4>
+                        <p class="text-sm text-gray-600">AI系统应致力于改善患者健康结果，提供有益的医疗支持</p>
+                    </div>
+                    <div class="text-center ethics-principle">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-hand-paper text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-blue-600">无害原则</h4>
+                        <p class="text-sm text-gray-600">首要原则是不伤害患者，确保AI决策的安全性和可靠性</p>
+                    </div>
+                    <div class="text-center ethics-principle">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-check-circle text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-green-600">自主原则</h4>
+                        <p class="text-sm text-gray-600">尊重患者和医生的自主决策权，AI提供支持而非替代</p>
+                    </div>
+                    <div class="text-center ethics-principle">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-balance-scale text-white text-xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2 text-purple-600">公正原则</h4>
+                        <p class="text-sm text-gray-600">确保医疗AI服务的公平分配，消除偏见和歧视</p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                    <h4 class="font-bold mb-4 text-center">伦理决策检查清单</h4>
+                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <h5 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">技术层面</h5>
+                            <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                <li>✓ 算法透明性与可解释性</li>
+                                <li>✓ 数据质量与代表性评估</li>
+                                <li>✓ 偏见检测与缓解机制</li>
+                                <li>✓ 错误处理与恢复策略</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold mb-2 text-gray-800 dark:text-gray-200">应用层面</h5>
+                            <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                <li>✓ 人类专家最终决策权</li>
+                                <li>✓ 患者知情同意机制</li>
+                                <li>✓ 隐私保护与数据安全</li>
+                                <li>✓ 持续监控与评估体系</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 延伸阅读资源 -->
+        <section id="resources" class="mb-20">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold mb-4">进一步阅读</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    深入了解医疗AI与大语言模型的最新研究进展
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-file-alt text-blue-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">学术论文</div>
+                    </div>
+                    <h4 class="font-bold mb-2">Med-PaLM 2: 专家级医疗问答</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        Nature期刊发表，Google和DeepMind联合发布的医疗专用大语言模型，首个在USMLE中达到专家水平的AI系统。
+                    </p>
+                    <a href="https://sites.research.google/med-palm/" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        阅读论文 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-book text-green-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">技术报告</div>
+                    </div>
+                    <h4 class="font-bold mb-2">PaLM 2技术报告</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        Google发布的92页PaLM 2技术报告，详细阐述了模型架构、训练方法和在多个领域的应用表现。
+                    </p>
+                    <a href="https://ai.google/static/documents/palm2techreport.pdf" target="_blank" class="text-green-600 hover:text-green-800 text-sm font-medium">
+                        查看报告 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-chart-line text-purple-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">行业报告</div>
+                    </div>
+                    <h4 class="font-bold mb-2">2025医疗大模型研究报告</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        动脉智库发布，截至2025年5月已收录288个医疗大模型，涵盖各类医疗应用场景的深度分析。
+                    </p>
+                    <a href="https://bydrug.pharmcube.com/news/detail/b513cd0575857f43a780549c2c77bf8c" target="_blank" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                        下载报告 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-gavel text-red-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">法规指南</div>
+                    </div>
+                    <h4 class="font-bold mb-2">FDA AI医疗设备综合指导</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        2025年1月6日FDA发布的《针对人工智能医疗器械开发商的综合指导草案》，为AI设备全生命周期提供监管建议。
+                    </p>
+                    <a href="https://www.istis.sh.cn/cms/news/article/53/27328" target="_blank" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                        查看指南 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-database text-orange-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">数据集</div>
+                    </div>
+                    <h4 class="font-bold mb-2">MedQA-USMLE数据集</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        基于美国医疗执照考试的大规模医学问答数据集，包含英文、简体中文、繁体中文共61,097个问题。
+                    </p>
+                    <a href="https://github.com/jind11/MedQA" target="_blank" class="text-orange-600 hover:text-orange-800 text-sm font-medium">
+                        访问数据集 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-tools text-teal-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">开源平台</div>
+                    </div>
+                    <h4 class="font-bold mb-2">Papers with Code医疗AI</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        机器学习论文、代码和评估数据集的开放平台，提供最新的医疗AI研究成果和标准化评估基准。
+                    </p>
+                    <a href="https://paperswithcode.com/dataset/medqa-usmle" target="_blank" class="text-teal-600 hover:text-teal-800 text-sm font-medium">
+                        查看平台 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+                
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-university text-indigo-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">学术综述</div>
+                    </div>
+                    <h4 class="font-bold mb-2">医疗AI发展路径综述</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        北京大学董彬教授等团队在Medicine Plus发表，回顾大语言模型在医疗领域的发展历程和最新进展。
+                    </p>
+                    <a href="https://bda.pku.edu.cn/info/1003/2730.htm" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                        阅读综述 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-code text-pink-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">开源模型</div>
+                    </div>
+                    <h4 class="font-bold mb-2">Hugging Face医疗数据集</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        开源AI社区Hugging Face提供的医疗数据集集合，包括MedQA等多个标准化医疗问答数据集。
+                    </p>
+                    <a href="https://huggingface.co/datasets/bigbio/med_qa" target="_blank" class="text-pink-600 hover:text-pink-800 text-sm font-medium">
+                        访问集合 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+
+                <div class="section-card p-6 rounded-xl hover:shadow-lg transition-all duration-300 reading-item">
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-globe text-yellow-600"></i>
+                        </div>
+                        <div class="text-xs text-gray-500">政策趋势</div>
+                    </div>
+                    <h4 class="font-bold mb-2">医疗AI政策与趋势分析</h4>
+                    <p class="text-sm text-gray-600 mb-3">
+                        HIT专家网发布的2025年医疗AI发展回顾与展望，深入分析行业政策、技术发展和应用现状。
+                    </p>
+                    <a href="https://www.hit180.com/70964.html" target="_blank" class="text-yellow-600 hover:text-yellow-800 text-sm font-medium">
+                        查看分析 <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结论总结 -->
+        <section id="conclusion" class="mb-20">
+            <div class="section-card p-12 rounded-xl text-center">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-4xl font-bold mb-6">研究结论与未来展望</h2>
+                    <div class="w-24 h-1 bg-gradient-to-r from-orange-400 to-orange-600 mx-auto mb-8"></div>
+                    
+                    <div class="grid md:grid-cols-3 gap-8 mb-12">
+                        <div class="conclusion-point">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-lightbulb text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">框架完整性</h3>
+                            <p class="text-gray-600">
+                                CMW框架为医疗大模型质量提升提供了系统性、可操作的解决方案，三要素相互依存，缺一不可。
+                            </p>
+                        </div>
+                        
+                        <div class="conclusion-point">
+                            <div class="w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">技术成熟度</h3>
+                            <p class="text-gray-600">
+                                主流模型在医疗任务中表现快速提升，已有模型在USMLE等标准测试中接近或超越专家水平。
+                            </p>
+                        </div>
+                        
+                        <div class="conclusion-point">
+                            <div class="w-16 h-16 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-rocket text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">应用前景</h3>
+                            <p class="text-gray-600">
+                                随着技术不断发展和监管框架完善，医疗AI将在临床决策支持等关键场景中发挥更大作用。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-orange-50 to-orange-100 p-8 rounded-xl mb-8">
+                        <h3 class="text-2xl font-bold mb-4 text-orange-800">核心发现</h3>
+                        <ul class="text-left max-w-3xl mx-auto space-y-3 text-gray-700">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>上下文工程中的RAG技术显著减少了模型"幻觉"，提高了医疗信息的准确性和可追溯性</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>开源模型（如DeepSeek R1）在某些医疗任务中已可与专有模型竞争，USMLE准确率达到92%，为本地化部署提供新选择</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>多Agent协同和Human-in-the-Loop设计是确保医疗AI系统安全性的关键要素</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>HIPAA合规性和数据隐私保护已成为医疗AI部署的核心考虑因素</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>Med-PaLM 2成为首个在MedQA上达到专家级水平（准确率86.5%）的模型，标志着医疗AI的重大突破</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>思维链(CoT)提示技术在复杂医学诊断和治疗规划中显示出显著效果，提升了推理的逻辑性和可解释性</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-orange-500 rounded-full mr-3 mt-2 flex-shrink-0"></span>
+                                <span>医疗AI的模型选择正从单一"最佳"模型转向"多LLM策略"和集成选择，不同模型在各子任务上发挥专长</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-xl">
+                        <h3 class="text-2xl font-bold mb-4">未来发展方向</h3>
+                        <div class="grid md:grid-cols-2 gap-6 text-left">
+                            <div>
+                                <h4 class="font-bold text-lg mb-2 text-blue-600">技术突破</h4>
+                                <ul class="space-y-2 text-sm text-gray-600">
+                                    <li>• 多模态医疗AI的深度融合</li>
+                                    <li>• 联邦学习在医疗数据中的应用</li>
+                                    <li>• 可解释AI在临床决策中的普及</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg mb-2 text-green-600">应用拓展</h4>
+                                <ul class="space-y-2 text-sm text-gray-600">
+                                    <li>• 个性化精准医疗的实现</li>
+                                    <li>• 全流程智能化医疗服务</li>
+                                    <li>• 预防医学和健康管理创新</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-12">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="font-bold text-lg mb-4">关于作者</h3>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-user mr-2 text-blue-500"></i>
+                            <span>季晓康</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-building mr-2 text-green-500"></i>
+                            <span>国家健康医疗大数据研究院</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fab fa-weixin mr-2 text-green-600"></i>
+                            <span>微信公众号：凿壁</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">版权信息</h3>
+                    <p class="text-sm text-gray-600 mb-4">
+                        © 2025 国家健康医疗大数据研究院。本研究报告受版权保护，仅供学术研究和教育用途。
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        如需转载或商业使用，请联系作者获得授权。
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-4">联系方式</h3>
+                    <div class="space-y-2 text-sm text-gray-600">
+                        <div class="flex items-center">
+                            <i class="fas fa-envelope mr-2 text-red-500"></i>
+                            <span>research@healthcare.gov.cn</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-globe mr-2 text-blue-500"></i>
+                            <span>www.healthcare-bigdata.cn</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 dark:border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-sm text-gray-500">
+                    基于CMW框架的医疗健康领域大模型质量提升路径研究 - 让AI赋能医疗健康
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 主题切换功能
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // 初始化主题
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const icon = document.getElementById('theme-icon');
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+                document.documentElement.classList.add('dark');
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // 滚动到内容
+        function scrollToContent() {
+            document.getElementById('content').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+
+        // 创建模型雷达图
+        function createRadarChart() {
+            const ctx = document.getElementById('modelRadarChart');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['医学知识', '推理能力', '安全性', '上下文理解', '工具集成', '合规性'],
+                    datasets: [
+                        {
+                            label: 'GPT-4',
+                            data: [85, 90, 85, 95, 90, 80],
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            pointBackgroundColor: 'rgb(255, 99, 132)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(255, 99, 132)'
+                        },
+                        {
+                            label: 'Claude 3.5',
+                            data: [80, 85, 95, 90, 85, 85],
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            pointBackgroundColor: 'rgb(54, 162, 235)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(54, 162, 235)'
+                        },
+                        {
+                            label: 'Med-PaLM 2',
+                            data: [95, 80, 90, 75, 70, 90],
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            pointBackgroundColor: 'rgb(75, 192, 192)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(75, 192, 192)'
+                        },
+                        {
+                            label: 'DeepSeek R1',
+                            data: [75, 88, 80, 82, 75, 95],
+                            borderColor: 'rgb(255, 205, 86)',
+                            backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                            pointBackgroundColor: 'rgb(255, 205, 86)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(255, 205, 86)'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            min: 0,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 10
+                                }
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 15
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 创建USMLE成绩柱状图
+        function createUSMLEChart() {
+            const ctx = document.getElementById('usmleBarchart');
+            if (!ctx) return;
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['GPT-4', 'Med-PaLM 2', 'Claude 3.5', 'DeepSeek R1', 'GPT-4.1', 'MedGemma 27B'],
+                    datasets: [{
+                        label: 'USMLE准确率 (%)',
+                        data: [85, 86.5, 82, 92, 87, 87.7],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',
+                            'rgba(75, 192, 192, 0.7)',
+                            'rgba(54, 162, 235, 0.7)',
+                            'rgba(255, 205, 86, 0.7)',
+                            'rgba(153, 102, 255, 0.7)',
+                            'rgba(255, 159, 64, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // 初始化GSAP动画
+        function initGSAPAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero动画
+            const heroTl = gsap.timeline();
+            
+            heroTl.from("#hero-title", {
+                duration: 1,
+                y: 50,
+                opacity: 0,
+                ease: "power2.out"
+            })
+            .from("#hero-subtitle", {
+                duration: 0.8,
+                y: 30,
+                opacity: 0,
+                ease: "power2.out"
+            }, "-=0.5")
+            .from("#hero-stats", {
+                duration: 0.8,
+                y: 30,
+                opacity: 0,
+                ease: "power2.out"
+            }, "-=0.4")
+            .from("#hero-cta", {
+                duration: 0.6,
+                y: 20,
+                opacity: 0,
+                ease: "power2.out"
+            }, "-=0.3");
+
+            // CMW卡片动画
+            const cmwCards = document.querySelectorAll('.cmw-card');
+            if (cmwCards.length > 0) {
+                gsap.from(cmwCards, {
+                    duration: 0.8,
+                    y: 50,
+                    opacity: 0,
+                    stagger: 0.2,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: cmwCards[0],
+                        start: "top 80%"
+                    },
+                    onComplete: function() {
+                        gsap.set(cmwCards, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // Context Engineering项目动画
+            const contextItems = document.querySelectorAll('.context-item');
+            if (contextItems.length > 0) {
+                gsap.from(contextItems, {
+                    duration: 0.6,
+                    x: -30,
+                    opacity: 0,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: contextItems[0],
+                        start: "top 85%"
+                    },
+                    onComplete: function() {
+                        gsap.set(contextItems, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // Model Criterion动画
+            const modelCriteria = document.querySelectorAll('.model-criterion');
+            if (modelCriteria.length > 0) {
+                gsap.from(modelCriteria, {
+                    duration: 0.7,
+                    scale: 0.8,
+                    opacity: 0,
+                    stagger: 0.1,
+                    ease: "back.out(1.7)",
+                    scrollTrigger: {
+                        trigger: modelCriteria[0],
+                        start: "top 80%"
+                    },
+                    onComplete: function() {
+                        gsap.set(modelCriteria, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // Workflow项目动画
+            const workflowItems = document.querySelectorAll('.workflow-item');
+            if (workflowItems.length > 0) {
+                gsap.from(workflowItems, {
+                    duration: 0.8,
+                    y: 40,
+                    opacity: 0,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: workflowItems[0],
+                        start: "top 80%"
+                    },
+                    onComplete: function() {
+                        gsap.set(workflowItems, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // 阅读资源动画
+            const readingItems = document.querySelectorAll('.reading-item');
+            if (readingItems.length > 0) {
+                gsap.from(readingItems, {
+                    duration: 0.6,
+                    y: 30,
+                    opacity: 0,
+                    stagger: 0.1,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: readingItems[0],
+                        start: "top 85%"
+                    },
+                    onComplete: function() {
+                        gsap.set(readingItems, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // 伦理挑战项目动画
+            const ethicsItems = document.querySelectorAll('.ethics-item');
+            if (ethicsItems.length > 0) {
+                gsap.from(ethicsItems, {
+                    duration: 0.7,
+                    x: -40,
+                    opacity: 0,
+                    stagger: 0.15,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: ethicsItems[0],
+                        start: "top 85%"
+                    },
+                    onComplete: function() {
+                        gsap.set(ethicsItems, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // 伦理原则动画
+            const ethicsPrinciples = document.querySelectorAll('.ethics-principle');
+            if (ethicsPrinciples.length > 0) {
+                gsap.from(ethicsPrinciples, {
+                    duration: 0.8,
+                    scale: 0.8,
+                    opacity: 0,
+                    stagger: 0.1,
+                    ease: "back.out(1.7)",
+                    scrollTrigger: {
+                        trigger: ethicsPrinciples[0],
+                        start: "top 80%"
+                    },
+                    onComplete: function() {
+                        gsap.set(ethicsPrinciples, { clearProps: "all" });
+                    }
+                });
+            }
+
+            // SVG流程图动画
+            const flowDiagram = document.querySelector('.cmw-flow-diagram svg');
+            if (flowDiagram) {
+                gsap.from(flowDiagram, {
+                    duration: 1,
+                    scale: 0.8,
+                    opacity: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: flowDiagram,
+                        start: "top 80%"
+                    },
+                    onComplete: function() {
+                        gsap.set(flowDiagram, { clearProps: "all" });
+                    }
+                });
+            }
+        }
+
+        // 平滑滚动导航
+        function initSmoothScrolling() {
+            document.querySelectorAll('nav a[href^="#"], #mobile-menu a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        
+                        // 关闭移动端菜单
+                        const mobileMenu = document.getElementById('mobile-menu');
+                        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+        }
+
+        // 移动端菜单切换
+        function initMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                    
+                    // 切换图标
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        icon.className = 'fas fa-bars text-xl';
+                    } else {
+                        icon.className = 'fas fa-times text-xl';
+                    }
+                });
+                
+                // 点击外部关闭菜单
+                document.addEventListener('click', function(e) {
+                    if (!mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                        mobileMenu.classList.add('hidden');
+                        mobileMenuBtn.querySelector('i').className = 'fas fa-bars text-xl';
+                    }
+                });
+            }
+        }
+
+        // 页面加载完成后初始化所有功能
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面加载完成，开始初始化...');
+            
+            // 基础功能初始化
+            initTheme();
+            initSmoothScrolling();
+            
+            // 延迟执行动画，确保页面完全渲染
+            setTimeout(() => {
+                initGSAPAnimations();
+            }, 100);
+            
+            // 延迟创建图表，确保Chart.js加载完成
+            setTimeout(() => {
+                createRadarChart();
+                createUSMLEChart();
+            }, 300);
+        });
+
+        // 处理窗口大小改变
+        window.addEventListener('resize', function() {
+            // 防抖处理
+            clearTimeout(window.resizeTimeout);
+            window.resizeTimeout = setTimeout(() => {
+                ScrollTrigger.refresh();
+            }, 250);
+        });
+    </script>
+</body>
+</html>

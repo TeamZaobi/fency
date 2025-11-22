@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-04-25">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="借助Cursor的Vibe Coding模式和gitmcp.io托管服务，可以零本地安装地学习并复用GitHub项目的代码、Prompt与设计思路。本文详细介绍这一方案的价值、具体流程、最佳实践与潜在风险。">
+  <meta name="keywords" content="Cursor,GitMCP,Vibe Coding,gitmcp.io,MCP,Claude,代码学习,GitHub">
+  
+  <title>零部署学习：Cursor × GitMCP 集成指南 | 凿壁</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- 字体 -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Mermaid.js -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  
+  <!-- GSAP & ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+
+  <!-- CSS 变量定义 -->
+  <style>
+    :root {
+      --background: rgb(245, 241, 230);
+      --foreground: rgb(74, 63, 53);
+      --card: rgb(255, 252, 245);
+      --card-foreground: rgb(74, 63, 53);
+      --popover: rgb(255, 252, 245);
+      --popover-foreground: rgb(74, 63, 53);
+      --primary: rgb(166, 124, 82);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(226, 216, 195);
+      --secondary-foreground: rgb(92, 77, 63);
+      --muted: rgb(236, 229, 216);
+      --muted-foreground: rgb(125, 107, 86);
+      --accent: rgb(212, 200, 170);
+      --accent-foreground: rgb(74, 63, 53);
+      --destructive: rgb(181, 74, 53);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(219, 208, 186);
+      --input: rgb(219, 208, 186);
+      --ring: rgb(166, 124, 82);
+      --chart-1: rgb(166, 124, 82);
+      --chart-2: rgb(141, 110, 76);
+      --chart-3: rgb(115, 90, 58);
+      --chart-4: rgb(179, 144, 111);
+      --chart-5: rgb(192, 160, 128);
+      --sidebar: rgb(236, 229, 216);
+      --sidebar-foreground: rgb(74, 63, 53);
+      --sidebar-primary: rgb(166, 124, 82);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(212, 200, 170);
+      --sidebar-accent-foreground: rgb(74, 63, 53);
+      --sidebar-border: rgb(219, 208, 186);
+      --sidebar-ring: rgb(166, 124, 82);
+      --font-sans: 'Noto Sans SC', sans-serif;
+      --font-serif: 'Noto Serif SC', serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --radius: 0.25rem;
+    }
+
+    .dark {
+      --background: rgb(45, 38, 33);
+      --foreground: rgb(236, 229, 216);
+      --card: rgb(58, 50, 44);
+      --card-foreground: rgb(236, 229, 216);
+      --popover: rgb(58, 50, 44);
+      --popover-foreground: rgb(236, 229, 216);
+      --primary: rgb(192, 160, 128);
+      --primary-foreground: rgb(45, 38, 33);
+      --secondary: rgb(74, 64, 57);
+      --secondary-foreground: rgb(236, 229, 216);
+      --muted: rgb(58, 50, 44);
+      --muted-foreground: rgb(197, 188, 172);
+      --accent: rgb(89, 73, 62);
+      --accent-foreground: rgb(236, 229, 216);
+      --destructive: rgb(181, 74, 53);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(74, 64, 57);
+      --input: rgb(74, 64, 57);
+      --ring: rgb(192, 160, 128);
+      --chart-1: rgb(192, 160, 128);
+      --chart-2: rgb(179, 144, 111);
+      --chart-3: rgb(166, 124, 82);
+      --chart-4: rgb(141, 110, 76);
+      --chart-5: rgb(115, 90, 58);
+      --sidebar: rgb(45, 38, 33);
+      --sidebar-foreground: rgb(236, 229, 216);
+      --sidebar-primary: rgb(192, 160, 128);
+      --sidebar-primary-foreground: rgb(45, 38, 33);
+      --sidebar-accent: rgb(89, 73, 62);
+      --sidebar-accent-foreground: rgb(236, 229, 216);
+      --sidebar-border: rgb(74, 64, 57);
+      --sidebar-ring: rgb(192, 160, 128);
+    }
+
+    /* 基础样式 */
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+      line-height: 1.7;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      margin-top: 1.5em;
+      margin-bottom: 0.75em;
+      line-height: 1.3;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 2rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.3em;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      margin-bottom: 1.2em;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      background-color: var(--muted);
+      color: var(--primary);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    pre {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1em;
+      overflow-x: auto;
+      margin: 1.5em 0;
+    }
+
+    pre code {
+      background-color: transparent;
+      padding: 0;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    a:hover {
+      color: var(--ring);
+      text-decoration: underline;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5em 0;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+      padding: 0.75em 1em;
+      border: 1px solid var(--border);
+    }
+
+    th {
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+      font-weight: 700;
+      text-align: left;
+    }
+
+    tr {
+      background-color: var(--card);
+      transition: background-color 0.2s ease;
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--muted);
+    }
+
+    tr:hover {
+      background-color: var(--accent);
+    }
+
+    blockquote {
+      border-left: 4px solid var(--primary);
+      padding-left: 1em;
+      margin: 1.5em 0;
+      background-color: var(--muted);
+      padding: 1em;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .card {
+      background-color: var(--card);
+      color: var(--card-foreground);
+      border-radius: 12px;
+      padding: 1.5em;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2em;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    /* 导航栏样式 */
+    .nav-item {
+      transition: transform 0.2s ease;
+    }
+    
+    .nav-item:hover {
+      transform: translateY(-2px);
+    }
+
+    /* 主题切换 */
+    .theme-toggle {
+      cursor: pointer;
+      padding: 0.5em;
+      border-radius: 50%;
+      transition: background-color 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background-color: var(--muted);
+    }
+
+    /* 首字下沉 */
+    .first-letter::first-letter {
+      font-size: 3em;
+      float: left;
+      line-height: 0.8;
+      margin-right: 0.1em;
+      color: var(--primary);
+      font-family: var(--font-serif);
+      font-weight: 700;
+    }
+
+    /* 强调文本 */
+    .highlight {
+      background: linear-gradient(to right, var(--primary), var(--chart-4));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+    
+    /* 代码块样式 */
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--secondary);
+      color: var(--secondary-foreground);
+      padding: 0.5em 1em;
+      border-radius: 8px 8px 0 0;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+    }
+    
+    .copy-button {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      border-radius: 4px;
+      padding: 0.25em 0.5em;
+      cursor: pointer;
+      font-size: 0.8em;
+      transition: background-color 0.2s ease;
+    }
+    
+    .copy-button:hover {
+      background-color: var(--ring);
+    }
+    
+    .code-block {
+      margin-top: 0;
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* 段落间距优化 */
+    p + h2, p + h3 {
+      margin-top: 2em;
+    }
+
+    /* 图标样式 */
+    .icon {
+      margin-right: 0.5em;
+      color: var(--primary);
+    }
+
+    /* 进度条样式 */
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--chart-4));
+      z-index: 9999;
+      width: 0%;
+      transition: width 0.05s ease;
+    }
+
+    /* 自定义滚动条 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--muted);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--ring);
+    }
+    
+    /* 动画类 */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .fade-in.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-in-left {
+      opacity: 0;
+      transform: translateX(-50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .slide-in-left.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .slide-in-right {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    
+    .slide-in-right.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* 表格响应式处理 */
+    @media (max-width: 768px) {
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      h2 {
+        font-size: 1.75rem;
+      }
+      
+      h3 {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 进度条 -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- 导航栏 -->
+  <nav class="sticky top-0 z-50 bg-opacity-90 backdrop-blur-sm" style="background-color: var(--background);">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="../../index.html" class="flex items-center">
+        <i class="fas fa-book-open text-2xl mr-2" style="color: var(--primary);"></i>
+        <span class="text-xl font-bold" style="font-family: var(--font-serif);">凿壁</span>
+      </a>
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:flex items-center space-x-6">
+          <span class="nav-item">
+            <i class="far fa-calendar icon"></i>2024-05-25
+          </span>
+          <span class="nav-item">
+            <i class="fas fa-tag icon"></i>AI技术与生态
+          </span>
+        </div>
+        <button id="themeToggle" class="theme-toggle" aria-label="切换主题">
+          <i class="fas fa-sun text-xl" id="themeIcon"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 英雄区/标题区 -->
+  <header class="relative overflow-hidden py-20 px-4">
+    <div class="absolute inset-0 z-0 overflow-hidden">
+      <div class="absolute inset-0 bg-cover bg-center opacity-10" style="background-image: url('https://images.unsplash.com/photo-1633356122102-3fe601e05bd2?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
+      <div class="absolute inset-0" style="background: radial-gradient(circle at top right, transparent, var(--background) 70%);"></div>
+    </div>
+    
+    <div class="container mx-auto relative z-10">
+      <div class="max-w-3xl mx-auto text-center">
+        <h1 class="text-5xl font-bold mb-6 fade-in">零部署学习：Cursor × GitMCP 集成指南</h1>
+        <p class="text-xl opacity-80 mb-8 fade-in" style="font-family: var(--font-serif);">
+          借助 Cursor 的 Vibe Coding 模式和 gitmcp.io 托管服务，无需本地安装即可学习并复用 GitHub 项目的代码与设计思路
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 fade-in">
+          <a href="#overview" class="bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-full transition duration-300 flex items-center" style="background-color: var(--primary); color: var(--foreground);">
+            <i class="fas fa-book mr-2"></i>
+            开始阅读
+          </a>
+          <a href="#tools-comparison" class="bg-opacity-20 hover:bg-opacity-30 px-6 py-3 rounded-full transition duration-300 flex items-center" style="background-color: var(--accent); color: var(--foreground);">
+            <i class="fas fa-chart-simple mr-2"></i>
+            工具对比
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要内容容器 -->
+  <main class="container mx-auto px-4 py-12">
+    <div class="max-w-4xl mx-auto">
+      <!-- 目录 -->
+      <div class="card mb-12 fade-in" id="toc">
+        <h2 class="text-2xl mb-4">目录</h2>
+        <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <li>
+            <a href="#overview" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-circle-info mr-2 text-sm"></i>
+              <span>1. MCP与gitmcp.io概览</span>
+            </a>
+          </li>
+          <li>
+            <a href="#workflow" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-code-branch mr-2 text-sm"></i>
+              <span>2. Cursor Vibe Coding × MCP工作流</span>
+            </a>
+          </li>
+          <li>
+            <a href="#advantages" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-plus-circle mr-2 text-sm"></i>
+              <span>3. 优势与适用场景</span>
+            </a>
+          </li>
+          <li>
+            <a href="#risks" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-shield-alt mr-2 text-sm"></i>
+              <span>4. 潜在风险与限制</span>
+            </a>
+          </li>
+          <li>
+            <a href="#best-practices" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-check-circle mr-2 text-sm"></i>
+              <span>5. 最佳实践与改进建议</span>
+            </a>
+          </li>
+          <li>
+            <a href="#tools-comparison" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-balance-scale mr-2 text-sm"></i>
+              <span>6. Roo-code与Task Master对比</span>
+            </a>
+          </li>
+          <li>
+            <a href="#alias-usage" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-tag mr-2 text-sm"></i>
+              <span>7. MCP服务器别名使用指南</span>
+            </a>
+          </li>
+          <li>
+            <a href="#example" class="flex items-center hover:pl-2 transition-all duration-300">
+              <i class="fas fa-laptop-code mr-2 text-sm"></i>
+              <span>8. 示例：学习Supabase Edge Functions</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- 文章内容开始 -->
+      <article>
+        <!-- 引言部分 -->
+        <section class="mb-16 fade-in">
+          <p class="first-letter text-lg">
+            借助 Cursor 的 Vibe Coding 模式和 gitmcp.io 这一托管的 MCP (Model Context Protocol) 服务器，确实可以"零本地安装"地学习并复用 GitHub 项目里的代码、Prompt 与设计思路。核心做法是在 Cursor 里把目标仓库的 GitHub URL 替换成 gitmcp.io 域名，然后将其作为自定义 MCP 源接入；随后，Cursor 会把仓库中的文件、目录、代码段按需动态拉取到聊天上下文，让 LLM 直接分析、运行乃至改写。下面分模块说明这一方案的价值、具体流程、最佳实践与潜在风险，并给出改进建议。
+          </p>
+        </section>
+
+        <!-- 1. MCP与gitmcp.io概览 -->
+        <section id="overview" class="mb-16">
+          <h2 class="slide-in-left">1. MCP与gitmcp.io概览</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-question-circle mr-2" style="color: var(--primary);"></i>
+                MCP是什么
+              </h3>
+              <p>
+                MCP（Model Context Protocol）是 Anthropic 主导的开放协议，旨在将 LLM 与各种外部数据源和工具进行"标准化串接"，消除一对一集成的麻烦。
+              </p>
+              <ul class="list-disc pl-6 mt-4 space-y-2">
+                <li>协议层面支持 SSE 与 stdio 两种传输方式</li>
+                <li>工具可声明能力、接收参数并返回结构化 JSON（甚至图片、二进制）作为回复</li>
+                <li>减少了为每个 LLM 单独开发集成的工作量</li>
+              </ul>
+            </div>
+            
+            <div class="card slide-in-right">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-server mr-2" style="color: var(--primary);"></i>
+                gitmcp.io的角色
+              </h3>
+              <p>
+                gitmcp.io 是社区提供的<span class="highlight">托管 MCP 服务器</span>：只需把任何 GitHub 仓库 URL 从 <code>github.com/owner/repo</code> 换成 <code>gitmcp.io/owner/repo</code>，即可把该仓库暴露为 MCP Endpoint。
+              </p>
+              <ul class="list-disc pl-6 mt-4 space-y-2">
+                <li>开源实现 <code>git-mcp</code> 支持全文索引、代码检索、README 渲染等多种工具指令</li>
+                <li>专为 AI IDE（如 Cursor）设计，以减少"代码幻觉"</li>
+                <li>无需手动克隆或下载即可访问仓库内容</li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- 概念图解 -->
+          <div class="card mt-8 slide-in-left">
+            <h3 class="text-xl mb-4">MCP与gitmcp.io工作原理</h3>
+            <div class="flex justify-center my-6">
+              <div id="mcp-diagram" class="mermaid">
+                graph TD
+                    A["Cursor用户"] -->|"1. 请求: /mcp search_code '函数名'"| B(Cursor IDE)
+                    B -->|"2. 发送请求到MCP服务器"| C{gitmcp.io}
+                    C -->|"3. 查询GitHub API"| D[(GitHub仓库)]
+                    D -->|"4. 返回代码片段"| C
+                    C -->|"5. 格式化结果返回"| B
+                    B -->|"6. 注入上下文给LLM"| E[Claude/GPT]
+                    E -->|"7. 生成代码解释/重写"| B
+                    B -->|"8. 显示结果给用户"| A
+                    
+                    style A fill:#f9f9f9,stroke:#333,stroke-width:1px
+                    style B fill:#f5f1e6,stroke:#333,stroke-width:1px
+                    style C fill:#d4c8aa,stroke:#333,stroke-width:1px
+                    style D fill:#a67c52,stroke:#333,stroke-width:1px,color:#fff
+                    style E fill:#a67c52,stroke:#333,stroke-width:1px,color:#fff
+              </div>
+            </div>
+            <p class="text-center text-sm opacity-70">图1：MCP与gitmcp.io如何连接Cursor与GitHub仓库</p>
+          </div>
+        </section>
+
+        <!-- 2. Cursor Vibe Coding × MCP 的工作流 -->
+        <section id="workflow" class="mb-16">
+          <h2 class="slide-in-right">2. Cursor Vibe Coding × MCP工作流</h2>
+          
+          <div class="card slide-in-right">
+            <h3 class="text-xl mb-4">典型工作流程</h3>
+            
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步骤</th>
+                    <th>操作</th>
+                    <th>说明</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      在 Cursor ➜ Settings ➜ <i>MCP Servers</i> 点击 "Add New"
+                    </td>
+                    <td>
+                      取昵称如 <code>gitmcp-demo</code>，类型选 SSE，URL 填 <code>https://gitmcp.io/&lt;owner&gt;/&lt;repo&gt;</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      在编辑区 <code>⌘K</code> 打开聊天，输入 "/mcp &lt;tool&gt; ..." 调用仓库工具
+                    </td>
+                    <td>
+                      例如 <code>search_code "connect database"</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>
+                      让 Cursor 生成、改写或运行片段
+                    </td>
+                    <td>
+                      Cursor 会把命中的文件或函数片段注入上下文，再由 LLM 解释或重写
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      如需多仓库并行，对每个 repo 建立独立 server
+                    </td>
+                    <td>
+                      避免上下文冲突，提高检索准确度
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      生成代码后，本地 <b>沙盒 run</b> 或用 Cursor 的 <i>Live Preview</i> 验证
+                    </td>
+                    <td>
+                      保证不直接执行未经审计的远程代码
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <blockquote class="mt-6">
+              <p>
+                <i class="fas fa-lightbulb mr-2" style="color: var(--primary);"></i>
+                <b>提示</b>：Cursor 0.49+ 的 <i>Vibe Coding</i> 支持"让 AI 写→本地运行→失败后自动 debug"闭环，此模式与 MCP 感知上下文天然互补。
+              </p>
+            </blockquote>
+          </div>
+          
+          <!-- Vibe Coding概念说明 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <div class="card slide-in-left">
+              <div class="text-center mb-4">
+                <i class="fas fa-code text-3xl" style="color: var(--primary);"></i>
+              </div>
+              <h4 class="text-lg text-center mb-2">代码生成</h4>
+              <p class="text-sm">
+                根据MCP注入的上下文，让Claude或GPT理解代码风格和设计模式，生成符合项目规范的代码。
+              </p>
+            </div>
+            
+            <div class="card slide-in-left" style="transition-delay: 100ms;">
+              <div class="text-center mb-4">
+                <i class="fas fa-play text-3xl" style="color: var(--primary);"></i>
+              </div>
+              <h4 class="text-lg text-center mb-2">本地执行</h4>
+              <p class="text-sm">
+                在本地环境安全运行生成的代码，验证其功能是否符合预期，而无需在真实环境部署外部未审计代码。
+              </p>
+            </div>
+            
+            <div class="card slide-in-left" style="transition-delay: 200ms;">
+              <div class="text-center mb-4">
+                <i class="fas fa-bug text-3xl" style="color: var(--primary);"></i>
+              </div>
+              <h4 class="text-lg text-center mb-2">自动调试</h4>
+              <p class="text-sm">
+                当执行失败时，Cursor自动捕获错误信息，结合MCP上下文提示LLM进行错误分析和修复，形成闭环。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. 优势与适用场景 -->
+        <section id="advantages" class="mb-16">
+          <h2 class="slide-in-left">3. 优势与适用场景</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-cloud-download-alt mr-2" style="color: var(--primary);"></i>
+                无需克隆/安装
+              </h3>
+              <p>
+                通过 SSE 流实时取文件，避免动辄 GB 级依赖下载，特别适合<span class="highlight">快速调研、原型验证、Prompt 迁移</span>。
+              </p>
+              <p class="text-sm mt-4 opacity-80">
+                对网络环境受限或磁盘空间有限的开发者尤其有价值。
+              </p>
+            </div>
+            
+            <div class="card slide-in-left" style="transition-delay: 100ms;">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-bullseye mr-2" style="color: var(--primary);"></i>
+                上下文精准
+              </h3>
+              <p>
+                gitmcp 的 <code>search_&lt;repo&gt;_code</code> 能基于 GitHub Code Search 精准返回实现片段，减少"凭记忆猜代码"的幻觉。
+              </p>
+              <p class="text-sm mt-4 opacity-80">
+                提高了生成代码的准确性和与项目风格的一致性。
+              </p>
+            </div>
+            
+            <div class="card slide-in-left" style="transition-delay: 200ms;">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-puzzle-piece mr-2" style="color: var(--primary);"></i>
+                跨仓库Prompt摘取
+              </h3>
+              <p>
+                你可以把多条 MCP server 分别指向 Prompt 工程优秀的项目（如 LLM 评测、RAG、Agent 等），在同一对话里组合最佳实践，实现"Prompt 拼装"。
+              </p>
+              <p class="text-sm mt-4 opacity-80">
+                构建复杂的AI工作流时，可以从多个专业仓库中提取并组合最佳实践。
+              </p>
+            </div>
+          </div>
+          
+          <!-- 数据可视化：常见适用场景 -->
+          <div class="card mt-8 slide-in-right">
+            <h3 class="text-xl mb-4">常见适用场景分析</h3>
+            <div class="flex justify-center">
+              <div class="w-full md:w-2/3 lg:w-1/2">
+                <canvas id="scenarioChart"></canvas>
+              </div>
+            </div>
+            <p class="text-center text-sm mt-4 opacity-70">图2：GitMCP在不同开发场景中的适用性评分（满分10分）</p>
+          </div>
+        </section>
+
+        <!-- 4. 潜在风险与限制 -->
+        <section id="risks" class="mb-16">
+          <h2 class="slide-in-right">4. 潜在风险与限制</h2>
+          
+          <div class="card slide-in-right">
+            <h3 class="text-xl mb-4">安全与性能考量</h3>
+            
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>风险</th>
+                    <th>影响</th>
+                    <th>缓解措施</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span class="font-bold text-destructive">上下文投毒 / 代码植入</span>
+                    </td>
+                    <td>
+                      恶意 PR 或分支被注入，诱导生成后门
+                    </td>
+                    <td>
+                      <ul class="list-disc pl-4">
+                        <li>只跟踪可信分支</li>
+                        <li>开启仓库保护</li>
+                        <li>在 Cursor 中锁定 <code>default_branch</code></li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold text-destructive">安全沙箱缺失</span>
+                    </td>
+                    <td>
+                      直接运行远程片段可能执行恶意命令
+                    </td>
+                    <td>
+                      <ul class="list-disc pl-4">
+                        <li>在 Docker / VM 中运行</li>
+                        <li>禁用危险系统调用</li>
+                        <li>使用代码审查工具预先检查</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">速率 & quota</span>
+                    </td>
+                    <td>
+                      GitHub REST / Search API 限流导致超时
+                    </td>
+                    <td>
+                      <ul class="list-disc pl-4">
+                        <li>配置 GitHub PAT</li>
+                        <li>使用自部署 <code>git-mcp</code> 缓存</li>
+                        <li>实现请求队列与重试机制</li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">上下文尺寸</span>
+                    </td>
+                    <td>
+                      仓库超大导致模型窗口爆炸
+                    </td>
+                    <td>
+                      <ul class="list-disc pl-4">
+                        <li>先用 <code>list_files</code> + <code>filter</code> 手动收窄目录</li>
+                        <li>分模块对话</li>
+                        <li>使用更大窗口的模型（如Claude 3 Opus）</li>
+                      </ul>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- 安全风险指数可视化 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4">安全风险评估</h3>
+              <div class="flex justify-center">
+                <div class="w-full">
+                  <canvas id="securityRiskChart"></canvas>
+                </div>
+              </div>
+              <p class="text-center text-sm mt-4 opacity-70">图3：GitMCP使用不同场景下的安全风险指数</p>
+            </div>
+            
+            <div class="card slide-in-right">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                推荐安全实践
+              </h3>
+              <div class="space-y-4">
+                <div class="flex items-start">
+                  <div class="bg-muted rounded-full p-2 mr-4 flex-shrink-0">
+                    <i class="fas fa-check" style="color: var(--primary);"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold">代码隔离执行</h4>
+                    <p class="text-sm">使用专用的临时Docker容器或VM沙箱运行未审计代码，避免直接在开发环境执行。</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="bg-muted rounded-full p-2 mr-4 flex-shrink-0">
+                    <i class="fas fa-check" style="color: var(--primary);"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold">内容来源验证</h4>
+                    <p class="text-sm">优先使用可信的、活跃维护的仓库；检查最后更新时间和贡献者数量作为可信度指标。</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="bg-muted rounded-full p-2 mr-4 flex-shrink-0">
+                    <i class="fas fa-check" style="color: var(--primary);"></i>
+                  </div>
+                  <div>
+                    <h4 class="font-bold">代码审查流程</h4>
+                    <p class="text-sm">建立自动化审查流程，对所有通过MCP注入的代码进行静态分析和安全检查。</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. 最佳实践与改进建议 -->
+        <section id="best-practices" class="mb-16">
+          <h2 class="slide-in-left">5. 最佳实践与改进建议</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-server mr-2" style="color: var(--primary);"></i>
+                为常用仓库自建GitMCP实例
+              </h3>
+              <p>
+                部署 <code>git-mcp</code> 到本地或内网，可以缓存索引、启用企业私库访问，提高访问速度并绕过API限制。
+              </p>
+              <div class="bg-muted p-4 rounded-lg mt-4">
+                <div class="code-header">
+                  <span>安装与运行自建实例</span>
+                  <button class="copy-button" onclick="copyCode(this)">复制</button>
+                </div>
+                <pre class="code-block"><code>
+# 安装git-mcp
+npm install -g git-mcp
+
+# 启动服务（默认本地8080端口）
+git-mcp --repo-path=/path/to/local/repos --cache-dir=/tmp/git-mcp-cache
+
+# 在Cursor中添加
+# URL: http://localhost:8080
+                </code></pre>
+              </div>
+            </div>
+            
+            <div class="card slide-in-right">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-tools mr-2" style="color: var(--primary);"></i>
+                编写"聚合工具"
+              </h3>
+              <p>
+                在自建 MCP Server 里再封装 <code>eval_snippet</code>, <code>run_tests</code>, <code>explain_design</code> 等工具，把"查看→运行→讲解"串成一键流水线，提高 Vibe Coding 闭环效率。
+              </p>
+              <div class="bg-muted p-4 rounded-lg mt-4">
+                <div class="code-header">
+                  <span>工具聚合示例</span>
+                  <button class="copy-button" onclick="copyCode(this)">复制</button>
+                </div>
+                <pre class="code-block"><code>
+// 在自建MCP服务中添加组合工具
+router.post('/tools/analyze_function', async (req, res) => {
+  const { repoPath, functionName } = req.body;
+  
+  // 1. 搜索代码
+  const code = await searchCode(repoPath, functionName);
+  
+  // 2. 解析依赖
+  const deps = await analyzeDependencies(code);
+  
+  // 3. 执行单元测试
+  const testResults = await runTests(functionName);
+  
+  // 返回完整分析结果
+  res.json({
+    code,
+    dependencies: deps,
+    testResults
+  });
+});
+                </code></pre>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Prompt模板 -->
+          <div class="card mt-8 slide-in-left">
+            <h3 class="text-xl mb-4 flex items-center">
+              <i class="fas fa-comment-alt mr-2" style="color: var(--primary);"></i>
+              Prompt模板
+            </h3>
+            <div class="bg-muted p-4 rounded-lg">
+              <div class="code-header">
+                <span>高效Prompt模板</span>
+                <button class="copy-button" onclick="copyCode(this)">复制</button>
+              </div>
+              <pre class="code-block"><code>
+/think 你是一名资深架构师。请阅读以下 repo 中的 /docs/design.md 与 /src/db 目录代码，  
+概括其数据库连接池设计要点，并对比我的项目（路径: ./app/db）指出差距。
+              </code></pre>
+            </div>
+            <p class="mt-4">
+              模板里显式列路径，可控制上下文长度，避免拉入无关文件。这种精确定位可以大幅提高MCP工具的使用效率。
+            </p>
+          </div>
+          
+          <!-- 安全治理 -->
+          <div class="card mt-8 slide-in-right">
+            <h3 class="text-xl mb-4 flex items-center">
+              <i class="fas fa-lock mr-2" style="color: var(--primary);"></i>
+              安全治理
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div class="space-y-3">
+                <div class="flex items-center">
+                  <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                  <span>对自建 MCP 加 <strong>JWT / IP allowlist</strong></span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                  <span>启用 <strong>content-security-policy</strong></span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                  <span>使用 <strong>Otel Trace</strong> 记录每次 AI 调用</span>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center">
+                  <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                  <span>实现代码静态分析与沙箱执行</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                  <span>限制敏感操作权限（如文件写入、网络）</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="fas fa-shield-alt mr-2" style="color: var(--primary);"></i>
+                  <span>定期审计日志，监控异常模式</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Roo-code与Claude-task-master对比 -->
+        <section id="tools-comparison" class="mb-16">
+          <h2 class="slide-in-right">6. Roo-code与Task Master对比</h2>
+          
+          <div class="mb-8">
+            <p class="mb-4">
+              在 <span class="highlight">Roo-code</span> 与 <span class="highlight">Claude-task-master</span> 这两个典型案例上验证"零部署学习"方案，可以看得更清楚：Roo-code侧重<strong>代码自动化与工具扩展</strong>，Task Master聚焦<strong>任务分解与项目流程</strong>；二者都天然支持 MCP，但通过 gitmcp.io 把它们"当成服务"接入 Cursor，可将源仓库的代码、Prompt、配置即取即用——无需本地安装依赖、拉起后端或写临时脚本，同时保留 IDE 中"Vibe Coding→运行→调试"的闭环。
+            </p>
+          </div>
+          
+          <!-- 项目概览 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-robot mr-2" style="color: var(--primary);"></i>
+                Roo-code
+              </h3>
+              <ul class="list-disc pl-6 space-y-3">
+                <li>
+                  VS Code 插件形式的自主编码代理，可读写工作区文件、执行终端命令、驱动浏览器并调用任意 OpenAI 兼容模型。
+                </li>
+                <li>
+                  通过"<strong>MCP Servers</strong>"面板为每个仓库或自定义工具添加 STDIO/SSE 连接；配置保存在 <code>cline_mcp_settings.json</code>。
+                </li>
+                <li>
+                  提供"Memory Bank"子项目保持跨会话上下文，为大型代码库持续注入"记忆"。
+                </li>
+              </ul>
+            </div>
+            
+            <div class="card slide-in-right">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-tasks mr-2" style="color: var(--primary);"></i>
+                Claude-task-master
+              </h3>
+              <ul class="list-disc pl-6 space-y-3">
+                <li>
+                  面向 Cursor 的 AI 任务管理系统，一键把 PRD 解析→拆分→生成文件，再交予 Claude/LLM 执行。
+                </li>
+                <li>
+                  内置 CLI：<code>parse-prd → list → next → generate</code> 等命令，也可完全由对话式 Prompt 触发。
+                </li>
+                <li>
+                  近一周在社区与视频中被广泛用于"10× Cursor"工作流演示。
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- 零部署接入流程对比 -->
+          <div class="card mt-8 slide-in-left">
+            <h3 class="text-xl mb-4">零部署接入流程对比</h3>
+            
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>步骤</th>
+                    <th>Roo-code（VS Code）</th>
+                    <th>Claude-task-master（Cursor）</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>① 添加 MCP</td>
+                    <td>
+                      点击侧边栏 ▶ <code>Edit MCP Settings</code>，填 <code>https://gitmcp.io/&lt;repo&gt;</code> 或自建 MCP URL。
+                    </td>
+                    <td>
+                      在 Cursor <code>Settings → MCP Servers</code> 添 <code>sse://gitmcp.io/eyaltoledano/claude-task-master</code>。
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>② 拉取文件</td>
+                    <td>
+                      <code>/mcp roo list_files "src/**"</code>；选中片段注入上下文。
+                    </td>
+                    <td>
+                      <code>/mcp task_master search_code "parse-prd"</code>；直接让 Claude 解释实现。
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>③ 执行/调试</td>
+                    <td>
+                      VS Code 终端自动跑生成脚本；错误时 Roo-agent 自行递归修复。
+                    </td>
+                    <td>
+                      Cursor "Run Selection" 本地沙箱执行，Task Master 更新任务状态。
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>④ 持续记忆</td>
+                    <td>
+                      通过 Memory Bank 写入 <code>.roo-memory/</code> 增量上下文。
+                    </td>
+                    <td>
+                      Task Master 把进度写入 <code>tasks/*.json</code> 并可在会话中查询。
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- 能力对比雷达图 -->
+          <div class="card mt-8 slide-in-right">
+            <h3 class="text-xl mb-4">Roo-code vs Task Master 能力对比</h3>
+            <div class="flex justify-center">
+              <div class="w-full md:w-2/3">
+                <canvas id="capabilityRadarChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 何时选用哪一套 -->
+          <div class="card mt-8 slide-in-left">
+            <h3 class="text-xl mb-4">何时选用哪一套？</h3>
+            
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>场景</th>
+                    <th>推荐</th>
+                    <th>理由</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span class="font-bold">单人快速黑客/脚本</span>
+                    </td>
+                    <td>
+                      Roo-code
+                    </td>
+                    <td>
+                      直接在 VS Code 中"写-跑-修"闭环最流畅；Memory Bank 便于追踪个人上下文。
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">多人协作/需求-驱动迭代</span>
+                    </td>
+                    <td>
+                      Task Master
+                    </td>
+                    <td>
+                      PRD-to-Tasks 流程天然分工；零部署让所有成员共享同一指令集，降低环境差异。
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">Prompt 与代码双向迁移</span>
+                    </td>
+                    <td>
+                      两者并用
+                    </td>
+                    <td>
+                      用 Roo-code 自动生成代码片段，再用 Task Master 编排里程碑；二者均通过 MCP 挂载远程仓库，避免依赖冲突。
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. MCP服务器别名使用指南 -->
+        <section id="alias-usage" class="mb-16">
+          <h2 class="slide-in-left">7. MCP服务器别名使用指南</h2>
+          
+          <div class="card slide-in-left">
+            <p class="mb-4">
+              在 Cursor 的最新版本里，只要你<strong>已在 <code>.cursor/mcp.json</code> 或 <code>~/.cursor/mcp.json</code> 中登记了一个 MCP 服务器</strong>，Composer 会自动把该服务器暴露出的全部工具注入「可用工具」列表，因此在多数单服务器场景下，直接按工具名字或一句描述就能触发调用，无需再写 <code>/mcp &lt;别名&gt; …</code> 这样的前缀。但当你<strong>启用了多台 MCP 服务器</strong>、或者不同服务器内存在<strong>重名工具</strong>时，显式别名仍然是确保可预期调用的最佳办法。
+            </p>
+          </div>
+          
+          <!-- 别名定义与解析 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-tag mr-2" style="color: var(--primary);"></i>
+                MCP服务器「别名」到底是什么
+              </h3>
+              <ul class="list-disc pl-6 space-y-3">
+                <li>
+                  在 <code>mcp.json</code> 中，每个顶级键（如 <code>"server-name"</code>）就是 Cursor 对该 MCP 实例的<strong>本地别名</strong>，也是后续 <code>/mcp server-name &lt;command&gt;</code> 的前缀来源。
+                </li>
+                <li>
+                  别名可随意命名，只要与你的其他服务器不重复；它与 MCP 服务器内部暴露的 <strong>tool name</strong> 并不冲突。
+                </li>
+              </ul>
+              
+              <h4 class="text-lg mt-6 mb-2">Cursor的自动选择逻辑</h4>
+              <ul class="list-disc pl-6 space-y-3">
+                <li>
+                  Composer 会把 MCP 工具名单注入系统提示；如果它判断某条指令与某工具描述高度相关，就会直接调用，而<strong>无需显式别名或 <code>/mcp …</code> 命令</strong>。
+                </li>
+                <li>
+                  如果你想手动调用，可"在聊天里描述要用的工具或功能"，例如"请用 search_code 查找 <code>connect()</code> 的实现"，同样不必写别名——前提是工具名称在<strong>全局唯一</strong>。
+                </li>
+              </ul>
+            </div>
+            
+            <div class="card slide-in-right">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-question-circle mr-2" style="color: var(--primary);"></i>
+                为什么实际使用中似乎"不需要别名"
+              </h3>
+              <ol class="list-decimal pl-6 space-y-3">
+                <li>
+                  <strong>单一服务器</strong>：工作区只挂载一台 MCP 服务器时，没有名称冲突，Composer 可直接按工具名解析。
+                </li>
+                <li>
+                  <strong>唯一工具名</strong>：即使挂了多台服务器，只要每个工具都有独一无二的 <code>name</code>，Cursor 依旧能分辨。
+                </li>
+                <li>
+                  <strong>隐式匹配策略</strong>：Cursor 在生成调用前，会尝试把用户指令与工具 <code>description</code> 做语义匹配；这也是许多用户感觉"直接说就能用"的原因。
+                </li>
+              </ol>
+              
+              <div class="mt-6 bg-muted p-4 rounded-lg">
+                <p>
+                  <i class="fas fa-exclamation-triangle mr-2" style="color: var(--destructive);"></i>
+                  但官方文档同时提示，当工具总数超过 40 或存在重名、形近名时，Composer 可能放弃调用并直接回答模型文本。
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 何时使用别名 -->
+          <div class="card mt-8 slide-in-right">
+            <h3 class="text-xl mb-4">何时仍建议显式写别名</h3>
+            
+            <div class="overflow-x-auto">
+              <table>
+                <thead>
+                  <tr>
+                    <th>场景</th>
+                    <th>说明</th>
+                    <th>典型问题</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span class="font-bold">多服务器，重名工具</span>
+                    </td>
+                    <td>
+                      不同服务器里叫 <code>search_code</code> 的工具 >1 个
+                    </td>
+                    <td>
+                      Composer 随机选或放弃调用
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">工具名称包含连字符 (-)</span>
+                    </td>
+                    <td>
+                      Cursor 某些版本不识别带 <code>-</code> 的名称
+                    </td>
+                    <td>
+                      论坛大量反馈需改成 <code>_</code>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">总工具数>40</span>
+                    </td>
+                    <td>
+                      Cursor 仅发送前 40 个工具到模型
+                    </td>
+                    <td>
+                      需显式指定 server-name + tool
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="font-bold">Agent YOLO 自动模式</span>
+                    </td>
+                    <td>
+                      打开自动运行后想限制调用范围
+                    </td>
+                    <td>
+                      用别名锁定指定服务器
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- 提示工程示例 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+            <div class="card slide-in-left">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-code mr-2" style="color: var(--primary);"></i>
+                提示工程（Prompt Engineering）示例
+              </h3>
+              
+              <h4 class="text-lg mb-2">直接使用唯一工具（无别名）</h4>
+              <div class="bg-muted p-4 rounded-lg">
+                <pre><code>请运行 search_code 查找所有出现 "fetchEvent(" 的文件，然后列出绝对路径。</code></pre>
+              </div>
+              <p class="text-sm mt-2">
+                适用：只有一个 <code>search_code</code> 工具。<br>
+                风险：若后续再挂同名工具，旧模板会失效。
+              </p>
+              
+              <h4 class="text-lg mt-6 mb-2">显式指定服务器</h4>
+              <div class="bg-muted p-4 rounded-lg">
+                <pre><code>/mcp gitmcp_edge search_code "fetchEvent(" --top=10</code></pre>
+              </div>
+              <p class="text-sm mt-2">
+                适用：多个服务器都含 <code>search_code</code>。<br>
+                优点：结果确切来自 <code>gitmcp_edge</code>，不会误入本地 stdio 服务器。
+              </p>
+            </div>
+            
+            <div class="card slide-in-right">
+              <h3 class="text-xl mb-4 flex items-center">
+                <i class="fas fa-cogs mr-2" style="color: var(--primary);"></i>
+                配置与排错
+              </h3>
+              
+              <h4 class="text-lg mb-2">让别名更语义化</h4>
+              <div class="bg-muted p-4 rounded-lg">
+                <pre class="language-json"><code>{
+  "mcpServers": {
+    "supabase-edge": { "url": "https://gitmcp.io/supabase/edge-runtime" },
+    "local-db":      { "command": "npm", "args": ["run", "mcp:db"] }
+  }
+}</code></pre>
+              </div>
+              <p class="text-sm mt-2">
+                聊天中可写：<code>/mcp supabase-edge list_files "src/**.ts"</code>
+              </p>
+              
+              <h4 class="text-lg mt-6 mb-2">排错与最佳实践</h4>
+              <ol class="list-decimal pl-6 space-y-2 text-sm">
+                <li>
+                  <strong>检查工具是否被读取</strong>：设置页 → MCP → Available Tools，若看不到工具，请确认服务器 status 是 green。
+                </li>
+                <li>
+                  <strong>重命名带连字符的工具</strong>：把 <code>list-calendar-events</code> 改成 <code>list_calendar_events</code> 后，调用成功率显著提高。
+                </li>
+                <li>
+                  <strong>限制工具数量</strong>：在多工具服务器里，把常用工具放前 40 个；不常用工具拆分成另一实例。
+                </li>
+                <li>
+                  <strong>使用别名+描述双保险</strong>：始终提供清晰的上下文描述，即使使用了别名。
+                </li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. 示例：学习Supabase Edge Functions -->
+        <section id="example" class="mb-16">
+          <h2 class="slide-in-right">8. 示例：学习Supabase Edge Functions设计</h2>
+          
+          <div class="card slide-in-right">
+            <p class="mb-6">
+              下面通过一个完整示例，展示如何使用 GitMCP 零部署学习 Supabase Edge Functions 的设计。这个过程展示了如何从探索仓库结构开始，到深入理解核心代码实现，再到本地复刻验证的完整流程。
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h3 class="text-xl mb-4">步骤 1: 设置 MCP 连接</h3>
+                <div class="bg-muted p-4 rounded-lg">
+                  <p class="text-sm opacity-80 mb-2">将 GitHub 仓库转换为 GitMCP URL:</p>
+                  <pre><code>https://github.com/supabase/edge-runtime</code></pre>
+                  <p class="text-sm opacity-80 my-2">转换为:</p>
+                  <pre><code>https://gitmcp.io/supabase/edge-runtime</code></pre>
+                </div>
+                
+                <p class="mt-4">
+                  在 Cursor 设置中添加 MCP Server，设置类型为 SSE，并使用上面的 URL。
+                </p>
+              </div>
+              
+              <div>
+                <h3 class="text-xl mb-4">步骤 2: 获取文件结构信息</h3>
+                <div class="bg-muted p-4 rounded-lg">
+                  <p class="text-sm opacity-80 mb-2">使用 list_files 命令探索源代码结构:</p>
+                  <pre><code>/mcp edge_runtime list_files "src/runtime/**.ts" --max=10</code></pre>
+                </div>
+                
+                <div class="bg-muted p-4 rounded-lg mt-4">
+                  <p class="text-sm opacity-80 mb-2">输出示例:</p>
+                  <pre><code>src/runtime/index.ts
+src/runtime/types.ts
+src/runtime/edge-runtime.ts
+src/runtime/fetch-event.ts
+src/runtime/edge-headers.ts
+src/runtime/dom/body.ts
+...</code></pre>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-8">
+              <h3 class="text-xl mb-4">步骤 3: 搜索关键功能实现</h3>
+              <div class="bg-muted p-4 rounded-lg">
+                <p class="text-sm opacity-80 mb-2">使用 search_code 查找核心功能实现:</p>
+                <pre><code>/mcp edge_runtime search_code "fetchEvent" --top=3</code></pre>
+              </div>
+              
+              <div class="bg-muted p-4 rounded-lg mt-4">
+                <p class="text-sm opacity-80 mb-2">返回的代码片段示例:</p>
+                <pre class="text-xs"><code>// src/runtime/fetch-event.ts
+export class FetchEvent extends Event {
+  private _response?: Response
+  private _waitUntilPromises: Promise<any>[] = []
+
+  constructor(
+    public readonly request: Request,
+    public readonly params: Record<string, string> = {}
+  ) {
+    super('fetch')
+  }
+
+  respondWith(response: Response | Promise<Response>): void {
+    if (this._response) {
+      throw new Error('Response has already been sent')
+    }
+
+    this._response = response instanceof Promise ? undefined : response
+  }
+
+  waitUntil(promise: Promise<any>): void {
+    this._waitUntilPromises.push(promise)
+  }
+
+  // Other methods...
+}</code></pre>
+              </div>
+            </div>
+            
+            <div class="mt-8">
+              <h3 class="text-xl mb-4">步骤 4: 使用LLM解释代码</h3>
+              <div class="bg-muted p-4 rounded-lg">
+                <p class="mb-2">让 Cursor 分析代码，提取核心设计模式:</p>
+                <div class="p-4 border border-border rounded-lg">
+                  <p class="mb-2 italic">基于搜索到的代码，Supabase Edge Functions 的 FetchEvent 实现采用了以下关键设计模式:</p>
+                  <ol class="list-decimal pl-6 space-y-2">
+                    <li>基于 Web 标准的 <strong>事件驱动模型</strong>，继承自 Event 类</li>
+                    <li>支持 <strong>异步响应链</strong>，通过 waitUntil 方法允许函数在响应返回后继续执行后台任务</li>
+                    <li>使用 <strong>单一责任原则</strong>，FetchEvent 类专注于请求处理和生命周期管理</li>
+                    <li>实现与标准 Service Worker API 兼容的接口，使开发体验一致</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-8">
+              <h3 class="text-xl mb-4">步骤 5: 创建最小复刻版</h3>
+              <div class="bg-muted p-4 rounded-lg">
+                <div class="code-header">
+                  <span>简化的FetchEvent实现</span>
+                  <button class="copy-button" onclick="copyCode(this)">复制</button>
+                </div>
+                <pre class="code-block"><code>
+// minimal-edge-runtime.ts
+class Event {
+  constructor(public type: string) {}
+}
+
+export class FetchEvent extends Event {
+  private _response?: Response;
+  private _waitUntilPromises: Promise<any>[] = [];
+
+  constructor(
+    public readonly request: Request,
+    public readonly params: Record<string, string> = {}
+  ) {
+    super('fetch');
+  }
+
+  respondWith(response: Response | Promise<Response>): void {
+    if (this._response) {
+      throw new Error('Response has already been sent');
+    }
+    this._response = response instanceof Promise ? undefined : response;
+  }
+
+  waitUntil(promise: Promise<any>): void {
+    this._waitUntilPromises.push(promise);
+  }
+
+  // 简化的响应获取方法
+  async getResponse(): Promise<Response> {
+    if (this._response) return this._response;
+    throw new Error('No response was provided');
+  }
+
+  // 等待所有后台任务完成
+  async done(): Promise<void> {
+    if (this._waitUntilPromises.length > 0) {
+      await Promise.all(this._waitUntilPromises);
+    }
+  }
+}
+
+// 简单的运行时实现
+export class EdgeRuntime {
+  async handle(request: Request, handler: (event: FetchEvent) => void): Promise<Response> {
+    const event = new FetchEvent(request);
+    
+    try {
+      // 执行用户处理函数
+      handler(event);
+      
+      // 获取响应
+      const response = await event.getResponse();
+      
+      // 在后台完成waitUntil任务
+      event.done().catch(console.error);
+      
+      return response;
+    } catch (error) {
+      console.error('Edge function error:', error);
+      return new Response('Internal Server Error', { status: 500 });
+    }
+  }
+}
+                </code></pre>
+              </div>
+            </div>
+            
+            <div class="mt-8">
+              <h3 class="text-xl mb-4">步骤 6: 沙箱验证</h3>
+              <div class="bg-muted p-4 rounded-lg">
+                <div class="code-header">
+                  <span>测试代码</span>
+                  <button class="copy-button" onclick="copyCode(this)">复制</button>
+                </div>
+                <pre class="code-block"><code>
+import { EdgeRuntime, FetchEvent } from './minimal-edge-runtime';
+
+// 创建测试用的函数处理器
+function edgeHandler(event: FetchEvent) {
+  // 记录后台任务
+  event.waitUntil(
+    (async () => {
+      console.log('执行后台任务...');
+      await new Promise(resolve => setTimeout(resolve, 100));
+      console.log('后台任务完成');
+    })()
+  );
+  
+  // 响应请求
+  event.respondWith(
+    new Response('Hello from Edge Function!', {
+      headers: { 'Content-Type': 'text/plain' }
+    })
+  );
+}
+
+// 运行测试
+async function runTest() {
+  const runtime = new EdgeRuntime();
+  const request = new Request('https://example.com/api/hello');
+  
+  console.log('处理请求...');
+  const response = await runtime.handle(request, edgeHandler);
+  
+  console.log(`状态码: ${response.status}`);
+  console.log(`响应体: ${await response.text()}`);
+}
+
+runTest().catch(console.error);
+                </code></pre>
+              </div>
+              
+              <p class="mt-4">
+                通过这种方式，你可以在不克隆整个仓库的情况下，快速理解 Supabase Edge Functions 的核心设计理念，并创建一个简化但功能正常的最小实现进行验证和学习。
+              </p>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="py-12 px-4" style="background-color: var(--muted);">
+    <div class="container mx-auto max-w-4xl">
+      <div class="flex flex-col md:flex-row justify-between">
+        <div class="mb-8 md:mb-0">
+          <h3 class="text-xl font-bold mb-4" style="font-family: var(--font-serif);">延伸阅读</h3>
+          <ul class="space-y-3">
+            <li>
+              <a href="https://github.com/anthropics/anthropic-cookbook/tree/main/mcp" class="flex items-center hover:underline" target="_blank" rel="noopener">
+                <i class="fas fa-book mr-2" style="color: var(--primary);"></i>
+                <span>Anthropic MCP官方文档</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/githubnext/git-mcp" class="flex items-center hover:underline" target="_blank" rel="noopener">
+                <i class="fas fa-code-branch mr-2" style="color: var(--primary);"></i>
+                <span>git-mcp源代码仓库</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://cursor.sh/blog/introducing-vibe-coding" class="flex items-center hover:underline" target="_blank" rel="noopener">
+                <i class="fas fa-newspaper mr-2" style="color: var(--primary);"></i>
+                <span>Cursor Vibe Coding介绍</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/RooVetGit/Roo-Code" class="flex items-center hover:underline" target="_blank" rel="noopener">
+                <i class="fas fa-robot mr-2" style="color: var(--primary);"></i>
+                <span>Roo-code项目</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/eyaltoledano/claude-task-master" class="flex items-center hover:underline" target="_blank" rel="noopener">
+                <i class="fas fa-tasks mr-2" style="color: var(--primary);"></i>
+                <span>Claude Task Master项目</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-xl font-bold mb-4" style="font-family: var(--font-serif);">作者信息</h3>
+          <div class="space-y-2">
+            <p>作者姓名: 季晓康</p>
+            <p>微信公众号：凿壁</p>
+            <p>版权信息：国家健康医疗大数据研究院</p>
+          </div>
+          
+          <div class="mt-8">
+            <a href="../../index.html" class="inline-flex items-center px-4 py-2 rounded-md transition-all duration-300" style="background-color: var(--primary); color: var(--primary-foreground);">
+              <i class="fas fa-home mr-2"></i>
+              返回首页
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-12 pt-6 border-t border-border text-center">
+        <p class="text-sm opacity-70">
+          发布日期: 2024-05-25 | 分类: AI技术与生态
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // 初始化Mermaid
+    document.addEventListener('DOMContentLoaded', () => {
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'basis'
+        },
+        securityLevel: 'loose'
+      });
+    });
+    
+    // 深色模式切换
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    // 检查用户偏好
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme = localStorage.getItem('theme');
+    
+    // 设置初始主题
+    if (storedTheme === 'dark' || (!storedTheme && prefersDarkMode)) {
+      document.documentElement.classList.add('dark');
+      themeIcon.classList.remove('fa-sun');
+      themeIcon.classList.add('fa-moon');
+    }
+    
+    // 主题切换功能
+    themeToggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      
+      if (document.documentElement.classList.contains('dark')) {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+        localStorage.setItem('theme', 'dark');
+        mermaid.initialize({ theme: 'dark' });
+      } else {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+        localStorage.setItem('theme', 'light');
+        mermaid.initialize({ theme: 'default' });
+      }
+      
+      // 重新渲染图表
+      updateCharts();
+    });
+    
+    // 进度条功能
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      progressBar.style.width = scrolled + '%';
+    });
+    
+    // 复制按钮功能
+    function copyCode(button) {
+      const pre = button.parentElement.nextElementSibling;
+      const code = pre.textContent;
+      
+      navigator.clipboard.writeText(code).then(() => {
+        const originalText = button.textContent;
+        button.textContent = '已复制!';
+        button.style.backgroundColor = 'var(--accent)';
+        
+        setTimeout(() => {
+          button.textContent = originalText;
+          button.style.backgroundColor = 'var(--primary)';
+        }, 1500);
+      });
+    }
+    
+    // 滚动动画
+    function checkVisible() {
+      const elements = document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right');
+      
+      elements.forEach(element => {
+        const top = element.getBoundingClientRect().top;
+        const bottom = element.getBoundingClientRect().bottom;
+        
+        // 检查元素是否部分可见
+        if (top < window.innerHeight - 100 && bottom > 0) {
+          element.classList.add('show');
+        }
+      });
+    }
+    
+    // 初始检查
+    window.addEventListener('DOMContentLoaded', () => {
+      checkVisible();
+      
+      // 初始化图表
+      initCharts();
+    });
+    
+    window.addEventListener('scroll', checkVisible);
+    
+    // 图表初始化
+    function initCharts() {
+      // 场景适用性图表
+      const scenarioCtx = document.getElementById('scenarioChart').getContext('2d');
+      window.scenarioChart = new Chart(scenarioCtx, {
+        type: 'bar',
+        data: {
+          labels: ['快速原型验证', '代码库学习', '多仓库知识融合', '团队协作开发', '生产环境部署'],
+          datasets: [{
+            label: '适用性评分',
+            data: [9, 8.5, 8, 6, 4],
+            backgroundColor: [
+              'rgba(166, 124, 82, 0.7)',
+              'rgba(179, 144, 111, 0.7)',
+              'rgba(192, 160, 128, 0.7)',
+              'rgba(141, 110, 76, 0.7)',
+              'rgba(115, 90, 58, 0.7)'
+            ],
+            borderColor: [
+              'rgb(166, 124, 82)',
+              'rgb(179, 144, 111)',
+              'rgb(192, 160, 128)',
+              'rgb(141, 110, 76)',
+              'rgb(115, 90, 58)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 10,
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+              },
+              grid: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+              }
+            },
+            x: {
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+              },
+              grid: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+      
+      // 安全风险图表
+      const securityCtx = document.getElementById('securityRiskChart').getContext('2d');
+      window.securityChart = new Chart(securityCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['低风险', '中等风险', '高风险'],
+          datasets: [{
+            data: [45, 35, 20],
+            backgroundColor: [
+              'rgba(115, 190, 120, 0.7)',
+              'rgba(240, 180, 80, 0.7)',
+              'rgba(181, 74, 53, 0.7)'
+            ],
+            borderColor: [
+              'rgb(115, 190, 120)',
+              'rgb(240, 180, 80)',
+              'rgb(181, 74, 53)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+              }
+            }
+          }
+        }
+      });
+      
+      // 能力对比雷达图
+      const radarCtx = document.getElementById('capabilityRadarChart').getContext('2d');
+      window.radarChart = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: [
+            'IDE集成度', 
+            '工具扩展性', 
+            '跨会话记忆', 
+            '任务分解', 
+            '多人协作',
+            '自动化程度'
+          ],
+          datasets: [
+            {
+              label: 'Roo-code',
+              data: [7, 9, 8, 5, 6, 8],
+              fill: true,
+              backgroundColor: 'rgba(166, 124, 82, 0.2)',
+              borderColor: 'rgb(166, 124, 82)',
+              pointBackgroundColor: 'rgb(166, 124, 82)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgb(166, 124, 82)'
+            },
+            {
+              label: 'Task Master',
+              data: [8, 6, 7, 9, 8, 7],
+              fill: true,
+              backgroundColor: 'rgba(115, 90, 58, 0.2)',
+              borderColor: 'rgb(115, 90, 58)',
+              pointBackgroundColor: 'rgb(115, 90, 58)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgb(115, 90, 58)'
+            }
+          ]
+        },
+        options: {
+          scales: {
+            r: {
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+              },
+              pointLabels: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+              },
+              grid: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+              },
+              angleLines: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--border')
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--foreground')
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // 更新图表颜色
+    function updateCharts() {
+      if (window.scenarioChart) {
+        window.scenarioChart.options.scales.x.ticks.color = 
+        window.scenarioChart.options.scales.y.ticks.color = 
+          getComputedStyle(document.documentElement).getPropertyValue('--foreground');
+        
+        window.scenarioChart.options.scales.x.grid.color = 
+        window.scenarioChart.options.scales.y.grid.color = 
+          getComputedStyle(document.documentElement).getPropertyValue('--border');
+        
+        window.scenarioChart.update();
+      }
+      
+      if (window.securityChart) {
+        window.securityChart.options.plugins.legend.labels.color = 
+          getComputedStyle(document.documentElement).getPropertyValue('--foreground');
+        
+        window.securityChart.update();
+      }
+      
+      if (window.radarChart) {
+        window.radarChart.options.scales.r.ticks.color = 
+        window.radarChart.options.scales.r.pointLabels.color = 
+          getComputedStyle(document.documentElement).getPropertyValue('--foreground');
+        
+        window.radarChart.options.scales.r.grid.color = 
+        window.radarChart.options.scales.r.angleLines.color = 
+          getComputedStyle(document.documentElement).getPropertyValue('--border');
+        
+        window.radarChart.options.plugins.legend.labels.color = 
+          getComputedStyle(document.documentElement).getPropertyValue('--foreground');
+        
+        window.radarChart.update();
+      }
+    }
+  </script>
+</body>
+</html> 

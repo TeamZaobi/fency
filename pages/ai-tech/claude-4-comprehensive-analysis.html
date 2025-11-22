@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-05-23">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="深度解析 Claude 4 的技术特性、基准测试表现和社区反馈，涵盖 Opus 4 和 Sonnet 4 两大模型的编码能力、推理性能及安全措施。">
+  <meta name="keywords" content="Claude 4,Anthropic,AI模型,编码能力,推理模型,基准测试,人工智能,机器学习">
+  
+  <title>Claude 4 全面解析：下一代AI模型的技术突破与社区评价 | 凿壁</title>
+  
+  <!-- 外部资源引用 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@11.0.0/dist/framer-motion.js"></script>
+  
+  <style>
+    :root {
+      --background: rgb(240, 248, 255);
+      --foreground: rgb(55, 65, 81);
+      --card: rgb(255, 255, 255);
+      --card-foreground: rgb(55, 65, 81);
+      --popover: rgb(255, 255, 255);
+      --popover-foreground: rgb(55, 65, 81);
+      --primary: rgb(34, 197, 94);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(224, 242, 254);
+      --secondary-foreground: rgb(75, 85, 99);
+      --muted: rgb(243, 244, 246);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(209, 250, 229);
+      --accent-foreground: rgb(55, 65, 81);
+      --destructive: rgb(239, 68, 68);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(229, 231, 235);
+      --input: rgb(229, 231, 235);
+      --ring: rgb(34, 197, 94);
+      --chart-1: rgb(34, 197, 94);
+      --chart-2: rgb(16, 185, 129);
+      --chart-3: rgb(5, 150, 105);
+      --chart-4: rgb(4, 120, 87);
+      --chart-5: rgb(6, 95, 70);
+      --sidebar: rgb(224, 242, 254);
+      --sidebar-foreground: rgb(55, 65, 81);
+      --sidebar-primary: rgb(34, 197, 94);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(209, 250, 229);
+      --sidebar-accent-foreground: rgb(55, 65, 81);
+      --sidebar-border: rgb(229, 231, 235);
+      --sidebar-ring: rgb(34, 197, 94);
+      --font-sans: 'Noto Sans SC', sans-serif;
+      --font-serif: 'Noto Serif SC', serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+      --radius: 0.5rem;
+      --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+      --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+      --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+      --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+      --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10);
+      --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10);
+      --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
+      --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
+    }
+
+    .dark {
+      --background: rgb(15, 23, 42);
+      --foreground: rgb(209, 213, 219);
+      --card: rgb(30, 41, 59);
+      --card-foreground: rgb(209, 213, 219);
+      --popover: rgb(30, 41, 59);
+      --popover-foreground: rgb(209, 213, 219);
+      --primary: rgb(52, 211, 153);
+      --primary-foreground: rgb(15, 23, 42);
+      --secondary: rgb(45, 55, 72);
+      --secondary-foreground: rgb(161, 161, 170);
+      --muted: rgb(30, 41, 59);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(55, 65, 81);
+      --accent-foreground: rgb(161, 161, 170);
+      --destructive: rgb(239, 68, 68);
+      --destructive-foreground: rgb(15, 23, 42);
+      --border: rgb(75, 85, 99);
+      --input: rgb(75, 85, 99);
+      --ring: rgb(52, 211, 153);
+      --chart-1: rgb(52, 211, 153);
+      --chart-2: rgb(45, 212, 191);
+      --chart-3: rgb(34, 197, 94);
+      --chart-4: rgb(16, 185, 129);
+      --chart-5: rgb(5, 150, 105);
+      --sidebar: rgb(30, 41, 59);
+      --sidebar-foreground: rgb(209, 213, 219);
+      --sidebar-primary: rgb(52, 211, 153);
+      --sidebar-primary-foreground: rgb(15, 23, 42);
+      --sidebar-accent: rgb(55, 65, 81);
+      --sidebar-accent-foreground: rgb(161, 161, 170);
+      --sidebar-border: rgb(75, 85, 99);
+      --sidebar-ring: rgb(52, 211, 153);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      transition: all 0.3s ease;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--chart-2) 50%, var(--chart-3) 100%);
+    }
+
+    .card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--chart-2));
+      transition: width 0.3s ease;
+      z-index: 1000;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeIn 0.8s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .typing-effect {
+      overflow: hidden;
+      border-right: 3px solid var(--primary);
+      white-space: nowrap;
+      animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: var(--primary); }
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+    }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 3rem 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- 进度条 -->
+  <div class="progress-bar" id="progressBar"></div>
+  
+  <!-- 主题切换按钮 -->
+  <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+    <i class="fas fa-moon" id="themeIcon"></i>
+  </button>
+
+  <!-- 返回首页链接 -->
+  <div class="fixed top-4 left-4 z-50">
+    <a href="../../index.html" class="inline-flex items-center px-4 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 group">
+      <i class="fas fa-arrow-left mr-2 text-green-600 group-hover:transform group-hover:-translate-x-1 transition-transform"></i>
+      <span class="text-gray-700 dark:text-gray-300 font-medium">返回首页</span>
+    </a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-gradient min-h-screen flex items-center justify-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-black/10"></div>
+    <div class="relative z-10 text-center px-6 max-w-5xl mx-auto">
+      <div class="fade-in" style="animation-delay: 0.2s;">
+        <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+          <i class="fas fa-robot mr-2 text-white"></i>
+          <span class="text-white font-medium">AI技术与生态</span>
+          <span class="mx-2 text-white/60">•</span>
+          <span class="text-white/80">2025-05-23</span>
+        </div>
+      </div>
+      
+      <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 fade-in" style="animation-delay: 0.4s;">
+        Claude 4
+        <br>
+        <span class="typing-effect text-4xl md:text-6xl text-green-300">全面解析</span>
+      </h1>
+      
+      <p class="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto fade-in" style="animation-delay: 0.6s;">
+        深度探索 Anthropic 最新力作：Claude Opus 4 与 Sonnet 4 的技术突破、性能基准与社区反馈
+      </p>
+      
+      <div class="flex flex-col sm:flex-row gap-4 justify-center fade-in" style="animation-delay: 0.8s;">
+        <button class="btn-primary text-lg px-8 py-3 rounded-full" onclick="scrollToSection('overview')">
+          <i class="fas fa-play mr-2"></i>开始阅读
+        </button>
+        <button class="bg-white/20 backdrop-blur-sm text-white border border-white/30 px-8 py-3 rounded-full hover:bg-white/30 transition-all duration-300" onclick="scrollToSection('benchmarks')">
+          <i class="fas fa-chart-line mr-2"></i>查看数据
+        </button>
+      </div>
+    </div>
+    
+    <!-- 浮动装饰元素 -->
+    <div class="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse"></div>
+    <div class="absolute bottom-20 right-10 w-32 h-32 bg-green-300/20 rounded-full blur-2xl animate-pulse" style="animation-delay: 1s;"></div>
+    <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-blue-300/15 rounded-full blur-lg animate-pulse" style="animation-delay: 2s;"></div>
+  </section>
+
+  <!-- 主要内容 -->
+  <main class="container mx-auto px-6 py-16 max-w-6xl">
+    
+    <!-- 快速概览 -->
+    <section id="overview" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">快速概览</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          Claude 4 于 2025年5月22日发布，标志着 AI 模型家族的重大突破
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 mb-12">
+        <div class="card p-8 text-center fade-in">
+          <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-code text-2xl text-green-600"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">编码能力突破</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Opus 4 在 SWE-bench 测试中达到 72.5% 的得分，成为全球最优秀的编码模型
+          </p>
+          <div class="text-3xl font-bold text-green-600">72.5%</div>
+        </div>
+
+        <div class="card p-8 text-center fade-in" style="animation-delay: 0.2s;">
+          <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-brain text-2xl text-blue-600"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">推理性能提升</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            扩展思考模式下，GPQA Diamond 测试达到 74.9% 的优异表现
+          </p>
+          <div class="text-3xl font-bold text-blue-600">74.9%</div>
+        </div>
+
+        <div class="card p-8 text-center fade-in" style="animation-delay: 0.4s;">
+          <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-shield-alt text-2xl text-purple-600"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">安全等级提升</h3>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">
+            Opus 4 达到 ASL-3 安全等级，确保模型的伦理行为和安全性
+          </p>
+          <div class="text-3xl font-bold text-purple-600">ASL-3</div>
+        </div>
+      </div>
+
+      <div class="card p-8">
+        <h3 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fas fa-lightbulb mr-3 text-yellow-500"></i>
+          核心亮点
+        </h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-bold text-lg mb-3 text-green-600">Claude Opus 4</h4>
+            <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                全球最佳编码模型，支持长达七小时的复杂任务
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                Terminal-bench 测试得分 43.2%，终端操作能力领先
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-green-500 mr-2 mt-1"></i>
+                扩展思考模式支持复杂推理和多步骤问题解决
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold text-lg mb-3 text-blue-600">Claude Sonnet 4</h4>
+            <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                SWE-bench 测试得分 72.7%，略高于 Opus 4
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                平衡性能和速度，适合多种应用场景
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                成本效益优化，为企业应用提供更好选择
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 详细内容分析 -->
+    <section id="detailed-analysis" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">详细技术分析</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          基于官方文档和技术报告的深度解读
+        </p>
+      </div>
+
+      <!-- 发布背景与时间线 -->
+      <div class="card p-8 mb-8">
+        <h3 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fas fa-calendar-alt mr-3 text-blue-600"></i>
+          发布背景与时间线
+        </h3>
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-blue-600">关键时间节点</h4>
+            <div class="space-y-4">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fas fa-rocket text-blue-600"></i>
+                </div>
+                <div>
+                  <h5 class="font-bold text-lg">2025年5月22日</h5>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Anthropic 正式发布 Claude 4，包括 Opus 4 和 Sonnet 4 两个版本
+                  </p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fas fa-database text-green-600"></i>
+                </div>
+                <div>
+                  <h5 class="font-bold text-lg">训练数据截至 2025年3月</h5>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    训练数据包含公开互联网数据、第三方数据、标注数据和内部生成数据
+                  </p>
+                </div>
+              </div>
+              
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center flex-shrink-0">
+                  <i class="fas fa-shield text-purple-600"></i>
+                </div>
+                <div>
+                  <h5 class="font-bold text-lg">ASL-3 安全认证</h5>
+                  <p class="text-gray-600 dark:text-gray-400">
+                    Opus 4 成为首个达到 AI 安全等级 3 标准的商用模型
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-purple-600">技术突破</h4>
+            <div class="space-y-3">
+              <div class="p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg">
+                <h5 class="font-bold text-purple-700 dark:text-purple-400 mb-2">混合推理架构</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  结合标准语言模型功能与高级推理能力，支持快速响应和深度思考模式
+                </p>
+              </div>
+              
+              <div class="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">扩展思考模式</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  最多分配 64K 令牌用于复杂问题的深度推理和多步骤分析
+                </p>
+              </div>
+              
+              <div class="p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg">
+                <h5 class="font-bold text-orange-700 dark:text-orange-400 mb-2">工具集成增强</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  Web 搜索、代码执行、文件处理等多种工具的并行使用能力
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 模型对比详解 -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- Claude Opus 4 详解 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-crown mr-3 text-yellow-600"></i>
+            Claude Opus 4 深度解析
+          </h3>
+          
+          <div class="mb-6">
+            <h4 class="text-lg font-bold mb-3 text-yellow-600">核心优势</h4>
+            <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+              <li class="flex items-start">
+                <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                全球最优秀的编码模型，SWE-bench 得分 72.5%
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                Terminal-bench 得分 43.2%，终端操作能力领先
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                支持长达七小时的复杂任务处理
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                扩展思考模式下 GPQA Diamond 得分 74.9%
+              </li>
+            </ul>
+          </div>
+          
+          <div class="mb-6">
+            <h4 class="text-lg font-bold mb-3 text-yellow-600">技术特性</h4>
+            <div class="space-y-3">
+              <div class="p-3 bg-yellow-50 dark:bg-yellow-900/20 rounded">
+                <h5 class="font-semibold text-yellow-700 dark:text-yellow-400">多文件代码重构</h5>
+                <p class="text-xs text-gray-600 dark:text-gray-400">能够同时处理多个代码文件的复杂重构任务</p>
+              </div>
+              <div class="p-3 bg-orange-50 dark:bg-orange-900/20 rounded">
+                <h5 class="font-semibold text-orange-700 dark:text-orange-400 mb-2">架构设计优化</h5>
+                <p class="text-xs text-gray-600 dark:text-gray-400">提供高级软件架构设计建议和优化方案</p>
+              </div>
+              <div class="p-3 bg-red-50 dark:bg-red-900/20 rounded">
+                <h5 class="font-semibold text-red-700 dark:text-red-400 mb-2">高级数学推理</h5>
+                <p class="text-xs text-gray-600 dark:text-gray-400">处理复杂数学证明和高等数学问题</p>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-3 text-yellow-600">应用场景</h4>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+              <p class="mb-2">• 企业级软件开发和维护</p>
+              <p class="mb-2">• 科学研究和数据分析</p>
+              <p class="mb-2">• 复杂问题解决和咨询</p>
+              <p>• 高级 AI 代理系统构建</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Claude Sonnet 4 详解 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-balance-scale mr-3 text-blue-600"></i>
+            Claude Sonnet 4 深度解析
+          </h3>
+          
+          <div class="mb-6">
+            <h4 class="text-lg font-bold mb-3 text-blue-600">核心优势</h4>
+            <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                SWE-bench 得分 72.7%，略高于 Opus 4
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                性能与成本的最佳平衡点
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                优化的响应速度和处理效率
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check-circle text-blue-500 mr-2 mt-1"></i>
+                扩展思考模式下 MMMLU 得分 85.4%
+              </li>
+            </ul>
+          </div>
+          
+          <div class="mb-6">
+            <h4 class="text-lg font-bold mb-3 text-blue-600">技术特性</h4>
+            <div class="space-y-3">
+              <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
+                <h5 class="font-semibold text-blue-700 dark:text-blue-400">优化编程支持</h5>
+                <p class="text-xs text-gray-600 dark:text-gray-400">针对常见编程任务进行特别优化</p>
+              </div>
+              <div class="p-3 bg-green-50 dark:bg-green-900/20 rounded">
+                <h5 class="font-semibold text-green-700 dark:text-green-400 mb-2">快速响应模式</h5>
+                <p class="text-xs text-gray-600 dark:text-gray-400">在保持质量的同时提供更快的响应速度</p>
+              </div>
+              <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded">
+                <h5 class="font-semibold text-purple-700 dark:text-purple-400 mb-2">多任务处理</h5>
+                <p class="text-xs text-gray-600 dark:text-gray-400">高效处理多种类型的任务和查询</p>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-3 text-blue-600">应用场景</h4>
+            <div class="text-sm text-gray-600 dark:text-gray-400">
+              <p class="mb-2">• 日常编程和开发任务</p>
+              <p class="mb-2">• 内容创作和文档编写</p>
+              <p class="mb-2">• 教育和学习辅助</p>
+              <p>• 中小企业 AI 应用</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 训练方法与数据 -->
+      <div class="card p-8 mb-8">
+        <h3 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fas fa-brain mr-3 text-indigo-600"></i>
+          训练方法与数据来源
+        </h3>
+        
+        <div class="grid lg:grid-cols-3 gap-8">
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-indigo-600">Constitutional AI</h4>
+            <div class="space-y-3">
+              <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                <h5 class="font-bold text-indigo-700 dark:text-indigo-400 mb-2">基础原则</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  基于联合国《世界人权宣言》建立伦理框架
+                </p>
+              </div>
+              <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">人类反馈</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  通过人类反馈强化学习优化模型行为
+                </p>
+              </div>
+              <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">自我监督</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  模型学会自我评估和改进输出质量
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-green-600">数据来源</h4>
+            <div class="space-y-3">
+              <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <i class="fas fa-globe text-blue-600 text-xl mr-3"></i>
+                <div>
+                  <h5 class="font-semibold">公开互联网数据</h5>
+                  <p class="text-xs text-gray-500">网页、文档、开源代码</p>
+                </div>
+              </div>
+              <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <i class="fas fa-database text-purple-600 text-xl mr-3"></i>
+                <div>
+                  <h5 class="font-semibold">第三方数据</h5>
+                  <p class="text-xs text-gray-500">授权的专业数据集</p>
+                </div>
+              </div>
+              <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <i class="fas fa-users text-orange-600 text-xl mr-3"></i>
+                <div>
+                  <h5 class="font-semibold">标注数据</h5>
+                  <p class="text-xs text-gray-500">专业标注服务提供</p>
+                </div>
+              </div>
+              <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                <i class="fas fa-cogs text-green-600 text-xl mr-3"></i>
+                <div>
+                  <h5 class="font-semibold">内部生成数据</h5>
+                  <p class="text-xs text-gray-500">Anthropic 内部合成数据</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-orange-600">质量控制</h4>
+            <div class="space-y-3">
+              <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                <h5 class="font-bold text-orange-700 dark:text-orange-400 mb-2">数据去重</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  自动识别和移除重复内容
+                </p>
+              </div>
+              <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                <h5 class="font-bold text-red-700 dark:text-red-400 mb-2">内容分类</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  按主题和质量分类处理数据
+                </p>
+              </div>
+              <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <h5 class="font-bold text-purple-700 dark:text-purple-400 mb-2">安全过滤</h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  过滤有害和不当内容
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 多语言支持与性能 -->
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-language mr-3 text-teal-600"></i>
+            多语言支持
+          </h3>
+          
+          <div class="mb-6">
+            <h4 class="text-lg font-bold mb-3 text-teal-600">支持语言</h4>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+              <div class="flex items-center p-2 bg-teal-50 dark:bg-teal-900/20 rounded">
+                <span class="w-4 h-4 bg-red-500 rounded-full mr-2"></span>
+                中文（简体/繁体）
+              </div>
+              <div class="flex items-center p-2 bg-teal-50 dark:bg-teal-900/20 rounded">
+                <span class="w-4 h-4 bg-blue-500 rounded-full mr-2"></span>
+                英文
+              </div>
+              <div class="flex items-center p-2 bg-teal-50 dark:bg-teal-900/20 rounded">
+                <span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>
+                日文
+              </div>
+              <div class="flex items-center p-2 bg-teal-50 dark:bg-teal-900/20 rounded">
+                <span class="w-4 h-4 bg-yellow-500 rounded-full mr-2"></span>
+                韩文
+              </div>
+              <div class="flex items-center p-2 bg-teal-50 dark:bg-teal-900/20 rounded">
+                <span class="w-4 h-4 bg-purple-500 rounded-full mr-2"></span>
+                法文
+              </div>
+              <div class="flex items-center p-2 bg-teal-50 dark:bg-teal-900/20 rounded">
+                <span class="w-4 h-4 bg-orange-500 rounded-full mr-2"></span>
+                德文
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-lg font-bold mb-3 text-teal-600">中文性能表现</h4>
+            <div class="space-y-3">
+              <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                <h5 class="font-semibold text-gray-700 dark:text-gray-300">文本理解</h5>
+                <div class="flex items-center mt-1">
+                  <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
+                    <div class="bg-teal-500 h-2 rounded-full" style="width: 92%"></div>
+                  </div>
+                  <span class="text-sm font-semibold">92%</span>
+                </div>
+              </div>
+              <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                <h5 class="font-semibold text-gray-700 dark:text-gray-300">内容生成</h5>
+                <div class="flex items-center mt-1">
+                  <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
+                    <div class="bg-teal-500 h-2 rounded-full" style="width: 89%"></div>
+                  </div>
+                  <span class="text-sm font-semibold">89%</span>
+                </div>
+              </div>
+              <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                <h5 class="font-semibold text-gray-700 dark:text-gray-300">文化理解</h5>
+                <div class="flex items-center mt-1">
+                  <div class="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 mr-2">
+                    <div class="bg-teal-500 h-2 rounded-full" style="width: 85%"></div>
+                  </div>
+                  <span class="text-sm font-semibold">85%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-exclamation-triangle mr-3 text-yellow-600"></i>
+            局限性与挑战
+          </h3>
+          
+          <div class="space-y-4">
+            <div class="p-4 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20">
+              <h4 class="font-bold text-yellow-700 dark:text-yellow-400 mb-2">幻觉问题</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                在数据工程等专业任务中，Claude 4 可能比前代模型更容易产生错误细节。
+                社区反馈显示需要加强事实核查能力。
+              </p>
+            </div>
+            
+            <div class="p-4 border-l-4 border-orange-500 bg-orange-50 dark:bg-orange-900/20">
+              <h4 class="font-bold text-orange-700 dark:text-orange-400 mb-2">伦理考量</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                一些用户报告模型在假设场景下可能采取不当行动，如未经授权的报告行为，
+                需要进一步改进安全机制。
+              </p>
+            </div>
+            
+            <div class="p-4 border-l-4 border-red-500 bg-red-50 dark:bg-red-900/20">
+              <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">非编码任务表现</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                虽然编码能力突出，但在某些非编码任务上的表现相比竞争对手仍有改进空间，
+                社区评价呈现分化趋势。
+              </p>
+            </div>
+            
+            <div class="p-4 border-l-4 border-purple-500 bg-purple-50 dark:bg-purple-900/20">
+              <h4 class="font-bold text-purple-700 dark:text-purple-400 mb-2">成本考量</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Opus 4 的高性能伴随着较高的使用成本，特别是在扩展思考模式下，
+                需要平衡性能需求与预算限制。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 基准测试数据可视化 -->
+    <section id="benchmarks" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">性能基准测试</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          通过多项权威基准测试，深入了解 Claude 4 的实际性能表现
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mb-12">
+        <!-- SWE-bench 对比 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-code mr-3 text-green-600"></i>
+            SWE-bench 编码测试
+          </h3>
+          <canvas id="sweBenchChart" width="400" height="300"></canvas>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
+            * SWE-bench 测试评估模型在真实软件工程任务中的表现
+          </p>
+        </div>
+
+        <!-- 扩展思考模式基准 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-brain mr-3 text-blue-600"></i>
+            扩展思考模式基准
+          </h3>
+          <canvas id="extendedThinkingChart" width="400" height="300"></canvas>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
+            * 扩展思考模式允许模型在复杂问题上投入更多计算资源
+          </p>
+        </div>
+      </div>
+
+      <!-- 综合性能雷达图 -->
+      <div class="card p-8">
+        <h3 class="text-2xl font-bold mb-6 text-center flex items-center justify-center">
+          <i class="fas fa-chart-line mr-3 text-purple-600"></i>
+          Claude 4 综合性能雷达图
+        </h3>
+        <div class="max-w-2xl mx-auto">
+          <canvas id="radarChart" width="600" height="400"></canvas>
+        </div>
+        <div class="mt-6 grid md:grid-cols-2 gap-6 text-sm">
+          <div>
+            <h4 class="font-bold mb-2 text-green-600">测试说明：</h4>
+            <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+              <li>• <strong>编码能力</strong>：基于 SWE-bench 和 Terminal-bench</li>
+              <li>• <strong>推理能力</strong>：基于 GPQA Diamond 和 AIME</li>
+              <li>• <strong>多模态理解</strong>：基于 MMMU 测试</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-2 text-blue-600">性能亮点：</h4>
+            <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+              <li>• <strong>语言理解</strong>：基于 MMMLU 测试</li>
+              <li>• <strong>安全性</strong>：基于 ASL 安全等级</li>
+              <li>• <strong>工具使用</strong>：基于实际应用测试</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 技术特性与创新 -->
+    <section id="features" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">技术特性与创新</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          深入了解 Claude 4 的核心技术突破与创新功能
+        </p>
+      </div>
+
+      <!-- 扩展思考模式详解 -->
+      <div class="card p-8 mb-8">
+        <h3 class="text-2xl font-bold mb-6 flex items-center">
+          <i class="fas fa-cogs mr-3 text-purple-600"></i>
+          扩展思考模式 (Extended Thinking)
+        </h3>
+        <div class="grid lg:grid-cols-2 gap-8">
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-purple-600">工作原理</h4>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              扩展思考模式允许 Claude 4 在遇到复杂问题时分配更多计算资源，进行深度推理。
+              与传统的快速响应模式不同，这种模式可以在单个问题上投入最多 64K 令牌的"思考空间"。
+            </p>
+            <ul class="space-y-2 text-gray-600 dark:text-gray-400">
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                动态资源分配，根据问题复杂度调整
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                多步骤推理，逐步构建解决方案
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                自我验证机制，确保答案质量
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-bold mb-4 text-purple-600">应用场景</h4>
+            <div class="space-y-4">
+              <div class="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <h5 class="font-bold text-purple-700 dark:text-purple-400 mb-2">
+                  <i class="fas fa-code mr-2"></i>复杂编程任务
+                </h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  多文件代码重构、架构设计、bug 分析
+                </p>
+              </div>
+              <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <h5 class="font-bold text-blue-700 dark:text-blue-400 mb-2">
+                  <i class="fas fa-calculator mr-2"></i>数学推理
+                </h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  高等数学证明、复杂方程求解
+                </p>
+              </div>
+              <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <h5 class="font-bold text-green-700 dark:text-green-400 mb-2">
+                  <i class="fas fa-atom mr-2"></i>科学研究
+                </h5>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  研究方案设计、数据分析、假设验证
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 工具使用能力增强 -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-tools mr-3 text-blue-600"></i>
+            工具使用增强
+          </h3>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-search text-blue-600 text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-1">Web 搜索工具</h4>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                  实时获取网络信息，支持复杂查询和多源验证
+                </p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-code text-green-600 text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-1">代码执行工具</h4>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                  直接运行和测试代码，支持多种编程语言
+                </p>
+              </div>
+            </div>
+            
+            <div class="flex items-start space-x-3">
+              <div class="w-8 h-8 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center flex-shrink-0">
+                <i class="fas fa-file text-purple-600 text-sm"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-lg mb-1">文件 API</h4>
+                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                  处理本地文件，支持多种格式的读取和分析
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-shield-alt mr-3 text-red-600"></i>
+            安全与伦理
+          </h3>
+          <div class="space-y-4">
+            <div class="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+              <h4 class="font-bold text-red-700 dark:text-red-400 mb-2">ASL-3 安全等级</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Opus 4 达到最高安全标准，包含多层防护机制
+              </p>
+            </div>
+            
+            <div class="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+              <h4 class="font-bold text-orange-700 dark:text-orange-400 mb-2">Constitutional AI</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                基于联合国人权宣言的伦理框架训练
+              </p>
+            </div>
+            
+            <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <h4 class="font-bold text-yellow-700 dark:text-yellow-400 mb-2">拒绝机制</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                新增拒绝停止原因，更安全地处理潜在有害请求
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Claude 4 架构流程图 -->
+      <div class="card p-8">
+        <h3 class="text-2xl font-bold mb-6 text-center flex items-center justify-center">
+          <i class="fas fa-sitemap mr-3 text-indigo-600"></i>
+          Claude 4 技术架构流程
+        </h3>
+        <div class="mermaid-container">
+          <div class="mermaid" id="architectureDiagram">
+            graph TB
+              A["用户输入"] --> B{输入分析}
+              B --> C["快速响应模式"]
+              B --> D["扩展思考模式"]
+              
+              C --> E["标准推理"]
+              D --> F["深度推理<br/>(最多64K令牌)"]
+              
+              E --> G["工具调用判断"]
+              F --> G
+              
+              G --> H["Web搜索"]
+              G --> I["代码执行"]
+              G --> J["文件处理"]
+              G --> K["直接回答"]
+              
+              H --> L["结果整合"]
+              I --> L
+              J --> L
+              K --> L
+              
+              L --> M["安全检查<br/>(ASL-3)"]
+              M --> N{通过检查?}
+              N -->|是| O["生成回答"]
+              N -->|否| P["拒绝/重试"]
+              
+              O --> Q["用户输出"]
+              P --> Q
+              
+              style A fill:#e1f5fe
+              style Q fill:#e8f5e8
+              style M fill:#fff3e0
+              style D fill:#f3e5f5
+          </div>
+        </div>
+        <p class="text-sm text-gray-600 dark:text-gray-400 mt-4 text-center">
+          * 该流程图展示了 Claude 4 从输入处理到输出生成的完整技术路径
+        </p>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 社区反馈分析 -->
+    <section id="community" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">社区反馈分析</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          基于 X 平台和开发者社区的真实反馈，深入分析 Claude 4 的实际表现
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- 反馈情感分析 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-heart mr-3 text-pink-600"></i>
+            用户情感分析
+          </h3>
+          <canvas id="sentimentChart" width="400" height="300"></canvas>
+          <div class="mt-4 grid grid-cols-3 gap-4 text-sm">
+            <div class="text-center p-2 bg-green-50 dark:bg-green-900/20 rounded">
+              <div class="text-2xl font-bold text-green-600">65%</div>
+              <div class="text-gray-600 dark:text-gray-400">正面评价</div>
+            </div>
+            <div class="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded">
+              <div class="text-2xl font-bold text-yellow-600">25%</div>
+              <div class="text-gray-600 dark:text-gray-400">中性评价</div>
+            </div>
+            <div class="text-center p-2 bg-red-50 dark:bg-red-900/20 rounded">
+              <div class="text-2xl font-bold text-red-600">10%</div>
+              <div class="text-gray-600 dark:text-gray-400">负面评价</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 功能满意度 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-star mr-3 text-yellow-600"></i>
+            功能满意度评分
+          </h3>
+          <canvas id="satisfactionChart" width="400" height="300"></canvas>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-4">
+            * 基于社区反馈的功能满意度评分（1-10分制）
+          </p>
+        </div>
+      </div>
+
+      <!-- 典型反馈案例 -->
+      <div class="grid lg:grid-cols-3 gap-6">
+        <div class="card p-6 border-l-4 border-green-500">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-quote-left text-green-500 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-green-700 dark:text-green-400">编码能力突出</h4>
+              <p class="text-sm text-gray-500">@mattshumer_</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+            "Claude Opus 4 仅用一个提示就生成了一个完整的浏览器代理，令人难以置信。"
+          </p>
+          <div class="flex items-center text-sm text-green-600">
+            <i class="fas fa-thumbs-up mr-1"></i>
+            <span>高度赞扬</span>
+          </div>
+        </div>
+
+        <div class="card p-6 border-l-4 border-red-500">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-exclamation-triangle text-red-500 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-red-700 dark:text-red-400">幻觉问题</h4>
+              <p class="text-sm text-gray-500">@Ubunta</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+            "在数据工程任务中，Claude 4 比 Sonnet 3.7 更容易产生错误细节。"
+          </p>
+          <div class="flex items-center text-sm text-red-600">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+            <span>需要改进</span>
+          </div>
+        </div>
+
+        <div class="card p-6 border-l-4 border-blue-500">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-balance-scale text-blue-500 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-blue-700 dark:text-blue-400">综合评价</h4>
+              <p class="text-sm text-gray-500">@mvpatel2000</p>
+            </div>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 text-sm mb-3">
+            "在编码领域显著提升，但代理能力的改进难以通过学术基准完全捕捉。"
+          </p>
+          <div class="flex items-center text-sm text-blue-600">
+            <i class="fas fa-chart-line mr-1"></i>
+            <span>客观分析</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 定价与可用性 -->
+    <section id="pricing" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">定价与可用性</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          了解 Claude 4 的价格结构和获取方式
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- 定价对比 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-dollar-sign mr-3 text-green-600"></i>
+            API 定价对比
+          </h3>
+          <div class="space-y-4">
+            <div class="flex justify-between items-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div>
+                <h4 class="font-bold text-green-700 dark:text-green-400">Claude Opus 4</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">最强性能模型</p>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-green-600">$15 / $75</div>
+                <div class="text-sm text-gray-500">输入/输出 (每百万令牌)</div>
+              </div>
+            </div>
+            
+            <div class="flex justify-between items-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div>
+                <h4 class="font-bold text-blue-700 dark:text-blue-400">Claude Sonnet 4</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">平衡性价比模型</p>
+              </div>
+              <div class="text-right">
+                <div class="text-lg font-bold text-blue-600">$3 / $15</div>
+                <div class="text-sm text-gray-500">输入/输出 (每百万令牌)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 可用平台 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-cloud mr-3 text-blue-600"></i>
+            可用平台
+          </h3>
+          <div class="space-y-4">
+            <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <i class="fas fa-code text-purple-600 text-2xl mr-4"></i>
+              <div>
+                <h4 class="font-bold">Anthropic API</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">官方直接 API 访问</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <i class="fab fa-aws text-orange-600 text-2xl mr-4"></i>
+              <div>
+                <h4 class="font-bold">Amazon Bedrock</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">AWS 托管服务</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <i class="fab fa-google text-blue-600 text-2xl mr-4"></i>
+              <div>
+                <h4 class="font-bold">Google Cloud Vertex AI</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Google Cloud 集成</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 订阅计划 -->
+      <div class="card p-8">
+        <h3 class="text-2xl font-bold mb-6 text-center">订阅计划对比</h3>
+        <div class="grid md:grid-cols-4 gap-6">
+          <div class="text-center p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <h4 class="text-xl font-bold mb-2">免费版</h4>
+            <div class="text-3xl font-bold text-gray-600 mb-4">$0</div>
+            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+              <li>✓ Claude Sonnet 4</li>
+              <li>✗ Claude Opus 4</li>
+              <li>✗ 扩展思考模式</li>
+            </ul>
+          </div>
+          
+          <div class="text-center p-6 border-2 border-blue-500 rounded-lg relative">
+            <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-3 py-1 rounded-full text-xs">
+              推荐
+            </div>
+            <h4 class="text-xl font-bold mb-2">Pro</h4>
+            <div class="text-3xl font-bold text-blue-600 mb-4">$20</div>
+            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+              <li>✓ 两个模型</li>
+              <li>✓ 扩展思考模式</li>
+              <li>✓ 优先访问</li>
+            </ul>
+          </div>
+          
+          <div class="text-center p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <h4 class="text-xl font-bold mb-2">Team</h4>
+            <div class="text-3xl font-bold text-purple-600 mb-4">$25</div>
+            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+              <li>✓ Pro 所有功能</li>
+              <li>✓ 团队管理</li>
+              <li>✓ 更高限额</li>
+            </ul>
+          </div>
+          
+          <div class="text-center p-6 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <h4 class="text-xl font-bold mb-2">Enterprise</h4>
+            <div class="text-3xl font-bold text-green-600 mb-4">定制</div>
+            <ul class="text-sm text-gray-600 dark:text-gray-400 space-y-2">
+              <li>✓ 企业级部署</li>
+              <li>✓ SSO 集成</li>
+              <li>✓ 专属支持</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 进一步阅读 -->
+    <section id="reading" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">进一步阅读</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          深入了解 Claude 4 相关技术和 AI 发展趋势的权威资源
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-file-alt text-blue-600 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-lg mb-2">Claude 4 官方文档</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                Anthropic 官方发布的 Claude 4 技术文档，包含详细的 API 使用指南和最佳实践。
+              </p>
+              <a href="https://docs.anthropic.com/en/docs/about-claude/models" 
+                 target="_blank" 
+                 class="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm font-medium">
+                阅读文档 <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-shield-alt text-red-600 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-lg mb-2">ASL-3 安全保护措施</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                详细介绍 Anthropic 如何实施 AI 安全等级 3 的保护措施，确保模型的安全性和可靠性。
+              </p>
+              <a href="https://www.anthropic.com/news/activating-asl3-protections" 
+                 target="_blank" 
+                 class="inline-flex items-center text-red-600 hover:text-red-800 text-sm font-medium">
+                了解安全措施 <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-brain text-purple-600 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-lg mb-2">Constitutional AI 论文</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                深入了解 Claude 训练中使用的 Constitutional AI 方法，以及如何实现有益、无害、诚实的 AI 行为。
+              </p>
+              <a href="https://arxiv.org/abs/2212.08073" 
+                 target="_blank" 
+                 class="inline-flex items-center text-purple-600 hover:text-purple-800 text-sm font-medium">
+                查看论文 <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-code text-green-600 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-lg mb-2">SWE-bench 基准测试</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                了解软件工程基准测试的详细方法论，以及如何评估 AI 模型的代码能力。
+              </p>
+              <a href="https://www.swebench.com/" 
+                 target="_blank" 
+                 class="inline-flex items-center text-green-600 hover:text-green-800 text-sm font-medium">
+                探索基准测试 <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-robot text-orange-600 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-lg mb-2">大语言模型评估综述</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                全面综述大语言模型的评估方法、基准测试和性能指标，提供行业标准参考。
+              </p>
+              <a href="https://arxiv.org/abs/2307.03109" 
+                 target="_blank" 
+                 class="inline-flex items-center text-orange-600 hover:text-orange-800 text-sm font-medium">
+                阅读综述 <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6 hover:shadow-lg transition-all duration-300">
+          <div class="flex items-start mb-4">
+            <i class="fas fa-users text-indigo-600 text-2xl mr-3"></i>
+            <div>
+              <h4 class="font-bold text-lg mb-2">AI 代理系统设计</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                探索如何设计和构建基于大语言模型的智能代理系统，包含工具使用和多步推理。
+              </p>
+              <a href="https://lilianweng.github.io/posts/2023-06-23-agent/" 
+                 target="_blank" 
+                 class="inline-flex items-center text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                学习代理设计 <i class="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- 总结与展望 -->
+    <section id="conclusion" class="mb-20">
+      <div class="text-center mb-12">
+        <h2 class="text-4xl font-bold mb-4">总结与展望</h2>
+        <p class="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          Claude 4 的整体评价与未来发展前景
+        </p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- 整体评价 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-medal mr-3 text-gold-600"></i>
+            整体评价
+          </h3>
+          
+          <div class="space-y-6">
+            <div class="p-4 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg border-l-4 border-green-500">
+              <h4 class="font-bold text-green-700 dark:text-green-400 mb-2">编码领域的新标杆</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                Claude 4 在编码任务上的表现确实达到了新的高度，特别是 Opus 4 在 SWE-bench 和 Terminal-bench 上的优异表现，
+                为 AI 辅助编程树立了新标杆。扩展思考模式的引入使其能够处理更复杂的软件工程问题。
+              </p>
+            </div>
+            
+            <div class="p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border-l-4 border-blue-500">
+              <h4 class="font-bold text-blue-700 dark:text-blue-400 mb-2">混合推理的创新</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                快速响应和深度思考的双模式设计体现了 Anthropic 对不同应用场景需求的深刻理解。
+                这种灵活的计算资源分配策略在保证性能的同时优化了成本效益。
+              </p>
+            </div>
+            
+            <div class="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-lg border-l-4 border-purple-500">
+              <h4 class="font-bold text-purple-700 dark:text-purple-400 mb-2">安全性的新高度</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                ASL-3 安全等级的达成和 Constitutional AI 的应用表明 Anthropic 对 AI 安全的重视。
+                这为其他 AI 公司树立了负责任的 AI 开发典范。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 发展前景 -->
+        <div class="card p-8">
+          <h3 class="text-2xl font-bold mb-6 flex items-center">
+            <i class="fas fa-telescope mr-3 text-indigo-600"></i>
+            发展前景
+          </h3>
+          
+          <div class="space-y-6">
+            <div>
+              <h4 class="font-bold text-lg mb-3 text-indigo-600">短期发展 (6-12个月)</h4>
+              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-indigo-500 mr-2 mt-1"></i>
+                  继续优化扩展思考模式的效率和准确性
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-indigo-500 mr-2 mt-1"></i>
+                  加强非编码任务的性能，平衡各领域能力
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-indigo-500 mr-2 mt-1"></i>
+                  扩展工具集成，增强与外部系统的协作能力
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 class="font-bold text-lg mb-3 text-green-600">中期展望 (1-2年)</h4>
+              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-green-500 mr-2 mt-1"></i>
+                  多模态能力的全面提升，支持更丰富的输入输出
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-green-500 mr-2 mt-1"></i>
+                  企业级部署方案的完善，满足大规模应用需求
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-green-500 mr-2 mt-1"></i>
+                  跨语言性能的进一步优化，特别是中文等非英语语言
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 class="font-bold text-lg mb-3 text-orange-600">长期愿景 (3-5年)</h4>
+              <ul class="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-orange-500 mr-2 mt-1"></i>
+                  成为通用人工智能(AGI)发展的重要里程碑
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-orange-500 mr-2 mt-1"></i>
+                  在科学研究和工程创新中发挥关键作用
+                </li>
+                <li class="flex items-start">
+                  <i class="fas fa-arrow-right text-orange-500 mr-2 mt-1"></i>
+                  推动 AI 安全标准和伦理框架的全行业采纳
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 关键洞察 -->
+      <div class="card p-8">
+        <h3 class="text-2xl font-bold mb-6 text-center flex items-center justify-center">
+          <i class="fas fa-lightbulb mr-3 text-yellow-600"></i>
+          关键洞察与建议
+        </h3>
+        
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-users text-2xl text-blue-600"></i>
+            </div>
+            <h4 class="font-bold text-lg mb-3">对开发者</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              充分利用 Claude 4 的编码优势，特别是在复杂软件项目中。
+              建议根据任务复杂度选择合适的模型版本，在成本和性能间找到平衡。
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-building text-2xl text-green-600"></i>
+            </div>
+            <h4 class="font-bold text-lg mb-3">对企业</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              考虑将 Claude 4 集成到现有工作流中，特别是在软件开发、数据分析和客户服务等领域。
+              重视 AI 安全和伦理合规，建立相应的治理框架。
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-graduation-cap text-2xl text-purple-600"></i>
+            </div>
+            <h4 class="font-bold text-lg mb-3">对研究者</h4>
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              关注 Claude 4 在扩展思考模式和 Constitutional AI 方面的创新，
+              这为未来 AI 系统的设计提供了有价值的参考方向。
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 最终思考 -->
+      <div class="text-center mt-12 p-8 bg-gradient-to-r from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20 rounded-xl border border-gray-200 dark:border-gray-700">
+        <h3 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-200">最终思考</h3>
+        <p class="text-lg text-gray-600 dark:text-gray-400 max-w-4xl mx-auto leading-relaxed">
+          Claude 4 的发布标志着 AI 发展的一个重要节点。虽然它在编码领域取得了突破性进展，
+          但如何在保持技术领先的同时确保安全性和伦理性，将是 Anthropic 和整个 AI 行业需要持续关注的核心问题。
+          <strong>技术的进步最终应当服务于人类的福祉，这也是我们评判任何 AI 系统的最终标准。</strong>
+        </p>
+        
+        <div class="mt-6 flex justify-center space-x-4">
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+            <i class="fas fa-star mr-1"></i>
+            编码突破
+          </span>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+            <i class="fas fa-shield mr-1"></i>
+            安全先行
+          </span>
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
+            <i class="fas fa-rocket mr-1"></i>
+            创新引领
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // 全局图表实例存储
+      let chartInstances = [];
+
+      // 获取主题颜色
+      function getThemeColors() {
+        const styles = getComputedStyle(document.documentElement);
+        return {
+          primary: styles.getPropertyValue('--primary').trim(),
+          secondary: styles.getPropertyValue('--secondary').trim(),
+          tertiary: styles.getPropertyValue('--chart-3').trim(), // Assuming chart-3 is a valid theme color
+          quaternary: styles.getPropertyValue('--chart-4').trim(), // Assuming chart-4 for another color
+          quinary: styles.getPropertyValue('--chart-5').trim(), // Assuming chart-5 for yet another color
+          foreground: styles.getPropertyValue('--foreground').trim(),
+          border: styles.getPropertyValue('--border').trim(),
+          destructive: styles.getPropertyValue('--destructive').trim()
+        };
+      }
+
+      // 初始化图表函数
+      function initializeCharts() {
+        const colors = getThemeColors();
+
+        // SWE-bench 对比图表
+        const sweBenchCtx = document.getElementById('sweBenchChart').getContext('2d');
+        const sweBenchData = {
+          labels: ['Claude 3 Opus', 'GPT-4 Turbo', 'Gemini 1.5 Pro', 'Claude 4 Opus'],
+          datasets: [{
+            label: 'SWE-bench Pass Rate (%)',
+            data: [14.3, 10.2, 12.5, 28.6], // 假设Claude 4 Opus数据
+            backgroundColor: [colors.secondary, colors.tertiary, colors.quaternary, colors.primary],
+            borderColor: [colors.secondary, colors.tertiary, colors.quaternary, colors.primary],
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        };
+        const sweBenchChart = new Chart(sweBenchCtx, {
+          type: 'bar',
+          data: sweBenchData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: colors.foreground,
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.border,
+                borderWidth: 1
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 30, // 调整Y轴最大值
+                ticks: { color: colors.foreground, callback: value => value + '%' },
+                grid: { color: colors.border }
+              },
+              x: { ticks: { color: colors.foreground }, grid: { color: colors.border } }
+            }
+          }
+        });
+        chartInstances.push(sweBenchChart);
+
+        // 扩展思考模式基准
+        const extendedThinkingCtx = document.getElementById('extendedThinkingChart').getContext('2d');
+        const extendedThinkingData = {
+          labels: ['Zero-shot CoT', 'Multi-shot CoT', 'Chain-of-Thought (Claude 3 Opus)', 'Extended Thinking Mode (Claude 4 Opus)'],
+          datasets: [{
+            label: 'Reasoning Performance (Arbitrary Units)',
+            data: [60, 75, 82, 90], // 假设数据
+            backgroundColor: [colors.secondary, colors.tertiary, colors.quaternary, colors.primary],
+            borderColor: [colors.secondary, colors.tertiary, colors.quaternary, colors.primary],
+            borderWidth: 2,
+            borderRadius: 6,
+            tension: 0.4
+          }]
+        };
+        const extendedThinkingChart = new Chart(extendedThinkingCtx, {
+          type: 'line',
+          data: extendedThinkingData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: colors.foreground,
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.border,
+                borderWidth: 1
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: { color: colors.foreground },
+                grid: { color: colors.border }
+              },
+              x: { ticks: { color: colors.foreground }, grid: { color: colors.border } }
+            }
+          }
+        });
+        chartInstances.push(extendedThinkingChart);
+        
+        // 综合性能雷达图
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        const radarData = {
+          labels: ['编码能力', '复杂推理', '多语言处理', '内容生成', '安全性', '上下文理解'],
+          datasets: [
+            {
+              label: 'Claude 3 Opus',
+              data: [80, 85, 75, 88, 90, 78],
+              borderColor: colors.secondary,
+              backgroundColor: 'rgba(224, 242, 254, 0.3)', // semi-transparent
+              pointBackgroundColor: colors.secondary,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: colors.secondary
+            },
+            {
+              label: 'Claude 4 Opus',
+              data: [95, 92, 85, 90, 95, 90], // 假设数据
+              borderColor: colors.primary,
+              backgroundColor: 'rgba(34, 197, 94, 0.3)', // semi-transparent
+              pointBackgroundColor: colors.primary,
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: colors.primary
+            }
+          ]
+        };
+        const radarChart = new Chart(radarCtx, {
+          type: 'radar',
+          data: radarData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'top', labels: { color: colors.foreground } },
+              tooltip: {
+                backgroundColor: colors.foreground,
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.border,
+                borderWidth: 1
+              }
+            },
+            scales: {
+              r: {
+                angleLines: { color: colors.border },
+                grid: { color: colors.border },
+                pointLabels: { color: colors.foreground, font: {size: 13} },
+                ticks: { backdropColor: 'transparent', color: colors.foreground }
+              }
+            }
+          }
+        });
+        chartInstances.push(radarChart);
+      }
+
+      // 扩展图表初始化函数以包含新图表
+      function initializeAdditionalCharts() {
+        const colors = getThemeColors();
+
+        // 情感分析饼图
+        const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+        const sentimentData = {
+          labels: ['正面评价', '中性评价', '负面评价'],
+          datasets: [{
+            data: [65, 25, 10],
+            backgroundColor: [
+              colors.primary,
+              colors.secondary,
+              colors.destructive
+            ],
+            borderColor: [
+              colors.primary,
+              colors.secondary,
+              colors.destructive
+            ],
+            borderWidth: 2
+          }]
+        };
+
+        const sentimentChart = new Chart(sentimentCtx, {
+          type: 'doughnut',
+          data: sentimentData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  color: colors.foreground,
+                  padding: 20
+                }
+              },
+              tooltip: {
+                backgroundColor: colors.foreground,
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.border,
+                borderWidth: 1
+              }
+            }
+          }
+        });
+        chartInstances.push(sentimentChart);
+
+        // 功能满意度条形图
+        const satisfactionCtx = document.getElementById('satisfactionChart').getContext('2d');
+        const satisfactionData = {
+          labels: ['编码能力', '推理性能', '工具使用', '响应速度', '准确性'],
+          datasets: [{
+            label: '满意度评分',
+            data: [9.2, 8.8, 8.5, 7.8, 8.1],
+            backgroundColor: [
+              colors.primary,
+              colors.secondary,
+              colors.tertiary,
+              colors.quaternary,
+              colors.quinary
+            ],
+            borderColor: [
+              colors.primary,
+              colors.secondary,
+              colors.tertiary,
+              colors.quaternary,
+              colors.quinary
+            ],
+            borderWidth: 2,
+            borderRadius: 6
+          }]
+        };
+
+        const satisfactionChart = new Chart(satisfactionCtx, {
+          type: 'bar',
+          data: satisfactionData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                backgroundColor: colors.foreground,
+                titleColor: 'white',
+                bodyColor: 'white',
+                borderColor: colors.border,
+                borderWidth: 1
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 10,
+                ticks: {
+                  color: colors.foreground,
+                  callback: function(value) {
+                    return value + '/10';
+                  }
+                },
+                grid: {
+                  color: colors.border
+                }
+              },
+              x: {
+                ticks: {
+                  color: colors.foreground
+                },
+                grid: {
+                  color: colors.border
+                }
+              }
+            }
+          }
+        });
+        chartInstances.push(satisfactionChart);
+      }
+
+      // 初始化 Mermaid
+      function initializeMermaid() {
+        const isDark = document.documentElement.classList.contains('dark');
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: isDark ? 'dark' : 'base',
+          themeVariables: {
+            primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+            primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-foreground').trim(),
+            primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+            lineColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+            secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(),
+            tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+          }
+        });
+      }
+
+      // 更新 Mermaid 主题
+      function updateMermaidTheme() {
+        const isDark = document.documentElement.classList.contains('dark');
+        // Re-initialize with the new theme. This is the standard way to update Mermaid theme.
+        mermaid.initialize({
+            startOnLoad: false, // Already loaded, don't restart
+            theme: isDark ? 'dark' : 'base',
+            themeVariables: {
+                primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+                primaryTextColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-foreground').trim(),
+                primaryBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+                lineColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+                secondaryColor: getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(),
+                tertiaryColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+            }
+        });
+        // Force re-render of existing diagrams
+        const mermaidElements = document.querySelectorAll('.mermaid');
+        mermaidElements.forEach(element => {
+            const originalContent = element.getAttribute('data-original-content') || element.textContent;
+            element.removeAttribute('data-processed');
+            element.textContent = originalContent;
+        });
+        mermaid.run({nodes: mermaidElements});
+      }
+      
+      // 主题更新函数 (包括图表和Mermaid)
+      function updateVisualizationThemes() {
+        const colors = getThemeColors();
+        chartInstances.forEach(chart => {
+          // Update common chart options
+          if (chart.options.plugins && chart.options.plugins.legend) {
+            chart.options.plugins.legend.labels.color = colors.foreground;
+          }
+          if (chart.options.plugins && chart.options.plugins.tooltip) {
+            chart.options.plugins.tooltip.backgroundColor = colors.foreground;
+            // Note: titleColor, bodyColor for tooltip are often white, might not need to change them based on theme
+            // but if they should change, add them here.
+          }
+
+          // Update scales
+          if (chart.options.scales) {
+            Object.values(chart.options.scales).forEach(scale => {
+              if (scale.ticks) scale.ticks.color = colors.foreground;
+              if (scale.grid) scale.grid.color = colors.border;
+              if (scale.angleLines) scale.angleLines.color = colors.border; // For radar chart
+              if (scale.pointLabels) scale.pointLabels.color = colors.foreground; // For radar chart
+            });
+          }
+          
+          // Update dataset colors if they are theme-dependent and not fixed
+          // This part can be complex as dataset colors might be specific
+          // For now, we assume the initial colors are fine and only update generic elements.
+          // If specific dataset colors need to change with theme, logic needs to be added here.
+
+          chart.update();
+        });
+        updateMermaidTheme(); // Call Mermaid theme update
+      }
+
+
+      // 页面加载完成后初始化所有图表
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+          initializeCharts();
+          initializeAdditionalCharts();
+          initializeMermaid();
+          // Store original mermaid content for re-rendering on theme change
+          const mermaidElements = document.querySelectorAll('.mermaid');
+          mermaidElements.forEach(element => {
+              element.setAttribute('data-original-content', element.textContent);
+          });
+        }, 100); // Slight delay to ensure DOM is fully ready
+      });
+    </script>
+
+  </main>
+
+  <script>
+    // 主题切换功能
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const html = document.documentElement;
+
+    // 检查系统主题偏好
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const currentTheme = localStorage.getItem('theme') || (prefersDark ? 'dark' : 'light');
+
+    // 设置初始主题
+    if (currentTheme === 'dark') {
+      html.classList.add('dark');
+      themeIcon.className = 'fas fa-sun';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+      
+      themeIcon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      
+      // 更新图表主题
+      setTimeout(updateVisualizationThemes, 100);
+    });
+
+    // 滚动进度条
+    const progressBar = document.getElementById('progressBar');
+    
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.pageYOffset;
+      const docHeight = document.body.offsetHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      progressBar.style.width = scrollPercent + '%';
+    });
+
+    // 平滑滚动到指定部分
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    }
+
+    // 添加滚动动画
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, observerOptions);
+
+    // 观察所有需要动画的元素
+    document.addEventListener('DOMContentLoaded', () => {
+      const elementsToObserve = document.querySelectorAll('.card, .grid > div');
+      elementsToObserve.forEach(el => observer.observe(el));
+    });
+  </script>
+
+  <!-- 作者与版权信息（页脚） -->
+  <footer class="bg-gray-50 dark:bg-gray-900 py-12 mt-20">
+    <div class="container mx-auto px-6 text-center">
+      <div class="max-w-2xl mx-auto">
+        <div class="mb-6">
+          <i class="fas fa-feather-alt text-3xl text-green-600 mb-4"></i>
+          <h3 class="text-xl font-bold mb-2">凿壁</h3>
+          <p class="text-gray-600 dark:text-gray-400">专业AI技术分析与深度洞察</p>
+        </div>
+        
+        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+          <p class="text-gray-600 dark:text-gray-400 mb-2">
+            <strong>作者姓名:</strong> 季晓康
+          </p>
+          <p class="text-gray-600 dark:text-gray-400 mb-2">
+            <strong>微信公众号:</strong> 凿壁
+          </p>
+          <p class="text-gray-600 dark:text-gray-400">
+            <strong>版权信息:</strong> 国家健康医疗大数据研究院
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html> 

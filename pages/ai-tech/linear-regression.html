@@ -1,0 +1,844 @@
+  <main class="container mx-auto mt-8 px-4 prose prose-lg max-w-4xl dark:prose-invert">
+    <section id="introduction" class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">引言</h2>
+      <p>本报告基于用户在社交平台X上由@MehulLigade（Mehul）发布的推文内容（推文ID：1920333757246222445，发布于2025年5月8日04:23 UTC），并结合了广泛的学术文献与统计学实践，旨在提供一份关于线性回归（Linear Regression）和逻辑回归（Logistic Regression）的全面、详细的解析。原始推文通过图表和文字深入剖析了两种回归模型的核心差异，本报告在此基础上，采纳了多项改进建议，大幅扩展了内容的深度与广度，特别增加了在医学统计领域的应用与考量。</p>
+      <p>报告将系统性地探讨这两种模型的基础概念、数学原理、关键假设、模型诊断、性能评估、正则化技术及其在处理高维数据时的应用。此外，报告还将重点讨论样本量估计、结果的可解释性与沟通、以及提升研究可重复性的方法。本修订版力求为初学者和专业研究人员提供一个更为完整和实用的参考。</p>
+      
+      <div class="my-8 p-4 bg-card rounded-lg shadow-md">
+        <img src="../../md/linear-regression/GqZgQmVWcAAPIl6.jpeg" alt="线性回归与逻辑回归概览图" class="w-full h-auto rounded-md shadow-lg">
+        <p class="text-sm text-center mt-2 text-muted-foreground">图：线性回归与逻辑回归核心概念图示 (推测内容)</p>
+      </div>
+    </section>
+
+    <section id="basic-comparison" class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">1. 线性回归与逻辑回归的基本对比</h2>
+      <p>正如Mehul在其推文中指出的，线性回归和逻辑回归在线性回归和逻辑回归的核心区别在于它们预测的目标和输出形式：</p>
+      
+      <div class="grid md:grid-cols-2 gap-8 my-8">
+        <div class="p-6 bg-card rounded-lg shadow-lg">
+          <h3 class="text-2xl font-semibold mb-3 text-primary">线性回归 (Linear Regression)</h3>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><strong class="text-foreground">目标：</strong>预测连续型变量的值。</li>
+            <li><strong class="text-foreground">图示与特点：</strong>通过拟合一条直线（或高维空间中的超平面）来描述自变量与因变量之间的线性关系。预测值可以是任意实数。</li>
+            <li><strong class="text-foreground">问题：</strong>直接用于分类任务时，其预测值可能超出逻辑范围（如概率应在0到1之间），因此不适合直接用于分类。</li>
+          </ul>
+        </div>
+        <div class="p-6 bg-card rounded-lg shadow-lg">
+          <h3 class="text-2xl font-semibold mb-3 text-primary">逻辑回归 (Logistic Regression)</h3>
+          <ul class="list-disc pl-5 space-y-2">
+            <li><strong class="text-foreground">目标：</strong>预测二分类或多分类结果发生的概率。</li>
+            <li><strong class="text-foreground">图示与特点：</strong>通过Sigmoid函数（或其他连结函数）将线性模型的输出转换到0和1之间，解释为事件发生的概率。</li>
+            <li><strong class="text-foreground">优势：</strong>输出结果直观，易于理解为概率，并天然适用于分类问题。</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="my-8 p-4 bg-card rounded-lg shadow-md">
+        <img src="../../md/linear-regression/GqZjEY2WAAEF25i.png" alt="线性回归 vs 逻辑回归图示" class="w-full md:w-3/4 mx-auto h-auto rounded-md shadow-lg">
+        <p class="text-sm text-center mt-2 text-muted-foreground">图：线性回归与逻辑回归的直观对比 (推测内容)</p>
+      </div>
+
+      <p class="mt-4">Mehul提出的核心问题，如逻辑回归的线性本质、MSE不适用于分类问题的原因以及线性回归在特定场景下的优势，都将在后续章节中得到深入探讨。</p>
+    </section>
+
+    <section id="linear-regression-deep-dive" class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">2. 线性回归的深入解析</h2>
+      
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+        <h3 class="text-2xl font-semibold mb-4 text-primary">2.1 数学原理与几何意义</h3>
+        <p>线性回归模型的基本形式为：</p>
+        <div class="my-4 p-3 bg-muted rounded-md overflow-x-auto">
+          <code class="text-sm">y&#770; = w<sup>T</sup>x + b</code>
+        </div>
+        <p>其中，<code class="text-sm bg-muted p-1 rounded">y&#770;</code> 是预测值，<code class="text-sm bg-muted p-1 rounded">w</code> 是权重向量，<code class="text-sm bg-muted p-1 rounded">x</code> 是输入特征向量，<code class="text-sm bg-muted p-1 rounded">b</code> 是偏置项。</p>
+        
+        <h4 class="text-xl font-medium mt-4 mb-2">损失函数：</h4>
+        <p>线性回归通常使用均方误差（Mean Squared Error, MSE）作为损失函数，旨在最小化预测值与实际值之间的平方差：</p>
+        <div class="my-4 p-3 bg-muted rounded-md overflow-x-auto">
+          <code class="text-sm">L = 1/n * &#8721;(y - y&#770;)<sup>2</sup></code>
+        </div>
+        <p>MSE对较大的误差给予更高的惩罚，并且在数学上易于处理。</p>
+        
+        <h4 class="text-xl font-medium mt-4 mb-2">几何意义：</h4>
+        <p>线性回归可视为将高维输入特征投影到一个最佳拟合的超平面上，这涉及到向量空间和正交性的概念。</p>
+        <div class="my-8 p-4 bg-card rounded-lg shadow-md">
+          <img src="../../md/linear-regression/GqZiABWWcAA3aYc.png" alt="线性回归几何意义" class="w-full md:w-2/3 mx-auto h-auto rounded-md shadow-lg">
+          <p class="text-sm text-center mt-2 text-muted-foreground">图：线性回归的几何意义图示 (推测内容)</p>
+        </div>
+      </div>
+
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+        <h3 class="text-2xl font-semibold mb-4 text-primary">2.2 线性回归的关键假设</h3>
+        <p>线性回归模型的有效性依赖于一系列关键假设。根据Statistics Solutions等来源，这些经典假设通常包括：</p>
+        <ul class="list-disc pl-5 space-y-3 mt-4">
+          <li><strong class="text-foreground">线性关系 (Linearity)：</strong>因变量与自变量之间存在线性关系。这意味着因变量的期望值是自变量的线性函数。 (Statistics Solutions; STHDA; Analytics Vidhya; SFU.ca)</li>
+          <li><strong class="text-foreground">独立性 (Independence of Errors)：</strong>误差项（残差）之间应相互独立，即一个观测的误差不应影响另一个观测的误差。 (STHDA; Analytics Vidhya; SFU.ca)</li>
+          <li><strong class="text-foreground">同方差性 (Homoscedasticity)：</strong>误差项的方差对于所有自变量的取值都应保持不变。这意味着残差的散布程度在预测值范围内应大致相同。 (PMC; Statistics Solutions; STHDA; Analytics Vidhya; SFU.ca)</li>
+             <div class="my-4 p-2 bg-muted rounded-md flex justify-center">
+                <img src="../../md/linear-regression/GqZggNCXMAAzuhu.png" alt="同方差性图示" class="max-w-sm h-auto rounded shadow">
+             </div>
+             <p class="text-sm text-center text-muted-foreground">图：同方差性与异方差性对比 (推测内容)</p>
+          </li>
+          <li><strong class="text-foreground">误差正态性 (Normality of Errors)：</strong>误差项应服从正态分布，尤其是在样本量较小的情况下，这对假设检验和置信区间的构建很重要。 (Statistics Solutions; STHDA; Analytics Vidhya; SFU.ca)</li>
+          <li><strong class="text-foreground">无多重共线性 (No Perfect Multicollinearity)：</strong>自变量之间不应存在完全或高度的线性相关关系。 (STHDA; Analytics Vidhya; SFU.ca)</li>
+          <li><strong class="text-foreground">自变量非随机且无测量误差：</strong>虽然在实际中较难完全满足，但理论上自变量被认为是固定值且测量精确。 (Scribd)</li>
+        </ul>
+      </div>
+      
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">2.3 模型假设检验与诊断</h3>
+          <h4 class="text-xl font-medium mt-4 mb-2">同方差性检查与处理：</h4>
+          <p>同方差性是线性回归的一个重要假设，其违背（即异方差性）会导致普通最小二乘法（OLS）估计的系数仍然是无偏的，但标准误不再是最小方差无偏估计，从而影响假设检验（如t检验和F检验）的有效性，可能导致错误的结论 (PMC; ResearchGate). 异方差性在社会科学和行为科学研究中并不少见，若不加以检测和处理，会影响推断的有效性 (ResearchGate).</p>
+          
+          <div class="my-6 p-4 border border-border rounded-lg">
+            <h5 class="text-lg font-semibold mb-2">检查方法：</h5>
+            <ul class="list-disc pl-5 space-y-1">
+              <li><strong class="text-foreground">残差图 (Residual Plots)：</strong>绘制残差与预测值（或自变量）的散点图。如果残差的散布呈现某种模式（如扇形、喇叭形），则可能存在异方差性。 (SSCC WISC; STHDA)
+                 <div class="my-4 p-2 bg-muted rounded-md flex justify-center">
+                    <img src="../../md/linear-regression/GqZg8mwXYAAV8kg.png" alt="残差图示例" class="max-w-md h-auto rounded shadow">
+                 </div>
+                 <p class="text-sm text-center text-muted-foreground">图：残差图用于检查同方差性 (推测内容)</p>
+              </li>
+              <li><strong class="text-foreground">Breusch-Pagan 检验：</strong>一种常用的统计检验方法，用于检验残差平方和是否与自变量相关。原假设为同方差性。若p值小于显著性水平，则拒绝原假设，认为存在异方差性 (SSCC WISC; PMC).</li>
+            </ul>
+          </div>
+
+          <div class="my-6 p-4 border border-border rounded-lg">
+            <h5 class="text-lg font-semibold mb-2">处理方法：</h5>
+            <ul class="list-disc pl-5 space-y-1">
+              <li><strong class="text-foreground">加权最小二乘法 (Weighted Least Squares, WLS)：</strong>当误差方差已知或可以估计时，对不同方差的观测值赋予不同的权重进行回归 (ResearchGate; SSCC WISC; Analytics Vidhya).</li>
+              <li><strong class="text-foreground">稳健标准误 (Robust Standard Errors)：</strong>例如Huber-White标准误，即使在存在异方差性的情况下，也能提供对回归系数标准误的一致估计，从而使得假设检验更为可靠 (ResearchGate; PMC).</li>
+              <li><strong class="text-foreground">数据转换：</strong>对因变量或自变量进行非线性转换（如对数转换、平方根转换）有时可以缓解异方差性。</li>
+              <li><strong class="text-foreground">广义线性模型 (Generalized Linear Models, GLMs)：</strong>某些GLMs可以处理异方差性。 (SSCC WISC)</li>
+            </ul>
+          </div>
+      </div>
+    </section>
+    
+    <section id="logistic-regression-deep-dive" class="mb-12">
+        <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">3. 逻辑回归的深入解析</h2>
+        <p>逻辑回归虽然名称中带有"回归"，但其主要用于分类问题，特别是二分类问题。</p>
+        
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">3.1 数学原理与分类过程</h3>
+          <p>逻辑回归通过一个线性函数结合输入特征，然后将结果通过Sigmoid（或Logistic）函数映射到(0,1)区间，从而得到事件发生的概率。</p>
+          
+          <h4 class="text-xl font-medium mt-4 mb-2">线性部分：</h4>
+          <div class="my-4 p-3 bg-muted rounded-md overflow-x-auto">
+            <code class="text-sm">z = w<sup>T</sup>x + b</code>
+          </div>
+
+          <h4 class="text-xl font-medium mt-4 mb-2">Sigmoid函数：</h4>
+          <div class="my-4 p-3 bg-muted rounded-md overflow-x-auto">
+            <code class="text-sm">P(y=1|x) = &#963;(z) = 1 / (1 + e<sup>-z</sup>)</code>
+          </div>
+          <p>其中，<code class="text-sm bg-muted p-1 rounded">P(y=1|x)</code> 是给定特征 x 时，结果为类别1的概率。</p>
+          <div class="my-8 p-4 bg-card rounded-lg shadow-md">
+            <img src="../../md/linear-regression/GqZf_lfWwAA9kTG.jpeg" alt="Sigmoid函数曲线" class="w-full md:w-2/3 mx-auto h-auto rounded-md shadow-lg">
+            <p class="text-sm text-center mt-2 text-muted-foreground">图：Sigmoid 函数曲线图示 (推测内容)</p>
+          </div>
+
+          <h4 class="text-xl font-medium mt-4 mb-2">分类过程：</h4>
+          <p>通过设定一个阈值（通常为0.5），将概率转换为类别预测：</p>
+          <ul class="list-disc pl-5 space-y-1 mt-2">
+            <li>如果 <code class="text-sm bg-muted p-1 rounded">P(y=1|x) &ge; 0.5</code>，则预测为类别1。</li>
+            <li>如果 <code class="text-sm bg-muted p-1 rounded">P(y=1|x) &lt; 0.5</code>，则预测为类别0。</li>
+          </ul>
+
+          <h4 class="text-xl font-medium mt-4 mb-2">损失函数：</h4>
+          <p>逻辑回归使用对数损失（Log Loss），也称为二元交叉熵（Binary Cross-Entropy）作为损失函数：</p>
+          <div class="my-4 p-3 bg-muted rounded-md overflow-x-auto">
+            <code class="text-sm">L = -[y*log(p&#770;) + (1-y)*log(1-p&#770;)]</code>
+          </div>
+          <p>其中，<code class="text-sm bg-muted p-1 rounded">y</code> 是真实标签（0或1），<code class="text-sm bg-muted p-1 rounded">p&#770;</code> 是预测概率。对数损失对错误的预测（尤其是自信的错误预测）给予较大的惩罚。</p>
+        </div>
+
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">3.2 逻辑回归的线性本质与假设</h3>
+          <p>尽管逻辑回归的输出是非线性的概率值，其决策边界仍然是线性的：</p>
+          <div class="my-4 p-3 bg-muted rounded-md overflow-x-auto">
+            <code class="text-sm">w<sup>T</sup>x + b = 0</code>
+          </div>
+          <p>这意味着逻辑回归在特征空间中用一个超平面来分隔不同的类别。</p>
+          <div class="my-8 p-4 bg-card rounded-lg shadow-md">
+            <img src="../../md/linear-regression/GqZiQ4lW4AAHZ8j.jpeg" alt="逻辑回归决策边界" class="w-full md:w-2/3 mx-auto h-auto rounded-md shadow-lg">
+            <p class="text-sm text-center mt-2 text-muted-foreground">图：逻辑回归的线性决策边界示例 (推测内容)</p>
+          </div>
+
+          <p>逻辑回归的关键假设包括 (PMC; Editverse)：</p>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">因变量为二分类（或多分类）：</strong>逻辑回归最常用于二分类问题。</li>
+            <li><strong class="text-foreground">观测独立性：</strong>各个观测之间应相互独立。对于重复测量数据，需要使用广义线性混合效应模型等更复杂的方法 (PMC).</li>
+            <li><strong class="text-foreground">自变量与对数几率（log-odds）之间存在线性关系：</strong>这是逻辑回归的核心假设。可以通过Box-Tidwell检验等方法进行检查。 (PMC)</li>
+            <li><strong class="text-foreground">无（或少）多重共线性：</strong>与线性回归类似，自变量之间不应存在高度相关。</li>
+            <li><strong class="text-foreground">大样本量：</strong>逻辑回归的参数估计和检验在大样本条件下更为稳定和可靠。</li>
+            <li><strong class="text-foreground">无完全分离 (Complete Separation) 或准完全分离 (Quasi-complete Separation)：</strong>当一个（或一组）预测变量能够完美地预测结果时，最大似然估计可能无法收敛或产生无限大的系数估计。 (PMC)</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">3.3 模型假设检验与诊断</h3>
+          <h4 class="text-xl font-medium mt-4 mb-2">完全分离与稀有事件偏倚：</h4>
+          <p>在逻辑回归中，当预测变量的某个值（或组合）与结果变量的某个类别完美对应时，就会发生完全分离。例如，如果所有吸烟者都患有某种疾病，而所有非吸烟者都不患此病，那么吸烟这个变量就能完美预测疾病状态。在这种情况下，标准的最大似然估计方法可能无法收敛，或者系数会趋向于无穷大 (PMC; PubMed). 准完全分离是类似的情况，但预测不是绝对完美的。</p>
+          <p>稀有事件偏倚 (Rare Events Bias) 是指当结局事件非常罕见时（通常指发生率低于5%-10%），逻辑回归的系数估计（尤其是比值比OR）可能会出现偏倚，通常会高估效应量，且标准误可能偏大，置信区间过宽 (PMC; PubMed).</p>
+
+          <div class="my-6 p-4 border border-border rounded-lg">
+            <h5 class="text-lg font-semibold mb-2">处理方法：</h5>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>
+                <strong class="text-foreground">Firth 惩罚型逻辑回归 (Firth's Penalized Logistic Regression)：</strong>
+                通过向似然函数中添加一个惩罚项（基于Jeffreys先验的偏倚缩减方法）来解决分离问题和稀有事件偏倚。Firth回归能够产生有限的、稳定的系数估计，即使在存在分离或样本量较小、事件稀少的情况下 (PubMed; PMC).
+                <ul class="list-circle pl-5 mt-1 space-y-1 text-sm">
+                    <li><strong class="text-accent-foreground">优势：</strong>减少小样本偏倚，解决分离问题，通常能提供更准确的置信区间。 (PubMed; PMC)</li>
+                    <li><strong class="text-accent-foreground">局限性：</strong>虽然能减少偏倚，但预测概率可能会向0.5收缩 (PubMed)。某些情况下，其计算可能比标准逻辑回归更复杂。</li>
+                </ul>
+              </li>
+              <li><strong class="text-foreground">精确逻辑回归 (Exact Logistic Regression)：</strong>基于精确的条件置信区间，适用于小样本或稀疏数据，但计算量较大，尤其是在有多个连续型预测变量时。</li>
+              <li><strong class="text-foreground">贝叶斯逻辑回归 (Bayesian Logistic Regression)：</strong>通过引入先验信息来稳定估计，可以处理稀疏数据问题。</li>
+              <li><strong class="text-foreground">合并类别或简化模型：</strong>如果分离是由过于精细的分类或过多的交互项引起的，可以考虑合并预测变量的类别或简化模型。</li>
+              <li><strong class="text-foreground">增加样本量：</strong>如果可行，增加样本量，特别是增加稀有事件的观测数量，有助于缓解这些问题。</li>
+            </ul>
+          </div>
+        </div>
+    </section>
+
+    <!-- Evaluation Metrics Section (to be continued) -->
+    <section id="evaluation-metrics" class="mb-12">
+        <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">4. 评价指标与结果解读</h2>
+        
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">4.1 线性回归模型的评价</h3>
+          <p>除了在模型构建过程中检查假设的满足情况，还需要评估模型的整体拟合优度和预测能力：</p>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li>
+                <strong class="text-foreground">R² (R-squared, 决定系数)：</strong>
+                衡量模型解释的因变量总变异的百分比。取值范围为0到1，越接近1表示模型拟合得越好。但R²会随着自变量数量的增加而增加（或至少不减少），即使新增的变量与因变量无关 (Analytics Vidhya; Arize AI; DataCamp; Number Analytics).
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">R² = 1 - SS<sub>res</sub> / SS<sub>tot</sub></code></div>
+                其中，SS<sub>res</sub> 是残差平方和，SS<sub>tot</sub> 是总平方和。
+            </li>
+            <li>
+                <strong class="text-foreground">调整R² (Adjusted R-squared)：</strong>
+                对R²进行了修正，考虑了模型中自变量的数量和样本量。当模型中加入无关的自变量时，调整R²通常会下降或增幅很小，因此它在比较不同数量自变量的模型时更为有用，有助于避免过拟合 (Analytics Vidhya; Arize AI; DataCamp; Number Analytics).
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">Adjusted R² = 1 - [(1-R²)(n-1)] / (n-k-1)</code></div>
+                其中，n 是样本量，k 是自变量的数量。
+            </li>
+            <li>
+                <strong class="text-foreground">均方根误差 (Root Mean Squared Error, RMSE)：</strong>
+                衡量模型预测值与实际观测值之间差异的标准差。RMSE的值越小，表示模型的预测精度越高。它与因变量的单位相同，更易于解释 (Arize AI; Nucleusbox).
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">RMSE = sqrt[ Σ(y<sub>i</sub> - ŷ<sub>i</sub>)² / n ]</code></div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">4.2 逻辑回归模型的评价</h3>
+          <p>逻辑回归模型的评价侧重于其分类能力和预测概率的准确性：</p>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">AUC (Area Under the ROC Curve, ROC曲线下面积)：</strong>ROC曲线以假阳性率（1-特异性）为横轴，真阳性率（敏感性）为纵轴绘制而成。AUC衡量模型区分不同类别样本的能力，取值范围为0.5到1。AUC为0.5表示模型没有区分能力（随机猜测），AUC为1表示完美区分。AUC是一个常用的、对阈值不敏感的整体性能度量 (NCBI Bookshelf; PMC; AHA Journals).
+              <div class="my-4 p-2 bg-muted rounded-md flex flex-col items-center">
+                  <img src="../../md/linear-regression/GqZkdQ3XMAA7inb.png" alt="ROC曲线示例" class="max-w-md h-auto rounded shadow mb-4">
+                  <p class="text-sm text-center text-muted-foreground">图：ROC曲线示例 (推测内容)</p>
+                  <canvas id="rocCurveChart" class="mt-4 max-w-md"></canvas>
+                  <p class="text-sm text-center mt-1 text-muted-foreground">图：示例ROC曲线 (Chart.js)</p>
+              </div>
+            </li>
+            <li><strong class="text-foreground">校准曲线 (Calibration Curve)：</strong>评估模型预测概率与实际观测到的事件发生频率之间的一致性。理想情况下，校准曲线应接近对角线（y=x）。可以通过Hosmer-Lemeshow检验来定量评估校准度，但该检验在样本量较大或较小时可能存在局限性 (NCBI Bookshelf; PMC)。在医学预测模型中，良好的校准至关重要，因为错误校准可能导致不当的临床决策 (BMJ).
+                <div class="my-4 p-2 bg-muted rounded-md flex flex-col items-center">
+                    <canvas id="calibrationCurveChart" class="max-w-md"></canvas>
+                    <p class="text-sm text-center mt-1 text-muted-foreground">图：示例校准曲线 (Chart.js)</p>
+                </div>
+            </li>
+            <li><strong class="text-foreground">Brier 分数 (Brier Score)：</strong>衡量预测概率与实际结果之间差异的均方误差。Brier分数的取值范围为0到1，分数越低表示校准度越好。它同时反映了模型的区分度和校准度 (NCBI Bookshelf; PMC; AHA Journals).
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">Brier Score = (1/N) * Σ(p<sub>i</sub> - o<sub>i</sub>)²</code></div>
+                 其中，p<sub>i</sub> 是第 i 个个体的预测概率，o<sub>i</sub> 是第 i 个个体的实际结果（0或1）。
+            </li>
+            <li><strong class="text-foreground">Hosmer-Lemeshow 检验 (Hosmer-Lemeshow Test)：</strong>一种评估模型校准度的拟合优度检验。它将样本按预测概率分为若干组（通常是10组），然后比较每组内观测到的事件数与期望的事件数。p值较大通常表明模型校准良好，但该检验对分组方式敏感，且在样本量极大或极小时功效不足 (NCBI Bookshelf; PMC).</li>
+            <li><strong class="text-foreground">决策曲线分析 (Decision Curve Analysis, DCA)：</strong> DCA是一种评估预测模型临床实用性的方法，它通过计算在不同概率阈值下，使用模型指导决策相对于"全部治疗"或"全部不治疗"策略所能带来的净收益（Net Benefit） (Statistical Thinking; MSKCC-EPI-BIO; Editverse; PubMed; PMC). 净收益的计算公式为：
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">Net Benefit = (True Positives / N) - (False Positives / N) * (P<sub>t</sub> / (1 - P<sub>t</sub>))</code></div>
+                 其中，N 是总样本量，P<sub>t</sub> 是决策阈值概率。DCA图将净收益绘制为阈值概率的函数，帮助临床医生根据可接受的风险水平来判断模型是否有用 (Editverse)。DCA优于仅依赖AUC等传统指标，因为它直接关联到临床决策的后果 (Statistical Thinking).
+                 <div class="my-4 p-2 bg-muted rounded-md flex flex-col items-center">
+                    <canvas id="dcaChart" class="max-w-md"></canvas>
+                    <p class="text-sm text-center mt-1 text-muted-foreground">图：示例决策曲线分析 (DCA) (Chart.js)</p>
+                </div>
+            </li>
+            <li><strong class="text-foreground">净重新分类指数 (Net Reclassification Index, NRI)：</strong> NRI用于评估一个新模型（或新标记物）相对于旧模型在重新分类个体风险方面的改进程度。它分别计算事件组（cases）和非事件组（controls）中，有多少比例的个体被正确地向上或向下重新分类到更合适的风险类别 (PMC; ResearchGate; Collection of Biostatistics Research Archive; Kerr_NetReclassIndex.pdf).
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">NRI = [P(up|event) - P(down|event)] + [P(down|nonevent) - P(up|nonevent)]</code></div>
+                <p class="mt-1 text-sm">优势：直观易懂，能够量化模型在特定风险分层上的改进。</p>
+                <p class="mt-1 text-sm text-destructive">误用风险与局限性：NRI对风险类别的选择和数量非常敏感。即使新标记物没有实际预测价值，NRI也可能呈现统计学显著性，导致假阳性结论 (ResearchGate; PMC). NRI可能夸大模型的改进效果，特别是类别无关的NRI (continuous NRI / NRI>0) (PMC; Kerr_NetReclassIndex.pdf).</p>
+                <p class="mt-1 text-sm">建议：报告NRI时，应分别报告事件组（NRI<sub>event</sub>）和非事件组（NRI<sub>nonevent</sub>）的真实阳性/阴性重分类贡献，而不仅仅是一个单一的NRI值 (PMC; Kerr_NetReclassIndex.pdf)。对于两个以上风险类别，NRI的解释变得复杂，应谨慎使用 (PMC; Kerr_NetReclassIndex.pdf).</p>
+            </li>
+          </ul>
+        </div>
+    </section>
+
+    <!-- Regularization Section (to be continued) -->
+    <section id="regularization" class="mb-12">
+        <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">5. 正则化与高维数据处理</h2>
+        <p class="mb-6">正则化是通过在损失函数中加入惩罚项来约束模型复杂度，从而防止过拟合，提高模型的泛化能力和鲁棒性。这在线性回归和逻辑回归中都非常重要，尤其是在处理高维数据（如基因组学、医学影像数据）时。</p>
+        
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">5.1 L1, L2 及其他正则化方法</h3>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">L1 正则化 (Lasso Regression)：</strong>在损失函数中加入L1范数惩罚项（系数绝对值之和）。Lasso倾向于产生稀疏模型，即将一些不重要的特征的系数压缩为零，从而实现特征选择。</li>
+            <li><strong class="text-foreground">L2 正则化 (Ridge Regression)：</strong>在损失函数中加入L2范数惩罚项（系数平方和）。Ridge回归倾向于使所有系数都变小，但通常不会变为零。它在处理多重共线性问题时表现较好。</li>
+            <li>
+                <strong class="text-foreground">Elastic Net 正则化：</strong>
+                结合了L1和L2正则化的优点，其惩罚项是L1范数和L2范数的线性组合。Elastic Net既能进行特征选择，又能处理高度相关的特征（Lasso倾向于只选择相关特征中的一个），并在存在多重共线性时表现稳定 (Number Analytics; Wikipedia; PMC; MDPI).
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">L<sub>ElasticNet</sub> = L<sub>OLS/LogLoss</sub> + &lambda;<sub>1</sub>&Sigma;|&beta;<sub>j</sub>| + &lambda;<sub>2</sub>&Sigma;&beta;<sub>j</sub><sup>2</sup></code></div>
+                <p class="text-sm">或者更常见的形式是（通过alpha参数混合）：</p>
+                <div class="my-2 p-2 bg-muted rounded-md overflow-x-auto"><code class="text-sm">L<sub>ElasticNet</sub> = L<sub>OLS/LogLoss</sub> + &lambda;[&alpha;&Sigma;|&beta;<sub>j</sub>| + (1-&alpha;)&Sigma;&beta;<sub>j</sub><sup>2</sup>]</code></div>
+                <p class="text-sm">其中 alpha 控制L1和L2惩罚的混合比例 (Number Analytics)。</p>
+            </li>
+            <li><strong class="text-foreground">Precision Lasso：</strong>这是一种针对估计稀疏高斯图模型的协方差矩阵或其逆（精度矩阵）的方法。通过对精度矩阵的元素施加L1惩罚，可以识别条件独立关系，从而构建稀疏网络图。虽然与回归模型的正则化概念相关（都使用Lasso惩罚实现稀疏性），但其直接应用场景是图模型估计，而非传统的回归预测。在多重共线和基因组高维变量选择的上下文中，更直接相关的是上述Lasso及其变体（如Elastic Net）。</li>
+          </ul>
+          <div class="my-6 p-4 border border-border rounded-lg">
+            <h4 class="text-lg font-semibold mb-3">正则化方法比较 (Mermaid.js)</h4>
+            <pre class="mermaid bg-muted p-4 rounded-md overflow-auto">
+              graph TD
+                  A[正则化技术] --> B(L1 Lasso);
+                  A --> C(L2 Ridge);
+                  A --> D(Elastic Net);
+                  B --> B1{特征选择能力强};
+                  B --> B2{产生稀疏模型};
+                  C --> C1{处理多重共线性};
+                  C --> C2{系数变小但不为零};
+                  D --> D1{结合L1和L2优点};
+                  D --> D2{特征选择};
+                  D --> D3{处理相关特征稳定};
+                  style A fill:var(--primary),stroke:var(--primary-foreground),stroke-width:2px,color:var(--primary-foreground)
+                  style B fill:var(--secondary),stroke:var(--border),color:var(--secondary-foreground)
+                  style C fill:var(--secondary),stroke:var(--border),color:var(--secondary-foreground)
+                  style D fill:var(--secondary),stroke:var(--border),color:var(--secondary-foreground)
+                  style B1 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                  style B2 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                  style C1 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                  style C2 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                  style D1 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                  style D2 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                  style D3 fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+            </pre>
+          </div>
+        </div>
+
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">5.2 医学应用：高维数据与可解释模型</h3>
+          <p>在医学研究中，经常遇到高维数据集，例如基因组学数据（数万个基因表达）、蛋白质组学、代谢组学数据以及医学影像数据（大量像素或体素特征）。在这些场景下，正则化方法尤为重要：</p>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">处理多重共线性：</strong>基因组数据中基因之间常常存在高度相关（共线性）。Elastic Net由于结合了Ridge回归的特性，能更好地处理这种情况，将相关的预测变量作为一个整体纳入或排除出模型，而不是像Lasso那样倾向于只选择其中一个 (PMC; Number Analytics)。</li>
+            <li><strong class="text-foreground">变量选择与稀疏模型：</strong>Lasso及其变体（如Elastic Net, Adaptive Lasso）通过将不重要的特征系数压缩为零，可以从大量潜在预测因子中筛选出对结果影响最大的少数几个，从而构建稀疏且易于解释的模型。这对于发现新的生物标志物或理解疾病机制至关重要 (PMC; MDPI)。</li>
+            <li><strong class="text-foreground">Lasso-Logistic 回归：</strong>当结局是二分类（如疾病有无、治疗反应好坏）且预测变量是高维数据（如医学影像特征、多组学数据）时，Lasso-Logistic回归是一种强大的工具。它将Lasso正则化应用于逻辑回归模型，能够选择出与二分类结局相关的关键特征，并构建一个稀疏的预测模型，这对于提升模型的可解释性和降低过拟合风险非常有价值 (CRAN; PMC)。例如，在癌症研究中，Lasso-Logistic回归已被用于基于基因表达数据预测患者对特定治疗的反应 (PMC)。</li>
+          </ul>
+           <div class="my-6 p-4 border border-border rounded-lg">
+            <h4 class="text-lg font-semibold mb-3">Lasso-Logistic 回归在高维医学数据中的应用流程 (Mermaid.js)</h4>
+            <pre class="mermaid bg-muted p-4 rounded-md overflow-auto">
+              graph LR
+                A[高维医学数据<br>(基因组/影像)] --> B(数据预处理);
+                B --> C{Lasso-Logistic 回归模型};
+                C -- 特征选择 --> D[稀疏特征子集];
+                C -- 模型训练 --> E[预测模型];
+                D --> E;
+                E --> F(模型评估<br>AUC, 校准度);
+                F --> G(临床应用<br>疾病诊断/预后预测);
+                style A fill:var(--muted),stroke:var(--border),color:var(--muted-foreground)
+                style B fill:var(--secondary),stroke:var(--border),color:var(--secondary-foreground)
+                style C fill:var(--primary),stroke:var(--primary-foreground),stroke-width:2px,color:var(--primary-foreground)
+                style D fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                style E fill:var(--accent),stroke:var(--border),color:var(--accent-foreground)
+                style F fill:var(--secondary),stroke:var(--border),color:var(--secondary-foreground)
+                style G fill:var(--primary-foreground),stroke:var(--primary),color:var(--primary),stroke-width:2px
+            </pre>
+          </div>
+        </div>
+    </section>
+
+    <!-- Sample Size Section (to be continued) -->
+    <section id="sample-size" class="mb-12">
+        <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">6. 样本量、可重复性与写作规范</h2>
+        
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">6.1 样本量与事件数考量</h3>
+          <p>样本量估算：在进行回归分析前，合理的样本量估算是确保研究结果具有足够统计功效和稳定性的关键步骤。样本量不足可能导致置信区间过宽，模型不稳定，甚至无法检测到真实存在的效应。</p>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">经验法则：</strong>对于逻辑回归，一个常被引用的经验法则是"每预测变量至少需要10个事件"（Events Per Variable, EPV &ge; 10）。这里的"事件"指的是结局中发生数量较少的那一类（例如，在病例对照研究中是病例数，在队列研究中是发生疾病的个体数）。 (Real Statistics - 虽然直接结果未明确提供公式，但该领域普遍存在此法则)</li>
+            <li><strong class="text-foreground">局限性：</strong>EPV &ge; 10只是一个粗略的指导原则，其适用性受到多种因素影响，如事件发生率、预测变量的分布和效应大小等。在某些情况下（如预测变量效应较强或事件发生率较高），较低的EPV可能仍然可以接受；而在其他情况下（如效应较弱或存在多个弱预测因子），可能需要更高的EPV。</li>
+            <li><strong class="text-foreground">在线工具与公式：</strong>有多种专门的公式和在线计算器可用于估算线性和逻辑回归所需的样本量，它们通常需要用户输入预期的效应大小、统计功效（通常为80%或90%）、显著性水平（通常为0.05）以及预测变量的数量等参数。例如，Real Statistics 网站提供了多种统计工具和解释，可能包含相关的样本量计算资源或指导。</li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">6.2 提升研究可重复性</h3>
+          <p>为了增强研究的透明度和可重复性，从而提高研究结果的可信度和实用价值，建议：</p>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">提供代码片段：</strong>分享用于数据预处理、模型拟合、评估和可视化的核心R或Python代码片段。例如，可以使用glm函数在R中拟合逻辑回归，或使用Python的scikit-learn库中的LinearRegression和LogisticRegression类。 (Dataquest; MDSR Book)</li>
+            <li><strong class="text-foreground">共享开源数据或模拟数据：</strong>如果数据隐私允许，链接到公开可用的数据集；如果不能，提供生成模拟数据的代码，使其他人能够复现分析流程。</li>
+            <li><strong class="text-foreground">完整的可复现工作流 (Reproducible Workflow)：</strong>
+                <ul class="list-circle pl-5 mt-1 space-y-1 text-sm">
+                    <li>使用如R Markdown或Jupyter Notebook等工具，将代码、结果和解释性文本整合到一份动态文档中，确保分析过程的透明化和易于复现 (MPG.PuRe; Reproducible Research in R; WORCS).</li>
+                    <li>采用版本控制系统（如Git）来追踪代码和文档的变更历史 (MPG.PuRe; Reproducible Research in R).</li>
+                    <li>利用Snakemake或Make等工具管理复杂的分析流程和依赖关系 (Lachlan Deer; MPG.PuRe).</li>
+                    <li>考虑使用Docker等容器化技术来确保计算环境的一致性，使得分析可以在不同机器和操作系统上以相同的方式运行 (MPG.PuRe; Reproducible Research in R).</li>
+                    <li>清晰地记录数据来源、预处理步骤、模型参数选择、软件版本等所有相关信息。</li>
+                </ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="p-6 bg-card rounded-lg shadow-lg mb-8">
+          <h3 class="text-2xl font-semibold mb-4 text-primary">6.3 写作与可视化规范</h3>
+          <ul class="list-disc pl-5 space-y-3 mt-4">
+            <li><strong class="text-foreground">结构清晰：</strong>将报告内容按照逻辑划分为独立的章节和小节，例如，将正则化方法、假设检验、诊断步骤等分别置于独立的## 小节标题下，避免出现过长、内容混杂的段落，以提高可读性。</li>
+            <li><strong class="text-foreground">可视化呈现：</strong>
+                <ul class="list-circle pl-5 mt-1 space-y-2 text-sm">
+                    <li><strong>线性回归：</strong>使用散点图叠加拟合的回归线，直观展示数据点和模型趋势。图注应说明回归线的方程、R²值以及任何显著的模式或离群点。</li>
+                    <li><strong>逻辑回归：</strong>
+                        <ul class="list-decimal pl-5 mt-1 space-y-1">
+                            <li>绘制原始数据点（如果适用，例如一个连续预测变量和一个二分类结果）以及拟合的Sigmoid曲线，展示概率如何随预测变量变化。图注应解释曲线的含义和拐点。</li>
+                            <li>校准曲线：展示模型预测概率与实际观测概率之间的一致性。图注应解释曲线与理想对角线的偏离程度，并可配合Hosmer-Lemeshow检验结果进行说明。</li>
+                        </ul>
+                    </li>
+                    <li><strong>通用图注：</strong>每张图都应配有清晰、简洁的图注，准确说明该图所要传达的核心信息点，避免仅仅重复图表的标题或进行过于简单的描述（如"直线 vs S曲线"）。图注应帮助读者理解图中的模式、趋势和关键发现。</li>
+                </ul>
+            </li>
+          </ul>
+        </div>
+    </section>
+
+    <section id="medical-statistics-insights" class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">7. 对医学统计的启发</h2>
+      <p>线性回归和逻辑回归作为统计学中的经典方法，在医学研究中具有广泛的应用和重要的指导意义。</p>
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-6">
+        <h4 class="text-xl font-semibold text-accent-foreground mb-2"><i class="fas fa-notes-medical mr-2"></i>研究设计与样本量：</h4>
+        <p>在线性和逻辑回归常用于队列研究中分析连续指标的纵向变化或二分类结局的发生风险时，合理的样本量估计至关重要。它直接影响到置信区间的宽度、模型参数估计的稳定性和研究结论的可靠性。 (Real Statistics - 间接支持重要性) "每预测变量至少10个事件"的经验法则常用于逻辑回归，但其局限性也需认识到，应结合具体研究情境和统计功效进行更精确的计算。</p>
+      </div>
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-6">
+        <h4 class="text-xl font-semibold text-accent-foreground mb-2"><i class="fas fa-chart-line mr-2"></i>风险预测与校准：</h4>
+        <p>在临床预测模型中，除了关注模型的区分能力（如AUC），更要高度重视模型的校准度 (Calibration)。一个区分度高但校准度差的模型，其预测的绝对风险值并不可靠。</p>
+        <p>错误校准（Miscalibration）会导致临床决策的过度干预或干预不足，例如，高估风险可能导致不必要的治疗和资源浪费，而低估风险则可能延误必要的干预，对患者造成伤害。因此，模型校准被认为是预测分析的"阿喀琉斯之踵"或"致命要害" (BMJ; Statistical Thinking).</p>
+        <p>在医学论文中，应常规报告校准曲线、校准截距 (calibration-in-the-large) 和校准斜率 (calibration slope) 等指标，以全面评估模型的预测准确性。</p>
+      </div>
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-6">
+        <h4 class="text-xl font-semibold text-accent-foreground mb-2"><i class="fas fa-lightbulb mr-2"></i>稀有事件处理：</h4>
+        <p>对于医学研究中常见的稀有事件终点（如罕见病、药物严重不良反应等），标准的逻辑回归可能会遇到最大似然估计不收敛或系数估计偏倚的问题 (PMC; PubMed).</p>
+        <p>Firth 惩罚型逻辑回归 是一种有效的解决方法，它通过对似然函数进行偏倚校正，能够处理完全分离和稀有事件数据，提供更稳定和偏倚更小的估计 (PubMed; PMC). 贝叶斯逻辑回归或精确逻辑回归也是可选的替代方法。</p>
+      </div>
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-6">
+        <h4 class="text-xl font-semibold text-accent-foreground mb-2"><i class="fas fa-balance-scale mr-2"></i>多指标模型评价：</h4>
+        <p>决策曲线分析 (DCA) 提供了一种评估模型临床实用性的方法，它直接量化了在不同决策阈值下，使用模型辅助决策相对于"全治"或"不治"策略所带来的净临床获益 (Statistical Thinking; MSKCC-EPI-BIO; Editverse; PubMed; PMC)。这使得评价超越了单纯的统计显著性，更侧重于临床价值。</p>
+        <p>在引入新的生物标志物以改进现有预测模型时，可以使用净重新分类指数 (NRI) 或整合区分改善指数 (Integrated Discrimination Improvement, IDI) 来衡量模型预测能力的增益。然而，需要警惕NRI可能高估模型改进效果的风险，尤其是在类别定义不当或存在多个风险类别时。报告NRI时应提供更详细的组分信息 (PMC; ResearchGate; Collection of Biostatistics Research Archive).</p>
+      </div>
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-6">
+        <h4 class="text-xl font-semibold text-accent-foreground mb-2"><i class="fas fa-dna mr-2"></i>高维生物标志物分析：</h4>
+        <p>在基因组学、代谢组学、蛋白质组学以及医学影像等领域，研究者常常面对数千乃至数万维度的特征数据。在这种高维场景下，传统的回归方法容易产生过拟合。</p>
+        <p>Elastic Net 和 Precision Lasso (更广义地指Lasso及其变体用于高维特征选择) 等正则化方法能够有效地从中筛选出少数重要的生物标志物，构建稀疏且具有良好解释性的回归模型，从而提高预测准确性并降低过拟合风险 (Number Analytics; PMC; MDPI)。例如，Lasso-Logistic回归可用于从高维影像特征中识别与疾病诊断或预后相关的关键影像标记。</p>
+      </div>
+      <div class="p-6 bg-card rounded-lg shadow-lg mb-6">
+        <h4 class="text-xl font-semibold text-accent-foreground mb-2"><i class="fas fa-comments mr-2"></i>解释与沟通：</h4>
+        <p>逻辑回归的系数可以转化为比值比 (Odds Ratio, OR)。OR的对数线性特性使其易于解释为"某因素存在时，事件发生的风险是该因素不存在时的X倍"（尽管严格来说是几率的倍数，但在事件发生率较低时可近似为风险比），这便于医生与患者就风险因素进行沟通 (PMC; strength_of_materials_pytel_pdf.pdf - 提及OARC Stats间接支持)。</p>
+        <p>线性回归的系数则直接表示自变量每改变一个单位时，因变量平均改变的量，这有助于解释诸如药物剂量与生理指标反应之间的关系。</p>
+      </div>
+    </section>
+
+    <section id="summary-action-points" class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">8. 小结与行动要点</h2>
+      <p>本报告在Mehul Ligade推文的基础上，结合学术文献和统计学最佳实践，对线性回归和逻辑回归进行了深入和扩展的探讨。关键的改进和核心内容总结如下：</p>
+      <ul class="list-disc pl-5 space-y-2 mt-4 mb-6 bg-card p-6 rounded-lg shadow-lg">
+        <li><i class="fas fa-book-open mr-2 text-primary"></i>文献补充与循证深化：超越了单一推文来源，广泛引入了来自PubMed、PMC、BioMed Central、Statistics Solutions等同行评审文献和专业资源，显著增强了报告内容的科学性和严谨性，特别是在模型假设、诊断方法、评价指标和正则化技术等章节。</li>
+        <li><i class="fas fa-heartbeat mr-2 text-primary"></i>医学统计特化：针对医学研究的特殊需求，重点补充和强化了样本量设计考量、模型校准评估（强调其为"阿喀琉斯之踵"）、稀有事件处理策略（如Firth回归）、决策曲线分析（DCA）以评估临床效用、以及高维生物标志物分析方法等核心议题。</li>
+        <li><i class="fas fa-stethoscope mr-2 text-primary"></i>模型诊断与评估的全面性：
+            <ul class="list-circle pl-5 mt-1 space-y-1 text-sm">
+                <li>线性回归：强调了同方差性的重要性，介绍了残差图、Breusch-Pagan检验等诊断工具，并提出了在违反假设时的应对策略如加权回归和稳健标准误。评价指标补充了R²、调整R²和RMSE。</li>
+                <li>逻辑回归：突出了完全分离和稀有事件偏倚问题，介绍了Firth回归等处理方法。评价指标除AUC外，还强调了校准曲线、Brier分数、Hosmer-Lemeshow检验以及临床决策导向的DCA和NRI（同时警示其误用风险）。</li>
+            </ul>
+        </li>
+        <li><i class="fas fa-cogs mr-2 text-primary"></i>正则化与高维数据处理的拓展：在L1/L2正则化之外，详细介绍了Elastic Net在处理多重共线性和高维数据（如基因组学）时的优势，并提及Lasso-Logistic回归在医学影像和多组学数据中构建稀疏可解释模型的应用。</li>
+        <li><i class="fas fa-sync-alt mr-2 text-primary"></i>可重复性与实践指导：强调了提供R/Python代码片段、开源数据链接及建立完整可复现工作流（Reproducible Workflow）的重要性，以增强研究的透明度和实操价值，便于临床研究者理解和应用。</li>
+        <li><i class="fas fa-pen-fancy mr-2 text-primary"></i>写作规范与可解释性沟通：建议通过更细致的章节划分（如使用##小节）和更具信息量的图注来优化报告结构和可视化效果，提升临床可读性。强调了逻辑回归OR值在风险沟通中的便利性。</li>
+      </ul>
+      <h3 class="text-2xl font-semibold my-4 text-primary"><i class="fas fa-bullseye mr-2"></i>行动要点：</h3>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-accent dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+          <h4 class="font-semibold text-lg mb-1"><i class="fas fa-book mr-2"></i>强化文献支撑</h4>
+          <p class="text-sm">在未来的分析报告中，应系统性地纳入同行评审的文献，确保结论的可靠性。</p>
+        </div>
+        <div class="bg-accent dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+          <h4 class="font-semibold text-lg mb-1"><i class="fas fa-clinic-medical mr-2"></i>聚焦临床价值</h4>
+          <p class="text-sm">在医学统计应用中，模型评价不应仅停留在统计指标层面，更应结合DCA等工具评估其临床实用性和对决策的辅助作用。</p>
+        </div>
+        <div class="bg-accent dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+          <h4 class="font-semibold text-lg mb-1"><i class="fas fa-check-circle mr-2"></i>重视模型校准</h4>
+          <p class="text-sm">常规报告和评估模型的校准度，避免因错误校准导致不当的临床实践。</p>
+        </div>
+        <div class="bg-accent dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+          <h4 class="font-semibold text-lg mb-1"><i class="fas fa-redo mr-2"></i>拥抱可重复性</h4>
+          <p class="text-sm">积极采用可复现的研究方法和工具，分享代码和数据，促进科学合作与验证。</p>
+        </div>
+        <div class="bg-accent dark:bg-gray-700 p-4 rounded-lg shadow hover:shadow-md transition-shadow md:col-span-2">
+          <h4 class="font-semibold text-lg mb-1"><i class="fas fa-bullhorn mr-2"></i>提升可解释性</h4>
+          <p class="text-sm">选择和构建模型时，兼顾预测性能与临床可解释性，确保研究结果能够被临床医生和患者有效理解和应用。</p>
+        </div>
+      </div>
+      <p class="mt-6">通过上述改进，本报告期望能为相关领域的学习者和研究者提供一份更为全面、深入且实用的参考资料。</p>
+    </section>
+
+    <section id="further-reading" class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 border-b-2 border-primary pb-2">延伸阅读</h2>
+      <div class="space-y-6">
+        <div class="p-6 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+          <h3 class="text-xl font-semibold text-primary mb-2">1. "An Introduction to Statistical Learning" by Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani</h3>
+          <p class="text-muted-foreground mb-3">这本书提供了对包括线性和逻辑回归在内的统计学习方法的清晰介绍，包含理论和R语言实践。特别推荐第3章（线性回归）和第4章（分类，包括逻辑回归）。</p>
+          <a href="https://www.statlearning.com/" target="_blank" rel="noopener noreferrer" class="text-accent-foreground hover:underline inline-flex items-center">访问书籍网站 <i class="fas fa-external-link-alt ml-2"></i></a>
+        </div>
+        <div class="p-6 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+          <h3 class="text-xl font-semibold text-primary mb-2">2. "Applied Logistic Regression" by David W. Hosmer Jr., Stanley Lemeshow, and Rodney X. Sturdivant</h3>
+          <p class="text-muted-foreground mb-3">逻辑回归领域的经典教材，深入探讨了模型构建、解释、评估和诊断的各个方面，包含大量实例。</p>
+          <a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781118548387" target="_blank" rel="noopener noreferrer" class="text-accent-foreground hover:underline inline-flex items-center">查看Wiley在线图书馆 <i class="fas fa-external-link-alt ml-2"></i></a>
+        </div>
+        <div class="p-6 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+          <h3 class="text-xl font-semibold text-primary mb-2">3. "Elements of Statistical Learning" by Trevor Hastie, Robert Tibshirani, and Jerome Friedman</h3>
+          <p class="text-muted-foreground mb-3">这是一本更高级的著作，详细讨论了包括正则化（Lasso, Ridge, Elastic Net）在内的多种机器学习方法。适合希望深入理解背后数学原理的读者。</p>
+          <a href="https://hastie.su.domains/ElemStatLearn/" target="_blank" rel="noopener noreferrer" class="text-accent-foreground hover:underline inline-flex items-center">访问书籍网站 <i class="fas fa-external-link-alt ml-2"></i></a>
+        </div>
+        <div class="p-6 bg-card rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+          <h3 class="text-xl font-semibold text-primary mb-2">4. "Clinical prediction models: a practical approach to development, validation, and updating" by Ewout W. Steyerberg</h3>
+          <p class="text-muted-foreground mb-3">专注于临床预测模型的开发与验证，其中详细讨论了逻辑回归的应用、模型性能评估（如校准和DCA）以及在医学研究中的实际考量。</p>
+          <a href="https://www.springer.com/gp/book/9780387772431" target="_blank" rel="noopener noreferrer" class="text-accent-foreground hover:underline inline-flex items-center">查看Springer链接 <i class="fas fa-external-link-alt ml-2"></i></a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-muted dark:bg-gray-800 text-muted-foreground dark:text-gray-300 py-8 mt-12">
+    <div class="container mx-auto px-4 text-center">
+        <div class="mb-4">
+            <a href="../../index.html" class="text-primary hover:text-primary-focus transition-colors duration-300"><i class="fas fa-home mr-2"></i>返回首页</a>
+        </div>
+        <p class="text-sm">&copy; <span id="currentYear"></span> 季晓康. 保留所有权利.</p>
+        <p class="text-sm">微信公众号：凿壁</p>
+        <p class="text-sm">版权信息：国家健康医疗大数据研究院</p>
+        <div class="mt-4">
+          <p class="text-xs">页面生成日期: <span id="publishDateMetaDisplay" class="font-semibold">YYYY-MM-DD</span> | 分类: <span id="categoryMetaDisplay" class="font-semibold">分类</span></p>
+        </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/framer-motion@4/dist/framer-motion.umd.min.js"></script>
+  <script>
+    // Theme switcher logic
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlEl = document.documentElement;
+    const motion = window.motion; // Framer Motion global
+
+    const currentTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    htmlEl.classList.toggle('dark', currentTheme === 'dark');
+    if (themeToggle) {
+        themeToggle.querySelector('i').classList.toggle('fa-moon', currentTheme === 'light');
+        themeToggle.querySelector('i').classList.toggle('fa-sun', currentTheme === 'dark');
+    }
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            htmlEl.classList.toggle('dark');
+            const isDark = htmlEl.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            themeToggle.querySelector('i').classList.toggle('fa-moon', !isDark);
+            themeToggle.querySelector('i').classList.toggle('fa-sun', isDark);
+            if (typeof updateVisualizationThemes === 'function') {
+                updateVisualizationThemes();
+            }
+        });
+    }
+
+    let chartInstances = {}; 
+
+    function getThemeColor(variableName) {
+        return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+    }
+
+    function initializeCharts() {
+        const rocCtx = document.getElementById('rocCurveChart')?.getContext('2d');
+        if (rocCtx) {
+            chartInstances.rocCurveChart = new Chart(rocCtx, {
+                type: 'line',
+                data: {
+                    labels: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                    datasets: [{
+                        label: '模型 A (AUC = 0.85)',
+                        data: [0, 0.3, 0.65, 0.8, 0.9, 1],
+                        borderColor: getThemeColor('--chart-1'),
+                        backgroundColor: getThemeColor('--chart-1') + '33',
+                        tension: 0.1,
+                        pointBackgroundColor: getThemeColor('--chart-1'),
+                        pointRadius: 3,
+                    }, {
+                        label: '随机猜测 (AUC = 0.50)',
+                        data: [0, 0.2, 0.4, 0.6, 0.8, 1],
+                        borderColor: getThemeColor('--muted-foreground'),
+                        borderDash: [5, 5],
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 3,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: '假阳性率 (1 - 特异性)', color: getThemeColor('--foreground'), font: { weight: 'bold'} }, ticks: { color: getThemeColor('--foreground') }, grid: { color: getThemeColor('--border') } },
+                        y: { title: { display: true, text: '真阳性率 (敏感性)', color: getThemeColor('--foreground'), font: { weight: 'bold'} }, ticks: { color: getThemeColor('--foreground') }, grid: { color: getThemeColor('--border') }, min: 0, max: 1 }
+                    },
+                    plugins: { legend: { labels: { color: getThemeColor('--foreground'), usePointStyle: true } }, tooltip: { bodyFont: { weight: 'bold'} } }
+                }
+            });
+        }
+
+        const calCtx = document.getElementById('calibrationCurveChart')?.getContext('2d');
+        if (calCtx) {
+            chartInstances.calibrationCurveChart = new Chart(calCtx, {
+                type: 'line',
+                data: {
+                    labels: ['0-0.1', '0.1-0.2', '0.2-0.3', '0.3-0.4', '0.4-0.5', '0.5-0.6', '0.6-0.7', '0.7-0.8', '0.8-0.9', '0.9-1.0'],
+                    datasets: [{
+                        label: '理想校准线',
+                        data: [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95],
+                        borderColor: getThemeColor('--muted-foreground'),
+                        borderDash: [5, 5],
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 3,
+                    },{
+                        label: '模型校准曲线',
+                        data: [0.04, 0.12, 0.28, 0.33, 0.48, 0.53, 0.68, 0.78, 0.83, 0.96],
+                        borderColor: getThemeColor('--chart-2'),
+                        backgroundColor: getThemeColor('--chart-2') + '33',
+                        tension: 0.1,
+                        pointBackgroundColor: getThemeColor('--chart-2'),
+                        pointRadius: 3,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: '预测概率区间', color: getThemeColor('--foreground'), font: { weight: 'bold'} }, ticks: { color: getThemeColor('--foreground') }, grid: { color: getThemeColor('--border') } },
+                        y: { title: { display: true, text: '观测事件发生比例', color: getThemeColor('--foreground'), font: { weight: 'bold'} }, ticks: { color: getThemeColor('--foreground') }, grid: { color: getThemeColor('--border') }, min: 0, max: 1 }
+                    },
+                    plugins: { legend: { labels: { color: getThemeColor('--foreground'), usePointStyle: true } }, tooltip: { bodyFont: { weight: 'bold'} } }
+                }
+            });
+        }
+
+        const dcaCtx = document.getElementById('dcaChart')?.getContext('2d');
+        if (dcaCtx) {
+            chartInstances.dcaChart = new Chart(dcaCtx, {
+                type: 'line',
+                data: {
+                    labels: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+                    datasets: [{
+                        label: '模型',
+                        data: [0, 0.05, 0.1, 0.18, 0.25, 0.3, 0.28, 0.22, 0.15, 0.08, 0],
+                        borderColor: getThemeColor('--chart-3'),
+                        backgroundColor: getThemeColor('--chart-3') + '33',
+                        tension: 0.1,
+                        pointBackgroundColor: getThemeColor('--chart-3'),
+                        pointRadius: 3,
+                    }, {
+                        label: '全部治疗',
+                        data: [0, 0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72, 0.81, 0.9].map(p => p - (p * 0.1 / (1-0.1+1e-9))), // Example calculation for Pt=0.1
+                        borderColor: getThemeColor('--chart-4'),
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 3,
+                    }, {
+                        label: '不治疗',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        borderColor: getThemeColor('--muted-foreground'),
+                        tension: 0.1,
+                        fill: false,
+                        pointRadius: 3,
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: { title: { display: true, text: '阈值概率 (Pt)', color: getThemeColor('--foreground'), font: { weight: 'bold'} }, ticks: { color: getThemeColor('--foreground') }, grid: { color: getThemeColor('--border') } },
+                        y: { title: { display: true, text: '净收益 (Net Benefit)', color: getThemeColor('--foreground'), font: { weight: 'bold'} }, ticks: { color: getThemeColor('--foreground') }, grid: { color: getThemeColor('--border') } }
+                    },
+                    plugins: { legend: { labels: { color: getThemeColor('--foreground'), usePointStyle: true } }, tooltip: { bodyFont: { weight: 'bold'} } }
+                }
+            });
+        }
+    }
+
+    function updateVisualizationThemes() {
+        const isDark = htmlEl.classList.contains('dark');
+        const mermaidThemeConfig = {
+            startOnLoad: false, // Manual render/re-render
+            theme: isDark ? 'dark' : 'default',
+            themeVariables: {
+                primaryColor: getThemeColor(isDark ? '--primary' : '--primary'), // Ensure correct var for light/dark
+                primaryTextColor: getThemeColor(isDark ? '--primary-foreground': '--primary-foreground'),
+                primaryBorderColor: getThemeColor('--primary'),
+                lineColor: getThemeColor('--border'),
+                textColor: getThemeColor('--foreground'),
+                mainBkg: getThemeColor('--card'),
+                errorBkgColor: getThemeColor('--destructive'),
+                errorTextColor: getThemeColor('--destructive-foreground'),
+                // Add other variables from your CSS if Mermaid uses them
+                nodeBorder: getThemeColor('--border'),
+                clusterBkg: getThemeColor('--muted'),
+                clusterBorder: getThemeColor('--border'),
+                defaultLinkColor: getThemeColor('--foreground'),
+                titleColor: getThemeColor('--primary'),
+                edgeLabelBackground: getThemeColor(isDark? '#404040' : '#e0e0e0'), // Example specific for edge labels
+                actorBorder: getThemeColor('--primary'),
+                actorBackground: getThemeColor('--primary'),
+                actorTextColor: getThemeColor('--primary-foreground'),
+                labelBoxBkgColor: getThemeColor('--card'),
+                labelTextColor: getThemeColor('--card-foreground'),
+                loopTextColor: getThemeColor('--foreground'),
+                noteBkgColor: getThemeColor('--accent'),
+                noteTextColor: getThemeColor('--accent-foreground'),
+                activationBkgColor: getThemeColor('--secondary'),
+                activationBorderColor: getThemeColor('--border'),
+                sequenceNumberColor: getThemeColor('--primary-foreground'),
+            }
+        };
+        mermaid.initialize(mermaidThemeConfig);
+
+        document.querySelectorAll('pre.mermaid').forEach((el) => {
+            const elId = el.id || `mermaid-diag-${Math.random().toString(36).substring(2, 9)}`;
+            if (!el.id) el.id = elId;
+            
+            const currentSvg = el.querySelector('svg');
+            if (currentSvg) currentSvg.remove();
+            el.removeAttribute('data-processed');
+            
+            const mermaidDefinition = el.getAttribute('data-mermaid-def');
+            if (mermaidDefinition) {
+                try {
+                    mermaid.render(elId, mermaidDefinition, (svgCode) => {
+                        // Clear current content (which might be old SVG or original text)
+                        el.innerHTML = ''; 
+                        el.insertAdjacentHTML('beforeend', svgCode);
+                        el.setAttribute('data-processed', 'true');
+                    });
+                } catch (e) {
+                    console.error("Error re-rendering mermaid diagram:", e, mermaidDefinition);
+                    el.innerHTML = mermaidDefinition; // Restore original definition on error
+                }
+            } else {
+                console.warn("Mermaid pre tag missing data-mermaid-def for re-rendering", el);
+            }
+        });
+
+        for (const chartId in chartInstances) {
+            const chart = chartInstances[chartId];
+            if (chart) {
+                chart.options.scales.x.title.color = getThemeColor('--foreground');
+                chart.options.scales.x.ticks.color = getThemeColor('--foreground');
+                chart.options.scales.x.grid.color = getThemeColor('--border');
+                chart.options.scales.y.title.color = getThemeColor('--foreground');
+                chart.options.scales.y.ticks.color = getThemeColor('--foreground');
+                chart.options.scales.y.grid.color = getThemeColor('--border');
+                chart.options.plugins.legend.labels.color = getThemeColor('--foreground');
+                
+                if (chartId === 'rocCurveChart') {
+                    chart.data.datasets[0].borderColor = getThemeColor('--chart-1');
+                    chart.data.datasets[0].backgroundColor = getThemeColor('--chart-1') + '33';
+                    chart.data.datasets[0].pointBackgroundColor = getThemeColor('--chart-1');
+                    chart.data.datasets[1].borderColor = getThemeColor('--muted-foreground');
+                } else if (chartId === 'calibrationCurveChart') {
+                    chart.data.datasets[0].borderColor = getThemeColor('--muted-foreground');
+                    chart.data.datasets[1].borderColor = getThemeColor('--chart-2');
+                    chart.data.datasets[1].backgroundColor = getThemeColor('--chart-2') + '33';
+                    chart.data.datasets[1].pointBackgroundColor = getThemeColor('--chart-2');
+                } else if (chartId === 'dcaChart') {
+                    chart.data.datasets[0].borderColor = getThemeColor('--chart-3');
+                    chart.data.datasets[0].backgroundColor = getThemeColor('--chart-3') + '33';
+                    chart.data.datasets[0].pointBackgroundColor = getThemeColor('--chart-3');
+                    chart.data.datasets[1].borderColor = getThemeColor('--chart-4');
+                    chart.data.datasets[2].borderColor = getThemeColor('--muted-foreground');
+                }
+                chart.update();
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentYearSpan = document.getElementById('currentYear');
+        if (currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
+        
+        const publishDateMeta = document.querySelector('meta[name="publish-date"]');
+        const categoryMeta = document.querySelector('meta[name="category"]');
+        const categoryMap = { 'ai-tech': 'AI技术与生态', 'info-upgrade': '信息化升级', 'knowledge': '知识报告', 'research': '科研辅助' };
+        
+        if (publishDateMeta && document.getElementById('publishDateMetaDisplay')) {
+            document.getElementById('publishDateMetaDisplay').textContent = publishDateMeta.content;
+        }
+        if (categoryMeta && document.getElementById('categoryMetaDisplay')) {
+            const categoryKey = categoryMeta.content;
+            document.getElementById('categoryMetaDisplay').textContent = categoryMap[categoryKey] || categoryKey;
+        }
+
+        // Store original mermaid definitions and then initialize
+        document.querySelectorAll('pre.mermaid').forEach(el => {
+            el.setAttribute('data-mermaid-def', el.textContent.trim());
+        });
+
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: htmlEl.classList.contains('dark') ? 'dark' : 'default',
+            themeVariables: {
+                primaryColor: getThemeColor(htmlEl.classList.contains('dark') ? '--primary' : '--primary'),
+                primaryTextColor: getThemeColor(htmlEl.classList.contains('dark') ? '--primary-foreground': '--primary-foreground'),
+                primaryBorderColor: getThemeColor('--primary'),
+                lineColor: getThemeColor('--border'),
+                textColor: getThemeColor('--foreground'),
+                mainBkg: getThemeColor('--card'),
+                errorBkgColor: getThemeColor('--destructive'),
+                errorTextColor: getThemeColor('--destructive-foreground'),
+                nodeBorder: getThemeColor('--border'),
+                clusterBkg: getThemeColor('--muted'),
+                clusterBorder: getThemeColor('--border'),
+                defaultLinkColor: getThemeColor('--foreground'),
+                titleColor: getThemeColor('--primary'),
+                edgeLabelBackground: getThemeColor(htmlEl.classList.contains('dark')? '#404040' : '#e0e0e0'),
+                actorBorder: getThemeColor('--primary'),
+                actorBackground: getThemeColor('--primary'),
+                actorTextColor: getThemeColor('--primary-foreground'),
+                labelBoxBkgColor: getThemeColor('--card'),
+                labelTextColor: getThemeColor('--card-foreground'),
+                loopTextColor: getThemeColor('--foreground'),
+                noteBkgColor: getThemeColor('--accent'),
+                noteTextColor: getThemeColor('--accent-foreground'),
+                activationBkgColor: getThemeColor('--secondary'),
+                activationBorderColor: getThemeColor('--border'),
+                sequenceNumberColor: getThemeColor('--primary-foreground'),
+            }
+        });
+        // mermaid.run(); // Not needed if startOnLoad: true and diagrams are in initial HTML
+
+        initializeCharts();
+
+        if (motion && typeof motion.animate === 'function') {
+            document.querySelectorAll('main > section[id]').forEach((sectionEl) => {
+                sectionEl.style.opacity = 0;
+                sectionEl.style.transform = 'translateY(20px)';
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            motion.animate(entry.target, { opacity: 1, y: 0 }, { duration: 0.6, ease: [0.17, 0.67, 0.83, 0.67] });
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+                observer.observe(sectionEl);
+            });
+        } else {
+            console.warn('Framer Motion (motion.animate) not available. Skipping animations.');
+        }
+    });
+  </script>
+</body>
+</html> 

@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 必需的元数据标签 -->
+  <meta name="publish-date" content="2025-04-30">
+  <meta name="category" content="ai-tech">
+  <meta name="description" content="通过剖析Qwen 3的added_tokens机制，探讨大模型Agent系统从'提示工程'到'协议内生化'的演进，以及其对MCP工作流的深远影响。">
+  <meta name="keywords" content="added_tokens,Qwen 3,MCP,Agent工作流,函数调用,思考链,协议内生化">
+  
+  <title>Added Tokens：大模型Agent系统调用协议 | 凿壁</title>
+  
+  <!-- 外部资源引用 -->
+  <!-- Removed Tailwind CSS Link tag -->
+  <!-- <link href="https://cdn.tailwindcss.com" rel="stylesheet"> -->
+  <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+  <!-- Removed Framer Motion CDN -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/framer-motion@10/dist/framer-motion.min.js"></script> -->
+  
+  <!-- Highlight.js Styles (using 11.9.0) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="light-theme-code">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="dark-theme-code" disabled>
+  
+  <!-- Highlight.js Script Bundle (using 11.9.0) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  
+  <!-- Tippy.js (Tooltip Library) -->
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
+  <!-- Optional: Add a default Tippy theme or create custom styles -->
+  <!-- <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light-border.css" /> -->
+
+  <!-- Tailwind Play CDN Script -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --background: rgb(255, 255, 255);
+      --foreground: rgb(0, 0, 0);
+      --card: rgb(255, 255, 255);
+      --card-foreground: rgb(0, 0, 0);
+      --popover: rgb(255, 255, 255);
+      --popover-foreground: rgb(0, 0, 0);
+      --primary: rgb(255, 51, 51);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(255, 255, 0);
+      --secondary-foreground: rgb(0, 0, 0);
+      --muted: rgb(240, 240, 240);
+      --muted-foreground: rgb(51, 51, 51);
+      --accent: rgb(0, 102, 255);
+      --accent-foreground: rgb(255, 255, 255);
+      --destructive: rgb(0, 0, 0);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(0, 0, 0);
+      --input: rgb(0, 0, 0);
+      --ring: rgb(255, 51, 51);
+      --chart-1: rgb(255, 51, 51);
+      --chart-2: rgb(255, 255, 0);
+      --chart-3: rgb(0, 102, 255);
+      --chart-4: rgb(0, 204, 0);
+      --chart-5: rgb(204, 0, 204);
+      --sidebar: rgb(240, 240, 240);
+      --sidebar-foreground: rgb(0, 0, 0);
+      --sidebar-primary: rgb(255, 51, 51);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(0, 102, 255);
+      --sidebar-accent-foreground: rgb(255, 255, 255);
+      --sidebar-border: rgb(0, 0, 0);
+      --sidebar-ring: rgb(255, 51, 51);
+      --font-sans: DM Sans, sans-serif;
+      --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      --font-mono: Space Mono, monospace;
+      --radius: 0px;
+      --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.50);
+      --shadow-xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.50);
+      --shadow-sm: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 1px 2px -1px hsl(0 0% 0% / 1.00);
+      --shadow: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 1px 2px -1px hsl(0 0% 0% / 1.00);
+      --shadow-md: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 2px 4px -1px hsl(0 0% 0% / 1.00);
+      --shadow-lg: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 4px 6px -1px hsl(0 0% 0% / 1.00);
+      --shadow-xl: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 8px 10px -1px hsl(0 0% 0% / 1.00);
+      --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 0% / 2.50);
+    }
+
+    .dark {
+      --background: rgb(0, 0, 0);
+      --foreground: rgb(255, 255, 255);
+      --card: rgb(51, 51, 51);
+      --card-foreground: rgb(255, 255, 255);
+      --popover: rgb(51, 51, 51);
+      --popover-foreground: rgb(255, 255, 255);
+      --primary: rgb(255, 102, 102);
+      --primary-foreground: rgb(0, 0, 0);
+      --secondary: rgb(255, 255, 51);
+      --secondary-foreground: rgb(0, 0, 0);
+      --muted: rgb(51, 51, 51);
+      --muted-foreground: rgb(204, 204, 204);
+      --accent: rgb(51, 153, 255);
+      --accent-foreground: rgb(0, 0, 0);
+      --destructive: rgb(255, 255, 255);
+      --destructive-foreground: rgb(0, 0, 0);
+      --border: rgb(255, 255, 255);
+      --input: rgb(255, 255, 255);
+      --ring: rgb(255, 102, 102);
+      --chart-1: rgb(255, 102, 102);
+      --chart-2: rgb(255, 255, 51);
+      --chart-3: rgb(51, 153, 255);
+      --chart-4: rgb(51, 204, 51);
+      --chart-5: rgb(204, 51, 204);
+      --sidebar: rgb(0, 0, 0);
+      --sidebar-foreground: rgb(255, 255, 255);
+      --sidebar-primary: rgb(255, 102, 102);
+      --sidebar-primary-foreground: rgb(0, 0, 0);
+      --sidebar-accent: rgb(51, 153, 255);
+      --sidebar-accent-foreground: rgb(0, 0, 0);
+      --sidebar-border: rgb(255, 255, 255);
+      --sidebar-ring: rgb(255, 102, 102);
+      --font-sans: DM Sans, sans-serif;
+      --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+      --font-mono: Space Mono, monospace;
+      --radius: 0px;
+      --shadow-2xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.50);
+      --shadow-xs: 4px 4px 0px 0px hsl(0 0% 0% / 0.50);
+      --shadow-sm: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 1px 2px -1px hsl(0 0% 0% / 1.00);
+      --shadow: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 1px 2px -1px hsl(0 0% 0% / 1.00);
+      --shadow-md: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 2px 4px -1px hsl(0 0% 0% / 1.00);
+      --shadow-lg: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 4px 6px -1px hsl(0 0% 0% / 1.00);
+      --shadow-xl: 4px 4px 0px 0px hsl(0 0% 0% / 1.00), 4px 8px 10px -1px hsl(0 0% 0% / 1.00);
+      --shadow-2xl: 4px 4px 0px 0px hsl(0 0% 0% / 2.50);
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-serif);
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .code-block-container {
+      position: relative;
+      margin: 1.5rem 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+      padding: 0.5rem 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.875rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .copy-button {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .copy-button:hover {
+      background-color: var(--ring);
+    }
+
+    pre {
+      margin: 0;
+      padding: 1rem;
+      background-color: var(--card);
+      border-radius: 0 0 var(--radius) var(--radius);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      display: block;
+    }
+
+    table th {
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+      font-weight: 600;
+      text-align: left;
+      padding: 0.75rem 1rem;
+    }
+
+    table td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table tr:nth-child(even) {
+      background-color: var(--card);
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 100;
+      background-color: var(--card);
+      color: var(--card-foreground);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+    
+    .hero-section {
+      min-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .token {
+      display: inline-block;
+      background-color: var(--accent);
+      color: var(--accent-foreground);
+      padding: 0.125rem 0.375rem;
+      border-radius: var(--radius);
+      font-family: var(--font-mono);
+      font-size: 0.875em;
+    }
+    
+    .token-special {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+    }
+    
+    /* Custom Tippy.js theme */
+    .tippy-box[data-theme~='solarized'] {
+      background-color: var(--card);
+      color: var(--card-foreground);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      font-family: var(--font-sans);
+      font-size: 0.875rem; /* 14px */
+      padding: 0.5rem 0.75rem; /* 8px 12px */
+      line-height: 1.4;
+      max-width: 300px; /* Limit tooltip width */
+    }
+    .tippy-box[data-theme~='solarized'][data-placement^='top'] > .tippy-arrow::before {
+      border-top-color: var(--card);
+      border-width: 8px 8px 0;
+      bottom: -7px;
+    }
+    .tippy-box[data-theme~='solarized'][data-placement^='bottom'] > .tippy-arrow::before {
+      border-bottom-color: var(--card);
+      border-width: 0 8px 8px;
+      top: -7px;
+    }
+    .tippy-box[data-theme~='solarized'][data-placement^='left'] > .tippy-arrow::before {
+      border-left-color: var(--card);
+      border-width: 8px 0 8px 8px;
+      right: -7px;
+    }
+    .tippy-box[data-theme~='solarized'][data-placement^='right'] > .tippy-arrow::before {
+      border-right-color: var(--card);
+      border-width: 8px 8px 8px 0;
+      left: -7px;
+    }
+    .tippy-box[data-theme~='solarized'] > .tippy-content {
+      padding: 0; /* Remove default padding */
+    }
+
+    /* Style for the span triggering the tooltip */
+    .tooltip-trigger {
+      border-bottom: 1px dashed var(--primary);
+      cursor: help;
+    }
+
+    /* Updated styles for section titles (h2) - Underline + Text Shadow */
+    .section-title {
+      color: var(--foreground);
+      margin-bottom: 2.5rem; /* Increased margin slightly */
+      position: relative;
+      font-family: var(--font-serif);
+      font-size: 1.875rem; /* text-3xl */
+      line-height: 2.25rem;
+      font-weight: 700;
+      padding-bottom: 10px; /* Add padding for the underline */
+      /* Subtle text shadow matching hard shadow direction */
+      text-shadow: 2px 2px 0px hsla(0, 0%, 0%, 0.1);
+    }
+    .dark .section-title {
+      color: var(--foreground);
+      text-shadow: 2px 2px 0px hsla(0, 0%, 100%, 0.1); /* Lighter shadow for dark mode */
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0; /* Position at the bottom of the padding */
+      height: 4px; /* Thickness of the underline */
+      width: 40%; /* Width of the underline */
+      min-width: 100px; /* Minimum width */
+      background-color: var(--primary);
+      /* Add hard shadow to the underline itself */
+      box-shadow: 2px 2px 0px 0px var(--border);
+    }
+
+    /* New classes to apply box-shadow using variables */
+    .apply-shadow-lg {
+      box-shadow: var(--shadow-lg);
+    }
+    .apply-shadow-md {
+      box-shadow: var(--shadow-md);
+    }
+    .apply-shadow-sm {
+      box-shadow: var(--shadow-sm);
+    }
+    /* Add .apply-shadow-xl, .apply-shadow-xs etc. if needed later */
+  </style>
+</head>
+<body>
+  <!-- 主题切换按钮 -->
+  <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+    <i id="themeIcon" class="fas fa-sun"></i>
+  </button>
+  
+  <!-- 页面内容容器 - Removed max-w-4xl and mx-auto -->
+  <div class="px-4 sm:px-6 lg:px-8 py-8">
+    <!-- 返回首页链接 -->
+    <a href="../../index.html" class="inline-flex items-center text-primary hover:text-ring mb-8 transition-colors">
+      <i class="fas fa-arrow-left mr-2"></i> 返回首页
+    </a>
+
+    <!-- 主要内容开始 -->
+    <main>
+      <!-- Hero section -->
+      <section class="hero-section relative isolate overflow-hidden pt-16 pb-24 sm:pt-24 sm:pb-32">
+        <!-- Background Gradient - Use new theme primary/secondary RGBA -->
+        <div class="absolute inset-0 -z-10 bg-gradient-to-br from-[rgba(46,125,50,0.1)] via-[var(--background)] to-[rgba(232,245,233,0.1)]" aria-hidden="true"></div>
+        
+        <div class="hero-content max-w-2xl mx-auto text-center px-4">
+          <div class="mb-8">
+            <i class="fas fa-puzzle-piece text-4xl text-[var(--primary)]"></i>
+            <span class="text-4xl text-[var(--muted-foreground)] mx-2">→</span>
+            <i class="fas fa-cogs text-4xl text-[var(--secondary)]"></i>
+          </div>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 tracking-tight fade-in">added_tokens：大模型Agent系统调用协议</h1>
+          <p class="text-lg md:text-xl text-[var(--muted-foreground)] mb-8 max-w-3xl mx-auto fade-in visible" style="transition-delay: 100ms;">从Qwen 3的协议内生化，看大模型Agent如何从"提示工程"迈向"系统调用"时代</p>
+          <div class="flex items-center justify-center text-sm text-[var(--muted-foreground)] mb-12 fade-in visible" style="transition-delay: 200ms;">
+            <span class="mr-4 flex items-center">
+              <i class="far fa-calendar-alt mr-1.5"></i> 发布于 2025年04月30日
+            </span>
+            <span class="flex items-center">
+              <i class="far fa-folder-open mr-1.5"></i> AI技术与生态
+            </span>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 引言部分 -->
+      <section class="mb-16">
+        <!-- Applied new card style: using .apply-shadow-* class -->
+        <div class="bg-[var(--card)] p-6 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <h2 class="text-2xl font-bold mb-4 border-l-4 border-[var(--primary)] pl-3">引言：为什么一个小小的 <span class="tooltip-trigger" data-tippy-content="特殊标记（tokens），被添加到模型的词汇表中，用于表示特定的控制指令或元信息，如工具调用或思考步骤的开始/结束。">`added_token`</span> 会改变游戏规则？</h2>
+          
+          <p class="mb-4">随着 Qwen 3 把工具调用协议内嵌进 <span class="tooltip-trigger" data-tippy-content="在自然语言处理中，负责将原始文本分割成模型可以理解的基本单元（tokens）的组件。">tokenizer</span>，"<span class="tooltip-trigger" data-tippy-content="设计和优化输入提示（prompts）以引导大型语言模型产生期望输出的技术。">提示工程</span>"正悄然向"<span class="tooltip-trigger" data-tippy-content="将原本通过提示工程实现的控制逻辑（如工具调用格式）直接嵌入到模型的基础架构（如 tokenizer 或训练过程）中。">协议内生化</span>"过渡——这不仅提高了推理效率，也重新定义了"大模型 + <span class="tooltip-trigger" data-tippy-content="Model-Context-Protocol: 一种结构化LLM与外部工具交互的框架，涉及模型生成指令、上下文管理和协议遵循。">MCP</span>" 的分工边界。本文通过拆解典型案例（查询患者药物相互作用）、对比 DeepSeek R1 的"空壳 token"现象，并串联 ReTool、Planning-Token、PASTA 等最新研究，阐明 <strong><span class="tooltip-trigger" data-tippy-content="特殊标记（tokens），被添加到模型的词汇表中，用于表示特定的控制指令或元信息，如工具调用或思考步骤的开始/结束。">added_tokens</span> 机制如何成为下一代 <span class="tooltip-trigger" data-tippy-content="指涉及大型语言模型（作为'Agent'）执行一系列步骤（思考、调用工具、处理响应）以完成复杂任务的流程。">Agent 工作流</span>的"中断指令"</strong>。</p>
+        </div>
+      </section>
+      
+      <!-- 背景部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">一、背景：大模型 × MCP 进入"协议时代"</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- MCP 简述 -->
+            <!-- Inner Card - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-network-wired text-[var(--primary)] mr-2"></i>
+                1.1 MCP 简述
+              </h3>
+              <p class="mb-2"><span class="tooltip-trigger" data-tippy-content="Model-Context-Protocol: 一种结构化LLM与外部工具交互的框架，涉及模型生成指令、上下文管理和协议遵循。">Model-Context-Protocol (MCP)</span> 将 LLM-<span class="tooltip-trigger" data-tippy-content="指涉及大型语言模型（作为'Agent'）执行一系列步骤（思考、调用工具、处理响应）以完成复杂任务的流程。">Agent</span> 链拆成 <strong>"<span class="tooltip-trigger" data-tippy-content="一种引导模型在回答问题前显式地生成一系列中间推理步骤的技术，以提高复杂推理任务的准确性。">思考</span>-<span class="tooltip-trigger" data-tippy-content="大型语言模型生成特定格式的输出，指示需要调用外部函数或API来获取信息或执行操作的能力。">调用</span>-执行-回写"</strong> 四步，典型流程如 Qwen-Agent 的 <span class="token">Assistant</span> 模板所示。</p>
+              <div class="text-sm text-[var(--muted-foreground)] mt-2">
+                <i class="fas fa-link mr-1"></i>
+                参考: <a href="https://qwenlm.github.io/blog/qwen3/" class="underline hover:text-[var(--primary)]" target="_blank">Qwen3: Think Deeper, Act Faster | Qwen</a>
+              </div>
+            </div>
+            
+            <!-- Qwen 3 的定位 -->
+            <!-- Inner Card - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-rocket text-[var(--primary)] mr-2"></i>
+                1.2 Qwen 3 的定位
+              </h3>
+              <p class="mb-2">阿里巴巴于 2025-04-29 发布 Qwen 3，主打 <strong>Hybrid Reasoning + Agentic Tool Call</strong>，被腾讯新闻、Reuters 同日报道为"对标 DeepSeek 的反击"。</p>
+              <div class="flex flex-col space-y-1 text-sm text-[var(--muted-foreground)] mt-2">
+                <a href="https://www.reuters.com/business/media-telecom/alibaba-unveils-advanced-qwen-3-ai-chinese-tech-rivalry-intensifies-2025-04-29/" class="flex hover:text-[var(--primary)]" target="_blank">
+                  <i class="fas fa-link mr-1"></i>
+                  <span>Alibaba unveils advanced Qwen 3 AI as Chinese tech rivalry intensifies</span>
+                </a>
+                <a href="https://techcrunch.com/2025/04/28/alibaba-unveils-qwen-3-a-family-of-hybrid-ai-reasoning-models/" class="flex hover:text-[var(--primary)]" target="_blank">
+                  <i class="fas fa-link mr-1"></i>
+                  <span>Alibaba unveils Qwen3, a family of 'hybrid' AI reasoning models</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 核心机制部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">二、核心机制：added_tokens 深度剖析</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <!-- Tokenizer 中的"协议卡槽" -->
+          <div class="mb-8">
+            <h3 class="text-xl font-bold mb-6 fade-in">2.1 Tokenizer 中的"协议卡槽"</h3>
+            
+            <p class="mb-6 fade-in">在 <code>Qwen/Qwen3-8B</code> 的 <code>tokenizer_config.json</code> 中可见 40 余个保留标记，均 <strong>禁止 <span class="tooltip-trigger" data-tippy-content="Byte Pair Encoding: 一种常用的子词分割算法，用于构建词汇表，能有效处理未登录词。">BPE</span> 再切分</strong>，确保推理时原样输出。</p>
+            
+            <!-- Table Wrapper - Added shadow -->
+            <div class="overflow-x-auto mb-6 fade-in border border-[var(--border)] apply-shadow-sm">
+              <table class="min-w-full">
+                <thead>
+                  <tr>
+                    <th>功能域</th>
+                    <th>典型标记</th>
+                    <th>生命周期</th>
+                    <th>作用</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>会话边界</td>
+                    <td><span class="token"> &lt;|im_start|&gt; </span> / <span class="token"> &lt;|im_end|&gt; </span></td>
+                    <td>Input/Output</td>
+                    <td>分隔角色上下文</td>
+                  </tr>
+                  <tr>
+                    <td>思考模式</td>
+                    <td><span class="token token-special"> &lt;think&gt; </span></td>
+                    <td>Inference</td>
+                    <td>包裹隐式 <span class="tooltip-trigger" data-tippy-content="一种引导模型在回答问题前显式地生成一系列中间推理步骤的技术，以提高复杂推理任务的准确性。">Chain-of-Thought</span>，供日志回放</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tooltip-trigger" data-tippy-content="大型语言模型生成特定格式的输出，指示需要调用外部函数或API来获取信息或执行操作的能力。">工具调用</span></td>
+                    <td><span class="token token-special"> &lt;tool_call&gt; </span> / <span class="token"> &lt;tool_response&gt; </span></td>
+                    <td>Inference-Execution</td>
+                    <td>触发 <span class="tooltip-trigger" data-tippy-content="JSON Remote Procedure Call: 一种轻量级的远程过程调用协议，使用JSON格式进行数据交换。">JSON RPC</span> 并回收结果</td>
+                  </tr>
+                  <tr>
+                    <td>代码拆分</td>
+                    <td><span class="token"> &lt;|fim_prefix|&gt; </span> / <span class="token"> &lt;|file_sep|&gt; </span></td>
+                    <td>Fine-tune</td>
+                    <td>支持 <span class="tooltip-trigger" data-tippy-content="Fill-in-the-Middle: 一种代码生成任务，模型需要根据代码片段的前后部分来填充中间缺失的代码。">FIM</span>、<span class="tooltip-trigger" data-tippy-content="Repository-Level Question Answering: 在整个代码仓库的上下文中回答问题的任务。">RepoQA</span></td>
+                  </tr>
+                  <tr>
+                    <td>多模态预留</td>
+                    <td><span class="token"> &lt;|vision_start|&gt; </span> 等</td>
+                    <td>未来版本</td>
+                    <td>规划跨模态 Adapter</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <!-- Inner block - Applied new shadow class -->
+            <blockquote class="bg-[var(--muted)] border-l-4 border-[var(--primary)] px-4 py-3 my-6 border border-[var(--border)] apply-shadow-sm fade-in">
+              <p class="italic"><strong>设计原则</strong>：把"LLM→外部世界"的所有副作用全都"固化为 token"，相当于在 Transformer 内部植入 <span class="tooltip-trigger" data-tippy-content="操作系统的核心组件，映射了应用程序请求内核服务（系统调用）的入口点。这里是比喻，指 added_tokens 像系统调用一样触发特定行为。"><em>syscall table</em></span>。</p>
+            </blockquote>
+            
+            <div class="flex justify-center my-8">
+              <!-- Mermaid图表将在这里生成 - Added shadow -->
+              <div class="w-full lg:w-2/3 apply-shadow-md border border-[var(--border)]"> 
+                <pre class="mermaid fade-in">
+%%{init: {'theme':'neutral'}}%%
+graph LR
+  LLM(["LLM内部"])
+  SYS(["系统调用表"])
+  ENV(["外部环境"])
+  subgraph "Transformer内部"
+    LLM -->|"&lt;think&gt;"| TOKEN1["思考模式"]
+    LLM -->|"&lt;tool_call&gt;"| TOKEN2["工具调用"]
+    LLM -->|"&lt;|vision_start|&gt;"| TOKEN3["多模态处理"]
+  end
+  TOKEN1 -.-> SYS
+  TOKEN2 -.-> SYS
+  TOKEN3 -.-> SYS
+  SYS -->|"执行"| ENV
+  style TOKEN1 fill:#f9a8d4,stroke:#be185d
+  style TOKEN2 fill:#93c5fd,stroke:#1e40af
+  style TOKEN3 fill:#fde68a,stroke:#92400e
+                </pre>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 软开关：enable_thinking=True -->
+          <div>
+            <h3 class="text-xl font-bold mb-6 fade-in">2.2 软开关：<code>enable_thinking=True</code></h3>
+            
+            <p class="fade-in">官方博客给出了 <code>/think</code> 与 <code>/no_think</code> 切换示例；此开关会让模型生成 <span class="token token-special">&lt;think&gt;</span> 片段，用于多步规划。</p>
+            
+            <div class="text-sm text-[var(--muted-foreground)] mt-4 fade-in">
+              <a href="https://qwenlm.github.io/blog/qwen3/" class="flex hover:text-[var(--primary)]" target="_blank">
+                <i class="fas fa-link mr-1"></i>
+                <span>Qwen3: Think Deeper, Act Faster | Qwen</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 案例复盘部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">三、案例复盘：查询患者药物相互作用并生成报告</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+        <!-- Section Container Card - Applied new style -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] shadow-[var(--shadow-lg)] fade-in">
+          <p class="mb-6 text-[var(--muted-foreground)]">为了更清晰地展示 <code>added_tokens</code> 如何驱动 Agent 工作流，我们来看一个模拟的医疗场景：医生需要快速了解某位患者正在服用的药物与一种新处方药之间是否存在潜在的相互作用。</p>
+          
+          <!-- 用户请求 - Applied new shadow class -->
+          <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md mb-8">
+            <h4 class="font-semibold text-lg mb-3 text-[var(--foreground)]">1. 用户（医生）发起请求</h4>
+            <p class="text-sm mb-4 text-[var(--muted-foreground)]">医生向 AI 助手提出查询需求。</p>
+            <!-- Code block - Added shadow -->
+            <div class="code-block-container apply-shadow-sm">
+              <div class="code-block-header">
+                <span>用户请求</span>
+                <button class="copy-button">复制</button>
+              </div>
+              <pre><code class="language-text">&lt;|im_start|&gt;user
+请检查患者ID 'PT-789' 当前服用的药物与新处方药 '华法林 (Warfarin)' 之间是否存在相互作用，并生成简要报告。
+&lt;|im_end|&gt;</code></pre>
+            </div>
+          </div>
+
+          <p class="my-8 text-[var(--muted-foreground)] text-center">--- AI 助手处理流程 ---</p>
+          
+          <div class="grid grid-cols-1 gap-8 mb-8"> 
+            <!-- 步骤1: 规划 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-lg font-bold mb-4 flex items-center">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] mr-2">2</span>
+                规划阶段 (模型内部思考)
+              </h3>
+              <p class="text-sm mb-4 text-[var(--muted-foreground)]">模型接收到请求后，首先利用 <code>&lt;think&gt;</code> 标记进行内部规划，确定完成任务所需的步骤和工具。</p>
+              <!-- Code block - Added shadow -->
+              <div class="code-block-container apply-shadow-sm">
+                <div class="code-block-header">
+                  <span>模型输出 (内部思考)</span>
+                  <button class="copy-button">复制</button>
+                </div>
+                <pre><code class="language-text">&lt;think&gt;任务：检查药物相互作用并报告。
+步骤1: 需要获取患者 PT-789 的当前用药列表。
+  - 工具: `get_patient_medications`
+步骤2: 需要使用药物相互作用检查工具。
+  - 工具: `check_drug_interactions`
+步骤3: 格式化结果并生成报告。
+开始执行步骤1。
+&lt;/think&gt;
+&lt;tool_call&gt;{"fn":"get_patient_medications","args":{"patient_id":"PT-789"}}&lt;/tool_call&gt;</code></pre>
+              </div>
+              <p class="text-sm mt-4 text-[var(--muted-foreground)]">模型识别出需要先获取患者当前的用药情况，因此发起了第一个工具调用 <code>get_patient_medications</code>。</p>
+            </div>
+            
+            <!-- 步骤2: 执行阶段 - 获取药物 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-lg font-bold mb-4 flex items-center">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] mr-2">3</span>
+                执行阶段 (第一次工具调用与响应)
+              </h3>
+              <p class="text-sm mb-4 text-[var(--muted-foreground)]">MCP (Model-Context-Protocol) 服务器或类似中间件接收到 <code>&lt;tool_call&gt;</code>，调用相应的外部 API（如电子病历系统 EMR API），并将结果封装在 <code>&lt;tool_response&gt;</code> 中返回给模型。</p>
+              <!-- Code block - Added shadow -->
+              <div class="code-block-container apply-shadow-sm">
+                <div class="code-block-header">
+                  <span>MCP server 返回的工具响应</span>
+                  <button class="copy-button">复制</button>
+                </div>
+                <pre><code class="language-text">&lt;tool_response&gt;{"medications":["利辛普利 (Lisinopril)","阿司匹林 (Aspirin)"]}&lt;/tool_response&gt;</code></pre>
+              </div>
+               <p class="text-sm mt-4 text-[var(--muted-foreground)]">模型现在知道了患者正在服用利辛普利和阿司匹林。</p>
+            </div>
+            
+            <!-- 步骤3: 二次调用 - 检查相互作用 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-lg font-bold mb-4 flex items-center">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--primary-foreground)] mr-2">4</span>
+                二次调用与最终报告 (第二次工具调用)
+              </h3>
+              <p class="text-sm mb-4 text-[var(--muted-foreground)]">模型根据获取到的用药列表和用户请求中的新药，再次进行规划（可能内部思考，此处省略）并发起第二次工具调用，这次是调用药物相互作用检查 API。</p>
+              <!-- Code block - Added shadow -->
+              <div class="code-block-container mb-6 apply-shadow-sm">
+                <div class="code-block-header">
+                  <span>模型发起的第二次工具调用</span>
+                  <button class="copy-button">复制</button>
+                </div>
+                <pre><code class="language-text">&lt;tool_call&gt;{"fn":"check_drug_interactions","args":{"current_meds":["利辛普利 (Lisinopril)","阿司匹林 (Aspirin)"],"new_drug":"华法林 (Warfarin)"}}&lt;/tool_call&gt;</code></pre>
+              </div>
+              <p class="text-sm mb-4 text-[var(--muted-foreground)]">MCP 服务器执行调用，查询药物数据库，返回相互作用信息。</p>
+              <!-- Code block - Added shadow -->
+              <div class="code-block-container mb-6 apply-shadow-sm">
+                <div class="code-block-header">
+                  <span>MCP server 返回的第二次工具响应</span>
+                  <button class="copy-button">复制</button>
+                </div>
+                <pre><code class="language-text">&lt;tool_response&gt;{"interactions":[{"drug_pair":["阿司匹林 (Aspirin)","华法林 (Warfarin)"],"severity":"严重","description":"联合使用显著增加出血风险，通常应避免。"},{"drug_pair":["利辛普利 (Lisinopril)","华法林 (Warfarin)"],"severity":"中等","description":"可能增加华法林抗凝效果，需监测 INR。"}]}&lt;/tool_response&gt;</code></pre>
+              </div>
+              <p class="text-sm mb-4 text-[var(--muted-foreground)]">最后，模型整合所有信息，生成最终的报告给用户。</p>
+              <!-- Code block - Added shadow -->
+              <div class="code-block-container apply-shadow-sm">
+                 <div class="code-block-header">
+                  <span>模型最终回复</span>
+                  <button class="copy-button">复制</button>
+                </div>
+                 <pre><code class="language-text">&lt;|im_start|&gt;assistant
+根据患者 PT-789 的用药记录（利辛普利、阿司匹林）与新处方药（华法林）的相互作用检查结果如下：
+
+1.  **严重相互作用**: 阿司匹林与华法林联合使用会显著增加出血风险，通常应避免。
+2.  **中等相互作用**: 利辛普利可能增加华法林的抗凝效果，若需联用，应密切监测 INR。
+
+请医生结合患者具体情况评估风险。
+&lt;|im_end|&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+          
+          <p class="text-sm text-[var(--muted-foreground)] mb-4">这个例子展示了模型如何通过内置的 <code>&lt;think&gt;</code> 和 <code>&lt;tool_call&gt;</code> 标记，自主规划并执行多步骤任务，与外部系统（如 EMR、药物数据库）交互，最终完成复杂的查询和报告生成。</p>
+          <!-- 移除旧链接，添加通用说明 -->
+          <div class="text-sm text-[var(--muted-foreground)]">
+             <!-- 具体的工具调用实现和API细节会因系统而异 -->
+          </div>
+          
+          <!-- 调用流程可视化 - Added shadow and border -->
+          <div class="flex justify-center my-10">
+            <div class="w-full fade-in apply-shadow-md border border-[var(--border)]">
+              <pre class="mermaid">
+%%{init: {'theme':'neutral'}}%%
+sequenceDiagram
+    participant User as 用户(医生)
+    participant LLM as AI助手(Qwen 3)
+    participant MCP
+    participant EMR_API as 电子病历API
+    participant DrugDB_API as 药物数据库API
+    
+    User->>LLM: 查询患者PT-789药物相互作用 (含华法林)
+    Note over LLM: &lt;think&gt;规划：获取用药 -> 查相互作用 -> 生成报告&lt;/think&gt;
+    
+    LLM->>MCP: &lt;tool_call&gt; get_patient_medications(PT-789)
+    MCP->>EMR_API: 请求患者用药列表
+    EMR_API-->>MCP: 返回 [Lisinopril, Aspirin]
+    MCP-->>LLM: &lt;tool_response&gt; {medications: [...]}
+    
+    Note over LLM: 准备第二次调用
+    LLM->>MCP: &lt;tool_call&gt; check_drug_interactions([Lisinopril, Aspirin], Warfarin)
+    MCP->>DrugDB_API: 查询相互作用
+    DrugDB_API-->>MCP: 返回相互作用数据 (严重/中等)
+    MCP-->>LLM: &lt;tool_response&gt; {interactions: [...]}
+    
+    Note over LLM: 整合信息，生成报告
+    LLM-->>User: 回复相互作用报告
+              </pre>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 对比视角部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">四、对比视角：为何 DeepSeek R1"有 tool token 而无agent灵魂"？</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <div class="mb-8">
+            <!-- 对比表格 -->
+            <!-- Table Wrapper - Added shadow -->
+            <div class="overflow-x-auto border border-[var(--border)] apply-shadow-sm">
+              <table class="min-w-full">
+                <thead>
+                  <tr>
+                    <th>维度</th>
+                    <th>Qwen 3</th>
+                    <th>DeepSeek R1</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>是否公开 <span class="tooltip-trigger" data-tippy-content="Model-Context-Protocol: 一种结构化LLM与外部工具交互的框架，涉及模型生成指令、上下文管理和协议遵循。">MCP</span> 模板</td>
+                    <td class="text-[var(--primary)]">√ (<code>apply_chat_template</code>)</td>
+                    <td>× </td>
+                  </tr>
+                  <tr>
+                    <td>Tool token 是否在 <span class="tooltip-trigger" data-tippy-content="Reinforcement Learning / 强化学习: 智能体通过与环境交互并接收奖励/惩罚来学习最优策略。">RL</span> 阶段暴露</td>
+                    <td class="text-[var(--primary)]">√ (内嵌工具白名单)</td>
+                    <td>× (仅 tokenizer 占位)</td>
+                  </tr>
+                  <tr>
+                    <td><span class="tooltip-trigger" data-tippy-content="一种引导模型在回答问题前显式地生成一系列中间推理步骤的技术，以提高复杂推理任务的准确性。">思考模式</span></td>
+                    <td class="text-[var(--primary)]"><code>/think</code> 软切</td>
+                    <td>无</td>
+                  </tr>
+                  <tr>
+                    <td>实测多步调用</td>
+                    <td class="text-[var(--primary)]">HuggingFace-QwenAgent 通过</td>
+                    <td>无官方案例</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- 空壳token分析 - Applied new shadow class -->
+          <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+            <p class="mb-4">DeepSeek R1 的 <code>&lt;｜tool calls begin｜&gt;</code> 在 <span class="tooltip-trigger" data-tippy-content="在自然语言处理中，负责将原始文本分割成模型可以理解的基本单元（tokens）的组件。">tokenizer</span> 中确有其名，却因 <span class="tooltip-trigger" data-tippy-content="Supervised Fine-Tuning / 监督微调: 使用带有标签的数据集对预训练模型进行微调，以适应特定任务。">SFT</span> 阶段未引入工具接口，导致推理时"空 token 不起效"。</p>
+            
+            <div class="text-sm text-[var(--muted-foreground)]">
+              <a href="https://huggingface.co/deepseek-ai/DeepSeek-R1/blob/main/tokenizer_config.json" class="flex hover:text-[var(--primary)]" target="_blank">
+                <i class="fas fa-link mr-1"></i>
+                <span>tokenizer_config.json · deepseek-ai/DeepSeek-R1 at main</span>
+              </a>
+            </div>
+          </div>
+          
+          <!-- 可视化对比图表 -->
+          <!-- 图表容器 - Added shadow and border -->
+          <div class="flex justify-center my-10">
+            <div class="w-full lg:w-4/5 fade-in apply-shadow-md border border-[var(--border)]">
+              <canvas id="tokenComparisonChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 相关研究与产业脉络部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">五、相关研究与产业脉络：从学术到生产的一条暗线</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <!-- 研究框架表格 -->
+          <!-- Table Wrapper - Added shadow -->
+          <div class="overflow-x-auto mb-8 border border-[var(--border)] apply-shadow-sm">
+            <table class="min-w-full">
+              <thead>
+                <tr>
+                  <th>研究 / 框架</th>
+                  <th>关键贡献</th>
+                  <th>与 <span class="tooltip-trigger" data-tippy-content="特殊标记（tokens），被添加到模型的词汇表中，用于表示特定的控制指令或元信息，如工具调用或思考步骤的开始/结束。">added_tokens</span> 的契合点</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>ReTool</strong> (Apr 2025)</td>
+                  <td><span class="tooltip-trigger" data-tippy-content="Reinforcement Learning / 强化学习: 智能体通过与环境交互并接收奖励/惩罚来学习最优策略。">RL</span> 训练 LLM 何时、如何调用 Code Interpreter</td>
+                  <td>证明"token-级<span class="tooltip-trigger" data-tippy-content="大型语言模型生成特定格式的输出，指示需要调用外部函数或API来获取信息或执行操作的能力。">工具调用</span> + <span class="tooltip-trigger" data-tippy-content="Reinforcement Learning / 强化学习: 智能体通过与环境交互并接收奖励/惩罚来学习最优策略。">RL</span>"可显著提速数学推理</td>
+                </tr>
+                <tr>
+                  <td><strong>Planning Tokens</strong> (Wang 2023)</td>
+                  <td>在推理链头插入规划 token 提高 <span class="tooltip-trigger" data-tippy-content="Chain-of-Thought: 一种引导模型在回答问题前显式地生成一系列中间推理步骤的技术，以提高复杂推理任务的准确性。">CoT</span> 质量</td>
+                  <td>思路与 <code>&lt;think&gt;</code> 不谋而合</td>
+                </tr>
+                <tr>
+                  <td><strong>PASTA</strong> (Zhang 2023)</td>
+                  <td>Post-hoc Attention Steering</td>
+                  <td>未来可用多模态 token 做注意力重加权</td>
+                </tr>
+                <tr>
+                  <td><strong>TiM / ReCall</strong> (2023-24)</td>
+                  <td>长时记忆检索 token</td>
+                  <td>与 <code>&lt;think&gt;</code>/ <code>&lt;memo&gt;</code> 兼容，支持会话上下文快照</td>
+                </tr>
+                <tr>
+                  <td><strong>RepairAgent / APR</strong> (2024)</td>
+                  <td>FSM 约束<span class="tooltip-trigger" data-tippy-content="大型语言模型生成特定格式的输出，指示需要调用外部函数或API来获取信息或执行操作的能力。">工具调用</span>序列</td>
+                  <td>为代码修复代理提供 token-级安全护栏</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <p class="mb-6 fade-in">产业侧，Retool、Jarvis-VLA 等平台亦在尝试把离散操作映射到自定义 token，上述潮流相互印证。</p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4 text-sm text-[var(--muted-foreground)] mb-6 fade-in">
+            <a href="https://www.linkedin.com/pulse/jarvis-vla-post-training-large-scale-vision-language-models-bogolin-0qlue" class="flex hover:text-[var(--primary)]" target="_blank">
+              <i class="fas fa-link mr-1"></i>
+              <span>JARVIS-VLA: Post-Training Large-Scale Vision Language Models ...</span>
+            </a>
+            <a href="https://docs.retool.com/data-sources/concepts/models" class="flex hover:text-[var(--primary)]" target="_blank">
+              <i class="fas fa-link mr-1"></i>
+              <span>Retool AI platforms and models</span>
+            </a>
+          </div>
+          
+          <!-- 研究时间线可视化 -->
+          <div class="relative py-8 fade-in">
+            <div class="absolute left-0 right-0 h-1 top-1/2 transform -translate-y-1/2 bg-[var(--muted)]"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <!-- Planning Tokens - Applied new shadow class -->
+              <div class="relative pt-8">
+                <div class="absolute left-1/2 top-0 transform -translate-x-1/2 w-4 h-4 rounded-full bg-[var(--chart-3)] border-4 border-[var(--background)] z-10"></div>
+                <!-- Timeline item - Added apply-shadow-sm -->
+                <div class="bg-[var(--muted)] p-4 border border-[var(--border)] apply-shadow-sm">
+                  <h4 class="font-bold text-sm">Planning Tokens</h4>
+                  <p class="text-xs text-[var(--muted-foreground)]">2023年</p>
+                  <p class="text-sm mt-2">推理链头插入规划token</p>
+                </div>
+              </div>
+              
+              <!-- PASTA - Applied new shadow class -->
+              <div class="relative pt-8">
+                <div class="absolute left-1/2 top-0 transform -translate-x-1/2 w-4 h-4 rounded-full bg-[var(--chart-2)] border-4 border-[var(--background)] z-10"></div>
+                <!-- Timeline item - Added apply-shadow-sm -->
+                <div class="bg-[var(--muted)] p-4 border border-[var(--border)] apply-shadow-sm">
+                  <h4 class="font-bold text-sm">PASTA</h4>
+                  <p class="text-xs text-[var(--muted-foreground)]">2023年底</p>
+                  <p class="text-sm mt-2">注意力机制后处理</p>
+                </div>
+              </div>
+              
+              <!-- TiM/ReCall - Applied new shadow class -->
+              <div class="relative pt-8">
+                <div class="absolute left-1/2 top-0 transform -translate-x-1/2 w-4 h-4 rounded-full bg-[var(--chart-4)] border-4 border-[var(--background)] z-10"></div>
+                <!-- Timeline item - Added apply-shadow-sm -->
+                <div class="bg-[var(--muted)] p-4 border border-[var(--border)] apply-shadow-sm">
+                  <h4 class="font-bold text-sm">TiM/ReCall</h4>
+                  <p class="text-xs text-[var(--muted-foreground)]">2023-24年</p>
+                  <p class="text-sm mt-2">长时记忆检索</p>
+                </div>
+              </div>
+              
+              <!-- RepairAgent - Applied new shadow class -->
+              <div class="relative pt-8">
+                <div class="absolute left-1/2 top-0 transform -translate-x-1/2 w-4 h-4 rounded-full bg-[var(--chart-5)] border-4 border-[var(--background)] z-10"></div>
+                <!-- Timeline item - Added apply-shadow-sm -->
+                <div class="bg-[var(--muted)] p-4 border border-[var(--border)] apply-shadow-sm">
+                  <h4 class="font-bold text-sm">RepairAgent</h4>
+                  <p class="text-xs text-[var(--muted-foreground)]">2024年初</p>
+                  <p class="text-sm mt-2">FSM约束工具调用</p>
+                </div>
+              </div>
+              
+              <!-- ReTool - Applied new shadow class -->
+              <div class="relative pt-8">
+                <div class="absolute left-1/2 top-0 transform -translate-x-1/2 w-4 h-4 rounded-full bg-[var(--chart-1)] border-4 border-[var(--background)] z-10"></div>
+                <!-- Timeline item - Added apply-shadow-sm -->
+                <div class="bg-[var(--muted)] p-4 border border-[var(--border)] apply-shadow-sm">
+                  <h4 class="font-bold text-sm">ReTool</h4>
+                  <p class="text-xs text-[var(--muted-foreground)]">2025年4月</p>
+                  <p class="text-sm mt-2">RL训练工具调用策略</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 对大模型+MCP工作流的冲击部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">六、对"大模型 + MCP"工作流的冲击</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Prompt 工程 → 协议编排 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-code-branch text-[var(--primary)] mr-2"></i>
+                6.1 Prompt 工程 → 协议编排
+              </h3>
+              
+              <div class="mb-4">
+                <div class="font-bold text-sm mb-1">变更点：</div>
+                <p>系统提示不再手工拼 JSON，而是写 <span class="token token-special">&lt;tool_call&gt;</span> 即可，解析成本骤降。</p>
+              </div>
+              
+              <div>
+                <div class="font-bold text-sm mb-1">收益：</div>
+                <p>减少正则解析错误，提升安全可观测性。</p>
+              </div>
+              
+              <div class="text-sm text-[var(--muted-foreground)] mt-4">
+                <a href="https://medium.com/@jenray1986/retool-teaching-llms-when-and-how-to-use-tools-with-reinforcement-learning-705dd077e13e" class="flex hover:text-[var(--primary)]" target="_blank">
+                  <i class="fas fa-link mr-1"></i>
+                  <span>ReTool: Teaching LLMs When and How to Use Tools with ... - Medium</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- Agent 架构优化 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-sitemap text-[var(--primary)] mr-2"></i>
+                6.2 Agent 架构优化
+              </h3>
+              
+              <ul class="space-y-2 mb-4 list-disc list-inside">
+                <li>将 <strong><span class="tooltip-trigger" data-tippy-content="一种引导模型在回答问题前显式地生成一系列中间推理步骤的技术，以提高复杂推理任务的准确性。">思考链</span></strong> 和 <strong>动作链</strong> 用 token 分层，可以在日志回放时按块裁切，便于增量缓存与差分分析。</li>
+                <li>日志量降低 30-40 %（来自 Planning-Token 论文实测）。</li>
+              </ul>
+              
+              <div class="text-sm text-[var(--muted-foreground)] mt-4">
+                <a href="https://arxiv.org/html/2310.05707v4" class="flex hover:text-[var(--primary)]" target="_blank">
+                  <i class="fas fa-link mr-1"></i>
+                  <span>Guiding Language Model Reasoning with Planning Tokens - arXiv</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- 安全与合规 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-shield-alt text-[var(--primary)] mr-2"></i>
+                6.3 安全与合规
+              </h3>
+              
+              <p>MCP Server 可对白名单 <span class="token token-special">&lt;tool_call&gt;</span> 做静态校验，联合 <span class="tooltip-trigger" data-tippy-content="Google DeepMind 开发的一种为 AI 生成的文本添加不易察觉水印的技术，用于识别内容来源。">SynthID-Text</span> 水印，降低提示注入面。</p>
+              
+              <div class="text-sm text-[var(--muted-foreground)] mt-4">
+                <a href="https://arxiv.org/html/2411.13009v2" class="flex hover:text-[var(--primary)]" target="_blank">
+                  <i class="fas fa-link mr-1"></i>
+                  <span>LLMSteer: Improving Long-Context LLM Inference by Steering ...</span>
+                </a>
+              </div>
+            </div>
+            
+            <!-- 多模态前景 - Applied new shadow class -->
+            <div class="bg-[var(--muted)] p-6 border border-[var(--border)] apply-shadow-md">
+              <h3 class="text-xl font-bold mb-4 flex items-center">
+                <i class="fas fa-image text-[var(--primary)] mr-2"></i>
+                6.4 多模态前景
+              </h3>
+              
+              <p>预留 <span class="token">&lt;|vision_start|&gt;</span> 等，为未来"截图→<span class="tooltip-trigger" data-tippy-content="Optical Character Recognition / 光学字符识别: 将图像中的文本转换成机器可读文本的技术。">OCR</span>→分析→执行"链路奠定统一接口。</p>
+              
+              <div class="text-sm text-[var(--muted-foreground)] mt-4">
+                <a href="https://qwenlm.github.io/blog/qwen3/" class="flex hover:text-[var(--primary)]" target="_blank">
+                  <i class="fas fa-link mr-1"></i>
+                  <span>Qwen3: Think Deeper, Act Faster | Qwen</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 落地建议部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">七、落地建议：三步走</h2>
+        <!-- Section Container Card - Applied new shadow class -->
+        <div class="bg-[var(--card)] p-8 border-2 border-[var(--border)] apply-shadow-lg fade-in">
+          <div class="overflow-x-auto border border-[var(--border)] apply-shadow-sm">
+            <table class="min-w-full">
+              <thead>
+                <tr class="bg-[var(--muted)]">
+                  <th class="text-[var(--muted-foreground)]">时间线</th>
+                  <th class="text-[var(--muted-foreground)]">动作</th>
+                  <th class="text-[var(--muted-foreground)]">目标产出</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>短期 (0-2 周)</strong></td>
+                  <td>在现有代理中接入 Qwen 3 官方模板，开启 <code>enable_thinking</code>，复现 ISS 案例 → 生成团队内部 <span class="tooltip-trigger" data-tippy-content="Proof of Concept / 概念验证: 为了证明一个想法或理论的可行性而进行的小规模实现或演示。">PoC</span></td>
+                  <td>确认工具调用链可用</td>
+                </tr>
+                <tr class="bg-[var(--muted)]">
+                  <td><strong>中期 (1-2 月)</strong></td>
+                  <td>设计 token-level 日志解析器，按 <code>&lt;think&gt;/&lt;tool_call&gt;</code> 颗粒度做指标监控；评估 Prompt-to-Protocol 替换收益</td>
+                  <td>稳定性度量 & 流水线改造</td>
+                </tr>
+                <tr>
+                  <td><strong>长期 (3-6 月)</strong></td>
+                  <td>与产品团队共建多模态工具（截图标注、<span class="tooltip-trigger" data-tippy-content="Optical Character Recognition / 光学字符识别: 将图像中的文本转换成机器可读文本的技术。">OCR</span>），并规划 <span class="tooltip-trigger" data-tippy-content="Reinforcement Learning from Human Feedback: 结合强化学习和人类反馈来微调模型，使其输出更符合人类偏好。">RL-HF</span> fine-tune，强化 token-协议一致性</td>
+                  <td>形成跨模态 Agent 平台</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 结语部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">结语</h2>
+        
+        <!-- Conclusion block - Removed border, kept shadow -->
+        <div class="bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] text-[var(--primary-foreground)] p-8 apply-shadow-lg fade-in">
+          <p class="text-lg mb-6">当 Qwen 3 把<span class="tooltip-trigger" data-tippy-content="大型语言模型生成特定格式的输出，指示需要调用外部函数或API来获取信息或执行操作的能力。">函数调用</span>写进 <span class="tooltip-trigger" data-tippy-content="在自然语言处理中，负责将原始文本分割成模型可以理解的基本单元（tokens）的组件。">tokenizer</span>，LLM 的"<span class="tooltip-trigger" data-tippy-content="一种引导模型在回答问题前显式地生成一系列中间推理步骤的技术，以提高复杂推理任务的准确性。">思考</span>—行动"不再只是生成文本，而是一次 <strong>面向外部世界的系统调用</strong>。这预示着 <span class="tooltip-trigger" data-tippy-content="指涉及大型语言模型（作为'Agent'）执行一系列步骤（思考、调用工具、处理响应）以完成复杂任务的流程。">Agent</span> 生态将从"写提示"步入"写协议"，<span class="tooltip-trigger" data-tippy-content="设计和优化输入提示（prompts）以引导大型语言模型产生期望输出的技术。">Prompt 工程师</span>将成为 <strong>LLM-OS 的协议设计师</strong>。理解并善用这些 <span class="tooltip-trigger" data-tippy-content="特殊标记（tokens），被添加到模型的词汇表中，用于表示特定的控制指令或元信息，如工具调用或思考步骤的开始/结束。">added_tokens</span>，将是把大模型真正部署到生产环境、并让其安全可控的分水岭。</p>
+        </div>
+      </section>
+      
+      <!-- 延伸阅读部分 -->
+      <section class="mb-16">
+        <h2 class="section-title fade-in">延伸阅读</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 fade-in">
+          <!-- Reading item - Applied new shadow class -->
+          <div class="bg-[var(--card)] p-6 border border-[var(--border)] apply-shadow-md">
+            <h3 class="text-lg font-bold mb-2">Qwen 3 官方博客</h3>
+            <p class="text-sm mb-4">深入了解Qwen 3的核心设计理念，包括完整的added_tokens列表和工具调用框架。</p>
+            <a href="https://qwenlm.github.io/blog/qwen3/" class="text-[var(--primary)] hover:text-[var(--ring)] flex items-center" target="_blank">
+              <span>阅读原文</span>
+              <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
+          </div>
+          
+          <!-- Reading item - Applied new shadow class -->
+          <div class="bg-[var(--card)] p-6 border border-[var(--border)] apply-shadow-md">
+            <h3 class="text-lg font-bold mb-2">ReTool: 强化学习优化工具调用策略</h3>
+            <p class="text-sm mb-4">探讨如何通过强化学习训练LLM何时、如何调用工具，以实现更高效的推理过程。</p>
+            <a href="https://arxiv.org/html/2504.11536v1" class="text-[var(--primary)] hover:text-[var(--ring)] flex items-center" target="_blank">
+              <span>阅读原文</span>
+              <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
+          </div>
+          
+          <!-- Reading item - Applied new shadow class -->
+          <div class="bg-[var(--card)] p-6 border border-[var(--border)] apply-shadow-md">
+            <h3 class="text-lg font-bold mb-2">Planning Tokens: 规划提示优化推理</h3>
+            <p class="text-sm mb-4">研究如何在推理链开始时插入规划token，以提高Chain-of-Thought的质量和一致性。</p>
+            <a href="https://arxiv.org/html/2310.05707v4" class="text-[var(--primary)] hover:text-[var(--ring)] flex items-center" target="_blank">
+              <span>阅读原文</span>
+              <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
+          </div>
+          
+          <!-- Reading item - Applied new shadow class -->
+          <div class="bg-[var(--card)] p-6 border border-[var(--border)] apply-shadow-md">
+            <h3 class="text-lg font-bold mb-2">PASTA: 注意力后处理机制</h3>
+            <p class="text-sm mb-4">探索如何通过后处理注意力机制来控制模型输出，这与token级控制有协同效应。</p>
+            <a href="https://github.com/QingruZhang/PASTA" class="text-[var(--primary)] hover:text-[var(--ring)] flex items-center" target="_blank">
+              <span>GitHub项目</span>
+              <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
+          </div>
+          
+          <!-- Reading item - Applied new shadow class -->
+          <div class="bg-[var(--card)] p-6 border border-[var(--border)] apply-shadow-md">
+            <h3 class="text-lg font-bold mb-2">LLM Agent架构设计指南</h3>
+            <p class="text-sm mb-4">全面介绍LLM Agent的架构设计原则，特别是如何设计高效的工具调用协议和接口。</p>
+            <a href="https://arxiv.org/pdf/2311.08719" class="text-[var(--primary)] hover:text-[var(--ring)] flex items-center" target="_blank">
+              <span>阅读原文</span>
+              <i class="fas fa-external-link-alt ml-1"></i>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- 页脚 -->
+    <footer class="mt-16 pt-8 border-t border-[var(--border)]">
+      <div class="text-center text-sm text-[var(--muted-foreground)]">
+        <p>作者姓名: 季晓康</p>
+        <p>微信公众号：凿壁</p>
+        <p>版权信息：国家健康医疗大数据研究院</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 存储Chart.js实例
+    window.chartInstances = [];
+    
+    // 主题切换逻辑
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化主题
+      const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (prefersDarkMode) {
+        document.documentElement.classList.add('dark');
+        document.getElementById('themeIcon').classList.remove('fa-sun');
+        document.getElementById('themeIcon').classList.add('fa-moon');
+      }
+      
+      // 主题切换按钮
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.addEventListener('click', function() {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        
+        // 更新图标
+        const themeIcon = document.getElementById('themeIcon');
+        if (isDark) {
+          themeIcon.classList.remove('fa-sun');
+          themeIcon.classList.add('fa-moon');
+        } else {
+          themeIcon.classList.remove('fa-moon');
+          themeIcon.classList.add('fa-sun');
+        }
+        
+        // 更新所有可视化的主题
+        updateVisualizationThemes();
+      });
+      
+      // 代码高亮
+      hljs.highlightAll();
+      
+      // 初始化可视化主题
+      initMermaid();
+      updateVisualizationThemes();
+      
+      // 初始化Tippy.js Tooltips
+      tippy('[data-tippy-content]', {
+        theme: 'solarized', // Apply custom theme
+        allowHTML: true,    // Allow HTML in tooltips if needed
+        animation: 'fade',  // Optional: Add animation
+        interactive: false, // Optional: Allow interaction with tooltip
+        arrow: true,        // Ensure arrow is shown
+      });
+
+      // 设置动画 (保持简单的 fade-in)
+      setupSimpleAnimations(); // Renamed from setupAnimations
+      
+      // 初始化图表
+      initTokenComparisonChart();
+    });
+    
+    // 更新所有可视化主题
+    function updateVisualizationThemes() {
+      const isDark = document.documentElement.classList.contains('dark');
+      
+      // 更新Mermaid主题
+      window.mermaid.initialize({
+        theme: isDark ? 'dark' : 'default',
+        startOnLoad: true
+      });
+      
+      // 更新代码高亮主题
+      document.getElementById('light-theme-code').disabled = isDark;
+      document.getElementById('dark-theme-code').disabled = !isDark;
+      
+      // 更新所有Chart.js实例
+      window.chartInstances.forEach(chart => {
+        // 获取新的主题颜色
+        const chartColors = [
+          getComputedStyle(document.documentElement).getPropertyValue('--chart-1').trim(),
+          getComputedStyle(document.documentElement).getPropertyValue('--chart-2').trim(),
+          getComputedStyle(document.documentElement).getPropertyValue('--chart-3').trim(),
+          getComputedStyle(document.documentElement).getPropertyValue('--chart-4').trim(),
+          getComputedStyle(document.documentElement).getPropertyValue('--chart-5').trim()
+        ];
+        
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+        const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+        
+        // 更新图表颜色
+        chart.options.plugins.legend.labels.color = textColor;
+        chart.options.scales.x.ticks.color = textColor;
+        chart.options.scales.x.grid.color = gridColor;
+        chart.options.scales.y.ticks.color = textColor;
+        chart.options.scales.y.grid.color = gridColor;
+        
+        // 更新数据集颜色
+        chart.data.datasets.forEach((dataset, index) => {
+          dataset.backgroundColor = chartColors[index % chartColors.length];
+          if (dataset.borderColor) {
+            dataset.borderColor = chartColors[index % chartColors.length];
+          }
+        });
+        
+        // 应用更改
+        chart.update();
+      });
+    }
+    
+    // 初始化Mermaid
+    function initMermaid() {
+      const isDark = document.documentElement.classList.contains('dark');
+      window.mermaid.initialize({
+        theme: isDark ? 'dark' : 'default',
+        startOnLoad: true
+      });
+    }
+    
+    // 设置简单的淡入动画 (移除了Framer Motion依赖)
+    function setupSimpleAnimations() {
+      // 淡入动画
+      const fadeElements = document.querySelectorAll('.fade-in');
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+      
+      // 复制代码按钮功能
+      document.querySelectorAll('.copy-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const codeBlock = this.closest('.code-block-container').querySelector('code');
+          navigator.clipboard.writeText(codeBlock.textContent)
+            .then(() => {
+              const originalText = this.textContent;
+              this.textContent = '已复制!';
+              setTimeout(() => {
+                this.textContent = originalText;
+              }, 2000);
+            })
+            .catch(err => {
+              console.error('复制失败:', err);
+            });
+        });
+      });
+    }
+    
+    // 创建Token功能对比图表
+    function initTokenComparisonChart() {
+      const ctx = document.getElementById('tokenComparisonChart').getContext('2d');
+      
+      // 获取当前主题颜色
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+      const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+      const chartColors = [
+        getComputedStyle(document.documentElement).getPropertyValue('--chart-1').trim(),
+        getComputedStyle(document.documentElement).getPropertyValue('--chart-2').trim()
+      ];
+      
+      // 数据
+      const data = {
+        labels: ['公开MCP模板', '暴露工具白名单', '思考模式', '多步工具调用', '官方案例'],
+        datasets: [
+          {
+            label: 'Qwen 3',
+            data: [100, 100, 100, 100, 90],
+            backgroundColor: chartColors[0] + '80', // 添加透明度
+            borderColor: chartColors[0],
+            borderWidth: 2,
+            borderRadius: 4
+          },
+          {
+            label: 'DeepSeek R1',
+            data: [20, 10, 0, 30, 10],
+            backgroundColor: chartColors[1] + '80', // 添加透明度
+            borderColor: chartColors[1],
+            borderWidth: 2,
+            borderRadius: 4
+          }
+        ]
+      };
+      
+      // 配置
+      const config = {
+        type: 'bar',
+        data: data,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              grid: {
+                color: gridColor
+              },
+              ticks: {
+                color: textColor
+              }
+            },
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: {
+                color: gridColor
+              },
+              ticks: {
+                color: textColor
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              labels: {
+                color: textColor
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.raw + '%';
+                }
+              }
+            }
+          }
+        }
+      };
+      
+      // 创建图表并存储实例
+      const chart = new Chart(ctx, config);
+      window.chartInstances.push(chart);
+    }
+  </script>
+</body>
+</html> 

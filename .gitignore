@@ -23,3 +23,4 @@ config.php
 # 备份文件
 *.bak
 backup/
+aliyun_snapshot/

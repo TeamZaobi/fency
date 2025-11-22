@@ -1,0 +1,25 @@
+#!/usr/bin/expect
+
+set timeout 60
+set password "791123"
+set user "jxkcook"
+set host "101.200.131.64"
+set port "2279"
+set key "/Users/jixiaokang/.ssh/id_ed25519"
+
+# Command to run on server
+set remote_cmd "ls -la ~/.ssh && cd /var/www && git config credential.helper"
+
+spawn ssh -p $port -i $key $user@$host $remote_cmd
+
+expect {
+    "Enter passphrase for key" {
+        send "$password\r"
+        exp_continue
+    }
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    eof
+}

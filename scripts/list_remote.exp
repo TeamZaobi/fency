@@ -1,0 +1,22 @@
+#!/usr/bin/expect
+
+set timeout 30
+set password "791123"
+set user "jxkcook"
+set host "101.200.131.64"
+set port "2279"
+set key "/Users/jixiaokang/.ssh/id_ed25519"
+
+spawn ssh -p $port -i $key $user@$host "ls -F /var/www/"
+
+expect {
+    "Enter passphrase for key" {
+        send "$password\r"
+        exp_continue
+    }
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    eof
+}

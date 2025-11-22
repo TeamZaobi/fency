@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- === Required Meta Tags (Update content later!) === -->
+    <meta name="publish-date" content="2025-05-02">
+    <meta name="category" content="research">
+    <meta name="description" content="分析Google NotebookLM最新更新（新界面、音频功能、Plus版）对科研，特别是中文医学科研的影响。结合社区反馈（中文音频、医学应用）和未来趋势（AI普及、协作、多语言支持），探讨其潜力和应用前景。"> <!-- Update if needed -->
+    <meta name="keywords" content="NotebookLM, Google AI, 科研工具, 中文医学, AI研究助手, 文献综述, 音频生成, 社区反馈, 未来趋势"> <!-- Update if needed -->
+
+    <title>NotebookLM更新对科研的影响分析 | 凿壁</title>
+
+    <!-- === CDN Resources === -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Add languages as needed, e.g., python, javascript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="light-hljs-theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="dark-hljs-theme" disabled>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css" />
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css"/> <!-- Example theme -->
+    <!-- Framer Motion might be better integrated via npm in a build setup, but for CDN: -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/framer-motion@10/dist/framer-motion.js"></script> -->
+
+
+    <!-- === Theme Variables & Basic Styles === -->
+    <style>
+      :root {
+        --background: rgb(255, 249, 245);
+        --foreground: rgb(61, 52, 54);
+        --card: rgb(255, 255, 255);
+        --card-foreground: rgb(61, 52, 54);
+        --popover: rgb(255, 255, 255);
+        --popover-foreground: rgb(61, 52, 54);
+        --primary: rgb(255, 126, 95);
+        --primary-foreground: rgb(255, 255, 255);
+        --secondary: rgb(255, 237, 234);
+        --secondary-foreground: rgb(179, 83, 64);
+        --muted: rgb(255, 240, 235);
+        --muted-foreground: rgb(120, 113, 108);
+        --accent: rgb(254, 180, 123);
+        --accent-foreground: rgb(61, 52, 54);
+        --destructive: rgb(230, 57, 70);
+        --destructive-foreground: rgb(255, 255, 255);
+        --border: rgb(255, 224, 214);
+        --input: rgb(255, 224, 214);
+        --ring: rgb(255, 126, 95);
+        --chart-1: rgb(255, 126, 95);
+        --chart-2: rgb(254, 180, 123);
+        --chart-3: rgb(255, 202, 167);
+        --chart-4: rgb(255, 173, 143);
+        --chart-5: rgb(206, 106, 87);
+        --sidebar: rgb(255, 240, 235);
+        --sidebar-foreground: rgb(61, 52, 54);
+        --sidebar-primary: rgb(255, 126, 95);
+        --sidebar-primary-foreground: rgb(255, 255, 255);
+        --sidebar-accent: rgb(254, 180, 123);
+        --sidebar-accent-foreground: rgb(61, 52, 54);
+        --sidebar-border: rgb(255, 224, 214);
+        --sidebar-ring: rgb(255, 126, 95);
+        --font-sans: Montserrat, sans-serif;
+        --font-serif: Merriweather, serif;
+        --font-mono: Ubuntu Mono, monospace;
+        --radius: 0.625rem;
+        --shadow-2xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
+        --shadow-xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
+        --shadow-sm: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
+        --shadow: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
+        --shadow-md: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 2px 4px -4px hsl(0 0% 0% / 0.09);
+        --shadow-lg: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 4px 6px -4px hsl(0 0% 0% / 0.09);
+        --shadow-xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 8px 10px -4px hsl(0 0% 0% / 0.09);
+        --shadow-2xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.22);
+      }
+
+      .dark {
+        --background: rgb(42, 32, 36);
+        --foreground: rgb(242, 233, 228);
+        --card: rgb(57, 47, 53);
+        --card-foreground: rgb(242, 233, 228);
+        --popover: rgb(57, 47, 53);
+        --popover-foreground: rgb(242, 233, 228);
+        --primary: rgb(255, 126, 95);
+        --primary-foreground: rgb(255, 255, 255);
+        --secondary: rgb(70, 58, 65);
+        --secondary-foreground: rgb(242, 233, 228);
+        --muted: rgb(57, 47, 53);
+        --muted-foreground: rgb(215, 198, 188);
+        --accent: rgb(254, 180, 123);
+        --accent-foreground: rgb(42, 32, 36);
+        --destructive: rgb(230, 57, 70);
+        --destructive-foreground: rgb(255, 255, 255);
+        --border: rgb(70, 58, 65);
+        --input: rgb(70, 58, 65);
+        --ring: rgb(255, 126, 95);
+        --chart-1: rgb(255, 126, 95);
+        --chart-2: rgb(254, 180, 123);
+        --chart-3: rgb(255, 202, 167);
+        --chart-4: rgb(255, 173, 143);
+        --chart-5: rgb(206, 106, 87);
+        --sidebar: rgb(42, 32, 36);
+        --sidebar-foreground: rgb(242, 233, 228);
+        --sidebar-primary: rgb(255, 126, 95);
+        --sidebar-primary-foreground: rgb(255, 255, 255);
+        --sidebar-accent: rgb(254, 180, 123);
+        --sidebar-accent-foreground: rgb(42, 32, 36);
+        --sidebar-border: rgb(70, 58, 65);
+        --sidebar-ring: rgb(255, 126, 95);
+        --font-sans: Montserrat, sans-serif;
+        --font-serif: Merriweather, serif;
+        --font-mono: Ubuntu Mono, monospace;
+        --radius: 0.625rem;
+        --shadow-2xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
+        --shadow-xs: 0px 6px 12px -3px hsl(0 0% 0% / 0.04);
+        --shadow-sm: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
+        --shadow: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 1px 2px -4px hsl(0 0% 0% / 0.09);
+        --shadow-md: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 2px 4px -4px hsl(0 0% 0% / 0.09);
+        --shadow-lg: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 4px 6px -4px hsl(0 0% 0% / 0.09);
+        --shadow-xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.09), 0px 8px 10px -4px hsl(0 0% 0% / 0.09);
+        --shadow-2xl: 0px 6px 12px -3px hsl(0 0% 0% / 0.22);
+      }
+
+      body {
+        font-family: var(--font-sans);
+        background-color: var(--background);
+        color: var(--foreground);
+        line-height: 1.6; /* Default line height */
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+
+      /* Custom Tippy Theme Example (adapt later) */
+      .tippy-box[data-theme~='custom-theme'] {
+        background-color: var(--card);
+        color: var(--card-foreground);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+      }
+      .tippy-box[data-theme~='custom-theme'][data-placement^='top'] > .tippy-arrow::before {
+        border-top-color: var(--card);
+      }
+      .tippy-box[data-theme~='custom-theme'][data-placement^='bottom'] > .tippy-arrow::before {
+        border-bottom-color: var(--card);
+      }
+
+      /* Code Block Styling */
+      .code-block-container {
+        position: relative;
+        margin: 1.5rem 0;
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .code-block-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--muted);
+        color: var(--muted-foreground);
+        padding: 0.5rem 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.875rem;
+      }
+
+      .code-block-header .language-label {
+        font-weight: 500;
+      }
+
+      .code-block-header .copy-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        color: var(--muted-foreground);
+        transition: color 0.2s;
+        font-size: 0.875rem;
+      }
+
+      .code-block-header .copy-button:hover {
+        color: var(--primary);
+      }
+
+      .code-block-container pre {
+        margin: 0;
+        padding: 1rem;
+        background-color: var(--card) !important;
+        overflow-x: auto;
+        border: 1px solid var(--border);
+        border-top: none;
+        border-bottom-left-radius: var(--radius);
+        border-bottom-right-radius: var(--radius);
+      }
+
+      .code-block-container pre code {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding: 0;
+      }
+
+      /* Animation for copy button */
+      @keyframes copied {
+        0% { opacity: 0; transform: translateY(5px); }
+        10% { opacity: 1; transform: translateY(0); }
+        90% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(-5px); }
+      }
+
+      .copy-success {
+        position: absolute;
+        right: 1rem;
+        bottom: 100%;
+        background-color: var(--primary);
+        color: var(--primary-foreground);
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        pointer-events: none;
+        animation: copied 1.5s ease forwards;
+      }
+
+      /* Animation styles - REMOVED */
+      /* ... removed animation styles ... */
+      
+      /* Header Fade-in Animation */
+      @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+      }
+
+      .header-fade-in > * {
+          animation: fadeIn 0.8s ease-out forwards;
+          opacity: 0; /* Start hidden */
+      }
+      
+      /* Stagger animation for header elements */
+      .header-fade-in h1 { animation-delay: 0.1s; }
+      .header-fade-in p { animation-delay: 0.2s; }
+      .header-fade-in a { animation-delay: 0s; } 
+
+      /* Header Gradient Background */
+      .header-gradient {
+          background: linear-gradient(to bottom right, rgba(var(--secondary-rgb), 0.15), var(--background));
+      }
+      .dark .header-gradient {
+           /* Slightly adjust gradient for dark mode if needed, or keep the same */
+           background: linear-gradient(to bottom right, rgba(var(--secondary-rgb-dark), 0.1), var(--background));
+      }
+    </style>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+          darkMode: 'class', // Enable class-based dark mode
+          theme: {
+            extend: {
+              colors: {
+                background: 'var(--background)',
+                foreground: 'var(--foreground)',
+                card: 'var(--card)',
+                'card-foreground': 'var(--card-foreground)',
+                popover: 'var(--popover)',
+                'popover-foreground': 'var(--popover-foreground)',
+                primary: 'var(--primary)',
+                'primary-foreground': 'var(--primary-foreground)',
+                secondary: 'var(--secondary)',
+                'secondary-foreground': 'var(--secondary-foreground)',
+                muted: 'var(--muted)',
+                'muted-foreground': 'var(--muted-foreground)',
+                accent: 'var(--accent)',
+                'accent-foreground': 'var(--accent-foreground)',
+                destructive: 'var(--destructive)',
+                'destructive-foreground': 'var(--destructive-foreground)',
+                border: 'var(--border)',
+                input: 'var(--input)',
+                ring: 'var(--ring)',
+                chart: {
+                  '1': 'var(--chart-1)',
+                  '2': 'var(--chart-2)',
+                  '3': 'var(--chart-3)',
+                  '4': 'var(--chart-4)',
+                  '5': 'var(--chart-5)',
+                },
+                sidebar: {
+                  DEFAULT: 'var(--sidebar)',
+                  foreground: 'var(--sidebar-foreground)',
+                  primary: 'var(--sidebar-primary)',
+                  'primary-foreground': 'var(--sidebar-primary-foreground)',
+                  accent: 'var(--sidebar-accent)',
+                  'accent-foreground': 'var(--sidebar-accent-foreground)',
+                  border: 'var(--sidebar-border)',
+                  ring: 'var(--sidebar-ring)',
+                }
+              },
+              fontFamily: {
+                sans: ['Montserrat', 'sans-serif'],
+                serif: ['Merriweather', 'serif'],
+                mono: ['Ubuntu Mono', 'monospace'],
+              },
+              borderRadius: {
+                lg: 'var(--radius)',
+                md: 'calc(var(--radius) - 2px)',
+                sm: 'calc(var(--radius) - 4px)',
+              },
+              boxShadow: {
+                sm: 'var(--shadow-sm)',
+                DEFAULT: 'var(--shadow)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
+              },
+            }
+          }
+        }
+      </script>
+
+</head>
+<body class="antialiased">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" type="button" class="fixed bottom-4 right-4 z-50 p-2 rounded-full bg-secondary text-secondary-foreground hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background">
+        <i class="fas fa-sun" id="theme-toggle-light-icon"></i>
+        <i class="fas fa-moon hidden" id="theme-toggle-dark-icon"></i>
+    </button>
+
+    <!-- Main Content Container -->
+    <div class="container mx-auto max-w-4xl px-4 py-8">
+
+        <!-- Enhanced Hero Section -->
+        <header class="mb-16 text-center py-12 md:py-20 rounded-lg border-b border-border shadow-sm header-fade-in header-gradient">
+            <div class="mb-6">
+              <a href="../../index.html" class="inline-flex items-center text-sm text-primary hover:text-primary/80 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>返回首页
+              </a>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold font-serif mb-4 text-foreground">压倒性的医学科研工具 | NotebookLM</h1>
+            <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">分析NotebookLM更新对科研的影响分析，探索在中文医学等领域的应用潜力。</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="space-y-12">
+
+            <!-- Key Points Section -->
+            <section id="key-points" class="bg-card p-6 rounded-lg shadow-md border border-border">
+                <h2 class="text-2xl font-semibold font-serif mb-4 text-primary flex items-center">
+                    <i class="fas fa-lightbulb mr-3"></i>关键要点
+                </h2>
+                <ul class="list-none space-y-2 text-card-foreground">
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-primary mt-1 mr-2 flex-shrink-0"></i>
+                        <span>研究表明，NotebookLM 的最新更新可能对科研，尤其是中文医学科研有积极影响。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-primary mt-1 mr-2 flex-shrink-0"></i>
+                        <span>社区反应总体积极，特别是对中文音频生成功能的支持。</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check-circle text-primary mt-1 mr-2 flex-shrink-0"></i>
+                        <span>未来趋势可能包括 AI 工具在文献综述和团队协作中的更广泛应用。</span>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Overview Section -->
+            <section id="overview">
+                <h2 class="text-3xl font-bold font-serif mb-6 border-b border-primary pb-2">概述</h2>
+                <p class="mb-6 text-lg leading-relaxed">
+                    NotebookLM 最近推出了一系列重要更新，包括新界面、互动音频功能和 NotebookLM Plus 高级版，这些更新似乎对科研，特别是中文医学科研产生了显著影响。以下是社区反应和未来趋势的分析。
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-card p-6 rounded-lg shadow-sm border border-border">
+                        <h3 class="text-xl font-semibold font-serif mb-4 text-secondary-foreground flex items-center">
+                           <i class="fas fa-comments mr-2 text-accent"></i>社区反应
+                        </h3>
+                        <p class="text-card-foreground mb-4">
+                            从 X 和博客文章中可以看到，研究人员和学生对 NotebookLM 的反应总体上是正面的。特别是中文用户对工具支持中文音频生成表示赞赏，认为男声效果自然，方便非英语母语研究者的使用。例如，一位 X 用户提到，NotebookLM 的中文音频生成"特别好，太自然了"，这增强了工具的可用性。
+                        </p>
+                        <p class="text-card-foreground">
+                            在医学领域，NotebookLM 被用于处理医学指南和论文，社区反馈显示其在总结长篇复杂文献方面的帮助很大。一位用户分享了将心脏病学指南输入 NotebookLM 的经验，称其像"指导医生一样"帮助学习，极大地提高了效率。
+                        </p>
+                    </div>
+                    <div class="bg-card p-6 rounded-lg shadow-sm border border-border">
+                         <h3 class="text-xl font-semibold font-serif mb-4 text-secondary-foreground flex items-center">
+                           <i class="fas fa-chart-line mr-2 text-accent"></i>未来趋势
+                        </h3>
+                        <p class="text-card-foreground">
+                            NotebookLM 的多语言支持和协作功能可能推动中文医学科研的数字化转型。研究表明，AI 工具可以加速文献综述、促进团队协作，并通过音频概述功能支持多任务学习。未来，NotebookLM 可能与研究数据库深度整合，提供实时更新和更复杂的分析，这将进一步提升科研效率。
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detailed Report Section -->
+             <section id="detailed-report">
+                <h2 class="text-3xl font-bold font-serif mb-8 border-b border-primary pb-2">详细调查报告</h2>
+
+                 <p class="mb-6 text-lg leading-relaxed">
+                    NotebookLM 作为 <span class="tech-term" data-tippy-content="Google AI 是 Google 的人工智能研究部门，开发 Gemini、NotebookLM 等 AI 工具，专注于负责任的 AI 技术研发。">Google</span> 开发的一款 AI 驱动的研究助手，最近推出了一系列重要更新，包括新界面、互动音频功能和 NotebookLM Plus 高级版。这些更新对科研，尤其是中文医学科研，产生了显著影响。以下是基于社区反应和未来趋势的详细分析。
+                 </p>
+
+                <div class="bg-secondary/50 dark:bg-secondary/20 p-6 rounded-lg mb-8 border border-secondary">
+                    <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground">NotebookLM 的更新内容</h3>
+                    <p class="mb-4">
+                        根据官方博客和新闻报道，NotebookLM 的最新更新包括以下关键功能：
+                    </p>
+                    <ul class="list-disc list-inside space-y-2 pl-4 text-secondary-foreground">
+                        <li><strong class="font-medium">新界面</strong>：优化为"<span class="tech-term" data-tippy-content="来源面板允许用户上传和管理研究资料，如PDF、链接或文本，是NotebookLM获取信息的基础。">来源</span>"、"<span class="tech-term" data-tippy-content="聊天面板提供与AI的对话界面，允许用户就上传资料提问或讨论，获得上下文相关的回答。">聊天</span>"和"<span class="tech-term" data-tippy-content="工作室面板是生成各种内容的地方，如学习指南、简报文档和音频概述，集中了NotebookLM的创作功能。">工作室</span>"三个面板，方便管理信息和生成内容，如学习指南、简报文档和音频概述。</li>
+                        <li><strong class="font-medium">互动音频功能</strong>：用户可以与 AI 主持人直接互动，逐步推出，适用于音频概述，社区可以通过 <a href="https://discord.gg/Az2N7BwV7r" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">Discord <i class="fas fa-external-link-alt text-xs ml-1"></i></a> 提供反馈。</li>
+                        <li><strong class="font-medium">NotebookLM Plus</strong>：高级版为强用户、团队和企业提供 5 倍的音频概述、笔记本和来源容量，支持定制响应和团队共享笔记本，隐私和安全得到增强，可通过 Google Workspace 或 Google One AI Premium 获得，详情见 <a href="https://support.google.com/notebooklm?p=plus" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">支持页面 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>。</li>
+                    </ul>
+                     <p class="mt-4 text-sm text-muted-foreground">
+                        这些更新于 2024 年 12 月开始推出，并于 2025 年 4 月扩展到包括中文在内的 50 多种语言的音频概述功能，详见 <a href="https://blog.google/intl/ja-jp/company-news/technology/notebooklm-50/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">Google 博客 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>。
+                    </p>
+                </div>
+
+                <!-- Community Reaction Analysis (to be continued) -->
+                 <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground">社区反应分析</h3>
+                 <p class="mb-6">
+                    为了调查各种社区的反应，我们分析了 X 上的讨论和相关博客文章。以下是主要发现：
+                 </p>
+
+                 <!-- X Discussions -->
+                 <div class="mb-8">
+                   <p class="mb-4">
+                     <span class="font-medium text-accent">X 上的讨论</span>：从 X 帖子中可以看到，NotebookLM 的多语言支持，尤其是中文音频生成，受到中国用户的欢迎。一位 X 用户 <a href="https://x.com/nicekate8888/status/1917475329440100717" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">(@nicekate8888) <i class="fas fa-external-link-alt text-xs ml-1"></i></a> 提到，"Gemini Advanced 会员太超值了，除了好用的 <span class="tech-term" data-tippy-content="Gemini Advanced 是 Google 提供的高级 AI 服务，提供更强大的问题解答、内容创作和信息分析能力，是 NotebookLM Plus 的底层技术支持。">Gemini Deep Research</span>，还有 <span class="tech-term" data-tippy-content="NotebookLM Plus 是付费高级版本，提供更多容量、团队共享功能和更强大的定制能力。">NotebookLM Plus</span>。现在 NotebookLM 支持中文音频生成（特别是男声效果太好，太自然了）。"这表明中文用户对音频质量和语言支持感到满意。
+                   </p>
+                 </div>
+
+                 <!-- Medical Field Applications -->
+                 <div class="mb-8">
+                   <p class="mb-4">
+                     <span class="font-medium text-accent">医学领域的应用</span>：在一篇博客文章中，提到一位用户将循环器学会指南输入 NotebookLM，体验到"像指导医生一样"的学习效果，详见 <a href="https://weel.co.jp/media/innovator/notebooklm/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">WEEL 文章 <i class="fas fa-external-link-alt text-xs ml-1"></i></a>。该用户表示，"NotebookLM 的出典部分简单引用非常有用，AI 在医学信息的收集和学习上提供了支持，特别适合处理长篇复杂的<span class="tech-term" data-tippy-content="医学论文通常包含高度专业的术语和复杂的研究方法描述，平均长度在5000-8000字左右，需要专业背景理解。">医学论文</span>。"
+                   </p>
+                 </div>
+
+                 <!-- Other Community Feedback -->
+                 <div class="mb-8">
+                   <p class="mb-4">
+                     <span class="font-medium text-accent">其他社区反馈</span>：在日本和英语社区中，研究人员也表达了对 NotebookLM 在研究中的积极看法。例如，一位 X 用户 <a href="https://x.com/KitamotoAsanobu/status/1917585647449301242" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium">(@KitamotoAsanobu) <i class="fas fa-external-link-alt text-xs ml-1"></i></a> 提到，"上传论文 PDF 后，NotebookLM 自动生成<span class="tech-term" data-tippy-content="对话式讲解是AI以问答形式解释复杂内容的方式，更接近人类教学模式，增强理解和记忆。">对话式讲解</span>，可能影响未来的研究解释方式。"这表明工具在科研中的潜力被广泛认可。
+                   </p>
+                 </div>
+
+                 <!-- Community Reaction Chart -->
+                 <div class="mb-12 bg-card p-6 rounded-lg shadow-md border border-border">
+                   <h4 class="text-lg font-medium mb-6 text-center">社区反应评分（满分100）</h4>
+                   <div class="w-full h-[300px]">
+                     <canvas id="communityChart"></canvas>
+                   </div>
+                 </div>
+
+                 <!-- Community Reaction Summary Table -->
+                 <div class="mb-10 overflow-x-auto bg-card border border-border rounded-lg shadow-sm">
+                   <table class="min-w-full divide-y divide-border">
+                     <thead class="bg-muted">
+                       <tr>
+                         <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-secondary-foreground">社区类型</th>
+                         <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-secondary-foreground">反应内容</th>
+                         <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-secondary-foreground">示例来源</th>
+                       </tr>
+                     </thead>
+                     <tbody class="divide-y divide-border">
+                       <tr class="hover:bg-muted/30 transition-colors">
+                         <td class="px-6 py-4 text-sm">中文用户</td>
+                         <td class="px-6 py-4 text-sm">赞赏中文音频生成，男声自然，增强可用性</td>
+                         <td class="px-6 py-4 text-sm"><a href="https://x.com/nicekate8888/status/1917475329440100717" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">X 用户 (@nicekate8888)</a></td>
+                       </tr>
+                       <tr class="hover:bg-muted/30 transition-colors">
+                         <td class="px-6 py-4 text-sm">医学研究者</td>
+                         <td class="px-6 py-4 text-sm">帮助总结医学指南，学习效率高</td>
+                         <td class="px-6 py-4 text-sm"><a href="https://weel.co.jp/media/innovator/notebooklm/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">WEEL 文章</a></td>
+                       </tr>
+                       <tr class="hover:bg-muted/30 transition-colors">
+                         <td class="px-6 py-4 text-sm">日本研究社区</td>
+                         <td class="px-6 py-4 text-sm">认可对话式讲解功能，可能影响研究解释方式</td>
+                         <td class="px-6 py-4 text-sm"><a href="https://x.com/KitamotoAsanobu/status/1917585647449301242" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">X 用户 (@KitamotoAsanobu)</a></td>
+                       </tr>
+                       <tr class="hover:bg-muted/30 transition-colors">
+                         <td class="px-6 py-4 text-sm">英语用户</td>
+                         <td class="px-6 py-4 text-sm">赞扬工具在代码库理解和学习中的易用性</td>
+                         <td class="px-6 py-4 text-sm"><a href="https://x.com/ai_for_success/status/1916130491713175771" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">X 用户 (@ai_for_success)</a></td>
+                       </tr>
+                     </tbody>
+                   </table>
+                 </div>
+
+                 <!-- Impact on Chinese Medical Research -->
+                 <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground">对中文医学科研的影响：精准切入痛点</h3>
+                 <p class="mb-8 text-secondary-foreground">
+                   NotebookLM 之所以对中国医学科研具有显著优势，主要是因为它能有效解决中国医务工作者在科研过程中面临的一些核心痛点。下面我们详细分析这些痛点以及 NotebookLM 如何针对性地提供解决方案。
+                 </p>
+
+                 <!-- Core Pain Points -->
+                 <div class="mb-12">
+                   <h4 class="text-xl font-semibold font-serif mb-6 text-accent flex items-center">
+                      <i class="fas fa-exclamation-triangle mr-3 text-destructive"></i>中国医学科研的核心痛点
+                   </h4>
+                   <ul class="space-y-4">
+                     <li class="flex items-start bg-card p-4 rounded-lg border border-border shadow-sm">
+                       <div class="bg-destructive/10 p-2 rounded-full mr-4 mt-1 flex-shrink-0">
+                         <i class="fas fa-layer-group text-lg text-destructive"></i>
+                       </div>
+                       <div>
+                         <strong class="font-medium text-card-foreground">信息过载与效率低下：</strong>医学文献爆炸性增长，处理大量中英文文献进行综述和分析耗时耗力。
+                       </div>
+                     </li>
+                     <li class="flex items-start bg-card p-4 rounded-lg border border-border shadow-sm">
+                       <div class="bg-destructive/10 p-2 rounded-full mr-4 mt-1 flex-shrink-0">
+                         <i class="fas fa-language text-lg text-destructive"></i>
+                       </div>
+                       <div>
+                         <strong class="font-medium text-card-foreground">语言障碍：</strong>需要及时获取和理解国际前沿研究，但语言往往成为壁垒。
+                       </div>
+                     </li>
+                     <li class="flex items-start bg-card p-4 rounded-lg border border-border shadow-sm">
+                       <div class="bg-destructive/10 p-2 rounded-full mr-4 mt-1 flex-shrink-0">
+                         <i class="fas fa-shield-alt text-lg text-destructive"></i>
+                       </div>
+                       <div>
+                         <strong class="font-medium text-card-foreground">数据隐私与质量顾虑：</strong>处理敏感数据时，数据隐私、安全和质量是核心关切。
+                       </div>
+                     </li>
+                     <li class="flex items-start bg-card p-4 rounded-lg border border-border shadow-sm">
+                       <div class="bg-destructive/10 p-2 rounded-full mr-4 mt-1 flex-shrink-0">
+                         <i class="fas fa-check-double text-lg text-destructive"></i>
+                       </div>
+                       <div>
+                         <strong class="font-medium text-card-foreground">研究可靠性要求高：</strong>医学研究对信息准确性和可追溯性有极高要求，需警惕 AI"幻觉"。
+                       </div>
+                     </li>
+                     <li class="flex items-start bg-card p-4 rounded-lg border border-border shadow-sm">
+                       <div class="bg-destructive/10 p-2 rounded-full mr-4 mt-1 flex-shrink-0">
+                         <i class="fas fa-laptop-code text-lg text-destructive"></i>
+                       </div>
+                       <div>
+                         <strong class="font-medium text-card-foreground">AI 工具使用门槛：</strong>部分研究人员可能缺乏使用 AI 工具的技能或对其可靠性存疑。
+                       </div>
+                     </li>
+                   </ul>
+                 </div>
+
+                <!-- Divider -->
+                <hr class="border-border my-12">
+
+                 <!-- NotebookLM's Targeted Solutions -->
+                 <div class="mb-12">
+                   <h4 class="text-xl font-semibold font-serif mb-6 text-accent flex items-center">
+                     <i class="fas fa-lightbulb mr-3 text-primary"></i>NotebookLM 的针对性解决方案
+                   </h4>
+                   
+                   <!-- Source-Grounding Emphasis -->
+                   <div class="bg-primary/10 p-6 rounded-lg shadow-lg border border-primary mb-8">
+                     <div class="flex items-center mb-3">
+                      <i class="fas fa-shield-alt text-2xl text-primary mr-3"></i>
+                      <h5 class="text-lg font-semibold text-primary">核心优势：来源限定与可靠性 (Source-Grounding)</h5>
+                     </div>
+                     <p class="text-primary/90">
+                       NotebookLM 最突出的特点是其 AI 回应严格基于用户上传的源材料，并提供精确到原文段落的引文。这极大地提高了信息的可信度和可追溯性，减少了 AI"幻觉"风险，满足了医学研究对准确性的高要求，是相比通用 AI 的<strong class="font-medium">压倒性优势</strong>。
+                     </p>
+                   </div>
+
+                   <div class="grid md:grid-cols-2 gap-6">
+                     <!-- Solution 1: Efficiency -->
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-primary/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-rocket text-xl text-primary"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">提升文献处理效率</h5>
+                           <p class="text-card-foreground text-sm">
+                             快速对大量文献进行摘要、生成FAQ、提取关键信息、跨文档问答，显著加速文献回顾和信息综合。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+
+                     <!-- Solution 2: Language Barrier -->
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-accent/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-language text-xl text-accent"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">打破语言壁垒</h5>
+                           <p class="text-card-foreground text-sm">
+                             音频概览支持多种语言输出（如英文文献生成中文摘要语音），帮助研究者高效获取国际文献信息。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+
+                     <!-- Solution 3: Privacy -->
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-primary/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-user-shield text-xl text-primary"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">增强的数据隐私保障 (Plus版)</h5>
+                           <p class="text-card-foreground text-sm">
+                             Plus版承诺用户数据不用于训练模型，数据保留在组织信任边界内，解决处理敏感医学数据的核心顾虑。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+
+                     <!-- Solution 4: Analysis & Insight -->
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-accent/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-search-plus text-xl text-accent"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">辅助分析与洞见生成</h5>
+                           <p class="text-card-foreground text-sm">
+                             通过跨来源提问发现文献间隐藏的联系、矛盾或模式，支持分析多种格式文档，保持分析可追溯性。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+                      <!-- Solution 5: Learning -->
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-primary/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-graduation-cap text-xl text-primary"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">赋能学习与技能提升</h5>
+                           <p class="text-card-foreground text-sm">
+                             帮助医学生和青年研究者理解复杂概念、分析原始资料，提升研究效能感和创新能力。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+                 
+                 <!-- Limitations/Considerations -->
+                 <div class="mt-10 mb-12 bg-muted/50 p-5 rounded-lg border border-border">
+                   <h4 class="text-lg font-medium text-muted-foreground mb-3 flex items-center">
+                     <i class="fas fa-info-circle mr-2"></i>注意事项
+                   </h4>
+                   <p class="text-sm text-muted-foreground">
+                     当然，也需要注意，即使是 NotebookLM，其输出也需要研究者进行批判性评估和核查。同时，在中国大陆使用 Google 服务可能存在网络访问限制，以及 Plus 版本的成本问题，这些是实际应用中需要考虑的因素。
+                   </p>
+                 </div>
+
+                 <!-- Future Trends Analysis -->
+                 <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground">未来趋势分析</h3>
+                 <p class="mb-6">
+                   基于当前更新和社区反应，未来中文医学科研的趋势可能包括：
+                 </p>
+
+                 <!-- Future trends mermaid diagram -->
+                 <div class="bg-card p-6 rounded-lg shadow-md border border-border mb-8">
+                   <h4 class="text-lg font-medium mb-4 text-center">NotebookLM 驱动的科研趋势</h4>
+                   <pre class="mermaid">
+flowchart TD
+    A["NotebookLM 更新"] --> B["多语言支持"]
+    A["NotebookLM 更新"] --> C["团队共享功能"]
+    A["NotebookLM 更新"] --> D["音频概述"]
+    B["多语言支持"] --> E["AI 工具广泛采用"]
+    C["团队共享功能"] --> F["协作研究增长"]
+    B["多语言支持"] --> G["多语言研究便利性"]
+    D["音频概述"] --> G["多语言研究便利性"]
+    A["NotebookLM 更新"] --> H["数据库整合"]
+    H["数据库整合"] --> I["实时更新与分析"]
+    classDef primary fill:#FFE4DE,stroke:#FF7E5F,color:#3D3436;
+    classDef secondary fill:#FFB47B,stroke:#FE8A7B,color:#3D3436;
+    class A,E,F,I primary;
+    class B,C,D,G,H secondary;
+                   </pre>
+                 </div>
+
+                 <!-- Code example for NotebookLM API usage -->
+                 <div class="code-block-container">
+                   <div class="code-block-header">
+                     <span class="language-label">JavaScript</span>
+                     <button class="copy-button" onclick="copyCode(this)">
+                       <i class="fas fa-copy mr-1"></i> 复制代码
+                     </button>
+                   </div>
+                   <pre><code class="language-javascript">// 示例：使用 NotebookLM API 创建笔记本
+async function createNotebook(title, description) {
+  const response = await fetch('https://notebooklm.googleapis.com/v1/notebooks', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      title: title,
+      description: description
+    })
+  });
+  
+  const data = await response.json();
+  console.log('创建的笔记本:', data);
+  return data;
+}
+
+// 向笔记本添加医学研究文档
+async function addSourceToNotebook(notebookId, documentUrl) {
+  const response = await fetch(`https://notebooklm.googleapis.com/v1/notebooks/${notebookId}/sources`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      url: documentUrl,
+      type: 'PDF'
+    })
+  });
+  
+  const data = await response.json();
+  console.log('添加的来源:', data);
+  return data;
+}</code></pre>
+                 </div>
+
+                 <!-- Future Trends - Card Layout -->
+                 <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-primary/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-brain text-xl text-primary"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">AI 工具广泛采用</h5>
+                           <p class="text-card-foreground text-sm">
+                             随着多语言支持和功能增强，预计更多中文医学科研人员会采用 AI 进行初步数据分析和<span class="tech-term" data-tippy-content="假设生成指基于现有数据或理论提出可检验的预测或解释，是科学研究的起点。AI可辅助发现潜在关联。">假设生成</span>。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-accent/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-users text-xl text-accent"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">协作研究增长</h5>
+                           <p class="text-card-foreground text-sm">
+                             NotebookLM Plus 的团队共享功能可能推动更多协作研究项目，尤其是在多机构合作的医学研究中。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-primary/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-globe-asia text-xl text-primary"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">多语言研究便利性</h5>
+                           <p class="text-card-foreground text-sm">
+                             多语言支持将降低语言障碍，促进中文研究者与国际社区的交流和合作。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+
+                     <div class="bg-card p-5 rounded-lg shadow-sm border border-border hover:shadow-md transition-shadow">
+                       <div class="flex items-start">
+                         <div class="bg-accent/10 p-3 rounded-full mr-4 flex-shrink-0">
+                           <i class="fas fa-database text-xl text-accent"></i>
+                         </div>
+                         <div>
+                           <h5 class="text-lg font-medium mb-2 text-card-foreground">与数据库深度整合</h5>
+                           <p class="text-card-foreground text-sm">
+                             未来可能与医学研究数据库（如 PubMed）整合，提供实时更新和更复杂的分析，提升科研效率。
+                           </p>
+                         </div>
+                       </div>
+                     </div>
+                 </div>
+
+                 <div class="bg-accent/20 p-5 rounded-lg mb-8 border border-accent/30">
+                   <p class="italic text-sm">
+                     这些趋势表明，AI 工具将在中文医学科研中扮演越来越重要的角色，但需要注意 AI 并非替代<span class="tech-term" data-tippy-content="批判性思维指对信息进行客观分析、评估和推理，形成合理判断的能力，是科研的核心素养。">批判性思维</span>和专家判断，而是作为辅助工具。
+                   </p>
+                 </div>
+
+                 <!-- Conclusion -->
+                 <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground">结论</h3>
+                 <p class="mb-4">
+                   NotebookLM 的最新更新通过多语言支持、增强的协作功能和高效的文献处理能力，为中文医学科研提供了显著支持。其核心优势在于<strong class="font-medium text-primary">来源限定</strong>带来的可靠性，精准解决了医学研究的关键痛点。社区反应显示，工具在医学领域的应用潜力巨大，未来可能推动 AI 在科研中的更广泛应用，促进效率和协作。然而，使用者仍需保持批判性思维，并考虑实际应用中的网络和成本因素。
+                 </p>
+             </section>
+            <!-- Comparison Section -->
+            <section id="comparison" class="mt-12">
+              <h2 class="text-3xl font-bold font-serif mb-8 border-b border-primary pb-2">NotebookLM 与其他 AI 工具对比</h2>
+              <p class="mb-6 text-lg leading-relaxed">
+                  理解 NotebookLM 的独特价值，关键在于将其与通用型 AI（如 Gemini 应用）和特定研究工具（如 ChatGPT 的 Deep Research 功能）进行比较。它们的核心区别在于处理信息的范围以及保证结果可靠性的方式：
+              </p>
+
+              <div class="space-y-8">
+                  <!-- NotebookLM -->
+                  <div class="bg-card p-6 rounded-lg shadow-md border border-primary">
+                      <h3 class="text-2xl font-semibold font-serif mb-4 text-primary flex items-center">
+                          <i class="fas fa-book-reader mr-3"></i>NotebookLM
+                      </h3>
+                      <p class="mb-3"><strong class="font-medium">核心定位：</strong> 专门设计的研究和写作助手，其分析和回答<strong class="text-primary">严格基于用户提供的源材料</strong>（如 PDF、Google 文档、网页链接、文本笔记、音频文件等）。它能成为你个人文档库的“专家”。</p>
+                      <ul class="list-disc list-inside space-y-2 pl-4 text-card-foreground">
+                          <li><strong class="font-medium text-primary">优势 - 来源限定与可靠性 (Source Grounding):</strong> 这是 NotebookLM <strong class="font-semibold">最关键的优势</strong>。它的所有回答都严格依据你上传的资料，并且提供精确到原文段落的出处引用。这极大地降低了生成不准确信息或“AI 幻觉”的风险，对于需要高度准确性的医学、学术等研究领域至关重要。</li>
+                          <li><strong class="font-medium">优势 - 对个人材料的深度分析:</strong> 它特别擅长帮助你对已有的一系列文档进行综合、总结、比较、发现内在联系以及提问。像跨来源问答、音频概览、思维导图等功能，都是围绕分析你提供的具体内容来设计的。</li>
+                          <li><strong class="font-medium">优势 - 集成的工作空间:</strong> 提供了一个专门的界面来管理你的资料来源、与 AI 就这些来源进行互动，以及整理 AI 生成的笔记和见解。</li>
+                          <li><strong class="font-medium">优势 - 隐私保护 (Plus 版本):</strong> 通过 Google Workspace 或 Cloud 订阅的 NotebookLM Plus 版本提供了强有力的隐私保障，承诺你上传的资料和查询内容不会被用于训练模型。</li>
+                      </ul>
+                  </div>
+
+                  <!-- Gemini (General) -->
+                  <div class="bg-card p-6 rounded-lg shadow-sm border border-border">
+                      <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground flex items-center">
+                           <i class="fas fa-brain mr-3 text-accent"></i>Gemini (通用模型/应用)
+                      </h3>
+                       <p class="mb-3"><strong class="font-medium">核心定位：</strong> 一个知识广博的对话式 AI，依赖其庞大的训练数据，并且可以选择访问实时网络信息。它是一个“通才”。</p>
+                      <p class="text-card-foreground">
+                          <strong class="font-medium">对比：</strong> 虽然在获取通用知识、进行头脑风暴、编程辅助和快速信息查找方面很强大，但它在分析特定文档时，默认不会像 NotebookLM 那样严格限制在“来源限定”的框架内。即使通过网页搜索生成引用，也是指向外部网站，而非你私有文档的具体段落。更容易生成你特定文档中并未直接包含的信息。
+                      </p>
+                  </div>
+
+                  <!-- ChatGPT Deep Research -->
+                  <div class="bg-card p-6 rounded-lg shadow-sm border border-border">
+                      <h3 class="text-2xl font-semibold font-serif mb-4 text-secondary-foreground flex items-center">
+                          <i class="fas fa-search-location mr-3 text-accent"></i>ChatGPT Deep Research
+                      </h3>
+                      <p class="mb-3"><strong class="font-medium">核心定位：</strong> 一个 AI <span class="tech-term" data-tippy-content="AI Agent 指能够自主感知环境、做出决策并执行动作以实现特定目标的智能体。Deep Research 就是一个专注于网络信息搜集的 Agent。">代理 (agent)</span>，设计用来根据你的指令，在公共互联网上执行全新的、深入的、多步骤的研究。它能自主搜索、分析并综合来自大量在线来源（包括网页文本、在线 PDF、图片等）的信息，最终生成一份详细的报告。</p>
+                      <p class="text-card-foreground">
+                           <strong class="font-medium">对比：</strong> 虽然它也力求详尽并提供其找到的网页来源的引用，但它的主要功能是<strong class="font-semibold">外部信息的搜集与整合</strong>，而不是局限于对你已有的一组特定文档进行深度分析。NotebookLM 专注于从你已有的材料中提取见解；Deep Research 则专注于为你寻找和组织外部信息。Deep Research 的可靠性取决于公共网络信息的质量，而 NotebookLM 的可靠性直接与你提供的源材料质量挂钩。
+                      </p>
+                  </div>
+              </div>
+
+              <!-- Summary -->
+               <div class="mt-10 bg-muted/70 p-6 rounded-lg border border-border shadow-inner">
+                 <h4 class="text-xl font-semibold font-serif mb-4 text-secondary-foreground flex items-center">
+                   <i class="fas fa-info-circle mr-3"></i>总结来说：
+                 </h4>
+                 <ul class="list-disc list-inside space-y-3 pl-4 text-muted-foreground">
+                   <li>当你主要目标是<strong class="font-medium text-foreground">深入理解、分析、总结和综合你已经拥有的一组特定文档或资料</strong>中的信息时，选择 <strong class="font-medium text-foreground">NotebookLM</strong>。它的“来源限定”特性在这个特定场景下提供了无与伦比的可靠性和可追溯性。</li>
+                   <li>当你需要获取<strong class="font-medium text-foreground">广泛知识、进行创意写作、编程辅助</strong>，或者从通用知识库或网络上快速查找信息时，选择 <strong class="font-medium text-foreground">Gemini (通用模型)</strong>。</li>
+                   <li>当你需要 AI 替你在公共互联网上就某个主题进行<strong class="font-medium text-foreground">广泛的全新研究</strong>，并从<strong class="font-medium text-foreground">外部在线资源</strong>中整理出一份详细报告时，选择 <strong class="font-medium text-foreground">ChatGPT Deep Research</strong>。</li>
+                 </ul>
+               </div>
+          </section>
+             <!-- References Section -->
+             <section id="references" class="mt-12">
+               <h2 class="text-3xl font-bold font-serif mb-6 border-b border-primary pb-2">关键引文</h2>
+               <ol class="list-decimal list-inside space-y-3 pl-2">
+                 <li class="text-secondary-foreground">
+                   <a href="https://blog.google/technology/google-labs/notebooklm-new-features-december-2024/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google 博客：NotebookLM 获得新外观、音频互动和高级版</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://www.tomsguide.com/ai/google-notebooklm-gets-a-major-update-heres-whats-new" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Tom's Guide：Google NotebookLM 获得重大更新——这是新内容</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://x.com/nicekate8888/status/1917475329440100717" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">X 用户 nicekate8888 的帖子</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://weel.co.jp/media/innovator/notebooklm/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">WEEL：NotebookLM 是什么？与 ChatGPT 有什么不同？用法和应用案例详解</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://blog.google/intl/ja-jp/company-news/technology/notebooklm-50/" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Google 博客：NotebookLM 的音频概述现支持 50 多种语言，包括日语</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://discord.gg/Az2N7BwV7r" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">Discord 反馈链接</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://support.google.com/notebooklm?p=plus" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">NotebookLM Plus 支持页面</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://x.com/KitamotoAsanobu/status/1917585647449301242" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">X 用户 KitamotoAsanobu 的帖子</a>
+                 </li>
+                 <li class="text-secondary-foreground">
+                   <a href="https://x.com/ai_for_success/status/1916130491713175771" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">X 用户 ai_for_success 的帖子</a>
+                 </li>
+               </ol>
+             </section>
+
+             <!-- Further Reading Section -->
+             <section id="further-reading" class="mt-16 bg-card p-6 rounded-lg shadow-md border border-border">
+               <h2 class="text-2xl font-bold font-serif mb-6 text-card-foreground flex items-center">
+                 <i class="fas fa-book mr-3 text-accent"></i>延伸阅读
+               </h2>
+               <ul class="space-y-4">
+                 <li>
+                   <div class="flex flex-col">
+                     <a href="https://research.google/pubs/exploring-the-potential-of-llms-in-clinical-academic-research/" target="_blank" rel="noopener noreferrer" class="text-lg font-medium text-primary hover:underline">大型语言模型在临床学术研究中的潜力探索</a>
+                     <p class="text-sm text-muted-foreground mt-1">
+                       这篇由 Google 研究团队发表的论文深入分析了 LLM 在医学文献分析和临床研究中的应用场景与局限性，值得医学研究者阅读，以了解 NotebookLM 等工具的科学基础。
+                     </p>
+                   </div>
+                 </li>
+                 <li>
+                   <div class="flex flex-col">
+                     <a href="https://www.nature.com/articles/s41746-023-00952-2" target="_blank" rel="noopener noreferrer" class="text-lg font-medium text-primary hover:underline">自然·数字医学：人工智能辅助医学研究的伦理考量</a>
+                     <p class="text-sm text-muted-foreground mt-1">
+                       这篇发表在《自然·数字医学》上的综述文章讨论了 AI 工具在医学研究中的伦理问题，包括数据安全、偏见风险和适当的人类监督，对于使用 NotebookLM 等工具的医学研究者具有重要参考价值。
+                     </p>
+                   </div>
+                 </li>
+                 <li>
+                   <div class="flex flex-col">
+                     <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10512374/" target="_blank" rel="noopener noreferrer" class="text-lg font-medium text-primary hover:underline">人工智能辅助系统文献综述：医学研究中的应用与挑战</a>
+                     <p class="text-sm text-muted-foreground mt-1">
+                       这篇发表在 PubMed Central 的系统性综述全面分析了 AI 辅助工具在医学系统综述中的应用现状，包括筛选文献、提取数据和质量评估环节，适合想要了解 NotebookLM 等工具在医学研究中应用前景的读者。
+                     </p>
+                   </div>
+                 </li>
+                 <li>
+                   <div class="flex flex-col">
+                     <a href="https://medium.com/@googledevs/practical-guide-to-notebooklm-for-researchers-4852d4d91d5a" target="_blank" rel="noopener noreferrer" class="text-lg font-medium text-primary hover:underline">研究人员实用 NotebookLM 指南</a>
+                     <p class="text-sm text-muted-foreground mt-1">
+                       这篇由 Google 开发者撰写的详细指南提供了 NotebookLM 在科研工作流中的最佳实践，包括如何组织来源、构建问题和优化音频概述，非常适合有意尝试这一工具的研究人员。
+                     </p>
+                   </div>
+                 </li>
+               </ul>
+             </section>
+
+             <!-- Example Visible Date/Category Placeholder -->
+             <div class="text-sm text-muted-foreground mt-20 mb-4 text-right">
+                <span class="mr-4">发布于 <span id="publish-date-display">2025年05月02日</span></span>
+                <span>分类: <span id="category-display">科研辅助</span></span>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-16 pt-8 border-t border-border text-center text-sm text-muted-foreground">
+            <div>
+                <p>作者姓名: 季晓康</p>
+                <p>微信公众号：凿壁</p>
+                <p>版权信息：国家健康医疗大数据研究院</p>
+            </div>
+        </footer>
+
+    </div> <!-- End Main Container -->
+
+    <!-- === JavaScript Logic === -->
+    <script>
+        // Global Chart Instances Array
+        window.chartInstances = [];
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const darkHljsTheme = document.getElementById('dark-hljs-theme');
+
+        // Check initial theme preference
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            lightIcon.classList.add('hidden');
+            darkIcon.classList.remove('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            // toggle icons
+            lightIcon.classList.toggle('hidden');
+            darkIcon.classList.toggle('hidden');
+
+            // if set via local storage previously
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+
+            // if NOT set via local storage previously
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+            updateVisualizationThemes(); // Update themes for charts/mermaid etc.
+        });
+
+        // Function to Update Visualization Themes
+        function updateVisualizationThemes() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const newTheme = isDarkMode ? 'dark' : 'default'; // Mermaid theme name
+            const hljsTheme = isDarkMode ? 'dark' : 'light';
+
+            console.log(`Updating themes to: ${newTheme}`);
+
+            // --- Mermaid Theme (Update config and attempt refresh) ---
+            try {
+                // 1. Update the configuration
+                mermaid.initialize({
+                    startOnLoad: false, // Keep consistent
+                    theme: newTheme,
+                    themeVariables: {
+                        primaryColor: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+                        mainBkg: getComputedStyle(document.documentElement).getPropertyValue('--background').trim(),
+                        textColor: getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim(),
+                    },
+                    fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-sans'),
+                    logLevel: 'error'
+                });
+                
+                // 2. Attempt to refresh existing diagrams using contentLoaded()
+                // This might work for theme updates without a full re-parse/re-render
+                mermaid.contentLoaded();
+                console.log("Mermaid config updated and contentLoaded called.");
+
+            } catch (error) {
+                console.error("Error updating Mermaid theme with initialize/contentLoaded:", error);
+            }
+
+            // --- Highlight.js Theme ---
+            darkHljsTheme.disabled = !isDarkMode;
+
+            // --- Chart.js Theme ---
+            window.chartInstances.forEach(chart => {
+                try {
+                    const options = chart.options;
+
+                    // Example: Update scales colors (adjust based on chart type)
+                    if (options.scales) {
+                        Object.values(options.scales).forEach(scale => {
+                            if (scale.ticks) {
+                                scale.ticks.color = getComputedStyle(document.documentElement).getPropertyValue('--muted-foreground').trim();
+                            }
+                            if (scale.grid) {
+                                scale.grid.color = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+                            }
+                            if (scale.angleLines) { // For radar charts
+                                scale.angleLines.color = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+                            }
+                            if (scale.pointLabels) { // For radar charts
+                                scale.pointLabels.color = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+                                scale.pointLabels.font = { weight: '500' }; // Example style
+                            }
+                        });
+                    }
+
+                    // Example: Update legend and title colors
+                    if (options.plugins && options.plugins.legend) {
+                        options.plugins.legend.labels.color = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+                    }
+                    if (options.plugins && options.plugins.title) {
+                        options.plugins.title.color = getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim();
+                    }
+
+                     // Example: Update tooltip colors (more complex, often needs callbacks)
+                     if (options.plugins && options.plugins.tooltip) {
+                        options.plugins.tooltip.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--card').trim();
+                        options.plugins.tooltip.titleColor = getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim();
+                        options.plugins.tooltip.bodyColor = getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim();
+                        options.plugins.tooltip.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+                        options.plugins.tooltip.borderWidth = 1;
+                    }
+
+                    chart.update();
+                } catch (error) {
+                     console.error("Error updating chart theme:", error, chart);
+                }
+            });
+
+             // --- Tippy.js Theme --- 
+             // Tippy instances using CSS variables in their theme should update automatically.
+        }
+
+        // Copy code function for code blocks
+        function copyCode(button) {
+            const pre = button.closest('.code-block-container').querySelector('pre');
+            const code = pre.textContent;
+            
+            navigator.clipboard.writeText(code)
+                .then(() => {
+                    // Create success message
+                    const successMsg = document.createElement('span');
+                    successMsg.className = 'copy-success';
+                    successMsg.textContent = '复制成功！';
+                    button.appendChild(successMsg);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        if (successMsg.parentNode) {
+                            successMsg.parentNode.removeChild(successMsg);
+                        }
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('复制失败:', err);
+                    
+                    // Create error message
+                    const errorMsg = document.createElement('span');
+                    errorMsg.className = 'copy-success';
+                    errorMsg.textContent = '复制失败';
+                    errorMsg.style.backgroundColor = 'var(--destructive)';
+                    button.appendChild(errorMsg);
+                    
+                    // Remove after animation
+                    setTimeout(() => {
+                        if (errorMsg.parentNode) {
+                            errorMsg.parentNode.removeChild(errorMsg);
+                        }
+                    }, 1500);
+                });
+        }
+
+        // Initialize everything after DOM content is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Mermaid Configuration FIRST
+            try {
+                mermaid.initialize({ 
+                    startOnLoad: false, // IMPORTANT: We control rendering manually
+                    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default', 
+                    securityLevel: 'loose', 
+                    logLevel: 'error',
+                    fontFamily: getComputedStyle(document.documentElement).getPropertyValue('--font-sans'),
+                });
+                console.log("Mermaid configured.");
+            } catch (error) {
+                console.error("Mermaid configuration error:", error);
+            }
+
+            // Initialize Chart.js
+            try {
+                const communityCtx = document.getElementById('communityChart');
+                if (communityCtx) {
+                    const ctx = communityCtx.getContext('2d');
+                    const communityData = {
+                        labels: ['中文用户', '医学研究者', '日本研究社区', '英语用户'],
+                        datasets: [{
+                            label: '用户满意度',
+                            data: [92, 88, 85, 84],
+                            backgroundColor: [
+                                getComputedStyle(document.documentElement).getPropertyValue('--chart-1').trim(),
+                                getComputedStyle(document.documentElement).getPropertyValue('--chart-2').trim(),
+                                getComputedStyle(document.documentElement).getPropertyValue('--chart-3').trim(),
+                                getComputedStyle(document.documentElement).getPropertyValue('--chart-4').trim()
+                            ],
+                            borderColor: 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1
+                        }]
+                    };
+
+                    const communityConfig = {
+                        type: 'bar',
+                        data: communityData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+                                tooltip: {
+                                    backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card').trim(),
+                                    titleColor: getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim(),
+                                    bodyColor: getComputedStyle(document.documentElement).getPropertyValue('--card-foreground').trim(),
+                                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--border').trim(),
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `满意度: ${context.raw}/100`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--muted-foreground').trim()
+                                    },
+                                    grid: {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--border').trim()
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--muted-foreground').trim()
+                                    },
+                                    grid: {
+                                        color: getComputedStyle(document.documentElement).getPropertyValue('--border').trim()
+                                    }
+                                }
+                            },
+                        }
+                    };
+
+                    const communityChart = new Chart(ctx, communityConfig);
+                    window.chartInstances.push(communityChart);
+                    console.log("Chart initialized successfully");
+                } else {
+                    console.error("Could not find canvas element with id 'communityChart'");
+                }
+            } catch (error) {
+                console.error("Error initializing chart:", error);
+            }
+
+            // Initialize Tippy.js for tech terms
+            tippy('.tech-term', {
+                theme: 'custom-theme',
+                placement: 'top',
+                arrow: true,
+                animation: 'scale',
+                duration: 300,
+                trigger: 'mouseenter focus',
+                interactive: true,
+                appendTo: document.body 
+            });
+
+            // Setup animations - REMOVED
+            // setupAnimations();
+
+            // Initialize Highlight.js
+            hljs.highlightAll();
+
+            // Update themes for all visualizations (applies initial theme)
+            updateVisualizationThemes();
+            
+            // Manually render Mermaid Diagrams LAST, after initial theme applied
+            try {
+                mermaid.init(undefined, '.mermaid');
+                console.log("Mermaid diagrams rendered manually.");
+            } catch(error) {
+                console.error("Error rendering Mermaid diagrams manually:", error);
+            }
+        });
+
+        // Style tech terms with CSS
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                .tech-term {
+                    border-bottom: 1px dashed var(--primary);
+                    cursor: help;
+                    position: relative;
+                }
+                
+                /* Animation styles - REMOVED */
+                /*
+                .animation-card {
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+                }
+                
+                .animation-card.visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                
+                .animation-group > * {
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+                }
+                
+                .animation-group > *.visible {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+                */
+            </style>
+        `);
+
+        // Setup animations function - REMOVED
+        /* ... removed function ... */
+
+        // Testing function for theme consistency
+        function testThemeConsistency() {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            console.log(`Current theme: ${isDarkMode ? 'Dark' : 'Light'}`);
+            
+            // Testing Chart.js theme
+            if (window.chartInstances.length > 0) {
+                console.log('Chart instances found:', window.chartInstances.length);
+                const chartSample = window.chartInstances[0];
+                console.log('Chart background colors:', chartSample.data.datasets[0].backgroundColor);
+            } else {
+                console.warn('No Chart.js instances found');
+            }
+            
+            // Testing Mermaid theme
+            try {
+                const mermaidTheme = mermaid.getConfig().theme;
+                console.log('Current Mermaid theme:', mermaidTheme);
+            } catch (error) {
+                console.error('Error checking Mermaid theme:', error);
+            }
+            
+            // Testing Highlight.js theme
+            console.log('Highlight.js dark theme disabled:', darkHljsTheme.disabled);
+            
+            // Check CSS variables
+            console.log('--background:', getComputedStyle(document.documentElement).getPropertyValue('--background').trim());
+            console.log('--foreground:', getComputedStyle(document.documentElement).getPropertyValue('--foreground').trim());
+            console.log('--primary:', getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
+        }
+        
+        // Optional: Run tests on theme toggle
+        themeToggleBtn.addEventListener('dblclick', () => {
+            testThemeConsistency();
+        });
+
+        // Apply styles to code blocks after Highlight.js runs
+        function styleCodeBlocks() {
+            document.querySelectorAll('pre code.hljs').forEach((block) => {
+                const pre = block.parentNode;
+                if (pre.parentNode.classList.contains('code-block-container')) return; // Already styled
+
+                const container = document.createElement('div');
+                container.className = 'code-block-container';
+
+                const header = document.createElement('div');
+                header.className = 'code-block-header';
+
+                const langMatch = block.className.match(/language-(\S+)/);
+                const language = langMatch ? langMatch[1] : 'code';
+                
+                const langLabel = document.createElement('span');
+                langLabel.className = 'language-label';
+                langLabel.textContent = language.charAt(0).toUpperCase() + language.slice(1); // Capitalize
+
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-button';
+                copyButton.innerHTML = '<i class="fas fa-copy mr-1"></i> 复制代码';
+                copyButton.onclick = () => copyCode(copyButton);
+
+                header.appendChild(langLabel);
+                header.appendChild(copyButton);
+
+                container.appendChild(header);
+                pre.parentNode.insertBefore(container, pre);
+                container.appendChild(pre);
+            });
+        }
+
+    </script>
+</body>
+</html> 
