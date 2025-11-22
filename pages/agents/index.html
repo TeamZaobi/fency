@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · 总览</title>
+  <meta name="description" content="面向实践者的 Agent 应用教学：快速上手、工具框架、规划与记忆、RAG 集成、多智能体、评测与安全、案例与实验。" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <a href="index.html" class="title">Agent 应用教学</a>
+      </div>
+      <div class="ag-actions">
+        <button id="darkModeToggle" class="btn" title="切换主题">切换主题</button>
+      </div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="h1">总览</div>
+      <p class="lead">本系列从“能落地”的视角，系统讲解智能体（Agent）的核心能力与工程化路径：如何将 LLM 与工具、知识库、状态管理、规划与协作结合，构建可靠、可评测、可迭代的实际应用。</p>
+      <div class="grid cols-3" style="margin-top:12px">
+        <div class="card"><div class="title">面向任务</div><div class="muted">从需求出发，拆解为可验证的步骤与工具链。</div></div>
+        <div class="card"><div class="title">工程化</div><div class="muted">状态、记忆、规划、容错、观测与评测闭环。</div></div>
+        <div class="card"><div class="title">安全与合规</div><div class="muted">提示注入、工具滥用、权限边界与审计。</div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="h2">学习路径建议</div>
+      <ul class="list">
+        <li>快速上手：从零到一个能用的任务 Agent</li>
+        <li>工具与框架：选择合适的运行时、执行器与抽象</li>
+        <li>规划与记忆：任务分解、状态机、短长记忆与检索</li>
+        <li>Agent + RAG：让 Agent “会找资料、会用资料”</li>
+        <li>多智能体协作：分工、协议与社会性结构</li>
+        <li>评测与安全：可度量的改进与可靠性保障</li>
+        <li>案例与实验：行业模板与动手实操</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <div class="h2">推荐起步</div>
+      <div class="grid cols-2">
+        <div class="card">
+          <div class="title">先做后优：Quickstart</div>
+          <div class="muted">建立最小可用 Agent：固定目标、明确工具、限定上下文、加上观测。</div>
+          <p style="margin:10px 0 0"><a href="quickstart.html">进入快速上手 →</a></p>
+        </div>
+        <div class="card">
+          <div class="title">再做通用：模块化</div>
+          <div class="muted">抽象出规划器、执行器、记忆、工具接口，沉淀可复用骨架。</div>
+          <p style="margin:10px 0 0"><a href="tools.html">查看工具与框架 →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="h2">专题指南</div>
+      <div class="grid cols-3">
+        <div class="card">
+          <div class="title">OpenAI AgentKit</div>
+          <div class="muted">基于社区评价与最佳实践的工程化解读，涵盖护栏、评测与落地案例。</div>
+          <p style="margin:10px 0 0"><a href="openai-agentkit.html">阅读指南 →</a></p>
+        </div>
+        <div class="card">
+          <div class="title">LangChain / LangGraph / Deep Agents</div>
+          <div class="muted">对 LangChain 生态的系统视图：中间件、编排、长时程任务与生产实践。</div>
+          <p style="margin:10px 0 0"><a href="langchain.html">阅读指南 →</a></p>
+        </div>
+        <div class="card">
+          <div class="title">n8n</div>
+          <div class="muted">开源工作流自动化平台，适合多代理集成与企业级落地，自托管与广泛连接能力。</div>
+          <p style="margin:10px 0 0"><a href="n8n.html">阅读指南 →</a></p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">© Agent 应用教学 · 架构与实现示例</div>
+  </main>
+
+  <script src="../../assets/js/agents-nav.js"></script>
+</body>
+</html>

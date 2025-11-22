@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · 规划与记忆</title>
+  <meta name="description" content="任务分解、状态管理、短长记忆与检索，让 Agent 可控且可迭代。" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand"><div class="logo"></div><a href="index.html" class="title">Agent 应用教学</a></div>
+      <div class="ag-actions"><button id="darkModeToggle" class="btn" title="切换主题">切换主题</button></div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="h1">规划与记忆</div>
+      <p class="lead">核心在于“状态可见”和“可重放”：规划 = 约束边界，记忆 = 可追溯数据基座。</p>
+    </section>
+    <section class="panel">
+      <div class="h2">规划（Planning）</div>
+      <ul class="list">
+        <li>单轮规划：明确目标 → 步骤链 → 工具映射 → 验收</li>
+        <li>自反思：失败重试、偏航校正、Plan-Act-Reflect 闭环</li>
+        <li>人机回路：需要人审时引入“暂停/确认/修正”</li>
+      </ul>
+    </section>
+    <section class="panel">
+      <div class="h2">记忆（Memory）</div>
+      <ul class="list">
+        <li>短期：会话与本轮任务上下文（裁剪/滚动窗口）</li>
+        <li>长期：向量索引 + 结构化事实库（时间衰减/权重）</li>
+        <li>工作记忆：步骤中间态与中间产物（临时存储）</li>
+      </ul>
+    </section>
+    <div class="footer">© Agent 应用教学 · 规划与记忆</div>
+  </main>
+  <script src="../../assets/js/agents-nav.js"></script>
+</body>
+</html>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 基本 CSP 规则，允许 CDN 资源 -->
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self';
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self';
                    script-src 'self' https://cdn.jsdelivr.net https://cdn.staticfile.org 'unsafe-inline';
                    style-src 'self' https://cdn.staticfile.org https://fonts.googleapis.com 'unsafe-inline';
                    font-src 'self' https://fonts.gstatic.com https://cdn.staticfile.org;
@@ -15,38 +15,53 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <title>凿壁 | 健康医疗行业的AI解决方案先锋 (新版)</title>
     <meta name="description" content="一个由 LLM 辅助构建和维护的个人知识库，展示内容关联与知识图谱。">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet"
-          href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
-    <link rel="stylesheet"
-          href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
     <style>
         /* --- 颜色变量 (来自 react-app/123.html) --- */
         :root {
             /* Light Mode Palette */
-            --light-primary: #007A7A; /* Optimized Teal/Blue */
-            --light-accent: #F26419;  /* Vibrant Orange */
-            --light-bg-page: #F5F7FA; /* Very Light Gray */
-            --light-bg-surface: #FFFFFF; /* White */
-            --light-text-primary: #333333; /* Dark Gray */
-            --light-text-secondary: #666666; /* Medium Gray */
-            --light-text-tertiary: #AAAAAA; /* Light Gray */
-            --light-border: #E0E0E0; /* Light Gray Border */
+            --light-primary: #007A7A;
+            /* Optimized Teal/Blue */
+            --light-accent: #F26419;
+            /* Vibrant Orange */
+            --light-bg-page: #F5F7FA;
+            /* Very Light Gray */
+            --light-bg-surface: #FFFFFF;
+            /* White */
+            --light-text-primary: #333333;
+            /* Dark Gray */
+            --light-text-secondary: #666666;
+            /* Medium Gray */
+            --light-text-tertiary: #AAAAAA;
+            /* Light Gray */
+            --light-border: #E0E0E0;
+            /* Light Gray Border */
             --light-text-on-primary: #FFFFFF;
             --light-text-on-accent: #FFFFFF;
 
             /* Dark Mode Palette */
-            --dark-primary: #00A0A0; /* Brighter Teal/Blue */
-            --dark-accent: #FF8A4D;  /* Brighter/Less Saturated Orange */
-            --dark-bg-page: #121212; /* Very Dark Gray */
-            --dark-bg-surface: #1E1E1E; /* Slightly Lighter Dark Gray */
-            --dark-text-primary: #E0E0E0; /* Light Gray (Not Pure White) */
-            --dark-text-secondary: #A0A0A0; /* Medium Light Gray */
-            --dark-text-tertiary: #757575; /* Medium Dark Gray */
-            --dark-border: #424242; /* Dark Gray Border */
+            --dark-primary: #00A0A0;
+            /* Brighter Teal/Blue */
+            --dark-accent: #FF8A4D;
+            /* Brighter/Less Saturated Orange */
+            --dark-bg-page: #121212;
+            /* Very Dark Gray */
+            --dark-bg-surface: #1E1E1E;
+            /* Slightly Lighter Dark Gray */
+            --dark-text-primary: #E0E0E0;
+            /* Light Gray (Not Pure White) */
+            --dark-text-secondary: #A0A0A0;
+            /* Medium Light Gray */
+            --dark-text-tertiary: #757575;
+            /* Medium Dark Gray */
+            --dark-border: #424242;
+            /* Dark Gray Border */
             --dark-text-on-primary: #FFFFFF;
-            --dark-text-on-accent: #0D0D0D; /* Dark text on dark accent for better contrast */
+            --dark-text-on-accent: #0D0D0D;
+            /* Dark text on dark accent for better contrast */
 
             /* RGB 格式颜色 */
             --light-primary-rgb: 0, 122, 122;
@@ -108,14 +123,19 @@
             line-height: 1.7;
         }
 
-        h1, h2, h3, h4, h5, h6 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
             font-family: 'Noto Serif SC', serif;
             font-weight: 600;
             color: var(--clr-text-primary);
         }
 
         p {
-             color: var(--clr-text-secondary);
+            color: var(--clr-text-secondary);
         }
 
         /* --- 内容卡片样式 --- */
@@ -165,7 +185,7 @@
         }
 
         .content-card:hover::after {
-             opacity: 1;
+            opacity: 1;
         }
 
         .dark .content-card::after {
@@ -185,16 +205,20 @@
             font-weight: 700;
             line-height: 1.3;
             transition: color 0.3s ease;
-            flex-grow: 1; /* Allow title to take available space */
+            flex-grow: 1;
+            /* Allow title to take available space */
         }
+
         .content-card:hover h3 {
-             color: var(--clr-primary);
+            color: var(--clr-primary);
         }
+
         .dark .card-body h3 {
             color: var(--dark-text-primary);
         }
+
         .dark .content-card:hover h3 {
-             color: var(--dark-primary);
+            color: var(--dark-primary);
         }
 
         .article-date {
@@ -203,11 +227,12 @@
             font-size: 0.85rem;
             color: var(--clr-text-secondary);
             gap: 5px;
-             opacity: 0.85;
+            opacity: 0.85;
         }
+
         .dark .article-date {
             color: var(--dark-text-secondary);
-             opacity: 0.75;
+            opacity: 0.75;
         }
 
         .card-tag {
@@ -217,30 +242,36 @@
             border-radius: 0.25rem;
             font-weight: 500;
         }
+
         .card-tag-teal {
-             background-color: color-mix(in srgb, var(--light-primary) 15%, white);
-             color: color-mix(in srgb, var(--light-primary) 85%, black);
+            background-color: color-mix(in srgb, var(--light-primary) 15%, white);
+            color: color-mix(in srgb, var(--light-primary) 85%, black);
         }
+
         .dark .card-tag-teal {
             background-color: color-mix(in srgb, var(--dark-primary) 25%, black);
             color: color-mix(in srgb, var(--dark-primary) 80%, white);
         }
+
         .card-tag-slate {
-             background-color: #e2e8f0;
-             color: #475569;
+            background-color: #e2e8f0;
+            color: #475569;
         }
-         .dark .card-tag-slate {
-             background-color: #334155;
-             color: #cbd5e1;
-         }
+
+        .dark .card-tag-slate {
+            background-color: #334155;
+            color: #cbd5e1;
+        }
+
         .card-tag-orange {
-             background-color: color-mix(in srgb, var(--light-accent) 20%, white);
-             color: color-mix(in srgb, var(--light-accent) 80%, black);
+            background-color: color-mix(in srgb, var(--light-accent) 20%, white);
+            color: color-mix(in srgb, var(--light-accent) 80%, black);
         }
-         .dark .card-tag-orange {
-             background-color: color-mix(in srgb, var(--dark-accent) 30%, black);
-             color: color-mix(in srgb, var(--dark-accent) 80%, white);
-         }
+
+        .dark .card-tag-orange {
+            background-color: color-mix(in srgb, var(--dark-accent) 30%, black);
+            color: color-mix(in srgb, var(--dark-accent) 80%, white);
+        }
 
         .period-label {
             position: absolute;
@@ -252,68 +283,79 @@
             border-radius: 4px;
             z-index: 2;
         }
+
         .period-new {
             background-color: color-mix(in srgb, var(--light-accent) 20%, white);
             color: color-mix(in srgb, var(--light-accent) 80%, black);
         }
+
         .dark .period-new {
             background-color: color-mix(in srgb, var(--dark-accent) 30%, black);
             color: color-mix(in srgb, var(--dark-accent) 90%, white);
         }
+
         .period-recent {
             background-color: color-mix(in srgb, var(--light-primary) 15%, white);
             color: color-mix(in srgb, var(--light-primary) 85%, black);
         }
+
         .dark .period-recent {
             background-color: color-mix(in srgb, var(--dark-primary) 25%, black);
             color: color-mix(in srgb, var(--dark-primary) 90%, white);
         }
+
         .period-earlier {
             background-color: #e0e0e0;
             color: #666666;
         }
+
         .dark .period-earlier {
             background-color: #333333;
             color: #a0a0a0;
         }
 
         .card-link {
-             color: var(--clr-primary);
-             transition: color 0.2s ease;
-             font-weight: 500;
+            color: var(--clr-primary);
+            transition: color 0.2s ease;
+            font-weight: 500;
         }
+
         .card-link:hover {
-             color: var(--clr-accent);
-             text-decoration: underline;
+            color: var(--clr-accent);
+            text-decoration: underline;
         }
+
         .dark .card-link {
-             color: var(--dark-primary);
+            color: var(--dark-primary);
         }
-         .dark .card-link:hover {
-             color: var(--dark-accent);
-         }
+
+        .dark .card-link:hover {
+            color: var(--dark-accent);
+        }
 
         /* --- 主题切换按钮 --- */
         .theme-toggle {
             cursor: pointer;
             position: relative;
             overflow: visible;
-             border: 1px solid var(--clr-border);
-             background-color: var(--clr-bg-surface);
-             transition: all 0.3s ease;
-        }
-        .theme-toggle:hover {
-            border-color: var(--clr-primary);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid var(--clr-border);
+            background-color: var(--clr-bg-surface);
+            transition: all 0.3s ease;
         }
 
-        .light-icon, .dark-icon {
-             position: absolute;
-             top: 50%;
-             left: 50%;
-             transform: translate(-50%, -50%);
-             font-size: 1.1rem;
-             transition: opacity 0.3s, transform 0.3s;
+        .theme-toggle:hover {
+            border-color: var(--clr-primary);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .light-icon,
+        .dark-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.1rem;
+            transition: opacity 0.3s, transform 0.3s;
         }
 
         .light-icon {
@@ -357,11 +399,12 @@
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2V6h4V4H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             opacity: 0.5;
         }
+
         .dark .hero-pattern {
-             opacity: 0.2;
+            opacity: 0.2;
         }
 
-         .btn {
+        .btn {
             display: inline-block;
             padding: 0.6rem 1.5rem;
             border-radius: 0.375rem;
@@ -371,44 +414,51 @@
             cursor: pointer;
             border: 2px solid transparent;
         }
+
         .btn-hero-primary {
-             background-color: var(--light-bg-surface);
-             color: var(--light-primary);
+            background-color: var(--light-bg-surface);
+            color: var(--light-primary);
         }
-         .btn-hero-primary:hover {
-             background-color: #f0f0f0;
-             transform: translateY(-2px);
-             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-         }
-         .dark .btn-hero-primary {
-             background-color: var(--dark-accent);
-             color: var(--dark-text-on-accent);
-         }
-          .dark .btn-hero-primary:hover {
-             background-color: color-mix(in srgb, var(--dark-accent) 90%, white);
-             transform: translateY(-2px);
-             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          }
+
+        .btn-hero-primary:hover {
+            background-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .btn-hero-primary {
+            background-color: var(--dark-accent);
+            color: var(--dark-text-on-accent);
+        }
+
+        .dark .btn-hero-primary:hover {
+            background-color: color-mix(in srgb, var(--dark-accent) 90%, white);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
 
         .btn-hero-outline {
             border: 2px solid var(--clr-text-on-primary);
             color: var(--clr-text-on-primary);
             background-color: transparent;
         }
+
         .btn-hero-outline:hover {
             background-color: rgba(255, 255, 255, 0.1);
             transform: translateY(-2px);
         }
-         .dark .btn-hero-outline {
-             border-color: var(--dark-text-primary);
-             color: var(--dark-text-primary);
-         }
-          .dark .btn-hero-outline:hover {
-             background-color: rgba(224, 224, 224, 0.1);
-          }
+
+        .dark .btn-hero-outline {
+            border-color: var(--dark-text-primary);
+            color: var(--dark-text-primary);
+        }
+
+        .dark .btn-hero-outline:hover {
+            background-color: rgba(224, 224, 224, 0.1);
+        }
 
         /* --- 分类导航标签 --- */
-         .category-tabs {
+        .category-tabs {
             overflow: hidden;
             transition: all 0.3s ease;
             background-color: var(--clr-bg-surface);
@@ -429,7 +479,8 @@
             border: none;
             cursor: pointer;
             outline: none;
-            padding: 0.5rem 1.25rem; /* Adjusted padding */
+            padding: 0.5rem 1.25rem;
+            /* Adjusted padding */
         }
 
         .category-btn i {
@@ -444,13 +495,13 @@
 
         .category-btn:hover {
             color: var(--clr-text-primary);
-            background-color: rgba(0,0,0,0.05);
+            background-color: rgba(0, 0, 0, 0.05);
             transform: translateY(-1px);
         }
 
         .dark .category-btn:hover {
             color: var(--dark-text-primary);
-            background-color: rgba(255,255,255,0.05);
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
         .category-btn::after {
@@ -477,8 +528,9 @@
             font-weight: 600;
             background-color: transparent;
         }
+
         .dark .category-btn.active {
-             color: var(--dark-primary);
+            color: var(--dark-primary);
         }
 
         .category-btn.active::after {
@@ -486,15 +538,33 @@
             opacity: 1;
         }
 
-        .category-btn.active.category-active-primary::after { background-color: var(--clr-primary); }
-        .category-btn.active.category-active-secondary::after { background-color: #64748b; }
-        .category-btn.active.category-active-accent::after { background-color: var(--clr-accent); }
-        .category-btn.active.category-active-knowledge::after { background-color: #14b8a6; }
+        .category-btn.active.category-active-primary::after {
+            background-color: var(--clr-primary);
+        }
 
-        .dark .category-btn.active.category-active-secondary::after { background-color: #475569; }
-        .dark .category-btn.active.category-active-knowledge::after { background-color: #2dd4bf; }
+        .category-btn.active.category-active-secondary::after {
+            background-color: #64748b;
+        }
 
-        .category-contents { min-height: 400px; }
+        .category-btn.active.category-active-accent::after {
+            background-color: var(--clr-accent);
+        }
+
+        .category-btn.active.category-active-knowledge::after {
+            background-color: #14b8a6;
+        }
+
+        .dark .category-btn.active.category-active-secondary::after {
+            background-color: #475569;
+        }
+
+        .dark .category-btn.active.category-active-knowledge::after {
+            background-color: #2dd4bf;
+        }
+
+        .category-contents {
+            min-height: 400px;
+        }
 
         /* --- 关于我们区域样式 --- */
         .about-section {
@@ -502,6 +572,7 @@
             border-top: 1px solid var(--clr-border);
             border-bottom: 1px solid var(--clr-border);
         }
+
         .first-letter p::first-letter {
             font-size: 3.5em;
             float: left;
@@ -512,6 +583,7 @@
             font-weight: 700;
             margin-top: 0.1em;
         }
+
         .feature-icon {
             background-color: color-mix(in srgb, var(--clr-primary) 15%, transparent);
             color: var(--clr-primary);
@@ -525,17 +597,20 @@
             font-size: 1.25rem;
             transition: all 0.3s ease;
         }
+
         .dark .feature-icon {
-             background-color: color-mix(in srgb, var(--clr-primary) 25%, transparent);
-             color: var(--clr-primary);
+            background-color: color-mix(in srgb, var(--clr-primary) 25%, transparent);
+            color: var(--clr-primary);
         }
+
         .feature-item:hover .feature-icon {
             transform: scale(1.1) rotate(-10deg);
             background-color: color-mix(in srgb, var(--clr-primary) 25%, transparent);
         }
-         .dark .feature-item:hover .feature-icon {
-             background-color: color-mix(in srgb, var(--clr-primary) 35%, transparent);
-         }
+
+        .dark .feature-item:hover .feature-icon {
+            background-color: color-mix(in srgb, var(--clr-primary) 35%, transparent);
+        }
 
         /* --- 解决方案摘要卡片样式 --- */
         .solution-summary-card {
@@ -547,66 +622,88 @@
             border: 1px solid transparent;
             transform: perspective(1000px);
         }
+
         .solution-summary-card:hover {
-             transform: scale(1.02) rotateX(1deg);
-             box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            transform: scale(1.02) rotateX(1deg);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
         }
-         .dark .solution-summary-card:hover {
-             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-         }
+
+        .dark .solution-summary-card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
 
         .solution-summary-card .solution-icon-bg {
-             background-color: var(--clr-bg-surface);
-             padding: 0.75rem;
-             border-radius: 9999px;
-             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-             flex-shrink: 0;
+            background-color: var(--clr-bg-surface);
+            padding: 0.75rem;
+            border-radius: 9999px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            flex-shrink: 0;
         }
-         .dark .solution-summary-card .solution-icon-bg {
-             background-color: var(--clr-bg-surface); /* Dark surface */
-             box-shadow: none;
-         }
+
+        .dark .solution-summary-card .solution-icon-bg {
+            background-color: var(--clr-bg-surface);
+            /* Dark surface */
+            box-shadow: none;
+        }
+
         .solution-summary-card .solution-icon {
-             color: var(--clr-text-on-primary);
-             width: 3rem;
-             height: 3rem;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-             border-radius: 9999px;
-             font-size: 1.5rem;
+            color: var(--clr-text-on-primary);
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            font-size: 1.5rem;
         }
+
         .solution-summary-card .checklist-item {
-             display: flex;
-             align-items: center;
-             gap: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+
         .solution-summary-card .checklist-item i {
-             font-size: 0.9rem;
-             flex-shrink: 0;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
-         .solution-summary-card .checklist-item span {
-              color: var(--clr-text-secondary);
-              font-size: 0.9rem;
-         }
-          .dark .solution-summary-card .checklist-item span {
-              color: var(--dark-text-secondary);
-          }
+
+        .solution-summary-card .checklist-item span {
+            color: var(--clr-text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .dark .solution-summary-card .checklist-item span {
+            color: var(--dark-text-secondary);
+        }
 
         .solution-summary-card.info-upgrade {
             background: linear-gradient(105deg, color-mix(in srgb, var(--light-primary) 5%, var(--light-bg-surface)) 0%, color-mix(in srgb, var(--light-primary) 12%, var(--light-bg-surface)) 100%);
             border: 1px solid color-mix(in srgb, var(--light-primary) 30%, transparent);
             border-left: 4px solid var(--light-primary);
         }
+
         .dark .solution-summary-card.info-upgrade {
             background: linear-gradient(105deg, color-mix(in srgb, var(--dark-primary) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--dark-primary) 18%, var(--dark-bg-surface)) 100%);
             border: 1px solid color-mix(in srgb, var(--dark-primary) 35%, transparent);
             border-left: 4px solid var(--dark-primary);
         }
-        .solution-summary-card.info-upgrade .solution-icon { background-color: var(--clr-primary); }
-        .solution-summary-card.info-upgrade .checklist-item i { color: var(--clr-primary); }
-        .dark .solution-summary-card.info-upgrade .solution-icon { background-color: var(--dark-primary); }
-        .dark .solution-summary-card.info-upgrade .checklist-item i { color: var(--dark-primary); }
+
+        .solution-summary-card.info-upgrade .solution-icon {
+            background-color: var(--clr-primary);
+        }
+
+        .solution-summary-card.info-upgrade .checklist-item i {
+            color: var(--clr-primary);
+        }
+
+        .dark .solution-summary-card.info-upgrade .solution-icon {
+            background-color: var(--dark-primary);
+        }
+
+        .dark .solution-summary-card.info-upgrade .checklist-item i {
+            color: var(--dark-primary);
+        }
 
         .solution-summary-card.research {
             --category-color: #64748b;
@@ -615,30 +712,56 @@
             border: 1px solid color-mix(in srgb, var(--category-color) 30%, transparent);
             border-left: 4px solid var(--category-color);
         }
+
         .dark .solution-summary-card.research {
             background: linear-gradient(105deg, color-mix(in srgb, var(--category-color-dark) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--category-color-dark) 18%, var(--dark-bg-surface)) 100%);
             border: 1px solid color-mix(in srgb, var(--category-color-dark) 35%, transparent);
             border-left: 4px solid var(--category-color-dark);
         }
-        .solution-summary-card.research .solution-icon { background-color: var(--category-color); }
-        .solution-summary-card.research .checklist-item i { color: var(--category-color); }
-        .dark .solution-summary-card.research .solution-icon { background-color: var(--category-color-dark); }
-        .dark .solution-summary-card.research .checklist-item i { color: var(--category-color-dark); }
+
+        .solution-summary-card.research .solution-icon {
+            background-color: var(--category-color);
+        }
+
+        .solution-summary-card.research .checklist-item i {
+            color: var(--category-color);
+        }
+
+        .dark .solution-summary-card.research .solution-icon {
+            background-color: var(--category-color-dark);
+        }
+
+        .dark .solution-summary-card.research .checklist-item i {
+            color: var(--category-color-dark);
+        }
 
         .solution-summary-card.ai-tech {
             background: linear-gradient(105deg, color-mix(in srgb, var(--light-accent) 5%, var(--light-bg-surface)) 0%, color-mix(in srgb, var(--light-accent) 12%, var(--light-bg-surface)) 100%);
             border: 1px solid color-mix(in srgb, var(--light-accent) 30%, transparent);
             border-left: 4px solid var(--light-accent);
         }
+
         .dark .solution-summary-card.ai-tech {
             background: linear-gradient(105deg, color-mix(in srgb, var(--dark-accent) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--dark-accent) 18%, var(--dark-bg-surface)) 100%);
             border: 1px solid color-mix(in srgb, var(--dark-accent) 35%, transparent);
             border-left: 4px solid var(--dark-accent);
         }
-        .solution-summary-card.ai-tech .solution-icon { background-color: var(--clr-accent); }
-        .solution-summary-card.ai-tech .checklist-item i { color: var(--clr-accent); }
-        .dark .solution-summary-card.ai-tech .solution-icon { background-color: var(--dark-accent); }
-        .dark .solution-summary-card.ai-tech .checklist-item i { color: var(--dark-accent); }
+
+        .solution-summary-card.ai-tech .solution-icon {
+            background-color: var(--clr-accent);
+        }
+
+        .solution-summary-card.ai-tech .checklist-item i {
+            color: var(--clr-accent);
+        }
+
+        .dark .solution-summary-card.ai-tech .solution-icon {
+            background-color: var(--dark-accent);
+        }
+
+        .dark .solution-summary-card.ai-tech .checklist-item i {
+            color: var(--dark-accent);
+        }
 
         .solution-summary-card.knowledge {
             --category-color: #14b8a6;
@@ -647,29 +770,82 @@
             border: 1px solid color-mix(in srgb, var(--category-color) 30%, transparent);
             border-left: 4px solid var(--category-color);
         }
+
         .dark .solution-summary-card.knowledge {
             background: linear-gradient(105deg, color-mix(in srgb, var(--category-color-dark) 10%, var(--dark-bg-surface)) 0%, color-mix(in srgb, var(--category-color-dark) 18%, var(--dark-bg-surface)) 100%);
             border: 1px solid color-mix(in srgb, var(--category-color-dark) 35%, transparent);
             border-left: 4px solid var(--category-color-dark);
         }
-        .solution-summary-card.knowledge .solution-icon { background-color: var(--category-color); }
-        .solution-summary-card.knowledge .checklist-item i { color: var(--category-color); }
-        .dark .solution-summary-card.knowledge .solution-icon { background-color: var(--category-color-dark); }
-        .dark .solution-summary-card.knowledge .checklist-item i { color: var(--category-color-dark); }
+
+        .solution-summary-card.knowledge .solution-icon {
+            background-color: var(--category-color);
+        }
+
+        .solution-summary-card.knowledge .checklist-item i {
+            color: var(--category-color);
+        }
+
+        .dark .solution-summary-card.knowledge .solution-icon {
+            background-color: var(--category-color-dark);
+        }
+
+        .dark .solution-summary-card.knowledge .checklist-item i {
+            color: var(--category-color-dark);
+        }
 
         /* --- 其他样式 --- */
-        html { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--clr-bg-page); }
-        ::-webkit-scrollbar-thumb { background: var(--clr-primary); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--clr-accent); }
-        #loading-indicator .spinner { border-color: var(--clr-primary); border-top-color: transparent; }
-        .dark #loading-indicator .spinner { border-color: var(--dark-primary); border-top-color: transparent; }
-        #loading-indicator p { color: var(--clr-text-secondary); }
-        .dark #loading-indicator p { color: var(--dark-text-secondary); }
-        #error-message { color: #dc2626; background-color: #fee2e2; border: 1px solid #fecaca; padding: 1rem; border-radius: 0.5rem; }
-        .dark #error-message { color: #fca5a5; background-color: #7f1d1d; border-color: #ef4444; }
+        html {
+            scroll-behavior: smooth;
+        }
 
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--clr-bg-page);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--clr-primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--clr-accent);
+        }
+
+        #loading-indicator .spinner {
+            border-color: var(--clr-primary);
+            border-top-color: transparent;
+        }
+
+        .dark #loading-indicator .spinner {
+            border-color: var(--dark-primary);
+            border-top-color: transparent;
+        }
+
+        #loading-indicator p {
+            color: var(--clr-text-secondary);
+        }
+
+        .dark #loading-indicator p {
+            color: var(--dark-text-secondary);
+        }
+
+        #error-message {
+            color: #dc2626;
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .dark #error-message {
+            color: #fca5a5;
+            background-color: #7f1d1d;
+            border-color: #ef4444;
+        }
     </style>
     <!-- 初始化深色/浅色模式脚本 -->
     <script>
@@ -682,16 +858,19 @@
         }
     </script>
 </head>
+
 <body class="antialiased">
 
     <!-- 导航栏 -->
-    <nav class="sticky top-0 z-50 shadow-md transition-all duration-300" style="background-color: var(--clr-bg-surface); border-bottom: 1px solid var(--clr-border);">
+    <nav class="sticky top-0 z-50 shadow-md transition-all duration-300"
+        style="background-color: var(--clr-bg-surface); border-bottom: 1px solid var(--clr-border);">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <a href="#" class="flex items-center">
                 <span class="text-2xl font-bold" style="color: var(--clr-primary);">凿壁</span>
             </a>
             <div class="flex items-center">
-                 <button id="theme-toggle" class="theme-toggle p-2 rounded-full shadow-sm w-10 h-10 flex items-center justify-center">
+                <button id="theme-toggle"
+                    class="theme-toggle p-2 rounded-full shadow-sm w-10 h-10 flex items-center justify-center">
                     <i class="fas fa-sun light-icon"></i>
                     <i class="fas fa-moon dark-icon"></i>
                 </button>
@@ -707,7 +886,8 @@
                 <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight">
                     凿壁
                 </h1>
-                <p class="text-xl md:text-2xl text-white mb-6 leading-relaxed max-w-2xl mx-auto ">帮助健康医疗行业凿开AI乱象，帮AI行业凿开医疗行业壁垒</p>
+                <p class="text-xl md:text-2xl text-white mb-6 leading-relaxed max-w-2xl mx-auto ">
+                    帮助健康医疗行业凿开AI乱象，帮AI行业凿开医疗行业壁垒</p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
                     <a href="#content-area" class="btn btn-hero-primary">探索内容分类</a>
                 </div>
@@ -719,10 +899,12 @@
     <section id="about" class="py-16 md:py-20 about-section">
         <div class="container mx-auto px-4">
             <div class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold mb-8 text-center">关于<span style="color: var(--clr-primary);">凿壁</span></h2>
+                <h2 class="text-3xl font-bold mb-8 text-center">关于<span style="color: var(--clr-primary);">凿壁</span>
+                </h2>
                 <div class="first-letter mb-8">
                     <p class="mb-4">凿壁团队致力于为卫生健康行业提供前沿的AI解决方案。我们的使命是通过破除AI应用在医疗行业中的障碍，让先进技术真正服务于医疗健康事业，提高医疗效率和质量。</p>
-                    <p class="mb-4">我们深知医疗行业的特殊性与复杂性，团队汇集了医疗专家和AI技术人才，通过跨学科合作，打造适合中国医疗体系的智能化解决方案。我们不仅仅是技术提供者，更是医疗AI领域的思想者与探索者。</p>
+                    <p class="mb-4">
+                        我们深知医疗行业的特殊性与复杂性，团队汇集了医疗专家和AI技术人才，通过跨学科合作，打造适合中国医疗体系的智能化解决方案。我们不仅仅是技术提供者，更是医疗AI领域的思想者与探索者。</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                     <div class="flex flex-col items-center text-center p-4 feature-item">
@@ -749,23 +931,25 @@
     <main id="content-area" class="container mx-auto px-4 py-8 md:py-12">
         <!-- 分类导航标签 -->
         <div class="relative mb-12 md:mb-16">
-            <div class="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-px" style="background-color: var(--clr-border);"></div>
+            <div class="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-px"
+                style="background-color: var(--clr-border);"></div>
             <div class="flex justify-center">
-                 <div id="category-tabs" class="flex flex-wrap justify-center rounded-full shadow-md p-1 relative z-10 category-tabs">
-                     <button class="category-btn px-5 py-2 rounded-full" data-category="all">
-                         <i class="fas fa-border-all"></i><span>全部</span>
+                <div id="category-tabs"
+                    class="flex flex-wrap justify-center rounded-full shadow-md p-1 relative z-10 category-tabs">
+                    <button class="category-btn px-5 py-2 rounded-full" data-category="all">
+                        <i class="fas fa-border-all"></i><span>全部</span>
                     </button>
                     <button class="category-btn px-5 py-2 rounded-full" data-category="info-upgrade">
-                         <i class="fas fa-file-medical-alt"></i><span>信息化升级</span>
+                        <i class="fas fa-file-medical-alt"></i><span>信息化升级</span>
                     </button>
                     <button class="category-btn px-5 py-2 rounded-full" data-category="research">
-                         <i class="fas fa-microscope"></i><span>科研辅助</span>
+                        <i class="fas fa-microscope"></i><span>科研辅助</span>
                     </button>
                     <button class="category-btn px-5 py-2 rounded-full" data-category="ai-tech">
-                         <i class="fas fa-robot"></i><span>AI技术与生态</span>
+                        <i class="fas fa-robot"></i><span>AI技术与生态</span>
                     </button>
                     <button class="category-btn px-5 py-2 rounded-full" data-category="knowledge">
-                         <i class="fas fa-book-medical"></i><span>知识报告</span>
+                        <i class="fas fa-book-medical"></i><span>知识报告</span>
                     </button>
                 </div>
             </div>
@@ -783,20 +967,22 @@
         </div>
 
         <!-- Content Container (Includes Summary Cards and Article Cards) -->
-        <div id="content-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 category-contents">
+        <div id="content-container"
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 category-contents">
             <!-- Cards will be loaded here by JavaScript -->
         </div>
     </main>
 
     <!-- 页脚 -->
-    <footer class="mt-12 py-6 text-center text-sm" style="background-color: var(--clr-bg-surface); color: var(--clr-text-secondary); border-top: 1px solid var(--clr-border);">
+    <footer class="mt-12 py-6 text-center text-sm"
+        style="background-color: var(--clr-bg-surface); color: var(--clr-text-secondary); border-top: 1px solid var(--clr-border);">
         <p>作者: 凿壁AI| 成员：季晓康、曲静、王永超、许飞飞等</p>
         <p>微信公众号: 凿壁</p>
         <p class="mt-2">&copy; <span id="copyright-year">2024</span> 国家健康医疗大数据研究院</p>
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // --- DOM Elements ---
             const themeToggle = document.getElementById('theme-toggle');
             const htmlElement = document.documentElement;
@@ -811,7 +997,7 @@
                 htmlElement.classList.remove('light', 'dark');
                 htmlElement.classList.add(theme);
                 localStorage.setItem('theme', theme);
-                 console.log("Applied theme:", theme);
+                console.log("Applied theme:", theme);
             };
             themeToggle.addEventListener('click', () => {
                 const newTheme = htmlElement.classList.contains('dark') ? 'light' : 'dark';
@@ -829,13 +1015,89 @@
 
             const solutionSummaryCardsHTML = {
                 "info-upgrade": `
-                    <div class="solution-summary-card info-upgrade col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-file-medical-alt"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">信息化升级解决方案</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">帮助医疗机构进行数字化转型...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗数据资产价值评估</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>合规数据治理方案</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医院智能化管理系统</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗流程优化方案</span></div> </div> </div> </div> </div>`,
+                    <div class="solution-summary-card info-upgrade col-span-full">
+                        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div class="solution-icon-bg">
+                                <div class="solution-icon"> <i class="fas fa-file-medical-alt"></i> </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">信息化升级解决方案</h3>
+                                <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">聚焦医疗数据要素的价值挖掘与医院管理效能提升。从数据治理到资产化评估，为医疗机构提供可落地的数字化转型路径。</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 text-sm font-medium text-teal-600 dark:text-teal-400">
+                                        <i class="fas fa-star text-xs"></i> 精选：
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <a href="pages/数据资产_fixed.html" class="checklist-item hover:text-teal-600 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>医疗数据资产化实操指南</span></a>
+                                        <a href="pages/病历质量评分.html" class="checklist-item hover:text-teal-600 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>病历质量智能评分系统</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
                 "research": `
-                    <div class="solution-summary-card research col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-microscope"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">科研辅助解决方案</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">为医学研究者提供AI驱动的辅助工具...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>临床辅助决策系统</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医学影像智能分析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>健康风险预测模型</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>临床路径优化</span></div> </div> </div> </div> </div>`,
+                    <div class="solution-summary-card research col-span-full">
+                        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div class="solution-icon-bg">
+                                <div class="solution-icon"> <i class="fas fa-microscope"></i> </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">科研辅助解决方案</h3>
+                                <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">重塑医学科研工作流。利用 AI Agent 自动化处理文献综述、数据分析与论文撰写，让科研回归创新本质。</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+                                        <i class="fas fa-star text-xs"></i> 精选：
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <a href="pages/科研流程_final.html" class="checklist-item hover:text-slate-800 dark:hover:text-slate-200 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>标准化医学科研 AI 工作流</span></a>
+                                        <a href="pages/deepresearch_by_gemini_2.5.html" class="checklist-item hover:text-slate-800 dark:hover:text-slate-200 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>DeepResearch: 深度研究智能体</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
                 "ai-tech": `
-                    <div class="solution-summary-card ai-tech col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-robot"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">AI技术与生态解决方案</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">深入解析人工智能前沿技术与生态...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>大模型能力评估</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>多模态智能解析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>AI开发框架分析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗AI解决方案</span></div> </div> </div> </div> </div>`,
+                    <div class="solution-summary-card ai-tech col-span-full">
+                        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div class="solution-icon-bg">
+                                <div class="solution-icon"> <i class="fas fa-robot"></i> </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">AI技术与生态解决方案</h3>
+                                <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">紧跟 AI 技术前沿，深耕 Agent 智能体开发与 RAG 应用。提供从原理到代码的工程化实战教程。</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 text-sm font-medium text-orange-600 dark:text-orange-400">
+                                        <i class="fas fa-star text-xs"></i> 精选：
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <a href="pages/agents/index.html" class="checklist-item hover:text-orange-600 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>Agent 应用开发全指南</span></a>
+                                        <a href="pages/vibe_coder.html" class="checklist-item hover:text-orange-600 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>Vibe Coding: 沉浸式编程体验</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
                 "knowledge": `
-                    <div class="solution-summary-card knowledge col-span-full"> <div class="flex flex-col md:flex-row items-center md:items-start gap-6"> <div class="solution-icon-bg"> <div class="solution-icon"> <i class="fas fa-book-medical"></i> </div> </div> <div class="flex-1"> <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">知识报告</h3> <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">提供关于AI与医疗健康领域的深度知识...</p> <div class="grid grid-cols-1 sm:grid-cols-2 gap-3"> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>AI模型理论解析</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>医疗AI研究综述</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>认知科学研究</span></div> <div class="checklist-item"><i class="fas fa-check-circle"></i><span>前沿技术动态</span></div> </div> </div> </div> </div>`
+                    <div class="solution-summary-card knowledge col-span-full">
+                        <div class="flex flex-col md:flex-row items-center md:items-start gap-6">
+                            <div class="solution-icon-bg">
+                                <div class="solution-icon"> <i class="fas fa-book-medical"></i> </div>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="text-xl font-bold mb-2" style="color: var(--clr-text-primary);">知识报告</h3>
+                                <p class="mb-4 text-sm" style="color: var(--clr-text-secondary);">汇集行业深度洞察与认知科学研究。探讨中美大模型差异、医疗 AI 伦理与阿尔法收益理论。</p>
+                                <div class="space-y-2">
+                                    <div class="flex items-center gap-2 text-sm font-medium text-teal-600 dark:text-teal-400">
+                                        <i class="fas fa-star text-xs"></i> 精选：
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <a href="pages/alpha-theory.html" class="checklist-item hover:text-teal-600 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>阿尔法收益理论</span></a>
+                                        <a href="pages/cn-us-llm-2025.html" class="checklist-item hover:text-teal-600 transition-colors"><i class="fas fa-arrow-right text-xs"></i><span>2025 中美大模型产业对比</span></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`
             };
 
             const createCard = (page) => {
@@ -888,20 +1150,20 @@
                 let contentExists = false;
 
                 if (category && category !== 'all' && solutionSummaryCardsHTML[category]) {
-                     contentContainer.insertAdjacentHTML('beforeend', solutionSummaryCardsHTML[category]);
-                     contentExists = true;
+                    contentContainer.insertAdjacentHTML('beforeend', solutionSummaryCardsHTML[category]);
+                    contentExists = true;
                 }
 
-                 if (pages && pages.length > 0) {
+                if (pages && pages.length > 0) {
                     pages.forEach(page => {
                         contentContainer.appendChild(createCard(page));
                     });
                     contentExists = true;
-                 }
+                }
 
-                 if (!contentExists) {
+                if (!contentExists) {
                     contentContainer.innerHTML = '<div class="col-span-full text-center py-12" style="color: var(--clr-text-secondary);">该分类下暂无内容</div>';
-                 }
+                }
             };
 
             const filterAndRender = (category) => {
@@ -913,13 +1175,13 @@
                 let metadataUrl;
                 const hostname = window.location.hostname;
                 const pathname = window.location.pathname;
-                
-                console.log("当前环境:", { 
-                    hostname, 
+
+                console.log("当前环境:", {
+                    hostname,
                     pathname,
                     href: window.location.href
                 });
-                
+
                 // 检查是否在GitHub Pages环境
                 if (hostname.includes('github.io')) {
                     // GitHub Pages环境 - 提取项目名并构建路径
@@ -931,9 +1193,9 @@
                     // 服务器环境 - 使用绝对路径
                     metadataUrl = '/metadata.json';
                 }
-                
+
                 console.log("最终元数据加载路径:", metadataUrl);
-                
+
                 fetch(metadataUrl)
                     .then(response => {
                         if (!response.ok) {
@@ -946,7 +1208,7 @@
                     .then(data => {
                         loadingIndicator.classList.add('hidden');
                         if (!data || !data.pages || !Array.isArray(data.pages)) {
-                           throw new Error('Invalid metadata format: "pages" array not found.');
+                            throw new Error('Invalid metadata format: "pages" array not found.');
                         }
                         let filteredPages = data.pages;
                         if (category !== 'all') {
@@ -960,7 +1222,7 @@
                         loadingIndicator.classList.add('hidden');
                         errorMessage.textContent = `加载内容失败: ${error.message}. 请检查 metadata.json 文件是否存在且格式正确。`;
                         errorMessage.classList.remove('hidden');
-                         contentContainer.innerHTML = '';
+                        contentContainer.innerHTML = '';
                     });
             };
 
@@ -982,7 +1244,7 @@
 
             // --- Initial Load ---
             const allButton = categoryTabsContainer.querySelector('.category-btn[data-category="all"]');
-             if(allButton) allButton.classList.add('active'); // Activate 'All' button visually
+            if (allButton) allButton.classList.add('active'); // Activate 'All' button visually
             filterAndRender('all'); // Load all content initially
 
             // --- Footer Year ---
@@ -992,4 +1254,5 @@
     </script>
 
 </body>
+
 </html>

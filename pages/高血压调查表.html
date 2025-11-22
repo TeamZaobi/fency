@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老年高血压患者调整用药前信息采集表</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2a52be;
+            --secondary-color: #4682b4;
+            --accent-color: #ff6b6b;
+            --background-color: #f8f9fa;
+            --card-background: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+        }
+        
+        .dark {
+            --primary-color: #3a6cd6;
+            --secondary-color: #5a9bd5;
+            --accent-color: #ff8585;
+            --background-color: #121212;
+            --card-background: #1e1e1e;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --border-color: #333333;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+            color: var(--text-primary);
+            background-color: var(--background-color);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+        }
+        
+        .bg-theme {
+            background-color: var(--background-color);
+        }
+        
+        .bg-card {
+            background-color: var(--card-background);
+        }
+        
+        .text-primary {
+            color: var(--text-primary);
+        }
+        
+        .text-secondary {
+            color: var(--text-secondary);
+        }
+        
+        .border-theme {
+            border-color: var(--border-color);
+        }
+        
+        .accent {
+            color: var(--accent-color);
+        }
+        
+        .primary-color {
+            color: var(--primary-color);
+        }
+        
+        .primary-bg {
+            background-color: var(--primary-color);
+        }
+        
+        .secondary-color {
+            color: var(--secondary-color);
+        }
+        
+        .form-input {
+            border: 1px solid var(--border-color);
+            background-color: var(--card-background);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(42, 82, 190, 0.2);
+        }
+        
+        .btn {
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .card {
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-background);
+        }
+        
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="min-h-screen transition-colors duration-300 bg-theme">
+        <!-- 页面头部和导航栏 -->
+        <header class="relative bg-card shadow-md">
+            <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-heartbeat text-4xl accent mr-3"></i>
+                    <h1 class="text-2xl md:text-3xl font-bold primary-color">老年高血压患者调整用药前信息采集表</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="window.print()" class="no-print flex items-center px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <i class="fas fa-print mr-2"></i>
+                        <span>打印</span>
+                    </button>
+                    <button onclick="toggleTheme()" class="no-print flex items-center px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                        <i class="fas fa-moon dark:hidden mr-2"></i>
+                        <i class="fas fa-sun hidden dark:inline-block mr-2"></i>
+                        <span class="dark:hidden">深色模式</span>
+                        <span class="hidden dark:inline-block">浅色模式</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 介绍卡片 -->
+        <section class="container mx-auto px-4 py-8">
+            <div class="card rounded-lg p-6 mb-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold mb-2 md:mb-0 primary-color">
+                        <i class="fas fa-info-circle mr-2"></i>表格说明
+                    </h2>
+                    <div class="flex items-center text-sm text-secondary">
+                        <i class="fas fa-clock mr-1"></i>
+                        <span>填表日期：<span id="currentDate"></span></span>
+                    </div>
+                </div>
+                <p class="text-secondary mb-4">本表格用于老年高血压患者在调整用药前的全面信息采集，包括基本人口学信息、既往病史、生活方式、临床症状、血压监测数据、辅助检查、心理评估、社会支持与依从性评估等多方面内容。完整填写本表有助于医生制定更加合理、个体化的用药方案。</p>
+                <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg flex items-start">
+                    <i class="fas fa-lightbulb text-yellow-500 mt-1 mr-3"></i>
+                    <div>
+                        <p class="font-medium mb-1">填表提示</p>
+                        <ul class="list-disc list-inside text-sm text-secondary">
+                            <li>请尽可能详细、准确地填写所有信息</li>
+                            <li>如有近期检查报告，请随表格一并提交</li>
+                            <li>如有用药变更，请记录详细的用药情况</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 表单内容 -->
+        <div class="container mx-auto px-4 pb-16">
+            <!-- 第一部分：基本人口学信息 -->
+            <section class="mb-8">
+                <div class="card rounded-lg overflow-hidden">
+                    <div class="primary-bg text-white px-6 py-4 flex items-center">
+                        <i class="fas fa-user-circle text-xl mr-3"></i>
+                        <h2 class="text-xl font-bold">一、基本人口学信息</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">姓名</label>
+                                <input type="text" class="form-input w-full px-3 py-2 rounded-md">
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">性别</label>
+                                <div class="flex space-x-6">
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="gender" class="form-radio">
+                                        <span class="ml-2">男</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="radio" name="gender" class="form-radio">
+                                        <span class="ml-2">女</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">出生日期</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="number" placeholder="年" class="form-input w-20 px-3 py-2 rounded-md">
+                                    <input type="number" placeholder="月" min="1" max="12" class="form-input w-16 px-3 py-2 rounded-md">
+                                    <input type="number" placeholder="日" min="1" max="31" class="form-input w-16 px-3 py-2 rounded-md">
+                                    <span class="ml-4">（年龄：</span>
+                                    <input type="number" placeholder="岁" class="form-input w-16 px-3 py-2 rounded-md">
+                                    <span>）</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">身高 (cm)</label>
+                                <input type="number" class="form-input w-full px-3 py-2 rounded-md">
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">体重 (kg)</label>
+                                <input type="number" class="form-input w-full px-3 py-2 rounded-md">
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">BMI</label>
+                                <input type="number" class="form-input w-full px-3 py-2 rounded-md" readonly>
+                            </div>
+                        </div>
+
+                        <div class="mt-6">
+                            <label class="block text-secondary mb-2">家族史（可多选）</label>
+                            <div class="flex flex-wrap gap-x-6 gap-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">高血压</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">冠心病</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">脑卒中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">糖尿病</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">其他心血管疾病</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">无</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第二部分：既往病史和目前用药情况 -->
+            <section class="mb-8">
+                <div class="card rounded-lg overflow-hidden">
+                    <div class="primary-bg text-white px-6 py-4 flex items-center">
+                        <i class="fas fa-file-medical-alt text-xl mr-3"></i>
+                        <h2 class="text-xl font-bold">二、既往病史和目前用药情况</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">高血压病程</label>
+                                <div class="flex items-center">
+                                    <input type="number" class="form-input w-20 px-3 py-2 rounded-md">
+                                    <span class="ml-2">年</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-secondary mb-2">初诊年龄</label>
+                                <div class="flex items-center">
+                                    <input type="number" class="form-input w-20 px-3 py-2 rounded-md">
+                                    <span class="ml-2">岁</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">最高血压记录</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" class="form-input w-20 px-3 py-2 rounded-md">
+                                <span>/</span>
+                                <input type="number" class="form-input w-20 px-3 py-2 rounded-md">
+                                <span class="ml-2">mmHg</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">既往用药史</label>
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-full border-collapse">
+                                    <thead>
+                                        <tr class="bg-gray-100 dark:bg-gray-700">
+                                            <th class="px-4 py-2 text-left border border-theme">药物名称</th>
+                                            <th class="px-4 py-2 text-left border border-theme">剂量</th>
+                                            <th class="px-4 py-2 text-left border border-theme">频次</th>
+                                            <th class="px-4 py-2 text-left border border-theme">疗效及不良反应</th>
+                                            <th class="px-4 py-2 text-left border border-theme">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="medicationTableBody">
+                                        <tr>
+                                            <td class="px-4 py-2 border border-theme">
+                                                <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                                            </td>
+                                            <td class="px-4 py-2 border border-theme">
+                                                <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                                            </td>
+                                            <td class="px-4 py-2 border border-theme">
+                                                <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                                            </td>
+                                            <td class="px-4 py-2 border border-theme">
+                                                <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                                            </td>
+                                            <td class="px-4 py-2 border border-theme">
+                                                <button class="text-red-500 hover:text-red-700" onclick="removeRow(this)">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button id="addMedicationRow" class="mt-3 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center">
+                                <i class="fas fa-plus mr-2"></i>添加药物记录
+                            </button>
+                        </div>
+
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">药物过敏或不耐受史</label>
+                            <input type="text" class="form-input w-full px-3 py-2 rounded-md">
+                        </div>
+
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">伴随疾病史（可多选）</label>
+                            <div class="flex flex-wrap gap-x-6 gap-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">冠心病</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">脑卒中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">慢性肾病</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">糖尿病</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">血脂异常</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">高尿酸血症</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">睡眠呼吸暂停综合征</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" class="form-checkbox">
+                                    <span class="ml-2">其他</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">其他药物使用情况（包括中药、保健品、非处方药）</label>
+                            <textarea class="form-input w-full px-3 py-2 rounded-md" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第三部分：生活方式调查 -->
+            <section class="mb-8">
+                <div class="card rounded-lg overflow-hidden">
+                    <div class="primary-bg text-white px-6 py-4 flex items-center">
+                        <i class="fas fa-utensils text-xl mr-3"></i>
+                        <h2 class="text-xl font-bold">三、生活方式调查</h2>
+                    </div>
+                    <div class="p-6">
+                        <!-- 饮食习惯 -->
+                        <div class="form-group">
+                            <label class="block text-secondary mb-2">饮食习惯</label>
+                            <div class="flex flex-wrap gap-x-6 gap-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="dietHabit" class="form-radio">
+                                    <span class="ml-2">清淡</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="dietHabit" class="form-radio">
+                                    <span class="ml-2">适中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="dietHabit" class="form-radio">
+                                    <span class="ml-2">偏咸（盐摄入>5g/d）</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 油脂摄入 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">油脂摄入</label>
+                            <div class="flex flex-wrap gap-x-6 gap-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="fatIntake" class="form-radio">
+                                    <span class="ml-2">少</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="fatIntake" class="form-radio">
+                                    <span class="ml-2">适中</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="fatIntake" class="form-radio">
+                                    <span class="ml-2">多</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 饮食偏好 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">饮食偏好</label>
+                            <input type="text" class="form-input w-full px-3 py-2 rounded-md">
+                        </div>
+
+                        <!-- 日常运动频率 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">日常运动频率</label>
+                            <div class="flex items-center flex-wrap gap-y-3">
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="exerciseFrequency" class="form-radio" value="daily">
+                                    <span class="ml-2">每日</span>
+                                </label>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="exerciseFrequency" class="form-radio" value="weekly">
+                                    <span class="ml-2">每周</span>
+                                </label>
+                                <div class="flex items-center" id="weeklyExerciseCount" style="display: none;">
+                                    <input type="number" class="form-input w-16 px-3 py-2 rounded-md ml-2">
+                                    <span class="ml-2">次</span>
+                                </div>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="exerciseFrequency" class="form-radio" value="occasional">
+                                    <span class="ml-2">偶尔</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="exerciseFrequency" class="form-radio" value="none">
+                                    <span class="ml-2">无</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 日常运动强度 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">日常运动强度</label>
+                            <div class="flex flex-wrap gap-x-6 gap-y-2">
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="exerciseIntensity" class="form-radio">
+                                    <span class="ml-2">轻度（散步、太极）</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="exerciseIntensity" class="form-radio">
+                                    <span class="ml-2">中度</span>
+                                </label>
+                                <label class="inline-flex items-center">
+                                    <input type="radio" name="exerciseIntensity" class="form-radio">
+                                    <span class="ml-2">重度</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 吸烟史 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">吸烟史</label>
+                            <div class="flex items-center flex-wrap gap-y-3">
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="smokingHistory" class="form-radio" value="none">
+                                    <span class="ml-2">无</span>
+                                </label>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="smokingHistory" class="form-radio" value="yes">
+                                    <span class="ml-2">有</span>
+                                </label>
+                                <div id="smokingDetails" class="flex items-center flex-wrap gap-x-4 gap-y-2" style="display: none;">
+                                    <div class="flex items-center">
+                                        <span>每日</span>
+                                        <input type="number" class="form-input w-16 px-3 py-2 rounded-md mx-2">
+                                        <span>支</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span>吸烟</span>
+                                        <input type="number" class="form-input w-16 px-3 py-2 rounded-md mx-2">
+                                        <span>年</span>
+                                    </div>
+                                </div>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="smokingHistory" class="form-radio" value="quit">
+                                    <span class="ml-2">已戒烟</span>
+                                </label>
+                                <div id="quitSmokingDetails" class="flex items-center" style="display: none;">
+                                    <span>戒烟</span>
+                                    <input type="number" class="form-input w-16 px-3 py-2 rounded-md mx-2">
+                                    <span>年</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 饮酒史 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">饮酒史</label>
+                            <div class="flex items-center flex-wrap gap-y-3">
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="drinkingHistory" class="form-radio" value="none">
+                                    <span class="ml-2">无</span>
+                                </label>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="drinkingHistory" class="form-radio" value="occasional">
+                                    <span class="ml-2">偶尔</span>
+                                </label>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="drinkingHistory" class="form-radio" value="regular">
+                                    <span class="ml-2">经常</span>
+                                </label>
+                                <div id="drinkingDetails" class="flex items-center flex-wrap gap-x-4 gap-y-2" style="display: none;">
+                                    <div class="flex items-center">
+                                        <span>每周</span>
+                                        <input type="number" class="form-input w-16 px-3 py-2 rounded-md mx-2">
+                                        <span>次</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span>每次酒精量约</span>
+                                        <input type="number" class="form-input w-16 px-3 py-2 rounded-md mx-2">
+                                        <span>ml</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 睡眠状况 -->
+                        <div class="form-group mt-6">
+                            <label class="block text-secondary mb-2">睡眠状况</label>
+                            <div class="flex items-center flex-wrap gap-y-3">
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="sleepQuality" class="form-radio" value="good">
+                                    <span class="ml-2">良好</span>
+                                </label>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="sleepQuality" class="form-radio" value="normal">
+                                    <span class="ml-2">一般</span>
+                                </label>
+                                <label class="inline-flex items-center mr-6">
+                                    <input type="radio" name="sleepQuality" class="form-radio" value="bad">
+                                    <span class="ml-2">差</span>
+                                </label>
+                                <div id="sleepDetails" class="flex items-center" style="display: none;">
+                                    <span>具体情况：</span>
+                                    <input type="text" class="form-input w-64 px-3 py-2 rounded-md ml-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 其他部分将在此处添加 -->
+        </div>
+
+        <!-- 页脚部分 -->
+        <footer class="bg-card border-t border-theme py-6">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div class="text-center md:text-left mb-4 md:mb-0">
+                        <p class="text-secondary">作者：季晓康</p>
+                        <p class="text-secondary">微信公众号：凿壁</p>
+                    </div>
+                    <div class="text-center md:text-right">
+                        <p class="text-secondary">版权信息：国家健康医疗大数据研究院</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // 暗黑模式切换功能
+        function initTheme() {
+            // 检查系统偏好
+            const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            // 检查本地存储
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme === 'dark' || (!savedTheme && prefersDarkMode)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+        
+        // 初始化主题
+        initTheme();
+        
+        // 初始化Mermaid图表
+        mermaid.initialize({ startOnLoad: true });
+        
+        // 显示当前日期
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN');
+        
+        // BMI计算功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const heightInput = document.querySelector('input[type="number"][placeholder="身高 (cm)"]');
+            const weightInput = document.querySelector('input[type="number"][placeholder="体重 (kg)"]');
+            const bmiInput = document.querySelector('input[readonly]');
+            
+            function calculateBMI() {
+                const height = parseFloat(heightInput.value) / 100; // 转换为米
+                const weight = parseFloat(weightInput.value);
+                
+                if (height > 0 && weight > 0) {
+                    const bmi = (weight / (height * height)).toFixed(1);
+                    bmiInput.value = bmi;
+                } else {
+                    bmiInput.value = '';
+                }
+            }
+            
+            heightInput?.addEventListener('input', calculateBMI);
+            weightInput?.addEventListener('input', calculateBMI);
+        });
+
+        // 添加和删除药物记录行
+        document.addEventListener('DOMContentLoaded', function() {
+            const addMedicationRow = document.getElementById('addMedicationRow');
+            if (addMedicationRow) {
+                addMedicationRow.addEventListener('click', function() {
+                    const tbody = document.getElementById('medicationTableBody');
+                    const newRow = document.createElement('tr');
+                    newRow.innerHTML = `
+                        <td class="px-4 py-2 border border-theme">
+                            <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                        </td>
+                        <td class="px-4 py-2 border border-theme">
+                            <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                        </td>
+                        <td class="px-4 py-2 border border-theme">
+                            <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                        </td>
+                        <td class="px-4 py-2 border border-theme">
+                            <input type="text" class="form-input w-full px-2 py-1 rounded-md">
+                        </td>
+                        <td class="px-4 py-2 border border-theme">
+                            <button class="text-red-500 hover:text-red-700" onclick="removeRow(this)">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(newRow);
+                });
+            }
+        });
+
+        function removeRow(button) {
+            const row = button.closest('tr');
+            if (document.getElementById('medicationTableBody').childElementCount > 1) {
+                row.remove();
+            } else {
+                // 清空单元格内容而不是删除行
+                const inputs = row.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+            }
+        }
+
+        // 条件显示字段
+        document.addEventListener('DOMContentLoaded', function() {
+            // 运动频率
+            const exerciseFrequencyRadios = document.querySelectorAll('input[name="exerciseFrequency"]');
+            const weeklyExerciseCount = document.getElementById('weeklyExerciseCount');
+            
+            exerciseFrequencyRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'weekly') {
+                        weeklyExerciseCount.style.display = 'flex';
+                    } else {
+                        weeklyExerciseCount.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 吸烟史
+            const smokingHistoryRadios = document.querySelectorAll('input[name="smokingHistory"]');
+            const smokingDetails = document.getElementById('smokingDetails');
+            const quitSmokingDetails = document.getElementById('quitSmokingDetails');
+            
+            smokingHistoryRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'yes') {
+                        smokingDetails.style.display = 'flex';
+                        quitSmokingDetails.style.display = 'none';
+                    } else if (this.value === 'quit') {
+                        smokingDetails.style.display = 'none';
+                        quitSmokingDetails.style.display = 'flex';
+                    } else {
+                        smokingDetails.style.display = 'none';
+                        quitSmokingDetails.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 饮酒史
+            const drinkingHistoryRadios = document.querySelectorAll('input[name="drinkingHistory"]');
+            const drinkingDetails = document.getElementById('drinkingDetails');
+            
+            drinkingHistoryRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'regular') {
+                        drinkingDetails.style.display = 'flex';
+                    } else {
+                        drinkingDetails.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 睡眠状况
+            const sleepQualityRadios = document.querySelectorAll('input[name="sleepQuality"]');
+            const sleepDetails = document.getElementById('sleepDetails');
+            
+            sleepQualityRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'bad') {
+                        sleepDetails.style.display = 'flex';
+                    } else {
+                        sleepDetails.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

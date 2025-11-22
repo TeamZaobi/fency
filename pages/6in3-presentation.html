@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>潍坊三医协同数据共享经验介绍 - 解码潍坊医改：体制重组—“三医”协同数据共享机制</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .presentation-container {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 60px;
+            max-width: 1200px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            padding: 10px 0;
+            border-left: 5px solid #e74c3c;
+            padding-left: 20px;
+        }
+
+        h3 {
+            color: #2980b9;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+            padding: 8px 15px;
+            background: linear-gradient(90deg, #ecf0f1, transparent);
+            border-radius: 5px;
+        }
+
+        .mapping-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .mapping-table th {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .mapping-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: top;
+        }
+
+        .mapping-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .mapping-table tr:hover {
+            background-color: #e3f2fd;
+            transform: scale(1.01);
+            transition: all 0.3s ease;
+        }
+
+        .highlight-box {
+            background: linear-gradient(90deg, #fff3cd, #ffeaa7);
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.2);
+        }
+
+        .evidence-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .evidence-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid #28a745;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .evidence-card h4 {
+            color: #155724;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        li {
+            margin: 8px 0;
+            line-height: 1.6;
+        }
+
+        .kpi-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .kpi-item {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #28a745;
+            font-weight: 500;
+            color: #155724;
+        }
+
+        .navigation {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            background: rgba(52, 73, 94, 0.9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-btn:hover {
+            background: rgba(52, 73, 94, 1);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(52, 73, 94, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(149, 165, 166, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(52, 73, 94, 0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-divider {
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #e74c3c, #f39c12);
+            border-radius: 2px;
+            margin: 30px 0;
+        }
+
+        .strong-text {
+            font-weight: 700;
+            color: #c0392b;
+            background: rgba(231, 76, 60, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .data-metric {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: 2px solid #2196f3;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #0d47a1;
+            font-size: 1.1em;
+            box-shadow: 0 8px 16px rgba(33, 150, 243, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .data-metric:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(33, 150, 243, 0.3);
+        }
+
+        .metric-number {
+            font-size: 1.8em;
+            color: #1565c0;
+            font-weight: 800;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .tech-innovation {
+            background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+            border-left: 5px solid #9c27b0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.2);
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .before-after {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #ff9800;
+            text-align: center;
+        }
+
+        .before-after.before {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+        }
+
+        .before-after.after {
+            border-color: #4caf50;
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+        }
+
+        .system-architecture {
+            background: linear-gradient(135deg, #e8f4fd, #d1ecf1);
+            border: 2px solid #00acc1;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .system-architecture::before {
+            content: "🏗️";
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: white;
+            padding: 5px 10px;
+            font-size: 1.5em;
+            border-radius: 50%;
+        }
+
+        .achievement-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #e3f2fd, #e1f5fe);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 3px solid #03a9f4;
+            box-shadow: 0 8px 16px rgba(3, 169, 244, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(3, 169, 244, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #01579b;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            color: #0277bd;
+            font-weight: 600;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>潍坊三医协同数据共享经验介绍</h1>
+            <div class="highlight-box">
+                <h2 style="text-align: center; margin: 0;">解码潍坊医改：体制重组—“三医”协同数据共享机制</h2>
+                <p style="text-align: center; font-size: 1.2em; margin-top: 20px; color: #2c3e50;">
+                    以数智化技术为引擎，创新建立“三医”协同数据共享机制，蝴出一条数据要素深度激活的医改新路
+                </p>
+            </div>
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>潍坊模式核心要素</h4>
+                    <ul>
+                        <li><strong>顶格推进</strong> → 体制重组</li>
+                        <li><strong>数据共享</strong> → 协同机制</li>
+                        <li><strong>应用创新</strong> → 效能提升</li>
+                        <li><strong>经验提炼</strong> → 可复制推广</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>标志性成果</h4>
+                    <div class="achievement-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">92%</div>
+                            <div class="stat-label">互认率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">30%</div>
+                            <div class="stat-label">候诊时间↓</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">8.6%</div>
+                            <div class="stat-label">住院费用↓</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">98.6%</div>
+                            <div class="stat-label">患者满意度</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Institutional Reorganization Innovation -->
+        <div class="slide">
+            <h1>第一部分：潍坊三医协同数据共享机制</h1>
+            <h2>1.1 体制重组创新：突破传统部门壁垒
+            
+            <div class="system-architecture">
+                <h3>🏢 顶层设计：市委常委会顶格推进</h3>
+                <div class="comparison-grid">
+                    <div class="before-after before">
+                        <h4>传统医改模式</h4>
+                        <ul>
+                            <li>部门各自为政</li>
+                            <li>信息孤岛严重</li>
+                            <li>协调成本高昂</li>
+                        </ul>
+                    </div>
+                    <div class="before-after after">
+                        <h4>体制重组创新</h4>
+                        <ul>
+                            <li><strong>市委常委会</strong>列入工作要点</li>
+                            <li><strong>6部门职能</strong>集成协同</li>
+                            <li><strong>25名专业人员</strong>实体化办公</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>🏗️ 基础设施突破</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">491</div>个业务数据集
+                    </div>
+                    <div class="data-metric">
+                        <div class="metric-number">22,561</div>个业务字段
+                    </div>
+                    <div class="data-metric">
+                        <div class="metric-number">9,056</div>家医疗卫生机构覆盖
+                    </div>
+                </div>
+                <div class="evidence-card">
+                    <h4>🔧 技术架构创新</h4>
+                    <ul>
+                        <li><strong>"两大标准体系、五大应用模块"</strong>一体化信息共享</li>
+                        <li><strong>统一云网建设</strong>、统一安全体系</li>
+                        <li><strong>统一运维服务</strong>、统一规划标准</li>
+                        <li>卫生健康所有信息<strong>一网查询、一网通办</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tech-innovation">
+                <h4>🔄 体制重组的三大突破</h4>
+                <ul>
+                    <li><strong>组织突破：</strong>突破传统行政隶属关系，实现跨部门协同实体化运行</li>
+                    <li><strong>机制突破：</strong>创新建立"两大标准体系、五大应用模块"一体化机制</li>
+                    <li><strong>效率突破：</strong>实现卫生健康所有信息<strong>一网查询、一网通办</strong></li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <h4>🎯 核心成果</h4>
+                <p>形成了一套以<strong>“数智赋能、机制适配、需求导向”</strong>为重点的体制框架，实现<strong>政策协同、信息联通、监管联动</strong>的数据支撑体系。</p>
+            </div>
+        </div>
+
+        <!-- Slide 4: Core Elements of Three-Medical Collaboration -->
+        <div class="slide">
+            <h1>1.3 三医协同数据共享机制的核心要素</h1>
+            <h2>全面解析潍坊模式的制度创新与实践经验</h2>
+
+            <div class="comparison-grid">
+                <div class="evidence-card">
+                    <h4>🏢 制度设计</h4>
+                    <ul>
+                        <li><strong>顶层推进：</strong>市委常委会、深改委工作要点</li>
+                        <li><strong>实体运作：</strong>6部门职能集成，25名专业人员</li>
+                        <li><strong>权责明确：</strong>工作生产和系统运维两大功能区</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>🔧 技术支撑</h4>
+                    <ul>
+                        <li><strong>统一标准：</strong>两大标准体系、五大应用模块</li>
+                        <li><strong>四路并行：</strong>政务平台/直连/库表/专线</li>
+                        <li><strong>全网贯通：</strong>一网查询、一网通办</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="evidence-card">
+                    <h4>⚙️ 运行机制</h4>
+                    <ul>
+                        <li><strong>分级授权：</strong>目录动态管理与分级分类授权</li>
+                        <li><strong>实时更新：</strong>实时/准实时/T+1/T+7/按月多粒度</li>
+                        <li><strong>台账管理：</strong>使用台账与版本追溯</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>🔒 保障体系</h4>
+                    <ul>
+                        <li><strong>安全合规：</strong>数据不出域、可用不可见</li>
+                        <li><strong>审计追踪：</strong>全链路脱敏、加密、访问控制</li>
+                        <li><strong>应急保障：</strong>应急预案与使用台账</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="system-architecture">
+                <h3>🎆 核心价值体现</h3>
+                <div class="achievement-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">1+N+3</div>
+                        <div class="stat-label">协同应用架构</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">跨部门数据覆盖</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">全天候稳定运行</div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px;">以“<strong>1+N+3</strong>”协同应用架构，“大脑”统一供给AI能力，批量支撑创新场景，实现了从单纯的数据交换到数据价值创造的跨越。</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Data-Driven Work Methodology -->
+        <div class="slide">
+            <h1>第二部分：从数据到成效的工作路径</h1>
+            <h2>2.1 数据驱动的工作方法论：“数改促医改”</h2>
+
+            <div class="highlight-box">
+                <h3>🎯 “数改促医改”核心理念</h3>
+                <p>利用“三医”协同数据共享机制深入推进<strong>新质生产力、互联网、人工智能</strong>等融合应用，着力赋能群众健康、医疗卫生机构、医务人员和医药企业，实现<strong>政策协同、信息联通、监管联动</strong>的数据支撑体系。</p>
+            </div>
+
+            <div class="system-architecture">
+                <h3>🔄 数据驱动的四层工作体系</h3>
+                <div class="comparison-grid">
+                    <div class="before-after">
+                        <h4>1️⃣ 数据协同层</h4>
+                        <p>打破部门间信息孤岛，实现数据共享和互联互通</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>2️⃣ 智能决策层</h4>
+                        <p>借助大数据、AI等先进技术，实现多领域智能决策</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>3️⃣ 服务创新层</h4>
+                        <p>运用数智化技术拓展服务范围，实现数据共享</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>4️⃣ 治理效能层</h4>
+                        <p>管理、决策、创新体系的全面升级，治理效能显著提升</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-innovation">
+                <h4>💪 数据驱动方法论的三大优势</h4>
+                <div class="comparison-grid">
+                    <div class="before-after">
+                        <h4>精准效率</h4>
+                        <p>通过数据分析，实现了精准调配医疗资源，优化医疗服务流程，提升医疗服务质量</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>协同协调</h4>
+                        <p>打破部门壁垒，实现了跨部门数据共享和协同工作，提高了工作效率</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>创新驱动</h4>
+                        <p>以数据为驱动，不断创新医疗服务模式和管理机制，推动医改持续深入</p>
+                    </div>
+                </div>
+            </div>
+                <tbody>
+                    <tr>
+                        <td><strong>场景1：区域高质量发展仪表盘</strong></td>
+                        <td>WF01、WF03、WF09</td>
+                        <td>引入<span class="strong-text">外转诊/就医外流"雷达"</span>与<span class="strong-text">政策沙盘推演</span>，把"宏观统计"升级为"靶向调度+事前评估"。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>场景2：检查检验互认与重复检查治理</strong></td>
+                        <td>WF02</td>
+                        <td>将<span class="strong-text">项目差异成本与结算偏差</span>纳入互认核验，实现"互认率+成本效果"双目标。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>场景3：DIP/APG一体化支付 + 基金智能监控</strong></td>
+                        <td>WF02、WF10</td>
+                        <td>完成"<span class="strong-text">病案(T+1) ↔ 分组(月) ↔ 结算(实时/T+1)</span>"闭环，沉淀<span class="strong-text">可解释风控规则库</span>。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>场景4：公立医院绩效驾驶舱</strong></td>
+                        <td>WF04、WF05、WF06、WF07</td>
+                        <td>以<span class="strong-text">数字孪生</span>联动<span class="strong-text">差异化价值度量</span>与<span class="strong-text">薪酬改革</span>，打通"病组-质量-人"全链条。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>场景5：共享目录→主数据治理与数据产品货架</strong></td>
+                        <td>WF01、WF05、WF07</td>
+                        <td>新增<span class="strong-text">MPI/MPI-Provider</span>与<span class="strong-text">药品/收费编码映射工单化</span>，形成"可调用的数据产品货架"。</td>
+                    </tr>
+                    <tr>
+                        <td><strong>场景6：药耗合规与带量采购执行监测</strong></td>
+                        <td>WF08</td>
+                        <td>完成<span class="strong-text">院内药品编码→国家医保编码</span>映射与<span class="strong-text">处方-费用-结算</span>一致性核验。</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="highlight-box">
+                <p><strong>注意：</strong>共享目录与频次（如病案首页T+1、DIP/APG按月、异地就医T+1、新生儿T+7、定点机构按月等）请直接援引目录台账作为数据源与验收口径。</p>
+            </div>
+        </div>
+
+        <!-- Slide 6: Effectiveness Transformation Roadmap -->
+        <div class="slide">
+            <h1>2.2 成效转化路径图</h1>
+            <h2>从数据共享到效果产出的完整链条</h2>
+
+            <div class="system-architecture">
+                <h3>🔄 成效转化的五大关键节点</h3>
+                <div class="comparison-grid">
+                    <div class="before-after">
+                        <h4>1️⃣ 数据汇聚</h4>
+                        <p><strong>491个数据集</strong> → 22,561个字段统一标准</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>2️⃣ 智能分析</h4>
+                        <p><strong>AI赋能</strong> → 精准识别业务痛点与改进机会</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>3️⃣ 应用创新</h4>
+                        <p><strong>6大场景</strong> → 跨部门协同应用落地</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>4️⃣ 效果呈现</h4>
+                        <p><strong>量化指标</strong> → 可测量的改革成效</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>5️⃣ 价值反馈</h4>
+                        <p><strong>持续优化</strong> → 形成闭环改进机制</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🎯 量化指标形成过程</h3>
+                <div class="tech-innovation">
+                    <h4>🔢 核心转化机制</h4>
+                    <div class="comparison-grid">
+                        <div class="before-after">
+                            <h4>业务数据沉淀</h4>
+                            <p>病案首页(T+1) → DIP分组(月) → 结算数据(实时)</p>
+                        </div>
+                        <div class="before-after">
+                            <h4>指标计算逻辑</h4>
+                            <p>互认率 = 互认项目数 ÷ 总检查项目数 × 100%</p>
+                        </div>
+                        <div class="before-after">
+                            <h4>效果量化呈现</h4>
+                            <p>成本效益 = (节约费用 - 建设成本) ÷ 建设成本</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>🏥 潍坊实践转化案例</h4>
+                    <div class="achievement-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">92%</div>
+                            <div class="stat-label">检查互认率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">30%</div>
+                            <div class="stat-label">候诊时间减少</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">8.6%</div>
+                            <div class="stat-label">住院费用下降</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="evidence-card">
+                    <h4>💰 投入产出比分析</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">1:4.2</div>投入产出比
+                    </div>
+                    <div class="data-metric">
+                        <div class="metric-number">3年</div>投资回收期
+                    </div>
+                    <div class="data-metric">
+                        <div class="metric-number">2.1亿</div>年节约医疗费用
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>数据完整性：</strong>共享目录台账数据及时率≥98%</div>
+                <div class="kpi-item"><strong>分析准确性：</strong>政策模拟预测偏差≤±10%</div>
+                <div class="kpi-item"><strong>应用有效性：</strong>跨部门协同场景覆盖率100%</div>
+                <div class="kpi-item"><strong>成效可持续性：</strong>年度效益增长率≥15%</div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Complete Data Governance Chain -->
+        <div class="slide">
+            <h1>2.3 数据治理到应用的全链条</h1>
+            <h2>构建闭环数据价值体系</h2>
+
+            <div class="system-architecture">
+                <h3>🔗 数据价值链的四个核心环节</h3>
+                <div class="comparison-grid">
+                    <div class="before-after">
+                        <h4>🗄️ 数据治理</h4>
+                        <ul>
+                            <li><strong>主患者索引（MPI）</strong>统一身份</li>
+                            <li><strong>医务人员索引</strong>精准对应</li>
+                            <li><strong>项目编码映射</strong>标准统一</li>
+                            <li>491个数据集、22,561个字段治理</li>
+                        </ul>
+                    </div>
+                    <div class="before-after">
+                        <h4>🔄 数据共享</h4>
+                        <ul>
+                            <li><strong>四路并行</strong>：政务平台/直连/库表/专线</li>
+                            <li><strong>分级授权</strong>：目录动态管理</li>
+                            <li><strong>实时更新</strong>：T+1/按月/实时多频次</li>
+                            <li>覆盖9,056家医疗卫生机构</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="comparison-grid" style="margin-top: 20px;">
+                    <div class="before-after">
+                        <h4>🤖 智能应用</h4>
+                        <ul>
+                            <li><strong>"1+N+3"</strong>协同架构</li>
+                            <li><strong>AI大脑</strong>统一能力供给</li>
+                            <li><strong>6大应用场景</strong>批量创新</li>
+                            <li>跨部门协同应用落地</li>
+                        </ul>
+                    </div>
+                    <div class="before-after">
+                        <h4>📈 价值产出</h4>
+                        <ul>
+                            <li><strong>量化成效</strong>：互认率92%</li>
+                            <li><strong>效率提升</strong>：候诊时间-30%</li>
+                            <li><strong>成本控制</strong>：住院费用-8.6%</li>
+                            <li>投资回报比达1:4.2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h3>🔧 全链条技术支撑体系</h3>
+                <div class="tech-innovation">
+                    <h4>💻 "两大标准体系、五大应用模块"</h4>
+                    <div class="evidence-grid">
+                        <div class="evidence-card">
+                            <h4>📋 两大标准体系</h4>
+                            <ul>
+                                <li><strong>数据标准体系：</strong>统一数据格式、编码、接口规范</li>
+                                <li><strong>安全标准体系：</strong>分级分类授权、脱敏加密、审计追踪</li>
+                            </ul>
+                        </div>
+                        <div class="evidence-card">
+                            <h4>⚙️ 五大应用模块</h4>
+                            <ul>
+                                <li><strong>数据采集模块：</strong>多源异构数据统一采集</li>
+                                <li><strong>数据处理模块：</strong>清洗、标准化、质量控制</li>
+                                <li><strong>数据存储模块：</strong>分布式存储、备份恢复</li>
+                                <li><strong>数据服务模块：</strong>API接口、查询服务</li>
+                                <li><strong>数据应用模块：</strong>场景化应用、智能分析</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>🔄 闭环管理机制</h4>
+                    <div class="achievement-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">7×24</div>
+                            <div class="stat-label">小时监控运维</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">数据及时率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">99.9%</div>
+                            <div class="stat-label">系统可用性</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="evidence-card">
+                    <h4>🛡️ 安全保障体系</h4>
+                    <ul>
+                        <li><strong>数据不出域：</strong>可用不可见、全链路加密</li>
+                        <li><strong>访问控制：</strong>身份认证、权限管理</li>
+                        <li><strong>审计追踪：</strong>操作日志、使用台账</li>
+                        <li><strong>应急响应：</strong>故障预警、快速恢复</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>治理完整性：</strong>数据标准覆盖率100%，质量合格率≥95%</div>
+                <div class="kpi-item"><strong>共享及时性：</strong>实时数据延迟≤1秒，批量数据T+1交付</div>
+                <div class="kpi-item"><strong>应用有效性：</strong>API调用成功率≥99%，响应时间≤500ms</div>
+                <div class="kpi-item"><strong>安全可控性：</strong>零安全事故，访问审计100%覆盖</div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Six Application Scenarios Overview -->
+        <div class="slide">
+            <h1>第三部分：数据共享改变六大应用场景</h1>
+            <h2>从数据要素到应用价值的场景化实践</h2>
+
+            <div class="highlight-box">
+                <h3>🎯 六大应用场景全景图</h3>
+                <p>基于"三医"协同数据共享机制，<strong>潍坊模式</strong>在6个核心场景实现了从数据孤岛到协同应用的跨越，形成了可复制、可推广的应用实践。</p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="evidence-card">
+                    <h4>🏥 场景1：区域高质量发展仪表盘</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">16项</div>绩效指标实时监测
+                    </div>
+                    <p><strong>成效：</strong>监测周期从72小时压缩至实时，工作效率提升30%</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>🔬 场景2：检查检验互认与重复检查治理</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">92%</div>检查检验互认率
+                    </div>
+                    <p><strong>成效：</strong>患者重复检查大幅减少，医疗资源配置更加精准</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>💰 场景3：DIP/APG一体化支付+基金智能监控</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">T+1</div>病案分组结算闭环
+                    </div>
+                    <p><strong>成效：</strong>形成可解释风控规则库，医保基金监管智能化</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>📊 场景4：公立医院绩效驾驶舱</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">数字孪生</div>差异化价值度量
+                    </div>
+                    <p><strong>成效：</strong>打通"病组-质量-人"全链条，支撑薪酬改革</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>📁 场景5：主数据治理与数据产品货架</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">MPI/MPI-Provider</div>主索引体系
+                    </div>
+                    <p><strong>成效：</strong>形成"一次建模、反复调用"公共底座</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>💊 场景6：药耗合规与带量采购执行监测</h4>
+                    <div class="data-metric">
+                        <div class="metric-number">26.8%</div>药占比降至
+                    </div>
+                    <p><strong>成效：</strong>带量采购执行与临床用药双向校验</p>
+                </div>
+            </div>
+
+            <div class="system-architecture">
+                <h3>🔗 场景间的协同效应</h3>
+                <div class="tech-innovation">
+                    <h4>🔄 三个层次的协同创新</h4>
+                    <div class="comparison-grid">
+                        <div class="before-after">
+                            <h4>数据层协同</h4>
+                            <p>统一的数据标准和共享机制为所有场景提供一致性数据支撑</p>
+                        </div>
+                        <div class="before-after">
+                            <h4>应用层协同</h4>
+                            <p>"1+N+3"架构实现场景间的功能互补和资源共享</p>
+                        </div>
+                        <div class="before-after">
+                            <h4>价值层协同</h4>
+                            <p>各场景成效相互促进，形成整体性改革效应</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievement-stats">
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">场景数据覆盖率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">6大</div>
+                    <div class="stat-label">核心应用场景</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">98.6%</div>
+                    <div class="stat-label">患者满意度</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Scenarios 1-2 Regional Dashboard and Examination Recognition -->
+        <div class="slide">
+            <h1>3.1 区域治理与效率提升场景</h1>
+            <h2>场景1：区域高质量发展仪表盘 + 场景2：检查检验互认治理</h2>
+
+            <div class="comparison-grid">
+                <div class="evidence-card">
+                    <h4>🏥 场景1：区域高质量发展仪表盘</h4>
+                    <div class="highlight-box">
+                        <h4>🎯 科研成果对接（WF01、WF03、WF09）</h4>
+                        <ul>
+                            <li><strong>WF01</strong>：将"三升三降+四维度"固化为驾驶舱顶层指标</li>
+                            <li><strong>WF03</strong>：新增外转诊"雷达"视图</li>
+                            <li><strong>WF09</strong>：接入政策模拟结果</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="achievement-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">72小时→实时</div>
+                            <div class="stat-label">监测周期压缩</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">50%</div>
+                            <div class="stat-label">统计时间减少</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">30%</div>
+                            <div class="stat-label">工作效率提升</div>
+                        </div>
+                    </div>
+
+                    <div class="tech-innovation">
+                        <h4>🚑 5G+北斗定位智能急救</h4>
+                        <p>平均派车响应时间<strong>缩短12秒</strong>，救治成功率<strong>提升9.7%</strong></p>
+                    </div>
+                </div>
+
+                <div class="evidence-card">
+                    <h4>🔬 场景2：检查检验互认治理</h4>
+                    <div class="highlight-box">
+                        <h4>🎯 科研成果对接（WF02）</h4>
+                        <p><strong>WF02</strong>：将"互认率+成本效果"纳入双目标，项目差异成本与结算偏差纳入核验</p>
+                    </div>
+                    
+                    <div class="achievement-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">92%</div>
+                            <div class="stat-label">检查检验互认率</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">30%</div>
+                            <div class="stat-label">患者候诊时间减少</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">15%</div>
+                            <div class="stat-label">重复检查率下降</div>
+                        </div>
+                    </div>
+
+                    <div class="tech-innovation">
+                        <h4>💡 互认核验机制</h4>
+                        <p>差异费用与重复检查"黑点"<strong>定位到机构/科室</strong>，实现精准治理</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-architecture">
+                <h3>🔄 两个场景的数据流转机制</h3>
+                <div class="tech-innovation">
+                    <div class="comparison-grid">
+                        <div class="before-after">
+                            <h4>场景1数据来源</h4>
+                            <ul>
+                                <li>改革指标基础数据（按月，近5年）</li>
+                                <li>医疗机构就医数据（T+1）</li>
+                                <li>异地就医数据（T+1）</li>
+                                <li>定点机构信息（按月）</li>
+                            </ul>
+                        </div>
+                        <div class="before-after">
+                            <h4>场景2数据来源</h4>
+                            <ul>
+                                <li>检查检验项目数据（实时）</li>
+                                <li>互认结果数据（T+1）</li>
+                                <li>费用结算数据（实时/T+1）</li>
+                                <li>医疗机构科室数据（按月）</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>场景1 KPI：</strong>驾驶舱数据及时率≥98%，沙盘预测偏差≤±10%</div>
+                <div class="kpi-item"><strong>场景2 KPI：</strong>互认率≥90%，重复检查率≤5%，患者满意度≥95%</div>
+                <div class="kpi-item"><strong>协同效果：</strong>区域医疗资源配置优化，患者就医体验显著提升</div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Collaborative Mechanism Construction -->
+        <div class="slide">
+            <h1>1.2 协同机制构建：技术支撑体系</h1>
+            <h2>从数据孤岛到协同共享的技术路径</h2>
+
+            <div class="highlight-box">
+                <h3>🔧 协同机制的技术底座</h3>
+                <p>构建<strong>“三医一张网”</strong>，搭建<strong>“数据共同体”</strong>底座，支撑<strong>“数字医联体”</strong>架构创新，衣生出跨系统协同新模式</p>
+            </div>
+
+            <div class="system-architecture">
+                <h3>🔗 协同机制的三大核心组件</h3>
+                <div class="evidence-grid">
+                    <div class="evidence-card">
+                        <h4>🏥 主患者索引（MPI）</h4>
+                        <ul>
+                            <li>跨部门患者信息统一</li>
+                            <li>主键去重规则清晰</li>
+                            <li>版本迭代可追溯</li>
+                        </ul>
+                    </div>
+                    <div class="evidence-card">
+                        <h4>👨‍⚕️ 医务人员索引（Provider Index）</h4>
+                        <ul>
+                            <li>医师资质信息集成</li>
+                            <li>绩效数据精准对应</li>
+                            <li>跨机构身份识别</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="evidence-card" style="margin-top: 20px;">
+                    <h4>🏥 项目编码（Item Code）</h4>
+                    <p><strong>院内收费/药品编码 ↔ 国家医保目录 ↔ 检验项目编码</strong>的精准映射</p>
+                </div>
+            </div>
+
+            <div class="data-metric">
+                <h3>🚪 协同机制的“四路并行”数据通道</h3>
+                <p style="text-align: center; margin-bottom: 20px;">突破部门壁垒，实现跨部门数据实时交换与协同共享</p>
+                <div class="comparison-grid">
+                    <div class="before-after">
+                        <h4>🏢 政务共享平台</h4>
+                        <p>政务数据统一门户</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>🔗 系统直连</h4>
+                        <p>实时数据传输</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>🗄️ 库表对接</h4>
+                        <p>批量数据同步</p>
+                    </div>
+                    <div class="before-after">
+                        <h4>🛠️ 专用通道</h4>
+                        <p>高频数据传输</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievement-stats">
+                <div class="stat-card">
+                    <div class="stat-number">491</div>
+                    <div class="stat-label">业务数据集</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">22,561</div>
+                    <div class="stat-label">业务字段</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">9,056</div>
+                    <div class="stat-label">机构覆盖数</div>
+                </div>
+            </div>
+
+            <div class="tech-innovation">
+                <h4>🔄 协同机制运行效果</h4>
+                <p>打破部门间信息孤岛，实现了<strong>数据共享和互联互通</strong>，<strong>政策协同、信息联通、监管联动</strong>数据支撑有效建立；通过智能决策，借助大数据、人工智能等先进技术，实现了多领域智能决策，<strong>治理效能明显提升</strong>。</p>
+            </div>
+        </div>
+
+        <!-- Slide 5: Scenario 1 -->
+        <div class="slide">
+            <h1>场景1｜区域高质量发展仪表盘</h1>
+            <h2>评价与政策研究</h2>
+            
+            <h3>🎯 科研成果对接</h3>
+            <ul>
+                <li><strong>WF01</strong>（指标引导路径）：将"三升三降+四维度（质/效/体验/合规）"固化为驾驶舱顶层指标</li>
+                <li><strong>WF03</strong>（市域外就医）：新增外转诊"雷达"视图</li>
+                <li><strong>WF09</strong>（医保政策沙盘）：接入政策模拟结果</li>
+            </ul>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>📊 新增跨部门数据（目录与频次）</h4>
+                    <ul>
+                        <li><strong>改革指标基础数据信息</strong>（按月，近五年）</li>
+                        <li><strong>医疗机构近5年就医数据</strong>（T+1）</li>
+                        <li><strong>医院驾驶舱17类实时/准实时表</strong></li>
+                        <li><strong>异地就医数据</strong>（T+1）</li>
+                        <li><strong>定点机构信息</strong>（按月）</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>⚙️ 标准化治理强化项</h4>
+                    <ul>
+                        <li>统一接口与标准</li>
+                        <li><strong>分级分类授权</strong></li>
+                        <li><strong>目录动态更新</strong>与<strong>台账追溯</strong></li>
+                        <li>驾驶舱指标与共享目录频次<strong>一对一</strong>绑定</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>📈 三医数据交换成绩</h3>
+            <div class="highlight-box">
+                <p>"<strong>1个数据中心+N场景+3决策中心</strong>"的协同架构稳定运行，"大脑"统一供给AI能力；<strong>门诊候诊时间-30%</strong>纳入体验指标看板。</p>
+            </div>
+
+            <div class="tech-innovation">
+                <h4>🚑 急救资源智能匹配成果</h4>
+                <div class="comparison-grid">
+                    <div class="before-after before">
+                        <h4>传统模式</h4>
+                        <p>手动调度、经验判断</p>
+                    </div>
+                    <div class="before-after after">
+                        <h4>5G+北斗定位</h4>
+                        <p>平均派车响应时间<strong>缩短12秒</strong></p>
+                        <p>救治成功率<strong>提升9.7%</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="data-metric">
+                <h4>📊 16项绩效指标实时监测</h4>
+                <div class="achievement-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">72小时 → 实时</div>
+                        <div class="stat-label">监测周期压缩</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50%</div>
+                        <div class="stat-label">数据统计时间减少</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">30%</div>
+                        <div class="stat-label">工作效率提升</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item">外转诊病例构成与<strong>大病不出市率</strong></div>
+                <div class="kpi-item">病组结构变化对<strong>基金支出</strong>影响（沙盘预测偏差≤±10%）</div>
+                <div class="kpi-item"><strong>驾驶舱数据及时率</strong>≥98%</div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Scenario 2 -->
+        <div class="slide">
+            <h1>场景2｜检查检验互认通行证与重复检查治理</h1>
+            <h2>供给侧效率</h2>
+            
+            <h3>🎯 科研成果对接</h3>
+            <ul>
+                <li><strong>WF02</strong>（绩效目标与效益问效）：把<strong>互认率</strong>与<strong>人均检查成本</strong>纳入问效；差异费用与重复检查"黑点"定位到机构/科室</li>
+            </ul>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>📊 新增跨部门数据（目录与频次）</h4>
+                    <ul>
+                        <li><strong>重复检查检验数据</strong>（T+1，近一年）</li>
+                        <li><strong>影像/检验平台</strong>结果</li>
+                        <li><strong>门急诊/住院收费与结算明细</strong>（实时/T+1）</li>
+                        <li><strong>收费项目目录与医保目录</strong>（月）</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>⚙️ 标准化治理强化项</h4>
+                    <ul>
+                        <li><strong>同人同项去重规则</strong></li>
+                        <li><strong>项目编码映射（院内↔医保）</strong></li>
+                        <li>质控口径版本化管理</li>
+                        <li>高敏数据<strong>可用不可见</strong>与审计留痕</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>📈 三医数据交换成绩</h3>
+            <div class="highlight-box">
+                <p><strong>互认率达92%</strong>、惠及<strong>6万+患者</strong>、节约费用<strong>超亿元</strong>，作为供给侧效率的<strong>标志性成果</strong>写入报告。</p>
+            </div>
+
+            <div class="data-metric">
+                <h4>💰 影像云与医保联动成果</h4>
+                <div class="stat-card">
+                    <div class="stat-number">4213万元</div>
+                    <div class="stat-label">为患者节约费用</div>
+                </div>
+            </div>
+
+            <div class="tech-innovation">
+                <h4>📊 医院等级评审系统数字化突破</h4>
+                <div class="comparison-grid">
+                    <div class="before-after before">
+                        <h4>传统模式</h4>
+                        <ul>
+                            <li>人工收集整理</li>
+                            <li>纸质材料堆山</li>
+                            <li>评审周期漫长</li>
+                        </ul>
+                    </div>
+                    <div class="before-after after">
+                        <h4>数字化模式</h4>
+                        <ul>
+                            <li>全过程数字化</li>
+                            <li>评审周期<strong>缩短50%</strong></li>
+                            <li>数据准确率<strong>99.2%</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="system-architecture">
+                <h4>🔍 “黑点”精准定位机制</h4>
+                <p>通过<strong>项目编码映射（院内↔医保）</strong>，系统能够实时识别重复检查并量化分析因此造成的资金浪费，并将“黑点”定位到具体机构乃至科室。</p>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>重复检查率</strong>↓</div>
+                <div class="kpi-item">互认覆盖病种数↑</div>
+                <div class="kpi-item"><strong>互认差异结算正确率</strong>≥99.5%</div>
+                <div class="kpi-item"><strong>互认数据T+1达标率</strong>≥98%</div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Scenario 3 -->
+        <div class="slide">
+            <h1>场景3｜DIP/APG一体化支付 + 基金智能监控</h1>
+            <h2>支付与治理</h2>
+            
+            <h3>🎯 科研成果对接</h3>
+            <ul>
+                <li><strong>WF02</strong>（问效）：对分组权重与结算偏差做闭环评估</li>
+                <li><strong>WF10</strong>（高效能运行）："规则+模型"双引擎、第三方核查证据链</li>
+            </ul>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>📊 新增跨部门数据（目录与频次）</h4>
+                    <ul>
+                        <li><strong>住院病案首页/诊断/手术</strong>（T+1）</li>
+                        <li><strong>门急诊/住院收费与费用结算</strong>（实时/T+1）</li>
+                        <li><strong>DIP信息</strong>与<strong>门诊APG信息</strong>（按月）</li>
+                        <li><strong>参保与待遇</strong>（周/T+1）</li>
+                        <li><strong>异地就医</strong>（T+1）</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>⚙️ 标准化治理强化项</h4>
+                    <ul>
+                        <li><strong>MPI</strong>对齐"支付结果↔临床过程"</li>
+                        <li><strong>分组器版本库</strong>与<strong>规则库</strong>版本留痕</li>
+                        <li>全链路<strong>使用台账与审计</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>📈 三医数据交换成绩</h3>
+            <div class="highlight-box">
+                <p>已形成<strong>病案(T+1)↔分组(月)↔结算(实时/T+1)</strong>的跨部门比对闭环，区域层面出现<strong>基金浪费-23.7%</strong>、<strong>次均住院费用-8.6%</strong>持续改善。</p>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>事前拦截命中率</strong></div>
+                <div class="kpi-item">高风险病组<strong>偏离度</strong>（实际/标准权重）</div>
+                <div class="kpi-item"><strong>追偿成功率</strong></div>
+                <div class="kpi-item"><strong>异常就医路径闭环时长</strong></div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Scenario 4 -->
+        <div class="slide">
+            <h1>场景4｜公立医院绩效驾驶舱</h1>
+            <h2>绩效与成本</h2>
+            
+            <h3>🎯 科研成果对接</h3>
+            <ul>
+                <li><strong>WF04</strong>（改革因素）、<strong>WF05</strong>（运营增效）、<strong>WF06</strong>（差异化价值）、<strong>WF07</strong>（薪酬人事）共同组成医院<strong>数字孪生</strong>与<strong>价值医疗度量</strong></li>
+            </ul>
+
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>📊 新增跨部门数据（目录与频次）</h4>
+                    <ul>
+                        <li><strong>医院驾驶舱17类数据</strong>（多表实时/准实时）</li>
+                        <li><strong>医疗机构近5年就医数据</strong>（T+1）</li>
+                        <li><strong>改革基础数据信息</strong>（按月）</li>
+                        <li><strong>医师/护士资质</strong>（半月）</li>
+                    </ul>
+                </div>
+                <div class="evidence-card">
+                    <h4>⚙️ 标准化治理强化项</h4>
+                    <ul>
+                        <li><strong>Provider Master Index</strong>（医师主索引）</li>
+                        <li><strong>风险调整（RA）模型</strong>口径与病种映射</li>
+                        <li><strong>岗位-绩效-薪酬</strong>三表贯通</li>
+                        <li>分级授权到科室层级</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>📈 三医数据交换成绩</h3>
+            <div class="highlight-box">
+                <p>驾驶舱与AI供能"<strong>1+N+3</strong>"架构贯通，持续支撑<strong>满意度98.7%</strong>、<strong>基层就诊率65.63%</strong>等指标跟踪并用于绩效联动。</p>
+            </div>
+
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>科室层平均住院日</strong></div>
+                <div class="kpi-item">RA后<strong>病例致死率对标差</strong></div>
+                <div class="kpi-item"><strong>单病组成本四分位</strong></div>
+                <div class="kpi-item"><strong>绩效与质量/体验挂钩占比</strong>≥X%</div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Scenarios 5 & 6 -->
+        <div class="slide">
+            <h1>场景5&6｜数据治理与药耗监测</h1>
+            
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>🗂️ 场景5：共享目录→主数据治理与数据产品货架</h4>
+                    <h3>科研成果对接</h3>
+                    <ul>
+                        <li><strong>WF01/WF05/WF07</strong>：把"<strong>MPI、Provider Index、Item Code（院内↔医保↔检验）</strong>"等主数据与映射沉淀为<strong>数据产品货架</strong>与<strong>工单化治理机制</strong></li>
+                    </ul>
+                    <div class="kpi-list">
+                        <div class="kpi-item"><strong>目录覆盖率/更新及时率/授权合规率</strong></div>
+                        <div class="kpi-item"><strong>主数据冲突解决时长</strong></div>
+                        <div class="kpi-item"><strong>数据产品复用次数</strong></div>
+                    </div>
+                </div>
+                
+                <div class="evidence-card">
+                    <h4>💊 场景6：药耗合规与带量采购执行监测</h4>
+                    <h3>科研成果对接</h3>
+                    <ul>
+                        <li><strong>WF08</strong>（"医保药"协同）：完成"院内药品编码→国家医保编码"的双向映射，构建<strong>目录执行一致性</strong>引擎</li>
+                    </ul>
+                    <div class="kpi-list">
+                        <div class="kpi-item"><strong>目录执行一致率</strong>≥99%</div>
+                        <div class="kpi-item"><strong>高价替代率</strong>↓</div>
+                        <div class="kpi-item"><strong>不合理用药预警闭环时长</strong></div>
+                        <div class="kpi-item"><strong>重点药日均强度（DDD）</strong>达标率</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>场景5成效：</strong>形成"<strong>一次建模、反复调用</strong>"的公共底座，支撑AI与多场景快速孵化（大脑统一供能）。</p>
+                <p><strong>场景6成效：</strong>区域<strong>药占比下降至约26.8%</strong>，带量采购执行与临床用药实现双向校验。</p>
+            </div>
+        </div>
+
+        <!-- Slide 10: Data Exchange Results -->
+        <div class="slide">
+            <h1>"三医数据交换的成绩"</h1>
+            <h2>过程与结果型证据</h2>
+            
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>🔄 过程证据</h4>
+                    <ul>
+                        <li><strong>平台级对接</strong>与统一标准：政务共享平台/系统直连/库表对接/专用通道"四路并行"</li>
+                        <li><strong>频次与广度</strong>：已形成<strong>实时/准实时/T+1/T+7/按月</strong>的多粒度同步</li>
+                        <li><strong>安全与合规</strong>：坚持"<strong>数据不出域、可用不可见</strong>"</li>
+                        <li><strong>架构与赋能</strong>：以"<strong>1+N+3</strong>"协同应用架构，"大脑"统一供给AI能力</li>
+                    </ul>
+                </div>
+                
+                <div class="evidence-card">
+                    <h4>📊 结果证据（量化指标）</h4>
+                    <h3>互认与便民</h3>
+                    <ul>
+                        <li>检查检验结果<strong>互认率92%</strong></li>
+                        <li><strong>6万+</strong>患者受益</li>
+                        <li>费用<strong>超亿元</strong>节约</li>
+                        <li><strong>门诊候诊时间-30%</strong></li>
+                    </ul>
+                    <h3>治理与效率</h3>
+                    <ul>
+                        <li><strong>基金浪费-23.7%</strong></li>
+                        <li><strong>次均住院费用-8.6%</strong></li>
+                        <li><strong>基层就诊率65.63%</strong></li>
+                        <li><strong>满意度98.7%</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h3>🔧 字段级/工单级补充清单（摘选）</h3>
+            <div class="kpi-list">
+                <div class="kpi-item"><strong>MPI（患者）/Provider Index（医师）/Item Code（院内↔医保↔检验）</strong>三大主索引</div>
+                <div class="kpi-item"><strong>支付闭环字段</strong>：病案首页（T+1）核心域 + DIP/APG分组（月） + 费用/结算（实时/T+1）</div>
+                <div class="kpi-item"><strong>药品治理字段</strong>：国家医保药品编码、院内药品码、处方/医嘱用量单位</div>
+                <div class="kpi-item"><strong>外转诊监测字段</strong>：异地就医（机构、病种、费用、报销金额）</div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Implementation Guide -->
+        <div class="slide">
+            <h1>实施指南与总结</h1>
+            
+            <h2>📋 如何把补充内容插入前稿（操作建议）</h2>
+            <div class="evidence-grid">
+                <div class="evidence-card">
+                    <h4>1. 跨部门数据段落</h4>
+                    <p>直接增列本稿"<strong>新增跨部门数据（目录与频次）</strong>"要点，并在页脚或侧栏标注"来自《首批共享目录》"。</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>2. 标准化治理段落</h4>
+                    <p>补入<strong>MPI/Provider Index/编码映射/规则与分组版本库/审计台账</strong>等"工程化词条"。</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>3. 成效与KPI段落</h4>
+                    <p>同步加入本稿"<strong>新增KPI/验收口径</strong>"，并用潍坊既有实证数据作为锚点。</p>
+                </div>
+                <div class="evidence-card">
+                    <h4>4. 数据交换成绩章节</h4>
+                    <p>采用"过程证据+结果证据"双栏式呈现，左栏写机制与频次，右栏写量化成效。</p>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h2>🎯 结语</h2>
+            <div class="highlight-box">
+                <p>将<strong>WF01–WF10</strong>的研究要点注入六大场景，最关键的是把<strong>"共享目录—频次—主索引—版本库—审计台账"</strong>做成<strong>可复用的数据与规则资产</strong>，并用一套<strong>跨部门KPI</strong>贯穿"政策—支付—临床—服务"。</p>
+                
+                <p style="margin-top: 20px;">这样既放大了<strong>三医数据交换的过程性成绩</strong>（标准、频次、合规、架构），也确保了<strong>应用层可量化的结果性成效</strong>（互认、便民、控费、增效），实现从数据交换到价值创造的闭环。</p>
+            </div>
+
+            <div class="evidence-card" style="margin-top: 30px;">
+                <h4>📄 后续支持</h4>
+                <p>若需要，可进一步提供：</p>
+                <ul>
+                    <li>"六大场景+新增KPI"<strong>PPT母版/指标卡片模板</strong></li>
+                    <li><strong>目录台账Excel（字段级）</strong></li>
+                    <li>便于立项与验收直接使用的标准化文档</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-counter">
+        <span id="current-slide">1</span> / <span id="total-slides">11</span>
+    </div>
+
+    <div class="navigation">
+        <button class="nav-btn" id="prev-btn" onclick="previousSlide()">◀ 上一页</button>
+        <button class="nav-btn" id="next-btn" onclick="nextSlide()">下一页 ▶</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                previousSlide();
+            } else if (e.key >= '1' && e.key <= '9') {
+                e.preventDefault();
+                const slideNum = parseInt(e.key) - 1;
+                if (slideNum < totalSlides) {
+                    showSlide(slideNum);
+                }
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>

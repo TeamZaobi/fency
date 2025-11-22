@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实例三：集成MCP的多媒体连续服务伙伴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .main-container { display: flex; gap: 1rem; }
+        .left-panel { flex: 2; } /* 左侧占2份 */
+        .right-panel { flex: 1; } /* 右侧占1份 */
+        .chat-box { height: 55vh; /* 稍微减小高度 */ overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem; background-color: #f9fafb; margin-bottom: 1rem; }
+        .message { margin-bottom: 1rem; padding: 0.5rem 1rem; border-radius: 0.5rem; max-width: 90%; /* 稍微加宽 */ word-wrap: break-word; }
+        .message.patient { background-color: #dbeafe; color: #1e40af; margin-left: auto; text-align: right; }
+        .message.doctor { background-color: #d1fae5; color: #065f46; margin-right: auto; }
+        .message.agent-info { background-color: #e0e7ff; color: #3730a3; font-size: 0.875rem; margin-top: -0.5rem; margin-left: 1rem; max-width: 80%; border: 1px dashed #c7d2fe; }
+        .message.agent-action { background-color: #fef9c3; color: #713f12; font-size: 0.875rem; margin-top: -0.5rem; margin-left: 1rem; max-width: 80%; border: 1px dashed #fcd34d; font-style: italic;}
+
+        .emotion-indicator { font-size: 0.9rem; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-block; margin-left: 0.5rem; }
+        .emotion-anxiety { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .emotion-anger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        /* ... 其他情绪样式 ... */
+        .emotion-neutral { background-color: #e5e7eb; color: #4b5563; border: 1px solid #d1d5db; }
+
+        .input-area { display: flex; margin-top: 1rem; }
+        .input-field { flex-grow: 1; border: 1px solid #d1d5db; border-radius: 0.375rem 0 0 0.375rem; padding: 0.5rem; }
+        .send-btn { background-color: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0 0.375rem 0.375rem 0; border: 1px solid #3b82f6; border-left: none; }
+        .send-btn:hover { background-color: #2563eb; }
+
+        .right-panel .panel-section { margin-bottom: 1rem; background-color: #fff; padding: 0.75rem; border-radius: 0.5rem; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1); }
+        .right-panel h3 { font-semibold; color: #1f2937; margin-bottom: 0.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.25rem;}
+        .right-panel button { background-color: #10b981; color: white; font-size: 0.875rem; padding: 0.3rem 0.8rem; border-radius: 0.375rem; margin-right: 0.5rem; margin-bottom: 0.5rem; transition: background-color 0.3s; }
+        .right-panel button:hover { background-color: #059669; }
+        .right-panel button:disabled { background-color: #9ca3af; cursor: not-allowed; }
+        .multimedia-display { border: 1px dashed #ccc; min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; color: #6b7280; background-color: #f9fafb; border-radius: 0.5rem; padding: 1rem; font-size: 0.9rem;}
+        .ehr-data-display { font-size: 0.875rem; color: #4b5563; background-color: #f3f4f6; padding: 0.5rem; border-radius: 0.375rem; margin-top: 0.5rem;}
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">实例三：集成 MCP 的多媒体、连续服务与决策支持伙伴</h1>
+        <p class="text-sm text-gray-600 mb-6 text-center">模拟 AI 助手通过 MCP 连接后台系统，提供实时数据、多媒体展示和整合服务的医患沟通场景。</p>
+
+        <div class="main-container">
+            <div class="left-panel">
+                <h2 class="text-lg font-medium mb-2 text-gray-700">实时对话窗口</h2>
+                <div class="chat-box" id="chatBox">
+                    <div class="message agent-info">
+                        <i class="fas fa-database mr-1"></i> AI 已通过 MCP 获取患者基线信息：李先生，60岁，男。EHR 问题列表：高血压(10年)，2型糖尿病(5年)。EHR 过敏记录：无已知药物过敏。
+                    </div>
+                    <div class="message doctor">医生: 李先生，家属，我们谈谈检查结果... 是 IV 期肺癌，伴有骨转移。</div>
+                     <div class="message agent-info">
+                        <i class="fas fa-brain mr-1"></i> AI 分析: 告知坏消息关键节点，准备处理情绪。
+                    </div>
+                </div>
+                 <div class="text-sm text-gray-600 mb-2 mt-4">模拟患者/家属实时反应:</div>
+                <div class="input-area">
+                    <input type="text" id="patientInput" class="input-field" placeholder="输入患者/家属的话...">
+                    <select id="patientEmotion" class="border border-gray-300 rounded-md px-2 py-1 text-sm mx-2">
+                        <option value="anxiety">焦虑</option>
+                        <option value="anger">愤怒</option>
+                        <option value="sadness">悲伤</option>
+                        <option value="denial">否认</option>
+                        <option value="confusion">困惑</option> <option value="questioning">质疑</option> <option value="neutral">平静</option>
+                    </select>
+                    <button id="sendPatientMsgBtn" class="send-btn">发送</button>
+                </div>
+            </div>
+
+            <div class="right-panel">
+                 <div class="panel-section">
+                    <h3><i class="fas fa-tachometer-alt mr-1"></i> 患者状态监控 (模拟)</h3>
+                    <div id="emotionDisplay" class="mb-2">情绪: <span class="emotion-indicator emotion-neutral">平静</span></div>
+                    </div>
+
+                 <div class="panel-section">
+                     <h3><i class="fas fa-cogs mr-1"></i> AI 辅助操作 (MCP 调用模拟)</h3>
+                     <button id="getRenalBtn"><i class="fas fa-flask mr-1"></i> 查询肾功能</button>
+                     <button id="checkInteractionBtn"><i class="fas fa-pills mr-1"></i> 查药物相互作用</button>
+                     <button id="showComparisonBtn"><i class="fas fa-chart-bar mr-1"></i> 显示治疗对比</button>
+                     <button id="showVideoBtn"><i class="fas fa-video mr-1"></i> 播放姑息视频</button>
+                     <button id="scheduleConsultBtn"><i class="fas fa-calendar-alt mr-1"></i> 预约姑息会诊</button>
+                     <button id="sendMessageBtn"><i class="fas fa-paper-plane mr-1"></i> 发送消息摘要</button>
+                     <div id="mcpResultDisplay" class="ehr-data-display hidden"></div>
+                 </div>
+
+                 <div class="panel-section">
+                     <h3><i class="fas fa-photo-video mr-1"></i> 多媒体展示区</h3>
+                     <div id="multimediaDisplay" class="multimedia-display">
+                         (点击上方按钮可在此处展示图表、视频或网页内容)
+                     </div>
+                 </div>
+
+                 <div class="panel-section">
+                     <h3><i class="fas fa-tasks mr-1"></i> 后续行动计划</h3>
+                     <ul id="actionPlanList" class="list-disc list-inside text-sm text-gray-600">
+                         <li>待定...</li>
+                     </ul>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+        const patientInput = document.getElementById('patientInput');
+        const patientEmotionSelect = document.getElementById('patientEmotion');
+        const sendPatientMsgBtn = document.getElementById('sendPatientMsgBtn');
+        const emotionDisplay = document.getElementById('emotionDisplay');
+        const mcpResultDisplay = document.getElementById('mcpResultDisplay');
+        const multimediaDisplay = document.getElementById('multimediaDisplay');
+        const actionPlanList = document.getElementById('actionPlanList');
+
+        // 模拟情绪及其样式
+        const emotionClasses = { anxiety: 'emotion-anxiety', anger: 'emotion-anger', sadness: 'emotion-sadness', denial: 'emotion-anxiety', confusion: 'emotion-anxiety', questioning:'emotion-anger', neutral: 'emotion-neutral' };
+        const emotionText = { anxiety: '焦虑', anger: '愤怒', sadness: '悲伤', denial: '否认/焦虑', confusion: '困惑', questioning: '质疑', neutral: '平静' };
+
+        function updateEmotionDisplay(emotion) {
+             emotionDisplay.innerHTML = `情绪: <span class="emotion-indicator ${emotionClasses[emotion]}">${emotionText[emotion]}</span>`;
+        }
+
+        function addMessage(sender, text, isInfo = false, isAction = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.textContent = text; // Use textContent for safety
+
+            if (isInfo) {
+                messageDiv.classList.add('agent-info');
+                messageDiv.innerHTML = `<i class="fas fa-database mr-1"></i> AI 信息: ${text}`; // Use innerHTML carefully
+            } else if (isAction) {
+                messageDiv.classList.add('agent-action');
+                messageDiv.innerHTML = `<i class="fas fa-bolt mr-1"></i> AI 行动: ${text}`; // Use innerHTML carefully
+            } else if (sender === 'patient') {
+                messageDiv.classList.add('patient');
+                // Add emotion indicator logic if needed here
+            } else { // doctor
+                messageDiv.classList.add('doctor');
+            }
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- MCP 调用模拟 ---
+        document.getElementById('getRenalBtn').addEventListener('click', () => {
+            mcpResultDisplay.textContent = `正在通过 MCP 查询最新肾功能...`;
+            mcpResultDisplay.classList.remove('hidden');
+            addMessage('agent', `医生请求查询患者最新肾功能 (MCP Resource: get_latest_lab_result('eGFR'))`, false, true);
+            setTimeout(() => {
+                const egfr = Math.floor(Math.random() * 30 + 60); // 模拟 60-90 之间的值
+                mcpResultDisplay.textContent = `MCP 返回: 最新 eGFR = ${egfr} mL/min/1.73m² (结果正常)`;
+                addMessage('agent', `获取到最新肾功能 eGFR=${egfr} mL/min/1.73m²`, false, true);
+            }, 1500);
+        });
+
+        document.getElementById('checkInteractionBtn').addEventListener('click', () => {
+             mcpResultDisplay.textContent = `正在通过 MCP 检查药物相互作用...`;
+             mcpResultDisplay.classList.remove('hidden');
+             addMessage('agent', `医生请求检查当前方案与患者既往用药的相互作用 (MCP Tool: check_drug_interaction)`, false, true);
+             setTimeout(() => {
+                 mcpResultDisplay.textContent = `MCP 返回: 未发现当前方案与记录用药（氨氯地平, 二甲双胍）存在严重相互作用。`;
+                 addMessage('agent', `药物相互作用检查完成：无严重相互作用`, false, true);
+             }, 1800);
+        });
+
+         document.getElementById('showComparisonBtn').addEventListener('click', () => {
+             multimediaDisplay.innerHTML = `
+                 <div class='p-4 text-left w-full'>
+                     <h4 class='font-semibold mb-2'>治疗方案对比 (模拟)</h4>
+                     <table class='w-full text-xs border-collapse border border-slate-400'>
+                         <thead>
+                             <tr class='bg-slate-100'>
+                                 <th class='border border-slate-300 p-1'>方面</th>
+                                 <th class='border border-slate-300 p-1'>姑息化疗</th>
+                                 <th class='border border-slate-300 p-1'>最佳支持/姑息治疗</th>
+                             </tr>
+                         </thead>
+                         <tbody>
+                             <tr><td class='border border-slate-300 p-1'>主要目标</td><td class='border border-slate-300 p-1'>尝试延缓肿瘤进展, 可能延长生存期</td><td class='border border-slate-300 p-1'>最大化缓解症状, 提高生活质量</td></tr>
+                             <tr><td class='border border-slate-300 p-1'>主要方式</td><td class='border border-slate-300 p-1'>化疗药物, 可能有靶向/免疫</td><td class='border border-slate-300 p-1'>止痛/止咳/营养支持/心理关怀等</td></tr>
+                             <tr><td class='border border-slate-300 p-1'>常见副作用</td><td class='border border-slate-300 p-1'>恶心呕吐, 乏力, 脱发, 血象降低等</td><td class='border border-slate-300 p-1'>药物副作用相对较轻</td></tr>
+                             <tr><td class='border border-slate-300 p-1'>生活质量影响</td><td class='border border-slate-300 p-1'>可能因副作用暂时下降</td><td class='border border-slate-300 p-1'>目标是维持或改善</td></tr>
+                         </tbody>
+                     </table>
+                     <p class='text-slate-500 mt-1 text-center'>*此为简化对比，具体请详细咨询医生*</p>
+                 </div>`;
+             addMessage('agent', `已通过 MCP Tool: display_interactive_comparison_tool 展示治疗方案对比`, false, true);
+         });
+
+         document.getElementById('showVideoBtn').addEventListener('click', () => {
+             multimediaDisplay.innerHTML = `
+                 <div class='p-4 text-center'>
+                     <i class="fas fa-play-circle fa-3x text-blue-500 mb-2"></i>
+                     <p>正在加载“姑息治疗介绍”视频...</p>
+                     <p class='text-xs text-slate-500'>(模拟播放权威科普视频)</p>
+                 </div>`;
+             addMessage('agent', `已通过 MCP Tool: show_educational_video 播放姑息治疗介绍视频`, false, true);
+         });
+
+         document.getElementById('scheduleConsultBtn').addEventListener('click', () => {
+             mcpResultDisplay.textContent = `正在通过 MCP 尝试预约姑息治疗团队会诊...`;
+             mcpResultDisplay.classList.remove('hidden');
+             addMessage('agent', `医生请求预约姑息治疗团队会诊 (MCP Tool: schedule_consultation)`, false, true);
+             setTimeout(() => {
+                 const success = Math.random() > 0.3; // 模拟成功率
+                 if (success) {
+                     const time = `下周三 ${Math.floor(Math.random()*4+1)}:00 PM`;
+                     mcpResultDisplay.textContent = `MCP 操作成功: 已成功预约姑息治疗团队会诊，时间：${time}。`;
+                     actionPlanList.innerHTML = `<li>已预约姑息治疗团队会诊 (${time})</li>`;
+                     addMessage('agent', `成功预约姑息会诊: ${time}`, false, true);
+                 } else {
+                     mcpResultDisplay.textContent = `MCP 操作失败: 姑息团队近期排班已满，请稍后重试或联系科室。`;
+                     addMessage('agent', `预约姑息会诊失败，建议人工处理`, false, true);
+                 }
+             }, 2000);
+         });
+
+         document.getElementById('sendMessageBtn').addEventListener('click', () => {
+             mcpResultDisplay.textContent = `正在通过 MCP 发送消息摘要...`;
+             mcpResultDisplay.classList.remove('hidden');
+             addMessage('agent', `医生请求发送包含治疗方案对比链接和支持信息的安全消息 (MCP Tool: send_secure_message)`, false, true);
+             setTimeout(() => {
+                 mcpResultDisplay.textContent = `MCP 操作成功: 包含摘要和链接的安全消息已发送至患者 APP。`;
+                 if (!actionPlanList.innerHTML.includes('已发送')) {
+                    const li = document.createElement('li');
+                    li.textContent = '已发送沟通摘要及资源链接至患者 APP';
+                    actionPlanList.appendChild(li);
+                 }
+                  addMessage('agent', `已发送沟通摘要及资源链接至患者 APP`, false, true);
+             }, 1200);
+         });
+
+
+        // --- 实时对话模拟 ---
+        sendPatientMsgBtn.addEventListener('click', () => {
+            const msg = patientInput.value.trim();
+            const emotion = patientEmotionSelect.value;
+            if (msg) {
+                addMessage('patient', msg);
+                updateEmotionDisplay(emotion); // 更新情绪显示
+                // 模拟 AI 回应 (这里简化，实际会更复杂)
+                let agentResponse = `收到您的反馈。`;
+                if (emotion === 'anger' || emotion === 'denial' || emotion === 'questioning') {
+                     agentResponse = `我理解您现在的心情非常激动和难以接受。请允许我们先确认一下信息...`;
+                     addMessage('agent', `检测到强烈负面情绪 (${emotionText[emotion]})，优先安抚和信息核实。`, false, true);
+                } else if (emotion === 'confusion') {
+                     agentResponse = `您似乎对 [某个方面] 感到困惑，需要我再解释一下或者展示一些资料吗？（点击右侧按钮试试？）`;
+                     addMessage('agent', `检测到困惑情绪，建议使用多媒体解释或信息查询。`, false, true);
+                } else if (msg.includes('肾功能') || msg.includes('副作用')) {
+                    agentResponse = `关于肾功能和副作用的问题很重要，我们可以立刻查询一下最新的情况并详细讨论。（请医生点击右侧'查询肾功能'或相关按钮）`;
+                     addMessage('agent', `识别到具体临床问题，建议通过 MCP 获取实时数据支持回答。`, false, true);
+                }
+                addMessage('doctor', agentResponse); // 模拟医生采纳 AI 建议进行回应
+                patientInput.value = '';
+            }
+        });
+
+        // 初始化
+        updateEmotionDisplay('neutral');
+
+
+    </script>
+</body>
+</html>

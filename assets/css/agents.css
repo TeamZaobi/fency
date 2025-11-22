@@ -1,0 +1,81 @@
+/* Agent 应用教学 统一样式（使用 theme.css 令牌） */
+:root {
+  /* 适配层：沿用旧变量名映射到主题令牌，避免大规模改动 */
+  --bg: var(--color-background);
+  --panel: var(--color-card);
+  --muted: var(--color-muted);
+  --text: var(--color-foreground);
+  --subtext: var(--color-muted-foreground);
+  --brand: var(--color-primary);
+  --accent: var(--color-accent);
+  --border: var(--color-border);
+}
+
+/* 页面基线来自 theme.css，这里仅做布局与组件样式 */
+
+.container { max-width: 1120px; margin: 0 auto; padding: 24px; }
+
+header.ag-header {
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: blur(6px) saturate(1.05);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-card), transparent 10%), color-mix(in oklab, var(--color-card), transparent 20%));
+  border-bottom: 1px solid var(--border);
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+.brand a { color: var(--text); text-decoration: none; }
+.brand .logo { width: 28px; height: 28px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--brand), var(--accent)); box-shadow: var(--shadow-sm); }
+.brand .title { letter-spacing: 0.5px; }
+
+.ag-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+.ag-actions { display: flex; align-items: center; gap: 8px; }
+.btn {
+  padding: 8px 12px; border-radius: var(--radius-md); border: 1px solid var(--border);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-card), black 5%), color-mix(in oklab, var(--color-card), black 12%));
+  color: var(--text); cursor: pointer; box-shadow: var(--shadow-2xs);
+}
+.btn:hover { border-color: color-mix(in oklab, var(--border), var(--color-primary) 20%); }
+
+.ag-nav {
+  display: flex; gap: 12px; flex-wrap: wrap; padding: 10px 0 14px 0;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.ag-nav a {
+  color: var(--subtext); text-decoration: none; font-weight: 600; font-size: 14px;
+  padding: 6px 10px; border-radius: var(--radius-md); border: 1px solid transparent;
+}
+.ag-nav a:hover { color: var(--text); border-color: var(--border); background: color-mix(in oklab, var(--color-muted), transparent 30%); }
+.ag-nav a.active { color: var(--text); background: color-mix(in oklab, var(--color-muted), transparent 10%); border-color: var(--border); }
+
+main.ag-main { display: grid; grid-template-columns: 1fr; gap: 18px; padding-top: 18px; }
+.panel {
+  background: var(--color-card);
+  color: var(--color-card-foreground);
+  border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px;
+  box-shadow: var(--shadow-xs);
+}
+.muted { color: var(--subtext); }
+.h1 { font-size: 28px; font-weight: 800; letter-spacing: 0.2px; margin: 0 0 10px; }
+.h2 { font-size: 20px; font-weight: 700; margin: 12px 0 8px; }
+.lead { font-size: 16px; color: var(--subtext); line-height: 1.7; }
+.grid { display: grid; gap: 14px; }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0,1fr)); }
+@media (max-width: 960px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+
+.card { background: var(--color-popover); color: var(--color-popover-foreground); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; box-shadow: var(--shadow-2xs); }
+.card .title { font-weight: 700; margin-bottom: 6px; }
+
+.kpi { display: flex; align-items: center; gap: 10px; }
+.kpi .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent), transparent 80%); }
+.kpi .value { font-size: 18px; font-weight: 800; }
+.kpi .desc { color: var(--subtext); font-size: 13px; }
+
+.list { margin: 8px 0; padding-left: 18px; }
+.list li { margin: 6px 0; color: var(--subtext); }
+
+pre { margin: 10px 0; padding: 12px; background: var(--color-popover); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: auto; box-shadow: var(--shadow-2xs); }
+code { color: var(--color-accent); font-family: var(--font-mono); }
+
+.footer { color: var(--subtext); font-size: 13px; text-align: center; padding: 22px 0; }
+
+.note { border-left: 3px solid var(--brand); padding: 10px 12px; background: color-mix(in oklab, var(--color-muted), transparent 20%); color: var(--subtext); border-radius: var(--radius-md); }

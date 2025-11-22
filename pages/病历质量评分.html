@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>病历质量评价工作流程</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+
+    <style>
+        /* Define base font families */
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+            @apply bg-white text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif SC', serif;
+            @apply font-semibold;
+        }
+        /* Custom scrollbar for a refined look (optional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            @apply dark:bg-gray-800;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+            @apply dark:bg-gray-600;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            @apply dark:bg-gray-500;
+        }
+        /* Mermaid diagram styling */
+        .mermaid {
+            @apply bg-gray-50 dark:bg-gray-800 p-4 rounded-lg shadow-inner text-center mb-8 overflow-x-auto;
+        }
+        /* Card styling */
+        .workflow-card {
+            @apply bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:border-gray-700;
+        }
+        /* Button styling */
+        .btn {
+            @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200 shadow;
+        }
+        .btn-primary {
+            @apply bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600;
+        }
+        .btn-secondary {
+            @apply bg-gray-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
+        }
+        /* Link styling */
+        a {
+            @apply text-blue-600 dark:text-blue-400 hover:underline;
+        }
+        /* Hero section gradient */
+        .hero-gradient {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+        }
+        .dark .hero-gradient {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0c4a6e 100%);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <button id="theme-toggle" type="button" class="fixed top-4 right-4 z-50 btn btn-secondary p-2.5">
+        <i id="theme-toggle-dark-icon" class="fas fa-moon w-5 h-5 hidden"></i>
+        <i id="theme-toggle-light-icon" class="fas fa-sun w-5 h-5 hidden"></i>
+    </button>
+
+    <header class="hero-gradient py-16 md:py-24 text-center relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 dark:opacity-5">
+            </div>
+        <div class="container mx-auto px-4 relative z-10">
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+                智能化病历质量评价工作流程
+            </h1>
+            <p class="text-lg md:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+                结合自动化与人工智能，系统化评估完整就诊病历的整体性与内容细节，提升医疗质量管理水平。
+            </p>
+            <a href="#workflow-diagram" class="btn btn-primary text-lg">
+                <i class="fas fa-project-diagram mr-2"></i> 查看流程图
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12 md:py-16">
+
+        <section class="mb-16 text-center">
+            <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">流程概述</h2>
+            <p class="text-lg text-gray-600 dark:text-gray-400 max-w-4xl mx-auto">
+                本流程旨在通过系统化的步骤，利用现代技术手段对电子病历进行全面的质量评估。评价覆盖两个核心维度：一是确保一次完整就诊（住院或门诊）所需的核心文书类型齐全（**整体完整性**）；二是对关键文书（如入院记录、出院记录）的内容进行深入分析，评估其是否符合规范，信息是否详尽准确（**内容详细性**）。最终目标是为医疗质量控制提供客观、高效的量化依据。
+            </p>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">核心评价步骤</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                <div class="workflow-card">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 rounded-full w-10 h-10 flex items-center justify-center mr-4 text-xl font-bold">1</span>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">数据接入与准备</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-database mr-2 text-blue-500"></i>根据就诊标识连接数据库，提取该次就诊的**全部**相关病历文档（结构化、文本等），并进行初步整理。
+                    </p>
+                </div>
+
+                <div class="workflow-card">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300 rounded-full w-10 h-10 flex items-center justify-center mr-4 text-xl font-bold">2</span>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">整体完整性评分</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-clipboard-check mr-2 text-green-500"></i>遍历所有文档，识别类型。根据预设规则对**首次出现**的必需文书类型计分。最终报告得分及缺失的文书类型。
+                    </p>
+                </div>
+
+                <div class="workflow-card">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded-full w-10 h-10 flex items-center justify-center mr-4 text-xl font-bold">3</span>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">内容详细性评分</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-file-alt mr-2 text-purple-500"></i>针对**关键文书**（入院/出院记录等），使用包含评分细则的Prompt调用大模型分析内容。若**必须项**为0分，则该文书内容分为0。
+                    </p>
+                </div>
+
+                <div class="workflow-card">
+                    <div class="flex items-center mb-4">
+                        <span class="bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300 rounded-full w-10 h-10 flex items-center justify-center mr-4 text-xl font-bold">4</span>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">结构规范性检查 (可选)</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-sitemap mr-2 text-yellow-500"></i>（二次调用模型）在内容评分前，检查关键文书是否包含标准结构/章节。可作为独立指标或影响内容评分。
+                    </p>
+                </div>
+
+                <div class="workflow-card col-span-1 md:col-span-2 lg:col-span-1">
+                     <div class="flex items-center mb-4">
+                        <span class="bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded-full w-10 h-10 flex items-center justify-center mr-4 text-xl font-bold">5</span>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">结果汇总与报告</h3>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-400">
+                        <i class="fas fa-chart-bar mr-2 text-red-500"></i>整合整体完整性得分、内容详细性得分（含细则扣分原因）、结构检查结果，生成**综合质量评价报告**。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="workflow-diagram" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">工作流程可视化</h2>
+            <div class="mermaid">
+graph TD;
+    A["开始: 输入就诊ID"] --> B("1. 数据接入与准备");
+    B --> C{"遍历所有文档"};
+    C --> D["识别文档类型"];
+    D --> E{"是必需类型且未计分?"};
+    E -- "是" --> F["累加完整性分数, 记录类型"];
+    E -- "否" --> C;
+    F --> C;
+    C -- "遍历结束" --> G["汇总整体完整性得分 & 缺失项"];
+
+    G --> H{"选择关键文书"};
+    H -- "对每个关键文书" --> I("4. 结构检查 LLM Call 1 - 可选");
+    I --> J("3. 内容评分 LLM Call 2 - 含细则");
+    J --> K{"解析评分结果"};
+    K --> L{"必须项得分为0?"};
+    L -- "是" --> M["内容分=0"];
+    L -- "否" --> N["累加细则得分"];
+    M --> O["存储文书评分结果"];
+    N --> O;
+    O --> H;
+    H -- "所有关键文书处理完毕" --> P["汇总所有文书内容评分"];
+
+    G --> Q("5. 生成最终报告");
+    P --> Q;
+    I -.-> Q;  // "结构检查结果也汇入报告" (Comment, not quoted)
+
+    style A fill:#f0f9ff,stroke:#0284c7,stroke-width:2px,color:#0369a1
+    style Q fill:#f0f9ff,stroke:#0284c7,stroke-width:2px,color:#0369a1
+    style B fill:#e0f2fe,stroke:#0ea5e9,color:#0c4a6e
+    style C fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    style D fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    style E fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style F fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style G fill:#dcfce7,stroke:#16a34a,color:#14532d
+    style H fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    style I fill:#fef9c3,stroke:#eab308,color:#713f12
+    style J fill:#f3e8ff,stroke:#9333ea,color:#581c87
+    style K fill:#f3e8ff,stroke:#9333ea,color:#581c87
+    style L fill:#fefce8,stroke:#ca8a04,color:#713f12
+    style M fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    style N fill:#f3e8ff,stroke:#9333ea,color:#581c87
+    style O fill:#f3e8ff,stroke:#9333ea,color:#581c87
+    style P fill:#f3e8ff,stroke:#9333ea,color:#581c87
+
+    classDef default fill:#fff,stroke:#6b7280,stroke-width:1px,color:#374151;
+    classDef darkDefault fill:#374151,stroke:#9ca3af,stroke-width:1px,color:#f3f4f6;
+            </div>
+            <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+                <i class="fas fa-info-circle mr-1"></i> 这是一个交互式流程图，展示了从数据接入到报告生成的完整步骤。
+            </p>
+        </section>
+
+        <section class="mb-16 bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-md">
+            <h2 class="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">技术考量与说明</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 dark:text-gray-300">
+                <div>
+                    <h4 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-brain mr-2 text-pink-500"></i>大模型与Prompt</h4>
+                    <p>选择合适的医疗领域大模型至关重要。Prompt设计需精准、明确，引导模型准确评分并给出理由，需要持续迭代优化。</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-tags mr-2 text-indigo-500"></i>文档类型识别</h4>
+                    <p>步骤2的分类准确性是基础。可结合文件名、元数据、规则、机器学习模型或大模型进行分类。</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-check-double mr-2 text-cyan-500"></i>“必须项”定义</h4>
+                    <p>步骤3中“必须项”的界定需符合临床规范和质控要求，是内容评分的关键。</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-users mr-2 text-orange-500"></i>人机结合</h4>
+                    <p>对于低分或争议结果，建议设立人工复核环节，确保评价的公正准确。</p>
+                </div>
+                <div class="md:col-span-2">
+                    <h4 class="text-lg font-semibold mb-2 flex items-center"><i class="fas fa-dollar-sign mr-2 text-lime-500"></i>性能与成本</h4>
+                    <p>多次调用大模型会增加时间与成本。需平衡需求与资源，可优化调用策略（如结构不完整则跳过内容评分）。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center text-gray-900 dark:text-white">延伸阅读</h2>
+            <ul class="space-y-4 max-w-3xl mx-auto">
+                <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                    <i class="fas fa-book-open mr-2 text-blue-500"></i>
+                    <a href="https://www.jmir.org/2020/10/e18942/" target="_blank" rel="noopener noreferrer" class="font-medium">Artificial intelligence in evaluating the quality of electronic health records: A systematic review</a> (Li, J., et al., 2020) - 综述了人工智能在电子病历质量评价中的应用。
+                </li>
+                 <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                    <i class="fas fa-book-open mr-2 text-blue-500"></i>
+                    <a href="https://academic.oup.com/jamia/article/20/1/144/831284" target="_blank" rel="noopener noreferrer" class="font-medium">Methods and dimensions of electronic health record data quality assessment: a systematic review</a> (Weiskopf, N. G., & Weng, C., 2013) - 系统回顾了EHR数据质量评估的方法和维度。
+                </li>
+                <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                    <i class="fas fa-landmark mr-2 text-blue-500"></i>
+                    <a href="http://www.nhc.gov.cn/yzygj/s3594/202203/ed82fcc4f61d4d1e9a7f4c8d6e3f5a2d.shtml" target="_blank" rel="noopener noreferrer" class="font-medium">《电子病历系统应用水平分级评价标准（试行）》解读</a> (国家卫健委, 2022) - 中国官方的电子病历系统评价标准相关政策解读。
+                </li>
+                 <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                    <i class="fas fa-book-open mr-2 text-blue-500"></i>
+                    <a href="https://academic.oup.com/jamia/article/22/6/1133/2357660" target="_blank" rel="noopener noreferrer" class="font-medium">Characterizing EHR data quality: experience from a network of networks</a> (Hripcsak, G., et al., 2015) - 探讨了在网络化环境中描述EHR数据质量的经验。
+                </li>
+                <li class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                    <i class="fas fa-book-open mr-2 text-blue-500"></i>
+                    <a href="https://kns.cnki.net/kcms2/article/abstract?v=3uoqIhG8C44YLTlOAiTRKibYlV5Vjs7i_zrJuUrOdGlGCGSIN4_z_U5Z0p7M3T1E9rJ5Uf6f_Z1h7gX_Y9f_X0cQz_Z1h_Z&uniplatform=NZKPT" target="_blank" rel="noopener noreferrer" class="font-medium">基于人工智能的电子病历质量控制研究进展</a> (陈金雄, 徐美茹, 2019) - 国内关于AI在病历质控方面研究进展的文献。(链接为示例，可能需要通过知网等数据库访问)
+                </li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-8 text-center text-gray-600 dark:text-gray-400 text-sm">
+        <div class="container mx-auto px-4">
+            <p class="mb-2">作者: 季晓康</p>
+            <p class="mb-2">微信公众号: 凿壁</p>
+            <p>&copy; 2024 国家健康医疗大数据研究院. 保留所有权利.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default', // Base theme
+            themeVariables: {
+                // You can customize base theme variables here if needed
+            },
+            // Adjust Mermaid theme based on light/dark mode
+            themeCSS: `
+                .dark .node rect, .dark .node circle, .dark .node ellipse, .dark .node polygon { fill: #374151 !important; stroke: #9ca3af !important; }
+                .dark .edgePath path { stroke: #9ca3af !important; }
+                .dark .edgeLabel { color: #d1d5db !important; }
+                .dark .cluster rect { fill: #1f2937 !important; stroke: #4b5563 !important; }
+                .dark .cluster text { fill: #d1d5db !important; }
+                .dark .node text { fill: #f3f4f6 !important; }
+
+                /* Specific styles from graph */
+                .dark .node.A rect, .dark .node.Q rect { fill:#0f172a !important; stroke:#38bdf8 !important; color:#7dd3fc !important; }
+                .dark .node.B rect { fill:#1e3a8a !important; stroke:#38bdf8 !important; color:#e0f2fe !important; }
+                .dark .node.C rect, .dark .node.D rect, .dark .node.H rect { fill:#334155 !important; stroke:#64748b !important; color:#cbd5e1 !important; }
+                .dark .node.E rect, .dark .node.L rect { fill:#422006 !important; stroke:#facc15 !important; color:#fef9c3 !important; }
+                .dark .node.F rect, .dark .node.G rect { fill:#14532d !important; stroke:#4ade80 !important; color:#dcfce7 !important; }
+                .dark .node.I rect { fill:#422006 !important; stroke:#fcd34d !important; color:#fef9c3 !important; }
+                .dark .node.J rect, .dark .node.K rect, .dark .node.N rect, .dark .node.O rect, .dark .node.P rect { fill:#3b0764 !important; stroke:#c084fc !important; color:#f3e8ff !important; }
+                .dark .node.M rect { fill:#7f1d1d !important; stroke:#f87171 !important; color:#fee2e2 !important; }
+            `
+        });
+
+        // Dark Mode Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        // Function to apply theme and re-render Mermaid
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.documentElement.classList.add('dark');
+                themeToggleLightIcon.classList.remove('hidden');
+                themeToggleDarkIcon.classList.add('hidden');
+                // Reinitialize Mermaid with dark theme settings
+                mermaid.initialize({ theme: 'dark' });
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeToggleDarkIcon.classList.remove('hidden');
+                themeToggleLightIcon.classList.add('hidden');
+                 // Reinitialize Mermaid with default theme settings
+                mermaid.initialize({ theme: 'default' });
+            }
+            // Force Mermaid to re-render with the new theme styles applied
+            const mermaidContainer = document.querySelector('.mermaid');
+            if (mermaidContainer) {
+                 // Store the current diagram definition
+                const diagramDefinition = mermaidContainer.textContent || mermaidContainer.innerText;
+                mermaidContainer.removeAttribute('data-processed');
+                mermaidContainer.innerHTML = diagramDefinition; // Reset content with definition
+                try {
+                    mermaid.init(undefined, mermaidContainer); // Re-run init on the container
+                } catch (e) {
+                    console.error("Mermaid re-init error:", e);
+                    mermaidContainer.innerHTML = `<pre>${diagramDefinition}</pre>`; // Show definition on error
+                }
+            }
+        }
+
+
+        // Check initial theme based on localStorage or system preference
+        let currentTheme = localStorage.getItem('color-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(currentTheme); // Apply initial theme
+
+
+        // Listener for toggle button
+        themeToggleBtn.addEventListener('click', function() {
+            // Determine the new theme
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            // Store preference
+            localStorage.setItem('color-theme', newTheme);
+            // Apply the new theme
+            applyTheme(newTheme);
+        });
+
+         // Ensure Mermaid renders correctly after initial load and theme check
+         // The initial applyTheme call handles this. A separate load listener might cause double rendering.
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>沉思曲 (Méditation from Thaïs) - 马斯奈的不朽旋律</title>
+    <link href="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 基本字体设置 */
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, Roboto, "Droid Sans", "Helvetica Neue", "Droid Sans Fallback", "Heiti SC", "Hiragino Sans GB", Simsun, sans-serif;
+            @apply bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-200 transition-colors duration-300 antialiased;
+        }
+        /* 衬线字体用于标题 */
+        h1, h2, h3, h4, h5, h6, .font-serif {
+            font-family: 'Noto Serif SC', serif;
+        }
+        /* 自定义深色模式下的链接颜色 */
+        .dark a {
+            @apply text-blue-400 hover:text-blue-500;
+        }
+        /* Mermaid 图表样式 */
+        .mermaid svg {
+            display: block;
+            margin: auto;
+        }
+        /* 微调列表样式和行距 */
+        article ul, article ol {
+            @apply list-inside space-y-2 mb-4 pl-4 leading-relaxed;
+        }
+        article li::marker {
+             @apply text-blue-600 dark:text-blue-400 font-semibold;
+        }
+        article p {
+            @apply leading-relaxed;
+        }
+        /* 首字下沉效果 */
+        .first-letter-drop::first-letter {
+            @apply float-left text-7xl font-serif font-bold mr-3 leading-none pt-2 text-blue-700 dark:text-blue-400;
+        }
+        /* 响应式布局调整 */
+        @media (min-width: 768px) {
+            .content-max-width { max-width: 80ch; } /* 限制内容最大宽度以提高可读性 */
+        }
+        /* 切换按钮样式 */
+        #theme-toggle {
+            @apply fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 shadow-lg hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 transition-all;
+        }
+        /* 自定义 HR 样式 */
+        hr.stylish-hr {
+            border: 0;
+            height: 1px;
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+        .dark hr.stylish-hr {
+             background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+        }
+
+        /* 卡片增强样式 */
+        .enhanced-card {
+             @apply bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 transform hover:-translate-y-1;
+        }
+
+         /* 文本阴影 (简单示例) */
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .text-shadow-md {
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .dark .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+        .dark .text-shadow-md {
+            text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Theme Toggle Button -->
+    <button id="theme-toggle" title="切换深色/浅色模式">
+        <i class="fas fa-moon" id="theme-toggle-dark-icon"></i>
+        <i class="fas fa-sun hidden" id="theme-toggle-light-icon"></i>
+    </button>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen flex items-center justify-center text-center bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 dark:from-gray-800 dark:via-gray-900 dark:to-black overflow-hidden">
+        <div class="absolute inset-0 bg-fixed bg-center bg-cover opacity-15 dark:opacity-10" style="background-image: url('https://images.unsplash.com/photo-1511192336575-5a79af67a629?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');"></div>
+        <div class="absolute inset-0 bg-black opacity-20 dark:opacity-30"></div> <!-- Added Overlay -->
+        <div class="relative z-10 p-8 max-w-3xl mx-auto">
+            <h1 class="text-5xl md:text-7xl font-bold font-serif mb-4 text-white dark:text-gray-100 text-shadow-md">沉思曲</h1>
+            <h2 class="text-2xl md:text-3xl font-serif mb-6 text-white dark:text-gray-200 text-shadow-sm">Méditation from Thaïs</h2>
+            <p class="text-lg md:text-xl text-white dark:text-gray-300 font-light leading-relaxed text-shadow-sm">
+                探索儒勒·马斯奈笔下最动人心弦的小提琴旋律之一，感受法式优雅与深邃情感的完美融合。
+            </p>
+            <div class="mt-8">
+                <a href="#content" class="px-8 py-4 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition duration-300 text-lg inline-flex items-center font-medium transform hover:scale-105">
+                    深入了解 <i class="fas fa-arrow-down ml-2 "></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="content" class="py-16 md:py-24 px-4 md:px-8 lg:px-16">
+        <article class="max-w-4xl mx-auto content-max-width space-y-12 md:space-y-16">
+
+            <!-- Introduction -->
+            <section class="prose dark:prose-invert max-w-none prose-lg">
+                 <p class="lead text-xl font-light italic text-gray-700 dark:text-gray-400 border-l-4 border-blue-600 dark:border-blue-400 pl-6 py-3 bg-blue-50 dark:bg-gray-800 rounded-r-md first-letter-drop">
+                    "小提琴与乐队"或"小提琴与钢琴"演绎的《沉思曲》（Méditation from Thaïs）是法国作曲家马斯奈（Jules Massenet）最为人熟知、也最富诗意的作品之一。它原本是歌剧《泰伊思》（Thaïs）中的一段<strong class="font-semibold">器乐间奏曲</strong>（Intermezzo），作为主人公泰伊思在精神和心灵上进行反思的音乐衔接。随着时间推移，这段优美抒情的小提琴旋律逐渐脱离歌剧本身而独立流传，成为小提琴名曲、音乐会上常被演奏的保留节目。
+                </p>
+                <p class="mt-6">
+                    在欣赏《沉思曲》时，你可以从<strong class="font-medium">创作背景</strong>、<strong class="font-medium">曲式结构</strong>、<strong class="font-medium">旋律与情感</strong>、<strong class="font-medium">演奏技法</strong>及<strong class="font-medium">风格对比</strong>等角度入手，更好地体会这首作品的柔美与深邃。
+                </p>
+            </section>
+
+            <hr class="stylish-hr">
+
+            <!-- Section 1: Background -->
+            <section>
+                <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-landmark mr-3 text-blue-600 dark:text-blue-400"></i>一、了解作品背景与剧情角色</h2>
+                <div class="space-y-6 text-lg">
+                    <h3 class="text-2xl font-semibold font-sans mt-4 mb-3 text-gray-800 dark:text-gray-200">1. 歌剧《泰伊思》的情境</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>《泰伊思》是一部以埃及亚历山大为背景的歌剧，讲述了一位名叫泰伊思的绝世美女及歌姬，在修道士阿塔纳埃尔（Athanaël）的劝化下，从纸醉金迷的生活转向宗教与内心救赎的故事。</li>
+                        <li>《沉思曲》出现于第二幕尾与第三幕之间，是阿塔纳埃尔和泰伊思在一次重要转折后，泰伊思陷入对灵魂与世俗纠葛的"沉思"——因此音乐展现了她内心深处的挣扎与对真理的渴望，也带有宗教般的神圣感。</li>
+                    </ul>
+                    <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">2. 为什么它能独立于歌剧流传？</h3>
+                     <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>这段间奏曲以小提琴独奏的温柔歌唱见长，旋律优美，具有强烈的抒情性和冥想色彩。</li>
+                        <li>由于本身<strong class="font-medium">篇幅不长</strong>，却能完整表达一段情感起伏和神秘、虔诚的氛围，因此广受演奏家与观众喜爱，被视为"最能代表法式优雅与抒情"的小提琴曲之一。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <hr class="stylish-hr">
+
+            <!-- Section 2: Structure & Melody -->
+            <section>
+                <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-wave-square mr-3 text-blue-600 dark:text-blue-400"></i>二、曲式结构与旋律特点</h2>
+                <div class="space-y-6 text-lg">
+                    <h3 class="text-2xl font-semibold font-sans mt-4 mb-3 text-gray-800 dark:text-gray-200">1. 起承转合的段落设计</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>全曲时长约5分钟左右（视演奏速度而定），通常可大致分为几个部分。</li>
+                        <li>开始时，乐器（若是与钢琴版则为钢琴，若是管弦乐版则常由竖琴/乐队）做轻柔的引子，让人彷佛置身宁静、神秘的氛围中，随后小提琴的主旋律悄然进入。</li>
+                    </ul>
+                    <!-- Mermaid Diagram for Structure -->
+                    <div class="my-8 p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-inner border border-gray-200 dark:border-gray-700">
+                         <h4 class="text-xl font-semibold text-center mb-4 font-sans text-gray-700 dark:text-gray-300">乐曲结构示意图</h4>
+                         <div class="mermaid">
+                            gantt
+                                title 《沉思曲》曲式结构分析 (时间示意)
+                                dateFormat s
+                                axisFormat %M:%S
+                                
+                                section 结构分段
+                                "序奏 (引子)"           :a1, 0, 30
+                                "第一主题 (主旋律呈现)"  :a2, after a1, 60
+                                "中段/发展 (情感深化)"  :a3, after a2, 90
+                                "高潮 (情感最强处)"     :a4, after a3, 45
+                                "再现 (主题回归)"       :a5, after a4, 60
+                                "尾声 (静谧收束)"      :a6, after a5, 30
+                         </div>
+                    </div>
+
+                    <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">2. 优美而带有"人声"唱腔的主旋律</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>小提琴旋律非常流畅、富有歌唱性，旋律线条多采用<strong class="font-medium">长音、连弓</strong>，并且有微妙的<strong class="font-medium">揉弦与滑音（Portamento）</strong>，增强其甜美感。</li>
+                        <li>主题在不同音区的"再现"或"层层叠加"会加深情感，常以<strong class="font-medium">渐强</strong>的方式达到高潮，然后又逐渐回归内敛与宁静。</li>
+                    </ul>
+                     <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">3. 中心调性与和声</h3>
+                    <p>这首作品常见的版本是以D大调（或有时移调）进行，D大调本身音色相对温暖、明亮；再加上马斯奈的<strong class="font-medium">浪漫和声走向</strong>，让人仿佛浸润在温柔又略带忧郁的冥想氛围里。</p>
+                </div>
+            </section>
+
+            <hr class="stylish-hr">
+
+            <!-- Section 3: Emotion & Expression -->
+             <section>
+                <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-heart-pulse mr-3 text-blue-600 dark:text-blue-400"></i>三、情感与音乐表现</h2>
+                <div class="space-y-6 text-lg">
+                    <h3 class="text-2xl font-semibold font-sans mt-4 mb-3 text-gray-800 dark:text-gray-200">1. 冥想与宗教虔诚感</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                       <li>虽然这首曲子不似宗教曲有明显的颂歌或宣叙调，但马斯奈在和声、旋律、配器上营造出<strong class="font-medium">神秘而内省</strong>的情绪。</li>
+                       <li>小提琴如同"人声"在祈祷或思索，可以想象泰伊思在舞台上<strong class="font-medium">挣扎、反思、迷惘却又带着希望</strong>的画面。</li>
+                    </ul>
+                    <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">2. 渐强与高潮的塑造</h3>
+                     <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>乐曲中后段往往会有一次较明显的<strong class="font-medium">音量与音域上的爬升</strong>，也是全曲的情感爆发点。</li>
+                        <li>演奏者常在这里放开音量、扩大揉弦，让旋律极具<strong class="font-medium">歌剧咏叹调</strong>的张力；然后音乐缓缓收敛回柔和宁静，给人一种<strong class="font-medium">灵魂被净化</strong>的感觉。</li>
+                    </ul>
+                     <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">3. 细腻的速度和呼吸</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>演奏中，速度上会有些自由处理（Rubato），比如在<strong class="font-medium">句与句之间</strong>做呼吸或在即将进入高潮时稍作减速，以营造张力。</li>
+                        <li>这些微妙的节奏变化，是表现"沉思"氛围和人物内心的关键所在。</li>
+                    </ul>
+                </div>
+            </section>
+
+             <hr class="stylish-hr">
+
+            <!-- Section 4: Technique & Appreciation -->
+            <section>
+                <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-music mr-3 text-blue-600 dark:text-blue-400"></i>四、演奏技法与鉴赏要点</h2>
+                <div class="space-y-6 text-lg">
+                    <h3 class="text-2xl font-semibold font-sans mt-4 mb-3 text-gray-800 dark:text-gray-200">1. 连弓与揉弦</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>这首作品几乎从头至尾都需要<strong class="font-medium">细腻的揉弦</strong>和流畅的连弓（Legato）。尤其在旋律高音区或情感上升段落，揉弦的宽度、速度对塑造音色尤为关键。</li>
+                        <li>听的时候可留意演奏者如何控制揉弦：是<strong class="font-medium">柔和细腻</strong>，还是<strong class="font-medium">宽广深沉</strong>；不同处理会赋予音乐不同的情感色彩。</li>
+                    </ul>
+                    <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">2. 滑音（Portamento）的运用</h3>
+                     <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>在法式浪漫作品中，适度运用<strong class="font-medium">滑音</strong>会使旋律更具歌唱性和人声特质；但如果过度则显得甜腻，过少又会削弱浪漫风情。</li>
+                        <li>你可以比较不同演奏家（老派大师、现代演奏者）在滑音上的拿捏：有的稍纵即逝，有的明显而富于戏剧性。</li>
+                    </ul>
+                    <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">3. 音色层次</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>小提琴从低音区到高音区的音色变化丰富，演奏者往往会借助<strong class="font-medium">不同的弓段</strong>（弓根、中弓、弓尖）与<strong class="font-medium">弦上不同位置</strong>来塑造层次。</li>
+                        <li>听时，可以关注演奏者在句尾收音时是否精致、在高潮处是否松弛又饱满，从而使旋律宛如呼吸一般自然流动。</li>
+                    </ul>
+                     <h3 class="text-2xl font-semibold font-sans mt-6 mb-3 text-gray-800 dark:text-gray-200">4. 与伴奏或乐队的互动</h3>
+                    <ul class="list-disc list-inside space-y-2 pl-4">
+                        <li>若是钢琴伴奏版，注意钢琴在序奏、中段的和声衬托，以及在小提琴喘息或弱奏时，是否保持安静又有支撑力；</li>
+                        <li>若是管弦乐队版本，往往会有竖琴或木管声部的细腻铺垫，让人仿佛置身在如梦似幻的场景里。</li>
+                    </ul>
+                </div>
+            </section>
+
+            <hr class="stylish-hr">
+
+            <!-- Section 5: Versions & Styles -->
+            <section>
+                <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-record-vinyl mr-3 text-blue-600 dark:text-blue-400"></i>五、版本对比与演绎风格</h2>
+                 <div class="grid md:grid-cols-2 gap-8 text-lg">
+                     <div class="enhanced-card">
+                         <h3 class="text-xl font-semibold font-sans mb-4 flex items-center"><i class="fas fa-history mr-3 text-blue-600 dark:text-blue-400"></i>老派大师的录音</h3>
+                         <p class="mb-3 text-gray-600 dark:text-gray-400 text-base">例如海菲茨 (Jascha Heifetz)、奥伊斯特拉赫 (David Oistrakh)、梅纽因 (Yehudi Menuhin) 等。</p>
+                         <ul class="list-disc list-inside space-y-1 text-base pl-4 text-gray-700 dark:text-gray-300">
+                            <li>较浓厚的<strong class="font-medium">浪漫主义</strong>痕迹。</li>
+                            <li>明显的滑音、炽热的揉弦。</li>
+                            <li>速度更富弹性，表达自由。</li>
+                            <li>独特的音色魅力。</li>
+                         </ul>
+                     </div>
+                     <div class="enhanced-card">
+                         <h3 class="text-xl font-semibold font-sans mb-4 flex items-center"><i class="fas fa-microphone-alt mr-3 text-blue-600 dark:text-blue-400"></i>现代名家的诠释</h3>
+                         <p class="mb-3 text-gray-600 dark:text-gray-400 text-base">如安妮-索菲·穆特 (Anne-Sophie Mutter)、乔舒亚·贝尔 (Joshua Bell)、希拉里·哈恩 (Hilary Hahn) 等。</p>
+                          <ul class="list-disc list-inside space-y-1 text-base pl-4 text-gray-700 dark:text-gray-300">
+                            <li>录音技术好，音质清晰。</li>
+                            <li>技巧精准度高。</li>
+                            <li>滑音运用更克制。</li>
+                            <li>情感处理更"内敛"、"理性"。</li>
+                         </ul>
+                     </div>
+                 </div>
+                 <div class="mt-8 text-lg bg-gray-100 dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                     <h3 class="text-2xl font-semibold font-sans mb-3 text-gray-800 dark:text-gray-200">3. 个人口味的差异</h3>
+                     <p>有些人偏爱<strong class="font-medium">浓厚浪漫</strong>的演奏，也有人喜欢<strong class="font-medium">简洁纯净</strong>的风格。最终的选择应根据你的审美喜好和对这首曲子"沉思"氛围的想象来做判断，你可以多找不同版本来对比、体会。</p>
+                 </div>
+            </section>
+
+             <hr class="stylish-hr">
+
+             <!-- Section 6: Listening Tips -->
+            <section>
+                <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-headphones-alt mr-3 text-blue-600 dark:text-blue-400"></i>六、欣赏提示与体验分享</h2>
+                <div class="space-y-4 text-lg">
+                   <ol class="list-decimal list-inside space-y-4 pl-4">
+                       <li><strong class="font-medium">创造一个安静且带点仪式感的聆听环境:</strong> 找一个相对安静、能放松下来的时间和空间，用较好的音响或耳机欣赏。让自己沉浸在音乐塑造的情境里。</li>
+                       <li><strong class="font-medium">关注音乐情感的起伏:</strong> 跟随旋律的展开，想象泰伊思的挣扎与抉择，或纯粹感受音乐从宁静到高潮再回归沉思的过程。闭上眼，让音符如波浪般起伏。</li>
+                       <li><strong class="font-medium">反复对比聆听，细细品味:</strong> 多听几遍，甚至集中听某一小段，体会演奏者的力度变化和呼吸。每次重听都可能发现新的细节。</li>
+                       <li><strong class="font-medium">若懂些小提琴演奏法，可适度"哼唱":</strong> 尝试哼唱或在琴上拉奏，更能体会演奏家技艺的精湛。</li>
+                   </ol>
+                </div>
+            </section>
+
+            <hr class="stylish-hr">
+
+             <!-- Conclusion -->
+            <section class="prose dark:prose-invert max-w-none prose-lg">
+                 <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-6"><i class="fas fa-feather-alt mr-3 text-blue-600 dark:text-blue-400"></i>结语</h2>
+                 <p class="text-xl font-light italic text-gray-700 dark:text-gray-400 border-l-4 border-blue-600 dark:border-blue-400 pl-6 py-3 bg-blue-50 dark:bg-gray-800 rounded-r-md">
+                    《沉思曲》之所以在小提琴名曲中拥有如此持久的魅力，除了旋律优美外，更因为它本身承载了一种<strong class="font-semibold">冥想、反省、超脱尘嚣</strong>的精神意境。
+                 </p>
+                 <p class="mt-6">在欣赏时，不妨把握住以下关键：</p>
+                 <ul>
+                    <li>关注旋律本身的<strong class="font-medium">歌唱性</strong>及其蕴含的温暖、忧郁、虔诚混合的情感。</li>
+                    <li>细听演奏者的<strong class="font-medium">揉弦、滑音、运弓细节</strong>，以及如何在乐曲高潮塑造最深的情感张力。</li>
+                    <li>带着想象力投入到"冥想"的氛围，让音乐如同一束柔光，透进你内心的反思与感动。</li>
+                 </ul>
+                 <p>通过反复聆听并进行版本对比，你将逐渐体会到这首作品独特的灵性之美，也能更加深刻地理解为何它在小提琴艺术史上堪称"不朽经典"。祝你在欣赏《沉思曲》的过程中获得内心的宁静与美的享受。</p>
+            </section>
+
+             <hr class="stylish-hr">
+
+            <!-- Further Reading -->
+            <section>
+                 <h2 class="text-3xl md:text-4xl font-serif font-semibold mb-8 border-b-2 border-blue-600 dark:border-blue-400 pb-3 inline-block"><i class="fas fa-book-open mr-3 text-blue-600 dark:text-blue-400"></i>进一步阅读与聆听</h2>
+                 <p class="mb-8 text-lg leading-relaxed text-gray-700 dark:text-gray-300">若想更深入地了解《沉思曲》及其相关背景，以下资源可供参考：</p>
+                 <div class="space-y-5">
+                     <div class="enhanced-card flex items-start space-x-4">
+                        <i class="fas fa-compact-disc text-3xl text-blue-600 dark:text-blue-400 pt-1 flex-shrink-0"></i>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">经典录音：Jascha Heifetz 演奏版</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">体验老派大师对乐曲浪漫与技巧的极致诠释。可在各大音乐平台搜索试听。</p>
+                            <a href="https://www.youtube.com/results?search_query=heifetz+meditation+thais" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline dark:text-blue-400 font-medium inline-flex items-center">在 YouTube 上搜索 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                        </div>
+                     </div>
+                     <div class="enhanced-card flex items-start space-x-4">
+                        <i class="fas fa-compact-disc text-3xl text-blue-600 dark:text-blue-400 pt-1 flex-shrink-0"></i>
+                        <div>
+                            <h4 class="font-semibold text-lg mb-1">现代演绎：Anne-Sophie Mutter 演奏版</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">感受当代顶级小提琴家精准而内敛的演绎风格。同样可在音乐平台找到。</p>
+                             <a href="https://www.youtube.com/results?search_query=anne+sophie+mutter+meditation+thais" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline dark:text-blue-400 font-medium inline-flex items-center">在 YouTube 上搜索 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                        </div>
+                     </div>
+                     <div class="enhanced-card flex items-start space-x-4">
+                         <i class="fas fa-book text-3xl text-blue-600 dark:text-blue-400 pt-1 flex-shrink-0"></i>
+                         <div>
+                            <h4 class="font-semibold text-lg mb-1">书籍：Jules Massenet: His Life and Works</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">了解作曲家马斯奈的生平与创作背景（by Henry T. Finck, 可在公共领域找到）。</p>
+                            <a href="https://archive.org/details/julesmassenethi00finckgoog" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline dark:text-blue-400 font-medium inline-flex items-center">Internet Archive 链接 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                         </div>
+                     </div>
+                     <div class="enhanced-card flex items-start space-x-4">
+                         <i class="fas fa-info-circle text-3xl text-blue-600 dark:text-blue-400 pt-1 flex-shrink-0"></i>
+                         <div>
+                            <h4 class="font-semibold text-lg mb-1">歌剧《泰伊思》介绍</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">了解《沉思曲》所在的完整歌剧剧情，有助于理解其创作情境。</p>
+                             <a href="https://zh.wikipedia.org/wiki/%E6%B3%B0%E4%BC%8A%E6%80%9D_(%E6%AD%8C%E5%8A%87)" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline dark:text-blue-400 font-medium inline-flex items-center">维基百科链接 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                         </div>
+                     </div>
+                      <div class="enhanced-card flex items-start space-x-4">
+                         <i class="fas fa-feather text-3xl text-blue-600 dark:text-blue-400 pt-1 flex-shrink-0"></i>
+                         <div>
+                            <h4 class="font-semibold text-lg mb-1">文章：小提琴名曲赏析系列</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">搜索网络上关于《沉思曲》或其他小提琴经典作品的深度赏析文章。</p>
+                            <a href="https://www.google.com/search?q=%E5%B0%8F%E6%8F%90%E7%90%B4%E6%B2%89%E6%80%9D%E6%9B%B2%E8%B5%8F%E6%9E%90" target="_blank" rel="noopener noreferrer" class="text-sm text-blue-600 hover:underline dark:text-blue-400 font-medium inline-flex items-center">Google 搜索 <i class="fas fa-external-link-alt ml-1 text-xs"></i></a>
+                         </div>
+                     </div>
+                 </div>
+            </section>
+
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-20 md:mt-24 py-10 bg-gray-100 dark:bg-gray-800 text-center text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+        <div class="max-w-4xl mx-auto px-4">
+            <p class="mb-2 text-base">作者: <strong>季晓康</strong></p>
+            <p class="mb-3 text-base">微信公众号: <strong>凿壁</strong></p>
+            <p class="text-sm text-gray-500 dark:text-gray-500">&copy; 2024 国家健康医疗大数据研究院. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Mermaid JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: document.documentElement.classList.contains('dark') ? 'dark' : 'default' });
+    </script>
+
+    <!-- Theme Switcher JS -->
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        const htmlElement = document.documentElement;
+
+        // Function to apply theme
+        const applyTheme = (theme) => {
+            const isDarkMode = theme === 'dark';
+            htmlElement.classList.toggle('dark', isDarkMode);
+            themeToggleLightIcon.classList.toggle('hidden', !isDarkMode);
+            themeToggleDarkIcon.classList.toggle('hidden', isDarkMode);
+
+            // Re-initialize or update Mermaid theme if it exists
+            if (typeof mermaid !== 'undefined') {
+                // Ensure Mermaid config is updated *before* running it
+                mermaid.initialize({ startOnLoad: false, theme: isDarkMode ? 'dark' : 'default' });
+                document.querySelectorAll('.mermaid').forEach(el => {
+                    // Preserve original definition if needed, e.g., via data attribute
+                    if (!el.getAttribute('data-definition')) {
+                       el.setAttribute('data-definition', el.textContent);
+                    }
+                    const graphDefinition = el.getAttribute('data-definition');
+                    el.removeAttribute('data-processed'); // Allow re-processing
+                    el.innerHTML = graphDefinition; // Reset content before re-rendering
+                });
+                try {
+                 mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+                } catch (e) {
+                     console.error("Error running Mermaid:", e);
+                     // Handle error, maybe try to re-render differently
+                }
+            }
+        };
+
+        // Check local storage first
+        let storedTheme = localStorage.getItem('theme');
+
+        // Then check system preference
+        if (!storedTheme) {
+            storedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+
+        // Apply the initial theme
+        applyTheme(storedTheme);
+
+        // Listener for system preference change
+         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            // Only update if no theme is explicitly stored
+            if (!localStorage.getItem('theme')) {
+                const newColorScheme = event.matches ? "dark" : "light";
+                applyTheme(newColorScheme);
+            }
+        });
+
+
+        // Listener for button click
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlElement.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme); // Store user preference
+            applyTheme(newTheme);
+        });
+    </script>
+
+</body>
+</html>

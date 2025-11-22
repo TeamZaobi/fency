@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · 评测与安全</title>
+  <meta name="description" content="建立可度量的评测与安全策略，提升 Agent 的可靠性与可维护性。" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand"><div class="logo"></div><a href="index.html" class="title">Agent 应用教学</a></div>
+      <div class="ag-actions"><button id="darkModeToggle" class="btn" title="切换主题">切换主题</button></div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="h1">评测与安全</div>
+      <p class="lead">没有度量就没有改进。让评测驱动工程决策，并在安全边界内运行 Agent。</p>
+    </section>
+    <section class="panel">
+      <div class="h2">评测维度</div>
+      <ul class="list">
+        <li>正确性与一致性：Ground truth、对抗样本、回放对比</li>
+        <li>效率与成本：Token、延迟、并发、缓存命中</li>
+        <li>鲁棒性：长上下文、工具失败、异常输入</li>
+      </ul>
+    </section>
+    <section class="panel">
+      <div class="h2">安全策略</div>
+      <ul class="list">
+        <li>提示注入与越权：指令白名单、最小权限、参数校验</li>
+        <li>内容安全：敏感词/数据脱敏、审计日志、隔离环境</li>
+        <li>工具安全：沙箱、调用频控、成本/风险预算</li>
+      </ul>
+    </section>
+    <div class="footer">© Agent 应用教学 · 评测与安全</div>
+  </main>
+  <script src="../../assets/js/agents-nav.js"></script>
+</body>
+</html>

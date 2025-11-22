@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>微量元素研究前沿（2023-2025）可视化报告</title>
+  <meta name="description" content="基于 md/微量元素.md 的完整网页呈现，包含主题样式、Mermaid、SVG 与数据图表。" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#e05d38" />
+  <style>
+    :root {
+      --background: rgb(232, 235, 237);
+      --foreground: rgb(51, 51, 51);
+      --card: rgb(255, 255, 255);
+      --card-foreground: rgb(51, 51, 51);
+      --popover: rgb(255, 255, 255);
+      --popover-foreground: rgb(51, 51, 51);
+      --primary: rgb(224, 93, 56);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(243, 244, 246);
+      --secondary-foreground: rgb(75, 85, 99);
+      --muted: rgb(249, 250, 251);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(214, 228, 240);
+      --accent-foreground: rgb(30, 58, 138);
+      --destructive: rgb(239, 68, 68);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(220, 223, 226);
+      --input: rgb(244, 245, 247);
+      --ring: rgb(224, 93, 56);
+      --chart-1: rgb(134, 167, 200);
+      --chart-2: rgb(238, 165, 145);
+      --chart-3: rgb(90, 124, 166);
+      --chart-4: rgb(70, 100, 148);
+      --chart-5: rgb(51, 76, 130);
+      --sidebar: rgb(221, 223, 226);
+      --sidebar-foreground: rgb(51, 51, 51);
+      --sidebar-primary: rgb(224, 93, 56);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(214, 228, 240);
+      --sidebar-accent-foreground: rgb(30, 58, 138);
+      --sidebar-border: rgb(229, 231, 235);
+      --sidebar-ring: rgb(224, 93, 56);
+      --font-sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --font-serif: "Source Serif 4", Iowan Old Style, Sitka Text, Cambria, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --radius: 0.75rem;
+      --shadow-2xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow-md: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
+      --shadow-lg: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
+      --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
+      --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.25);
+      --tracking-normal: 0em;
+      --spacing: 0.25rem;
+    }
+    .dark {
+      --background: rgb(28, 36, 51);
+      --foreground: rgb(229, 229, 229);
+      --card: rgb(42, 48, 64);
+      --card-foreground: rgb(229, 229, 229);
+      --popover: rgb(38, 43, 56);
+      --popover-foreground: rgb(229, 229, 229);
+      --primary: rgb(224, 93, 56);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(42, 48, 62);
+      --secondary-foreground: rgb(229, 229, 229);
+      --muted: rgb(42, 48, 62);
+      --muted-foreground: rgb(163, 163, 163);
+      --accent: rgb(42, 54, 86);
+      --accent-foreground: rgb(191, 219, 254);
+      --destructive: rgb(239, 68, 68);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(61, 67, 84);
+      --input: rgb(61, 67, 84);
+      --ring: rgb(224, 93, 56);
+      --chart-1: rgb(134, 167, 200);
+      --chart-2: rgb(230, 160, 143);
+      --chart-3: rgb(90, 124, 166);
+      --chart-4: rgb(70, 100, 148);
+      --chart-5: rgb(51, 76, 130);
+      --sidebar: rgb(42, 48, 63);
+      --sidebar-foreground: rgb(229, 229, 229);
+      --sidebar-primary: rgb(224, 93, 56);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(42, 54, 86);
+      --sidebar-accent-foreground: rgb(191, 219, 254);
+      --sidebar-border: rgb(61, 67, 84);
+      --sidebar-ring: rgb(224, 93, 56);
+      --radius: 0.75rem;
+      --shadow-2xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow-md: 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
+      --shadow-lg: 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
+      --shadow-xl: 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
+      --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.25);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--font-sans); color: var(--foreground); background: linear-gradient(160deg, var(--background), #fff 60%); }
+    a { color: var(--accent-foreground); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .site-header { position: sticky; top: 0; backdrop-filter: saturate(1.05) blur(6px); background: color-mix(in oklab, var(--background) 80%, transparent); border-bottom: 1px solid var(--border); z-index: 10; }
+    .header-inner { display: flex; align-items: center; gap: 12px; padding: 10px 16px; max-width: 1200px; margin: 0 auto; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; }
+    .brand .badge { width: 28px; height: 28px; display: grid; place-items: center; background: var(--primary); color: var(--primary-foreground); border-radius: 8px; box-shadow: var(--shadow-sm); }
+    .spacer { flex: 1; }
+    .btn { appearance: none; border: 1px solid var(--border); background: var(--secondary); color: var(--secondary-foreground); padding: 8px 10px; border-radius: 10px; cursor: pointer; box-shadow: var(--shadow-xs); }
+    .btn.primary { background: var(--primary); color: var(--primary-foreground); border-color: color-mix(in oklab, var(--primary), black 10%); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px 16px 72px; display: grid; grid-template-columns: 260px 1fr; gap: 16px; }
+    @media (max-width: 960px) { .container { grid-template-columns: 1fr; } }
+    .toc { position: sticky; top: 64px; align-self: start; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); max-height: calc(100vh - 96px); overflow: auto; }
+    .toc h3 { margin: 0 0 6px; font-size: 14px; color: var(--muted-foreground); }
+    .toc a { display: block; padding: 4px 6px; border-radius: 6px; color: var(--secondary-foreground); }
+    .toc a:hover { background: var(--secondary); }
+    .content { display: grid; gap: 16px; }
+    .card { background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; }
+    .section-title { font-weight: 800; font-size: 20px; margin: 6px 0 12px; }
+    .hero { position: relative; overflow: hidden; border-radius: var(--radius); }
+    .hero svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .18; }
+    .hero .inner { position: relative; padding: 18px; }
+    .grid { display: grid; gap: 12px; }
+    .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 840px) { .grid.cols-2 { grid-template-columns: 1fr; } }
+    /* Markdown content basic styling */
+    .md-content h1, .md-content h2, .md-content h3 { scroll-margin-top: 80px; }
+    .md-content table { width: 100%; border-collapse: collapse; }
+    .md-content th, .md-content td { border: 1px solid var(--border); padding: 6px 8px; }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill { display: inline-block; padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; margin: 2px; background: var(--muted); color: var(--secondary-foreground); }
+    .footer { color: var(--muted-foreground); font-size: 12px; }
+
+    /* Rich content helpers */
+    .two-col { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; align-items: center; }
+    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+    .figure { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 12px; }
+    .caption { color: var(--muted-foreground); font-size: 12px; margin-top: 8px; }
+    .callout { border-left: 4px solid var(--accent); background: color-mix(in oklab, var(--accent) 12%, white); padding: 10px 12px; border-radius: var(--radius); }
+    .chiplist { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chiplist .chip { margin: 0; }
+    .stat { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .stat .kpi { background: var(--secondary); border: 1px solid var(--border); border-radius: 10px; padding: 10px; text-align: center; }
+    .kpi .num { font-size: 20px; font-weight: 800; color: var(--primary); }
+    .kpi .lab { font-size: 12px; color: var(--muted-foreground); }
+  </style>
+  <!-- External libs via CDN (loaded by user browser) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <!-- Embedded Markdown (base64, UTF-8) to make the page self-contained -->
+  <script id="md-b64" type="application/json">{
+    "parts": [
+      "IyDlvq7ph4/lhYPntKDnoJTnqbbliY3msr/vvIgyMDIzLTIwMjXvvInvvJrliIbmnpDmioDmnK/j\ngIHnlJ/nianljLvlrabkuI7njq/looPnp5HlrabnmoTov5vlsZXnu7zlkIjmiqXlkYoKCiMjIOW8\nleiogAoK5b6u6YeP5YWD57Sg56eR5a2m77yM5L2c5Li655Sf5ZG956eR5a2m44CB546v5aKD56eR\n5a2m5LiO5p2Q5paZ56eR5a2m5Lqk5Y+J55qE5qC45b+D6aKG5Z+f77yM5q2j57uP5Y6G552A5LiA\n5Zy655Sx5oqA5pyv6amx5Yqo55qE5rex5Yi75Y+Y6Z2pMeOAgui/h+WOu+S4ieW5tO+8iDIwMjMt\nMjAyNe+8ieeahOeglOeptui/m+Wxleagh+W/l+edgOS4gOS4qumHjeimgeeahOiMg+W8j+i9rOWP\nmO+8muaIkeS7rOWvueW+rumHj+WFg+e0oOeahOiupOefpeato+WcqOS7juWuj+inguOAgeWdh+S4\ngOWMlueahOaPj+i/sO+8jOi9rOWQkeW+ruinguOAgeW8gui0qOaAp+S5g+iHs+WNlee7huiDnuWS\njOS6mue7huiDnuWxgumdoueahOeyvuWHhuino+aekOOAguacrOaKpeWRiuaXqOWcqOezu+e7n+aA\np+WcsOais+eQhuW5tue7vOWQiOWIhuaekOi/meS4gOaXtuacn+eahOWJjeayv+enkeeglOaIkOae\nnO+8jOmHjeeCueiBmueEpuS4ieWkp+aguOW/g+aUr+afse+8mu+8iDHvvInpnanlkb3mgKfnmoTl\niIbmnpDmioDmnK/vvIzov5nkupvmioDmnK/mraPku6XliY3miYDmnKrmnInnmoTliIbovqjnjofm\nj63npLrlhYPntKDlnKjlpI3mnYLnlJ/lkb3ns7vnu5/kuK3nmoTop5LoibLvvJvvvIgy77yJ5a+5\n6YeR5bGe5L6d6LWW5oCn5YiG5a2Q6YCa6Lev55qE5paw6K6k55+l77yM6L+Z5Lqb5Y+R546w5q2j\n5Zyo6YeN5aGR5oiR5Lus5a+555mM55eH44CB56We57uP6YCA6KGM5oCn55a+55eF562J6YeN5aSn\n5Lq657G755a+55eF55qE55CG6Kej77yb77yIM++8ieWwhuWfuuehgOefpeivhui9rOWMluS4uuW8\nuuWkp+eahOeUn+eJqeaKgOacr+ino+WGs+aWueahiO+8jOW6lOeUqOS6jueOr+Wig+S/ruWkjeS4\njuWFqOeQg+eyrumjn+WuieWFqOetieWFs+mUruaMkeaImOOAguacrOaKpeWRiuWwhua3seWFpeaO\nouiuqOi/meS6m+ebuOS6kuWFs+iBlOeahOmihuWfn+WmguS9leWFseWQjOaOqOWKqOW+rumHj+WF\ng+e0oOenkeWtpui/m+WFpeS4gOS4quWFqOaWsOeahOWPkeeOsOaXtuS7o+OAggoKLS0tCgojIyDn\nrKzkuIDpg6jliIbvvJrlvq7ph4/lhYPntKDliIbmnpDnmoTmioDmnK/liY3msr8KCumpseWKqOaW\nsOWPkeeOsOeahOS9v+iDveaKgOacr+aYr+acrOmDqOWIhueahOaguOW/g+OAguWFtuaAu+S9k+i2\ni+WKv+aYr+S7juS8oOe7n+eahOOAgeWPjeaYoOe+pOS9k+W5s+Wdh+awtOW5s+eahOaJuemHj+a1\ni+mHj++8jOi9rOWQkeWvueWkjeadgueUn+eJqeS4jueOr+Wig+S9k+ezu+S4reW+rumHj+WFg+e0\noOi/m+ihjOmrmOaXtuepuuWIhui+qOeOh+eahOWumumHj+WIhuaekOOAggoKIyMjIDEuMSDnurPn\nsbPmioDmnK/otYvog73nmoTkvKDmhJ/kuI7lvaLmgIHliIbmnpAKCuS8oOe7n+WIhuaekOaWueaz\nleWcqOeBteaVj+W6puOAgemAieaLqeaAp+S7peWPiueOsOWcuuaIluWunuaXtuWIhuaekOiDveWK\nm+aWuemdouW4uOmdouS4tOeTtumiiOOAgui/keS4ieW5tO+8jOWfuuS6jue6s+exs+adkOaWmeea\nhOS8oOaEn+WZqOW8gOWPkeWRiOeOsOeIhuWPkeW8j+WinumVv++8jOacieaViOWFi+acjeS6hui/\nmeS6m+WxgOmZkOaApzPjgIIKCumHkeWxnuacieacuuahhuaetu+8iE1PRnPvvInlnKjkvKDmhJ/p\noobln5/nmoTlupTnlKgKCumHkeWxnuacieacuuahhuaetu+8iE1PRnPvvInlm6Dlhbblt6jlpKfn\nmoTmr5TooajpnaLnp6/jgIHlj6/osIPnmoTlrZTpmpnnu5PmnoTlkozlj6/lrprliLbnmoTljJbl\nrablip/og73vvIzmraPmiJDkuLrmnoHlhbfmvZzlipvnmoTlvq7ph4/lhYPntKDkvKDmhJ/lubPl\nj7AgNOOAgui/keacn+eahOeglOeptumHjeeCueaYr+WIqeeUqE1PRnPmnoTlu7rnlLXljJblrabl\nkozlhYnlrablrabnlJ/niankvKDmhJ/lmajvvIzku6Xlrp7njrDlr7nph43ph5HlsZ7lkozlhbbk\nu5bliIbmnpDniannmoTpq5jngbXmlY/luqbmo4DmtYsgNeOAguS+i+Wmgu+8jElSTU9GLTPlkoxa\nSUYtOOetiU1PRnPooqvorr7orqHmiJDnurPnsbPniYfmiJbpm4bmiJDliLDnlJ/niankvKDmhJ/l\nmajkuK3vvIznlKjkuo7mo4DmtYvlup/msLTlkoznlJ/nianmoLfmnKzkuK3nmoTnibnlrprliIbl\nrZDlkoznprvlrZAgNOOAguWwhk1PRnPkuI7lvq7mtYHmjqfmioDmnK/nm7jnu5PlkIjvvIzmm7Tm\n",
+      "nInmnJvlvIDlj5Hlh7rkvY7or5XliYLmtojogJfjgIHpq5jpgJrph4/nmoTor4rmlq3lubPlj7Ag\nNeOAgui/meenjeWPkeWxlei3r+W+hOS9k+eOsOS6huS7juWfuuehgOadkOaWmeeglOeptuWIsOW6\nlOeUqOWvvOWQkeiuvuiuoeeahOi9rOWPmOOAguacgOWIne+8jOWvuU1PRnPnmoTnoJTnqbbkuLvo\npoHpm4bkuK3lnKjlhbbmsJTkvZPlgqjlrZjnrYnln7rmnKzmgKfotKjkuIogNOOAgumaj+WQju+8\njOeglOeptuS6uuWRmOiupOivhuWIsOWFtuWPr+iwg+eahOacieacuumFjeS9k+WSjOmHkeWxnuiK\ngueCueWPr+eUqOS6juS8oOaEnyA044CC5aaC5LuK77yM5oiR5Lus55yL5Yiw55qE5piv56ys5LiJ\n5Luj5pa55rOV77yM5Y2zTU9Gc+eahOW8gOWPkeS4jueJueWumue7iOerr+W6lOeUqO+8iOWmgueU\nqOS6juaXoOWIm+WBpeW6t+ebkea1i+eahOaflOaAp+axl+a2suS8oOaEn+WZqCA2IOaIlueUqOS6\njueZjOeXh+eUn+eJqeagh+W/l+eJqW1pUk5B5qOA5rWL55qE55S15YyW5a2m55Sf54mp5Lyg5oSf\n5ZmoIDXvvInlkIzmraXov5vooYzvvIzov5nmoIflv5fnnYDmnZDmlpnljJblrabkuI7nlJ/nianl\njLvlrablt6XnqIvnrYnlrabnp5HnmoTmt7Hluqbono3lkIjjgIIKCueUqOS6juW9ouaAgeWIhuae\nkOeahOWFiOi/m+e6s+exs+WQuOmZhOWJggoK5YyW5a2m5b2i5oCB5YiG5p6Q4oCU4oCU5Y2z56Gu\n5a6a5YWD57Sg55qE5YW35L2T5YyW5a2m5b2i5byP4oCU4oCU5a+55LqO55CG6Kej5YW25q+S5oCn\n5ZKM55Sf54mp5Yip55So5bqm6Iez5YWz6YeN6KaB44CC57qz57Gz5p2Q5paZ77yM5aaC5raC6KaG\n5pyJ56Kz57qz57Gz566h77yIQ05Uc++8ieeahOejgeaAp+e6s+exs+mil+eyku+8iE1OUHPvvInv\nvIzlt7LooqvnlKjkuo7no4HmgKflm7rnm7jokIPlj5bvvIhNU1BF77yJ5oqA5pyv77yM5Zyo5YiG\n5p6Q5YmN5YiG56a75rGe562J5YWD57Sg55qE5LiN5ZCM5b2i5oCBIDPjgILov5nnp43mlrnms5Xo\ng73lpJ/mj5Dkvpvmr5TmgLvlhYPntKDmtZPluqbmm7Tnsr7nu4bnmoTmr5LnkIblrabor4TkvLDj\ngILov5nkuIDov5vlsZXlj43mmKDkuobliIbmnpDnm67moIfnmoTmt7HljJbjgILml6nmnJ/nmoTl\niIbmnpDljJblrabkvqfph43kuo7mtYvph4/lhYPntKDnmoTmgLvmtZPluqbjgILnhLbogIzvvIzn\noJTnqbbooajmmI7vvIzlhYPntKDnmoTmr5LmgKflkoznlJ/nianlrabkvZznlKjlnKjlvojlpKfn\nqIvluqbkuIrlj5blhrPkuo7lhbbmsKfljJbmgIHlkozliIblrZDlvaLlvI/vvIjkvovlpoLvvIzn\nlLLln7rmsZ7kuI7ml6DmnLrmsZ7vvIkz44CC5Zug5q2k77yM5LiT6Zeo55So5LqO5Zyo5qOA5rWL\n5YmN5YiG56a76L+Z5Lqb5LiN5ZCM5b2i5oCB55qE5paw5oqA5pyv5bqU6L+Q6ICM55Sf44CC6L+Z\n5Luj6KGo5LqG5LiA5Liq5YWz6ZSu55qE5LqM6Zi25Y+R5bGV77ya5YiG5p6Q55uu5qCH5bey5LuO\n4oCc5pyJ5aSa5bCR77yf4oCd6L2s5Y+Y5Li64oCc5a6D5Lul5L2V56eN5b2i5byP5a2Y5Zyo77yM\n5bm25Y+R5oyl5LuA5LmI5L2c55So77yf4oCd77yM5LuO6ICM5a6e546w5pu05YeG56Gu55qE6aOO\n6Zmp6K+E5Lyw5ZKM5a+55Luj6LCi6YCa6Lev55qE5pu05rex55CG6Kej44CCCgrph4/lrZDngrnv\nvIhRRHPvvInkuI7norPngrnvvIhDRHPvvInkvZzkuLrlhYnlrabmjqLpkogKCuiNp+WFiee6s+ex\ns+mil+eyku+8jOeJueWIq+aYr+mHj+WtkOeCue+8iFFEc++8ieWSjOeis+eCue+8iENEc++8ie+8\njOato+iiq+W8gOWPkeS4uumrmOmAieaLqeaAp+WSjOmrmOeBteaVj+W6pueahOWFieWtpuS8oOaE\n",
+      "n+WZqCAz44CC5LiA5Liq5YWz6ZSu6LaL5Yq/5piv6L2s5ZCR5pu0546v5L+d44CB5peg5q+S55qE\n5p2Q5paZ77yM5L6L5aaC5L2/55SoQWdJblpuU+mHj+WtkOeCue+8jOS7pemBv+WFjeS8oOe7n+mV\nieWfuuaIlumTheWfuumHj+WtkOeCueeahOavkuaAp+mXrumimCA444CC6L+Z5Lqb5o6i6ZKI6IO9\n5aSf6YCa6L+H6I2n5YWJ54yd54Gt5oiW5q+U546H6I2n5YWJ5L+h5Y+35Y+Y5YyW562J5py65Yi2\n77yM5Lul57qz5pGp5bCU57qn5Yir55qE5p6B5L2O5qOA5rWL6ZmQ5qOA5rWLWm7CsuKBuuWSjENy\nwrPigbrnrYnph5HlsZ7nprvlrZAgOOOAggoK57qz57Gz5p2Q5paZ55qE57u/6Imy5ZCI5oiQCgrk\nuIDkuKrmmL7okZfnmoTotovlir/mmK/lkJHigJznu7/oibLlkIjmiJDigJ3mlrnms5XnmoTovazl\nj5jvvIzljbPliKnnlKjmpI3nianmj5Dlj5bniankvZzkuLrov5jljp/liYLlkoznqLPlrprliYIg\nMTDjgILov5nnp43mlrnms5XkuI3ku4XmiJDmnKzmlYjnm4rpq5jjgIHnjq/looPlj4vlpb3vvIzo\nv5jog73pmY3kvY7miYDliLblpIfnurPnsbPpopfnspLnmoTmr5LmgKfvvIzkvb/lhbbmm7TpgILn\lKjkuo7nlJ/nianljLvlrablkoznjq/looPlupTnlKggMTDjgIIKCiMjIyAxLjIg5Y2V57uG6IOe\n6Z2p5ZG977ya5Yip55Soc2NJQ1AtTVPmj63npLrnu4bog57lvILotKjmgKcKCuS8oOe7n+eahOeU\nn+eJqeagt+WTgeWIhuaekOaPkOS+m+eahOaYr+aVsOeZvuS4h+e7huiDnueahOW5s+Wdh+a1i+mH\nj+WAvO+8jOi/meaOqeebluS6humpseWKqOeWvueXhei/m+eoi+WSjOayu+eWl+aKteaKl+eahOWF\ns+mUrue7huiDnumXtOWPmOW8guaAp+OAguWNlee7huiDnueUteaEn+iApuWQiOetieemu+WtkOS9\nk+i0qOiwse+8iHNjSUNQLU1T77yJ5bey5oiQ5Li65bqU5a+56L+Z5LiA5oyR5oiY55qE6aKg6KaG\n5oCn5oqA5pyvMTHjgIIKCuWOn+eQhuS4jui/m+WxlQoKc2NJQ1AtTVPpgJrov4flsIbljZXkuKrn\nu4bog57mgqzmtrLlvJXlhaXnrYnnprvlrZDkvZPkuK3lt6XkvZzvvIzmr4/kuKrnu4bog57kuqfn\lJ/kuIDkuKrnnqzml7bnmoTnprvlrZDkupHvvIzooqvmo4DmtYvkuLrkuIDkuKrni6znq4vnmoTk\nv6Hlj7fls7AgMTPjgILov5HmnJ/nmoTku6rlmajov5vlsZXvvIzljIXmi6zmm7Tlv6vnmoTml7bp\nl7TliIbovqjmlbDmja7ph4fpm4bvvIjlgZznlZnml7bpl7Q8MSBtc++8ieOAgeeisOaSni/lj43l\nupTmsaDmioDmnK/ku6Xlj4rpo57ooYzml7bpl7TotKjosLHvvIhUT0YtTVPvvInnrYnmm7/ku6Po\ntKjph4/liIbmnpDlmajnmoTlupTnlKjvvIzmnoHlpKflnLDmj5Dpq5jkuobngbXmlY/luqblkozp\ngJrph4/vvIzkvb/lvpfljZXnu4bog57lhoXnmoTlhYPntKDlkKvph4/lrprph4/lj6/ovr7po57l\hYvvvIhmZ++8iee6p+WIqyAxMeOAgui/meS4gOaKgOacr+S7juagueacrOS4iuaUueWPmOS6huaI\nkeS7rOeglOeptuW+rumHj+WFg+e0oOS9nOeUqOeahOaWueW8j+OAgui/h+WOu++8jOWvueiCv+eY\npOS4remUjOeahOaJuemHj+a1i+mHj+WPr+iDveW+l+WHuuS4gOS4quW5s+Wdh+WAvOOAgueEtuiA\njO+8jHNjSUNQLU1T5Y+v6IO95o+t56S6OTkl55qE57uG6IOe6ZSM5rC05bmz5q2j5bi477yM6ICM\nMSXnmoTnu4bog57lhbfmnInmnoHpq5jnmoTplIzmsLTlubPjgILov5nkuKoxJeeahOS6mue+pOWP\r+iDveato+aYr+mpseWKqOi9rOenu+aIluS6p+eUn+iAkOiNr+aAp+eahOe7huiDnuOAguWboOat\pO+8jHNjSUNQLU1T5bCG55Sf54mp5a2m6Zeu6aKY5LuO4oCc6ZSM5Zyo55mM55eH5Lit5omu5ryU\n5LuA5LmI6KeS6Imy77yf4oCd5o+Q5Y2H5Yiw4oCc6ZSM55qE5byC6LSo5oCn5Zyo55mM55eH6L+b\n5bGV5ZKM5rK755aX5aSx6LSl5Lit5omu5ryU5LuA5LmI6KeS6Imy77yf4oCd55qE5pu06auY5bGC\n5qyhIDEx44CCCgrlupTnlKjpoobln58KCuivpeaKgOacr+ato+iiq+W5v+azm+W6lOeUqOS6juS4\njeWQjOmihuWfn+OAguWcqOeOr+Wig+enkeWtpuS4re+8jOWug+iiq+eUqOS6jueglOeptuWNleS4\nqua1rua4uOakjeeJqee7huiDnuWvueegt+WQuOaUtueahOW8gui0qOaAp++8jOaPreekuuS6huWv\nueaxoeafk+eJqeWFt+acieS4jeWQjOiAkOWPl+aAp+eahOS6mue+pCAxMuOAguWcqOeUn+eJqeWM\nu+WtpumihuWfn++8jOWug+S4uue7huiDnumHkeWxnue7hOWtpuOAgee6s+exs+mil+eykuavkuaA\np+S7peWPiumHkeWxnuiNr+eJqeeahOW8gOWPkeaPkOS+m+S6huaWsOeahOingeinoyAxMuOAggoK\n5LiO5r+A5YWJ5Yml6JqA5oqA5pyv77yITEEtSUNQLU1T77yJ55qE57uT5ZCICgrlr7nkuo7otLTl\no4Hnu4bog57miJbnu4Tnu4fmoLfmnKzvvIzmv4DlhYnliaXomoAt55S15oSf6ICm5ZCI562J56a7\5a2Q5L2T6LSo6LCx77yITEEtSUNQLU1T77yJ6IO95aSf5o+Q5L6b56m66Ze05L+h5oGv44CC5r+A\n5YWJ5Yml6JqA5Y2V5Liq57uG6IOe77yM5Lqn55Sf55qE5rCU5rq26IO26KKr6L6T6YCB5YiwSUNQ\nLU1T6L+b6KGM5YiG5p6QIDEx44CC6K+l5oqA5pyv5a6e546w5LqG5Y2V57uG6IOe5ZKM57uE57uH\n5rC05bmz55qE5YWD57Sg5oiQ5YOP77yM5o+Q5L6b5LqG5oKs5rWuc2NJQ1AtTVPml6Dms5Xojrfl\nvpfnmoTlhbPplK7nqbrpl7Tog4zmma8gMTLjgILov5nnp43liIbmnpDmqKHlvI/nmoTono3lkIjl\niJvpgKDkuobkuIDkuKrlvLrlpKfnmoTjgIHkupLooaXnmoTlt6Xlhbfpm4bjgILkvovlpoLvvIzn\noJTnqbbkurrlkZjlj6/ku6XpppblhYjkvb/nlKjmgqzmta5zY0lDUC1NU+W/q+mAn+etm+mAiee7\huiDnue+pOS9k++8jOWPkeeOsOS4gOS4qumTnOawtOW5s+W8guW4uOeahOS6mue+pCAxM+OAgueE\ntuWQju+8jOS7luS7rOWPr+S7peWcqOadpeiHquWQjOS4gOaooeWei+eahOe7hOe7h+WIh+eJh+S4\n"
+    ]
+  }</script>
+  <script>
+    // Theme toggle and init
+    (function(){
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || (!saved && matchMedia('(prefers-color-scheme: dark)').matches)) root.classList.add('dark');
+      addEventListener('DOMContentLoaded', () => {
+        document.getElementById('theme-toggle')?.addEventListener('click', () => {
+          root.classList.toggle('dark');
+          localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+        });
+      });
+    })();
+
+    // Mermaid init
+    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+    // Utilities
+    const qs = (sel, el=document) => el.querySelector(sel);
+    const qsa = (sel, el=document) => Array.from(el.querySelectorAll(sel));
+    const themeVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+    async function tryFetchText(url) {
+      try { const res = await fetch(url); if (!res.ok) throw new Error(res.statusText); return await res.text(); } catch(e) { return null; }
+    }
+
+    function buildTOC(container, tocEl) {
+      const heads = qsa('h1, h2, h3', container);
+      const items = heads.map(h => {
+        if (!h.id) h.id = h.textContent.trim().replace(/\s+/g,'-');
+        return { id: h.id, text: h.textContent, lvl: +h.tagName.substring(1) };
+      });
+      tocEl.innerHTML = '<h3>目录</h3>' + items.map(it => `\n<a href="#${it.id}" style="margin-left:${(it.lvl-1)*8}px">${it.text}</a>`).join('');
+    }
+
+    function countMentions(md, keys) {
+      const res = {};
+      keys.forEach(k => { const m = md.match(new RegExp(k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'g')); res[k] = m ? m.length : 0; });
+      return res;
+    }
+
+    function initBarChart(el, dataObj, title) {
+      const chart = echarts.init(el, null, { renderer: 'svg' });
+      const labels = Object.keys(dataObj);
+      const values = labels.map(k => dataObj[k]);
+      chart.setOption({
+        backgroundColor: 'transparent',
+        title: { text: title, left: 'center', textStyle: { color: themeVar('--foreground') } },
+        tooltip: { trigger: 'axis' },
+        xAxis: { type: 'category', data: labels, axisLabel: { interval: 0 } },
+        yAxis: { type: 'value' },
+        series: [{ type: 'bar', data: values, itemStyle: { color: getComputedStyle(document.documentElement).getPropertyValue('--primary') } }],
+        grid: { left: 40, right: 10, top: 50, bottom: 40 }
+      });
+      addEventListener('resize', () => chart.resize());
+    }
+
+    function parseFirstMechanismTable(container) {
+      // 找到包含“微量元素”表头的第一张表
+      const tables = qsa('table', container);
+      for (const t of tables) {
+        const ths = qsa('thead th, tr:first-child th', t).map(th => th.textContent.trim());
+        if (ths.length>=3 && ths[0].includes('微量元素')) {
+          const rows = qsa('tbody tr', t); if (!rows.length) continue;
+          const links = [];
+          rows.forEach(tr => {
+            const tds = qsa('td', tr); if (tds.length < 4) return;
+            const elem = tds[0].textContent.replace(/\(.*?\)/g,'').trim();
+            const mech = tds[2].textContent.trim();
+            const stat = tds[3].textContent.trim();
+            links.push({ source: elem, target: mech, value: 1 });
+            links.push({ source: mech, target: stat, value: 1 });
+          });
+          return links;
+        }
+      }
+      return null;
+    }
+
+    function initSankey(el, links, title) {
+      const chart = echarts.init(el, null, { renderer: 'svg' });
+      const nodes = Array.from(new Set(links.flatMap(l=>[l.source,l.target]))).map(n=>({ name: n }));
+      chart.setOption({
+        backgroundColor: 'transparent',
+        title: { text: title, left: 'center', textStyle: { color: themeVar('--foreground') } },
+        tooltip: { trigger: 'item' },
+        series: [{
+          type: 'sankey',
+          data: nodes,
+          links: links,
+          emphasis: { focus: 'adjacency' },
+          lineStyle: { color: 'gradient', curveness: 0.5 },
+          nodeAlign: 'justify',
+        }],
+        grid: { left: 10, right: 10, top: 50, bottom: 10 }
+      });
+      addEventListener('resize', () => chart.resize());
+    }
+
+    function parseMechanismTableRich(container) {
+      const tables = qsa('table', container);
+      for (const t of tables) {
+        const headers = qsa('thead th, tr:first-child th', t).map(th => th.textContent.trim());
+        if (headers.length >= 4 && headers[0].includes('微量元素')) {
+          const rows = qsa('tbody tr', t);
+          const graph = { nodes: new Map(), links: [], categories: ['元素','疾病/状况','机制','状态'] };
+          function addNode(name, cat){ if (!graph.nodes.has(name)) graph.nodes.set(name, { name, category: cat, value: 1 }); else graph.nodes.get(name).value++; }
+          rows.forEach(tr => {
+            const tds = qsa('td', tr).map(td => td.textContent.trim());
+            if (tds.length < 4) return;
+            const elem = tds[0].replace(/\(.*?\)/g,'');
+            const disease = tds[1].replace(/\s+/g,' ');
+            const mech = tds[2];
+            const status = tds[3];
+            addNode(elem, 0); addNode(disease, 1); addNode(mech, 2); addNode(status, 3);
+            graph.links.push({ source: elem, target: disease });
+            graph.links.push({ source: disease, target: mech });
+            graph.links.push({ source: mech, target: status });
+          });
+          return graph;
+        }
+      }
+      return null;
+    }
+
+    function initNetwork(el, graph, title) {
+      const chart = echarts.init(el, null, { renderer: 'svg' });
+      const categories = graph.categories.map(name => ({ name }));
+      const nodes = Array.from(graph.nodes.values()).map(n => ({
+        ...n,
+        symbolSize: 12 + Math.min(28, Math.sqrt(n.value) * 6),
+        label: { show: true, color: themeVar('--foreground') },
+      }));
+      chart.setOption({
+        backgroundColor: 'transparent',
+        title: { text: title, left: 'center', textStyle: { color: themeVar('--foreground') } },
+        legend: [{ data: categories.map(c=>c.name), bottom: 0 }],
+        tooltip: {},
+        series: [{
+          type: 'graph', layout: 'force',
+          data: nodes,
+          links: graph.links,
+          categories,
+          roam: true,
+          draggable: true,
+          force: { repulsion: 160, edgeLength: [60, 180] },
+          lineStyle: { color: themeVar('--accent-foreground'), width: 1, opacity: 0.6 },
+        }]
+      });
+      addEventListener('resize', () => chart.resize());
+    }
+
+    function parseStrategyTable(container) {
+      const tables = qsa('table', container);
+      for (const t of tables) {
+        const ths = qsa('thead th, tr:first-child th', t).map(th => th.textContent.trim());
+        if (ths.length>=4 && ths[0].includes('策略') && ths[1].includes('目标')) {
+          const rows = qsa('tbody tr', t);
+          const root = { name: '策略', children: [] };
+          const group = new Map();
+          rows.forEach(tr => {
+            const [strategy, target, mechanism, breakthrough] = qsa('td', tr).map(td => td.textContent.trim());
+            if (!group.has(strategy)) group.set(strategy, { name: strategy, children: [] });
+            const strat = group.get(strategy);
+            strat.children.push({ name: target, children: [ { name: '机制: ' + mechanism }, { name: '突破: ' + breakthrough } ] });
+          });
+          root.children = Array.from(group.values());
+          return root;
+        }
+      }
+      return null;
+    }
+
+    function initSunburst(el, data, title) {
+      const chart = echarts.init(el, null, { renderer: 'svg' });
+      chart.setOption({
+        backgroundColor: 'transparent',
+        title: { text: title, left: 'center', textStyle: { color: themeVar('--foreground') } },
+        series: [{ type: 'sunburst', data: data.children, radius: ['10%', '85%'], sort: undefined, emphasis: { focus: 'ancestor' }, label: { rotate: 'radial' } }]
+      });
+      addEventListener('resize', () => chart.resize());
+    }
+
+    function initTreemap(el, obj, title) {
+      const chart = echarts.init(el, null, { renderer: 'svg' });
+      const data = Object.entries(obj).map(([name, value]) => ({ name, value }));
+      chart.setOption({ backgroundColor: 'transparent', title: { text: title, left: 'center', textStyle: { color: themeVar('--foreground') } }, series: [{ type: 'treemap', data, leafDepth: 1, roam: false }] });
+      addEventListener('resize', () => chart.resize());
+    }
+
+    async function renderReport(mdText) {
+      const reportEl = qs('#report');
+      // Markdown -> HTML
+      marked.setOptions({ headerIds: true, mangle: false, breaks: false });
+      reportEl.innerHTML = marked.parse(mdText);
+
+      // 生成目录
+      buildTOC(reportEl, qs('#toc'));
+
+      // 关键字统计条形图
+      const keys = ['铁', '铜', '锌', '硒', 'CRISPR', 'scICP-MS', 'MOF', '微生物', '生物炭'];
+      const counts = countMentions(mdText, keys);
+      initBarChart(qs('#chart-mentions'), counts, '报告关键词提及频次');
+
+      // 机制表格 -> 桑基图
+      const links = parseFirstMechanismTable(reportEl);
+      if (links && links.length) initSankey(qs('#chart-sankey'), links, '元素-机制-状态 关系图');
+
+      // 机制表格（富集） -> 网络图
+      const graph = parseMechanismTableRich(reportEl);
+      if (graph) initNetwork(qs('#chart-network'), graph, '元素-疾病-机制-状态 网络图');
+
+      // 策略表 -> Sunburst
+      const strat = parseStrategyTable(reportEl);
+      if (strat) initSunburst(qs('#chart-sunburst'), strat, '策略-目标-机制/突破 分解');
+
+      // 关键词 Treemap
+      initTreemap(qs('#chart-treemap'), counts, '关键词 Treemap（频次）');
+
+      // Mermaid 渲染（包括页面内示例）
+      qsa('.language-mermaid, code.language-mermaid').forEach(block => {
+        const code = block.textContent.trim();
+        const pre = block.closest('pre');
+        const div = document.createElement('div');
+        (pre || block).replaceWith(div);
+        mermaid.render('mmd-' + Math.random().toString(36).slice(2), code, svg => { div.innerHTML = svg; });
+      });
+    }
+
+    function renderDefaults() {
+      // Default, standalone visuals (no Markdown dependency)
+      const counts = { '铁': 12, '铜': 10, '锌': 9, '硒': 7, 'CRISPR': 8, 'scICP-MS': 6, 'MOF': 6, '微生物': 10, '生物炭': 7 };
+      initBarChart(qs('#chart-mentions'), counts, '主题热度（示意）');
+
+      // Network (元素-疾病-机制-状态)
+      const graph = {
+        categories: ['元素','疾病/状况','机制','状态'],
+        nodes: new Map(), links: []
+      };
+      function add(name, cat) { if(!graph.nodes.has(name)) graph.nodes.set(name, { name, category: cat, value: 1 }); else graph.nodes.get(name).value++; }
+      const rows = [
+        ['铁', '多种癌症', '铁死亡', 'I期探索'],
+        ['铜', '阿尔茨海默/帕金森/自身免疫', '铜死亡', '临床前'],
+        ['锌', '免疫功能/肠道', '锌信号与转运', '临床前'],
+        ['硒', '甲状腺/肿瘤免疫', '抗氧化/硒蛋白双重性', '补充窗口狭窄']
+      ];
+      rows.forEach(([e,d,m,s])=>{ add(e,0); add(d,1); add(m,2); add(s,3); graph.links.push({source:e,target:d}); graph.links.push({source:d,target:m}); graph.links.push({source:m,target:s}); });
+      initNetwork(qs('#chart-network'), graph, '元素-疾病-机制-状态 网络图');
+
+      // Sunburst (策略分解)
+      const strat = { name:'策略', children: [
+        { name:'CRISPR增强植物修复', children:[ { name:'Cd/As/Pb/Ni', children:[ {name:'机制: 上调转运/解毒'}, {name:'突破: 高生物量作物编辑'} ] } ] },
+        { name:'微生物辅助修复', children:[ { name:'重金属/有机污染', children:[ {name:'机制: 铁载体/有机酸'}, {name:'突破: 微生物联合体/内生菌'} ] } ] },
+        { name:'生物炭土壤改良', children:[ { name:'Cr/Cd', children:[ {name:'机制: 吸附固定/改善土壤'}, {name:'突破: 定制/工程化生物炭'} ] } ] },
+        { name:'生物强化（农艺/微生物）', children:[ { name:'Fe/Zn', children:[ {name:'机制: 生物利用度/吸收↑'}, {name:'突破: 抗旱/耐盐关联'} ] } ] }
+      ]};
+      initSunburst(qs('#chart-sunburst'), strat, '策略-目标-机制/突破 分解');
+
+      // Treemap
+      initTreemap(qs('#chart-treemap'), counts, '关键词 Treemap（示意）');
+
+      // 清理“加载报告内容”并填充简述
+      const load = qs('#load-fallback'); if (load) load.style.display = 'none';
+      const report = qs('#report'); if (report) report.innerHTML = '<p class="muted">本页为可视化摘要：上方图表与插画基于主题知识整理，非逐字渲染 Markdown。</p>';
+      const toc = qs('#toc'); if (toc) toc.innerHTML = '<h3>目录</h3>'+
+        '<a href="#summary">可视化总览</a>'+
+        '<a href="#mechanisms">机制速览</a>'+
+        '<a href="#microbiome">肠-脑轴</a>'+
+        '<a href="#agri-env">环境与农业</a>';
+    }
+
+    async function main() {
+      // 使用内嵌 Base64 Markdown（自包含）
+      let mdText = '';
+      try {
+        const b64 = JSON.parse(qs('#md-b64').textContent).parts.join('');
+        const bin = atob(b64);
+        const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+        mdText = new TextDecoder('utf-8').decode(bytes);
+      } catch (e) {
+        // 如果内嵌内容缺失或解码失败，尝试从相对路径读取
+        mdText = await tryFetchText('md/微量元素.md');
+        // 若当前页面已移动到 pages/ 下，则从上级目录回退读取
+        if (!mdText) mdText = await tryFetchText('../md/微量元素.md');
+      }
+      if (mdText) await renderReport(mdText); else renderDefaults();
+
+      // 选择文件加载
+      qs('#file-input').addEventListener('change', async (e) => {
+        const f = e.target.files?.[0]; if (!f) return;
+        const text = await f.text();
+        await renderReport(text);
+        qs('#load-fallback').style.display = 'none';
+      });
+      // 拖拽加载
+      const drop = qs('#drop-zone');
+      ;['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev, e=>{e.preventDefault(); drop.classList.add('on');}))
+      ;['dragleave','drop'].forEach(ev=>drop.addEventListener(ev, e=>{e.preventDefault(); drop.classList.remove('on');}))
+      drop.addEventListener('drop', async (e) => { const f = e.dataTransfer.files?.[0]; if (f) { const text = await f.text(); await renderReport(text); qs('#load-fallback').style.display='none'; } });
+    }
+    addEventListener('DOMContentLoaded', main);
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand"><span class="badge">TE</span><span>微量元素研究前沿（2023-2025）</span></div>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="btn" title="切换深色/浅色">切换主题</button>
+    </div>
+  </header>
+  <div class="container">
+    <aside id="toc" class="toc"></aside>
+    <main class="content">
+      <section id="summary" class="card hero">
+        <svg viewBox="0 0 800 200" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="var(--accent)" />
+              <stop offset="100%" stop-color="var(--primary)" />
+            </linearGradient>
+          </defs>
+          <path d="M0,120 C160,60 320,180 480,120 C640,60 720,140 800,100 L800,200 L0,200 Z" fill="url(#g1)" />
+        </svg>
+        <div class="inner">
+          <div class="section-title">可视化总览</div>
+          <div class="grid cols-2">
+            <div id="chart-mentions" style="min-height:260px"></div>
+            <div id="chart-sankey" style="min-height:260px"></div>
+          </div>
+          <div class="legend" style="margin-top:8px">
+            <span class="pill">左：关键词频次（自动从报告统计）</span>
+            <span class="pill">右：元素→机制→状态 桑基图（表格提取/或示意）</span>
+          </div>
+        </div>
+      </section>
+ 
+      <section id="mechanisms" class="card">
+        <div class="section-title">深入可视化</div>
+        <div class="grid cols-2">
+          <div id="chart-network" style="min-height:320px"></div>
+          <div id="chart-sunburst" style="min-height:320px"></div>
+        </div>
+        <div class="grid cols-2" style="margin-top:12px">
+          <div id="chart-treemap" style="min-height:260px"></div>
+          <div class="card" style="min-height:260px; background:var(--muted); border-style:dashed; display:flex; align-items:center; justify-content:center; text-align:center;">
+            <div>
+              <div style="font-weight:700; margin-bottom:6px">提示</div>
+              <div class="muted">图表基于报告自动抽取。可替换 Markdown 复用此页面。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="microbiome" class="card">
+        <div class="section-title">机制速览：铁死亡 vs 铜死亡</div>
+        <div class="two-col">
+          <div>
+            <div class="callout">
+              <strong>铁死亡（Ferroptosis）</strong>
+              <div class="chiplist" style="margin-top:6px">
+                <span class="chip">脂质过氧化</span>
+                <span class="chip">铁稳态失衡</span>
+                <span class="chip">抗氧化系统受损（GPX4）</span>
+              </div>
+              <div class="caption">利用肿瘤“铁成瘾”特性，诱导细胞死亡；已进入早期临床探索。</div>
+            </div>
+            <div class="callout" style="margin-top:10px">
+              <strong>铜死亡（Cuproptosis）</strong>
+              <div class="chiplist" style="margin-top:6px">
+                <span class="chip">铜离子过量</span>
+                <span class="chip">线粒体TCA蛋白聚集</span>
+                <span class="chip">蛋白脂酰化依赖</span>
+              </div>
+              <div class="caption">通过铜稳态干预影响能量代谢；具备潜在治疗窗口（临床前）。</div>
+            </div>
+          </div>
+          <figure class="figure">
+            <svg viewBox="0 0 420 240" width="100%" height="100%" aria-label="Ferroptosis & Cuproptosis schematic">
+              <defs>
+                <linearGradient id="gFe" x1="0" x2="1"><stop offset="0%" stop-color="var(--chart-1)"/><stop offset="100%" stop-color="var(--accent)"/></linearGradient>
+                <linearGradient id="gCu" x1="0" x2="1"><stop offset="0%" stop-color="#f6d1bd"/><stop offset="100%" stop-color="var(--primary)"/></linearGradient>
+              </defs>
+              <rect x="10" y="10" width="180" height="220" rx="12" fill="url(#gFe)" opacity="0.2" stroke="var(--border)"/>
+              <rect x="230" y="10" width="180" height="220" rx="12" fill="url(#gCu)" opacity="0.2" stroke="var(--border)"/>
+              <text x="30" y="35" font-size="14" fill="currentColor">Ferroptosis</text>
+              <text x="250" y="35" font-size="14" fill="currentColor">Cuproptosis</text>
+              <!-- Fe panel -->
+              <circle cx="60" cy="80" r="16" fill="#6b7280"/>
+              <text x="50" y="85" font-size="10" fill="#fff">Fe</text>
+              <path d="M80,80 L150,80" stroke="#6b7280" stroke-width="2"/>
+              <rect x="150" y="66" width="24" height="28" rx="4" fill="#ef4444"/>
+              <text x="152" y="83" font-size="10" fill="#fff">ROS</text>
+              <text x="30" y="110" font-size="11" fill="currentColor">脂质过氧化 ↑</text>
+              <text x="30" y="130" font-size="11" fill="currentColor">GPX4 能力 ↓</text>
+              <!-- Cu panel -->
+              <circle cx="280" cy="80" r="16" fill="#b45309"/>
+              <text x="272" y="85" font-size="10" fill="#fff">Cu</text>
+              <path d="M300,80 L360,80" stroke="#b45309" stroke-width="2"/>
+              <rect x="360" y="66" width="24" height="28" rx="4" fill="#0ea5e9"/>
+              <text x="362" y="83" font-size="10" fill="#fff">TCA</text>
+              <text x="250" y="110" font-size="11" fill="currentColor">TCA蛋白聚集</text>
+              <text x="250" y="130" font-size="11" fill="currentColor">脂酰化依赖</text>
+            </svg>
+            <figcaption class="caption">两种金属依赖性细胞死亡机制的对比示意。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="agri-env" class="card">
+        <div class="section-title">肠道微生物组 × 微量元素 × 肠-脑轴</div>
+        <div class="two-col">
+          <figure class="figure">
+            <svg viewBox="0 0 560 200" width="100%" height="100%" aria-label="Gut-brain axis">
+              <defs>
+                <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                  <path d="M0,0 L6,3 L0,6 Z" fill="var(--accent-foreground)" />
+                </marker>
+              </defs>
+              <rect x="20" y="30" width="120" height="60" rx="10" fill="var(--accent)" opacity="0.25" stroke="var(--border)"/>
+              <text x="80" y="65" text-anchor="middle" font-size="12">微量元素</text>
+              <rect x="220" y="20" width="120" height="60" rx="10" fill="var(--secondary)" stroke="var(--border)"/>
+              <text x="280" y="55" text-anchor="middle" font-size="12">肠道微生物组</text>
+              <rect x="420" y="30" width="120" height="60" rx="10" fill="var(--secondary)" stroke="var(--border)"/>
+              <text x="480" y="65" text-anchor="middle" font-size="12">宿主代谢/免疫</text>
+              <rect x="420" y="120" width="120" height="60" rx="10" fill="var(--secondary)" stroke="var(--border)"/>
+              <text x="480" y="155" text-anchor="middle" font-size="12">脑健康/AD 风险</text>
+              <path d="M140,60 L220,50" stroke="var(--accent-foreground)" stroke-width="2" marker-end="url(#arrow)" />
+              <path d="M340,50 L420,60" stroke="var(--accent-foreground)" stroke-width="2" marker-end="url(#arrow)" />
+              <path d="M340,50 L420,150" stroke="var(--accent-foreground)" stroke-width="2" marker-end="url(#arrow)" />
+              <text x="180" y="40" font-size="11">转化/甲基化/去甲基化</text>
+              <text x="360" y="90" font-size="11">免疫/代谢通路</text>
+            </svg>
+            <figcaption class="caption">铜、铁等元素与肠道微生物组协同影响代谢与神经退行性疾病风险。</figcaption>
+          </figure>
+          <div>
+            <ul>
+              <li>元素失衡可重塑菌群组成与代谢通路（如脂质生物合成）。</li>
+              <li>微生物可转化元素形态（砷代谢、汞去甲基化）影响毒性与吸收。</li>
+              <li>遗传学研究提示：铜水平变化经由菌群通路影响 AD 风险。</li>
+            </ul>
+            <div class="stat" style="margin-top:8px">
+              <div class="kpi"><div class="num">3</div><div class="lab">关键作用层面：元素—微生物—宿主</div></div>
+              <div class="kpi"><div class="num">2</div><div class="lab">双向作用：元素影响菌群/菌群改造元素</div></div>
+              <div class="kpi"><div class="num">1</div><div class="lab">核心轴线：肠-脑轴</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">环境与农业：CRISPR 植物修复工作流</div>
+        <div class="two-col">
+          <div>
+            <ol>
+              <li>目标基因：吸收/转运/解毒（转运蛋白、金属硫蛋白、植物螯合肽）。</li>
+              <li>编辑宿主：高生物量、非食用作物以提升富集与耐受。</li>
+              <li>场景组合：微生物联合体 + 定制生物炭，提升效率与土壤健康。</li>
+            </ol>
+            <div class="caption">系统工程优于单点干预：植物 × 微生物 × 土壤材料。</div>
+          </div>
+          <figure class="figure">
+            <svg viewBox="0 0 520 190" width="100%" height="100%" aria-label="CRISPR phytoremediation pipeline">
+              <defs>
+                <marker id="arrow2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--primary)" /></marker>
+                <linearGradient id="soil" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#dfe7dd"/><stop offset="100%" stop-color="#b6c7b3"/></linearGradient>
+              </defs>
+              <rect x="20" y="120" width="480" height="40" fill="url(#soil)" stroke="var(--border)"/>
+              <circle cx="80" cy="110" r="18" fill="#7c3aed" opacity="0.15" stroke="var(--border)"/>
+              <text x="80" y="115" text-anchor="middle" font-size="11">CRISPR</text>
+              <rect x="150" y="90" width="90" height="40" rx="8" fill="var(--secondary)" stroke="var(--border)"/>
+              <text x="195" y="115" text-anchor="middle" font-size="11">转运/解毒↑</text>
+              <rect x="270" y="90" width="90" height="40" rx="8" fill="var(--secondary)" stroke="var(--border)"/>
+              <text x="315" y="115" text-anchor="middle" font-size="11">耐受/富集↑</text>
+              <rect x="390" y="90" width="90" height="40" rx="8" fill="var(--secondary)" stroke="var(--border)"/>
+              <text x="435" y="115" text-anchor="middle" font-size="11">场地修复</text>
+              <path d="M98,110 L150,110" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow2)"/>
+              <path d="M240,110 L270,110" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow2)"/>
+              <path d="M360,110 L390,110" stroke="var(--primary)" stroke-width="2" marker-end="url(#arrow2)"/>
+              <text x="60" y="160" font-size="11">+ 微生物联合体</text>
+              <text x="200" y="160" font-size="11">+ 定制生物炭</text>
+            </svg>
+            <figcaption class="caption">从编辑到场地落地的端到端路径示意。</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title">结构示意（Mermaid）</div>
+        <pre><code class="language-mermaid">flowchart LR
+  A[报告结构] --> B[第一部分 技术前沿]
+  A --> C[第二部分 生物医学机制]
+  A --> D[第三部分 农业与环境]
+  A --> E[第四部分 综合与展望]
+  B --> B1[纳米传感/形态分析]
+  B --> B2[scICP-MS 单细胞]
+  C --> C1[铁死亡/铜死亡]
+  C --> C2[免疫/微生物组]
+  D --> D1[CRISPR 植物修复]
+  D --> D2[微生物+生物炭]
+  D --> D3[生物强化/精准农业]
+  E --> E1[精准营养]
+  E --> E2[挑战与交叉前沿]
+</code></pre>
+      </section>
+ 
+      <section class="card">
+        <div class="section-title">架构图（Mermaid）</div>
+        <pre><code class="language-mermaid">flowchart TB
+  subgraph Inputs[输入与样本]
+    S1[生物组织/细胞]
+    S2[环境/土壤/水体]
+    S3[作物/粮食]
+  end
+  subgraph Methods[分析与测量]
+    M1[纳米传感器/MOFs]
+    M2[scICP-MS 单细胞]
+    M3[形态分析/纳米吸附]
+  end
+  subgraph Compute[数据与建模]
+    C1[组学整合]
+    C2[AI/ML 建模]
+    C3[可视化/监控]
+  end
+  subgraph Domains[领域与应用]
+    D1[生物医学: 铁/铜通路]
+    D2[免疫/微生物组]
+    D3[农业环境: CRISPR/微生物/生物炭/生物强化]
+  end
+  subgraph Delivery[落地与治理]
+    L1[临床转化/疗法]
+    L2[环境修复/农艺实践]
+    L3[合规/标准/伦理]
+  end
+
+  S1 --> M2
+  S2 --> M1
+  S2 --> M3
+  S3 --> M1
+  M1 --> C1
+  M2 --> C1
+  M3 --> C1
+  C1 --> C2 --> C3
+  C2 --> D1 --> L1
+  C2 --> D2 --> L1
+  C2 --> D3 --> L2
+  C3 --> L3
+  style Inputs fill:#e6eef7,stroke:#a3b8d8
+  style Methods fill:#fdf2ec,stroke:#e4b39e
+  style Compute fill:#eef7ea,stroke:#a8d8a3
+  style Domains fill:#f0f4ff,stroke:#a3b8d8
+  style Delivery fill:#fff7e6,stroke:#ead2a0
+        </code></pre>
+      </section>
+
+      <section id="load-fallback" class="card" style="display:none">
+        <div class="section-title">加载报告内容</div>
+        <p>未能直接读取 <code>md/微量元素.md</code> 或 <code>../md/微量元素.md</code>（可能因浏览器 file:// 限制）。请选择本地文件或将本页通过本地服务器打开。</p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="file-input" type="file" accept=".md,.markdown,.txt" class="btn" />
+          <div id="drop-zone" class="btn" style="border-style:dashed">或拖拽 Markdown 文件到此</div>
+        </div>
+        <p class="footer">提示：在 VS Code 使用 Live Server/本地 HTTP 服务打开，可自动加载。</p>
+      </section>
+
+      <section class="card md-content">
+        <div class="section-title">完整报告</div>
+        <div id="report">加载中…</div>
+      </section>
+
+      <section class="card footer">
+        <p>说明：本页使用统一主题样式，自动渲染 Markdown、Mermaid，并从报告中提取结构化关系生成图表。打开网络可加载 CDN 资源以完成渲染。</p>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

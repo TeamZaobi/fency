@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实例一：静态沟通方案生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* 基础样式 */
+        .output-box {
+            white-space: pre-wrap; /* 保留换行和空格 */
+            background-color: #f9fafb; /* 浅灰色背景 */
+            border: 1px solid #e5e7eb; /* 灰色边框 */
+            border-radius: 0.5rem; /* 圆角 */
+            padding: 1rem; /* 内边距 */
+            max-height: 60vh; /* 最大高度，可滚动 */
+            overflow-y: auto; /* 垂直滚动 */
+            font-family: 'Microsoft YaHei', 'SimSun', sans-serif; /* 中文字体 */
+            line-height: 1.6; /* 行高 */
+        }
+        .btn-primary {
+            background-color: #3b82f6; /* 蓝色 */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* 深蓝色 */
+        }
+        .input-label {
+            font-weight: 500;
+            color: #374151; /* 深灰色 */
+        }
+        .input-field {
+            border: 1px solid #d1d5db; /* 灰色边框 */
+            border-radius: 0.375rem;
+            padding: 0.5rem;
+            width: 100%;
+        }
+        .info-banner {
+            background-color: #fef3c7; /* 淡黄色 */
+            color: #92400e; /* 深黄色文字 */
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid #fde68a; /* 黄色边框 */
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">实例一：“全知”但静态的沟通方案生成器</h1>
+        <p class="text-sm text-gray-600 mb-6 text-center">模拟医生使用 AI 助手（假设已访问所有院内信息）为高风险沟通场景生成静态方案。</p>
+
+        <div class="mb-4">
+            <label for="patientId" class="block text-sm input-label mb-1">患者 ID:</label>
+            <input type="text" id="patientId" class="input-field" value="PAT123456 (李先生)" placeholder="输入患者标识符">
+        </div>
+
+        <div class="mb-4">
+            <label for="scenario" class="block text-sm input-label mb-1">沟通场景:</label>
+            <input type="text" id="scenario" class="input-field" value="告知坏消息 (IV期肺癌), 患者/家属焦虑" placeholder="描述沟通目标和情境">
+        </div>
+
+        <div class="text-center mb-6">
+            <button id="generateBtn" class="btn-primary">生成沟通策略与脚本</button>
+        </div>
+
+        <hr class="my-6">
+
+        <div>
+            <h2 class="text-xl font-semibold mb-3 text-gray-700">AI 生成的沟通策略与脚本要点</h2>
+            <div class="info-banner text-sm">
+                <p><strong>提示:</strong> 这是 AI 基于患者全面信息生成的**静态**沟通参考方案。实际沟通中，请务必结合现场情况，灵活应变，并优先处理患者和家属的实时情绪与反应。</p>
+            </div>
+            <div id="outputScript" class="output-box text-sm">
+                请点击上方按钮生成...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generateBtn');
+        const outputScriptDiv = document.getElementById('outputScript');
+        const patientIdInput = document.getElementById('patientId');
+        const scenarioInput = document.getElementById('scenario');
+
+        // 模拟的“完美”脚本输出 (来自 advanced_patient_comm_agents_v2_cn 文档)
+        const perfectScript = `
+沟通策略与要点：告知李先生（60岁）及其家属 IV 期肺癌诊断
+
+（核心原则：同理心、诚实、清晰、支持、留有希望感但避免不实承诺）
+
+1.  **准备阶段 (Setting):**
+    * 确保环境私密、安静，时间充裕。邀请家属参与。备好纸巾。
+    * 医生本人需情绪稳定。可先由 AI 助手简要回顾患者关键信息（如：60岁男性，病理 IV 期 NSCLC，骨转移，合并高血压、糖尿病，职业司机，记录显示近期焦虑）。
+
+2.  **了解患者认知 (Perception):**
+    * 开场：“李先生，还有家属，在我们讨论检查结果之前，我想先听听您对目前身体状况的理解大概是怎样的？” (评估患者预期)
+
+3.  **获取患者邀请 (Invitation):**
+    * “您希望我现在和您详细谈谈这次检查的结果吗？您想了解到多详细的程度？” (尊重患者意愿)
+
+4.  **传递信息 (Knowledge) - 核心部分，需极度谨慎:**
+    * **预警信号:** “接下来我们要谈的检查结果，可能不是我们所期望的。”
+    * **清晰告知诊断:** “根据您最新的活检和 CT 检查结果，我们发现您肺部的病灶是恶性的，也就是我们说的肺癌。而且，检查显示癌细胞已经扩散到了骨头上，这属于晚期（或者说 IV 期）。” (使用清晰、直接但避免过于冷酷的语言)
+    * **停顿，观察反应，给予情感支持:** **(AI 脚本提示：此处极可能出现强烈情绪反应，请暂停信息传递，使用共情语句，如：“我知道这个消息对您和家人来说非常突然，也极其沉重。”“您现在感到震惊/难过/生气，都是完全正常的。” 并递上纸巾，保持沉默，允许他们表达情绪。) **
+    * **解释病情 (根据患者意愿):** “晚期意味着癌细胞不仅仅在肺里，也跑到身体其他地方去了。这确实是一个比较严重的情况。”
+    * **讨论预后 (极其敏感，需试探):** “我知道您肯定想问这对以后意味着什么。对于晚期肺癌，目前的治疗目标主要是控制肿瘤发展，减轻症状，尽可能延长有质量的生存时间。完全根治确实非常困难... (停顿观察) ... 如果您想了解更多关于通常情况下预后的信息，我们可以谈谈，但每个人的情况都是不同的。” (避免直接给出具体生存期数字，除非患者强烈要求且医生认为合适)
+
+5.  **处理情绪与同理心回应 (Empathy):**
+    * **贯穿始终:** 积极倾听，识别并确认情绪 (“听起来您感到非常愤怒/害怕/无助”)，表达理解和支持 (“这确实非常非常难”，“我们整个团队都会在这里支持您和家人”)。
+
+6.  **策略与总结 (Strategy & Summary):**
+    * **转向未来和可控性:** “虽然情况很困难，但这绝不意味着无事可做。现在医学发展很快，我们有很多方法可以帮助您控制病情、缓解症状。”
+    * **介绍治疗选择框架:** “接下来，我们需要一起讨论后续的治疗方向。大的方向有两个：一个是尝试用化疗等方法尽量控制肿瘤，另一个是重点放在缓解您的不适，提高生活质量。这两个选择各有利弊，没有绝对的好坏，最重要的是找到最适合您和家人期望的方式。”
+    * **安排后续:** “今天信息量很大，您可能需要时间消化。我们可以先谈到这里，给您安排下次详细讨论治疗方案的时间，或者先和姑息治疗/心理支持的同事聊聊？”
+    * **提供支持信息:** 提供书面材料、联系方式等。
+        `;
+
+        generateBtn.addEventListener('click', () => {
+            const patientId = patientIdInput.value;
+            const scenario = scenarioInput.value;
+
+            if (!patientId || !scenario) {
+                outputScriptDiv.textContent = '请输入患者 ID 和沟通场景。';
+                return;
+            }
+
+            outputScriptDiv.textContent = '正在生成沟通方案...';
+            // 模拟网络延迟
+            setTimeout(() => {
+                outputScriptDiv.textContent = perfectScript;
+            }, 1500);
+        });
+    </script>
+</body>
+</html>

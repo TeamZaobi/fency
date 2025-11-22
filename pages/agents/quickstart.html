@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · 快速上手</title>
+  <meta name="description" content="从零构建一个最小可用的任务 Agent，覆盖目标定义、工具绑定、状态与观测。" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand"><div class="logo"></div><a href="index.html" class="title">Agent 应用教学</a></div>
+      <div class="ag-actions"><button id="darkModeToggle" class="btn" title="切换主题">切换主题</button></div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="h1">快速上手</div>
+      <p class="lead">目标：实现一个“资料检索 + 结构化总结”的单任务 Agent，具备基本可观测性与可复现性。</p>
+    </section>
+
+    <section class="panel">
+      <div class="h2">1. 问题与验收定义</div>
+      <ul class="list">
+        <li>输入：主题关键词与限制条件（来源、时间、字段）</li>
+        <li>输出：JSON Lines 每行一条事实，含 source、quote、summary、tags</li>
+        <li>验收：字段齐全、来源可追溯、重复率低于阈值</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <div class="h2">2. 能力与工具</div>
+      <ul class="list">
+        <li>LLM：推理与抽取（可替换为任何支持的提供商）</li>
+        <li>检索：Web 搜索 / 本地索引</li>
+        <li>结构化：模式（schema）约束与校验</li>
+        <li>观测：日志、失败重试、可复现随机种子</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <div class="h2">3. 骨架示例（伪代码）</div>
+      <pre><code>// plan
+const plan = ["search(kw)", "select(topN)", "extract(schema)", "dedup()", "export(jsonl)"];
+
+// tool binding
+const tools = { search, fetch, parse, validate, exportJSONL };
+
+// loop
+for (const step of plan) {
+  try { await run(step, tools, ctx); } catch (e) { log(e); retry(step); }
+}
+
+// eval
+assert(metrics.coverage &gt;= 0.8);
+assert(metrics.dup_rate &lt;= 0.1);
+</code></pre>
+      <div class="note">提示：先把“可验证的产物”做出来，再逐步把鲁棒性与通用性补齐。</div>
+    </section>
+
+    <section class="panel">
+      <div class="h2">4. 下一步</div>
+      <ul class="list">
+        <li>将检索替换为向量索引（见 Agent + RAG）</li>
+        <li>引入短期记忆与状态机（见 规划与记忆）</li>
+        <li>扩展为多工序、异步并行（见 多智能体协作）</li>
+      </ul>
+    </section>
+
+    <div class="footer">© Agent 应用教学 · 快速上手</div>
+  </main>
+  <script src="../../assets/js/agents-nav.js"></script>
+</body>
+</html>

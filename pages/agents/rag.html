@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · Agent + RAG</title>
+  <meta name="description" content="让 Agent 具备检索与使用资料的能力：索引、召回、重排与引用。" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand"><div class="logo"></div><a href="index.html" class="title">Agent 应用教学</a></div>
+      <div class="ag-actions"><button id="darkModeToggle" class="btn" title="切换主题">切换主题</button></div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="h1">Agent + RAG</div>
+      <p class="lead">检索增强的关键在“可引用与可追溯”：任何结论都应可溯源到具体片段与来源。</p>
+    </section>
+    <section class="panel">
+      <div class="h2">设计要点</div>
+      <ul class="list">
+        <li>索引：分块策略、元数据、嵌入模型与刷新机制</li>
+        <li>召回：过滤、BM25 + 向量混排、重排器（Rerank）</li>
+        <li>引用：段落级引用、置信度与冲突处理</li>
+        <li>缓存：热点问题缓存、响应模板与去重</li>
+      </ul>
+    </section>
+    <div class="footer">© Agent 应用教学 · Agent + RAG</div>
+  </main>
+  <script src="../../assets/js/agents-nav.js"></script>
+</body>
+</html>

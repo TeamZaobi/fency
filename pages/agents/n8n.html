@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · n8n</title>
+  <meta name="description" content="基于 md/AgentsCookbook/n8n.md 的内容渲染，结合本站工程化视角，介绍 n8n 在 AI Agent 工作流中的位置、最佳实践与对比。" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+  <style>
+    .md-body table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    .md-body th, .md-body td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+    .md-body th { background: #0f1630; }
+    .md-body a { color: var(--brand); }
+    .breadcrumbs { font-size: 13px; color: var(--subtext); margin-bottom: 8px; }
+    .breadcrumbs a { color: var(--subtext); text-decoration: none; }
+    .breadcrumbs a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand"><div class="logo"></div><a href="index.html" class="title">Agent 应用教学</a></div>
+      <div class="ag-actions"><button id="darkModeToggle" class="btn" title="切换主题">切换主题</button></div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="breadcrumbs">
+        <a href="index.html">Agent 应用教学</a> · <a href="tools.html">工具与框架</a> · n8n
+      </div>
+      <div class="h1">n8n</div>
+      <p class="lead">本页内容来自 <code>md/AgentsCookbook/n8n.md</code>，聚焦 n8n 在 AI Agent 工作流自动化中的定位、发展现状、最佳实践与竞品对比。</p>
+    </section>
+
+    <section class="panel md-body" id="mdMount">
+      <div class="muted">正在加载内容…</div>
+    </section>
+
+    <section class="panel">
+      <div class="h2">相关板块</div>
+      <ul class="list">
+        <li><a href="tools.html">工具与框架</a>：抽象边界与组合选型</li>
+        <li><a href="openai-agentkit.html">OpenAI AgentKit</a>：视觉编排与评测能力</li>
+        <li><a href="langchain.html">LangChain / LangGraph</a>：编排、状态与长时程任务</li>
+        <li><a href="cases.html">案例</a>：工作流与多代理模板</li>
+      </ul>
+    </section>
+
+    <div class="footer">© Agent 应用教学 · n8n</div>
+  </main>
+
+  <script src="../../assets/js/agents-nav.js"></script>
+  <script src="../../assets/js/content-enhancer.js"></script>
+  <script>
+    // 动态加载 Marked（CDN），失败时使用轻量解析
+    (function(){
+      const cdn = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+      const s = document.createElement('script');
+      s.src = cdn; s.async = true; s.onload = () => render(); s.onerror = () => render(true);
+      document.head.appendChild(s);
+    })();
+
+    async function fetchCandidates(paths){
+      for (const p of paths) {
+        try { const r = await fetch(p); if (r.ok) return await r.text(); } catch(_){}
+      }
+      return null;
+    }
+
+    function basicMdToHtml(md){
+      const segments = md.split(/```[a-zA-Z0-9]*\n[\s\S]*?```/g);
+      const codeMatches = md.match(/```[a-zA-Z0-9]*\n([\s\S]*?)```/g) || [];
+      let html = '';
+      for (let i=0;i<segments.length;i++){
+        let part = segments[i];
+        part = part.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
+                   .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
+                   .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
+        part = part.replace(/(^|\n)(-\s+.+(?:\n-\s+.+)*)/g, (m, pre, list)=>{
+          const items = list.split(/\n/).map(l=>l.replace(/^-\s+/, '').trim()).filter(Boolean);
+          return `${pre}<ul>` + items.map(it=>`<li>${inline(it)}</li>`).join('') + '</ul>';
+        });
+        part = part.replace(/\n\|(.+?)\|\n\|\s*[-:|\s]+\|\n([\s\S]*?)\n(?=\S|$)/g, (m, header, body)=>{
+          const headCells = header.split('|').map(c=>c.trim());
+          const rows = body.trim().split(/\n/).filter(Boolean).map(r=> r.replace(/^\|/, '').replace(/\|$/, '').split('|').map(c=>c.trim()));
+          let t = '<table><thead><tr>' + headCells.map(c=>`<th>${inline(c)}</th>`).join('') + '</tr></thead><tbody>';
+          t += rows.map(r=>'<tr>'+ r.map(c=>`<td>${inline(c)}</td>`).join('') + '</tr>').join('');
+          t += '</tbody></table>';
+          return '\n' + t + '\n';
+        });
+        part = part.replace(/\n{2,}/g, '</p><p>');
+        part = '<p>' + part + '</p>';
+        function inline(t){
+          return t
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/`([^`]+)`/g, '<code>$1</code>')
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1<\/a>');
+        }
+        part = inline(part);
+        html += part;
+        if (i < codeMatches.length){
+          const code = codeMatches[i].replace(/^```[a-zA-Z0-9]*\n/, '').replace(/```\s*$/, '');
+          html += `<pre><code>${code.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</code></pre>`;
+        }
+      }
+      return html;
+    }
+
+    async function render(useFallback){
+      const mount = document.getElementById('mdMount');
+      const md = await fetchCandidates([
+        '../../md/AgentsCookbook/n8n.md',
+        '/md/AgentsCookbook/n8n.md',
+        'md/AgentsCookbook/n8n.md'
+      ]);
+      if (!md){
+        mount.innerHTML = '<div class="muted">未能读取 Markdown（可能因 file:// 限制）。可选择本地文件进行渲染：</div>'+
+          '<div style="margin-top:8px"><input type="file" id="localMd" accept=".md,.markdown,text/markdown" /></div>';
+        const input = document.getElementById('localMd');
+        input?.addEventListener('change', async (e)=>{
+          const f = e.target.files?.[0]; if(!f) return;
+          const text = await f.text();
+          try{
+            if (!useFallback && window.marked){ mount.innerHTML = window.marked.parse(text); }
+            else { mount.innerHTML = basicMdToHtml(text); }
+            window.AgentEnhancer && window.AgentEnhancer.enhance(mount);
+          } catch(err){ mount.textContent = text; }
+        });
+        return;
+      }
+      try {
+        if (!useFallback && window.marked){
+          mount.innerHTML = window.marked.parse(md);
+        } else {
+          mount.innerHTML = basicMdToHtml(md);
+        }
+        window.AgentEnhancer && window.AgentEnhancer.enhance(mount);
+      } catch (e){
+        mount.innerHTML = '<div class="muted">渲染失败，已回落为原始文本：</div><pre><code>'+ md.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])) +'</code></pre>';
+      }
+    }
+  </script>
+</body>
+</html>

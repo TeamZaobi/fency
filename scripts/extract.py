@@ -1,0 +1,1 @@
+import os, PyPDF2; pdf_path = "sciadv.ads1560.pdf"; f = open(pdf_path, "rb"); pdf_reader = PyPDF2.PdfReader(f); print(f"PDF有{len(pdf_reader.pages)}页"); first_page = pdf_reader.pages[0]; text = first_page.extract_text(); print(text[:300]); f.close()

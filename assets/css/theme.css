@@ -1,0 +1,132 @@
+/* Unified theme tokens per web-dev.mdc */
+:root {
+  --background: rgb(204, 204, 204);
+  --foreground: rgb(31, 31, 31);
+  --card: rgb(176, 176, 176);
+  --card-foreground: rgb(31, 31, 31);
+  --popover: rgb(176, 176, 176);
+  --popover-foreground: rgb(31, 31, 31);
+  --primary: rgb(183, 28, 28);
+  --primary-foreground: rgb(255, 255, 255);
+  --secondary: rgb(85, 107, 47);
+  --secondary-foreground: rgb(255, 255, 255);
+  --muted: rgb(184, 184, 184);
+  --muted-foreground: rgb(74, 74, 74);
+  --accent: rgb(70, 130, 180);
+  --accent-foreground: rgb(255, 255, 255);
+  --destructive: rgb(255, 111, 0);
+  --destructive-foreground: rgb(0, 0, 0);
+  --border: rgb(80, 80, 80);
+  --input: rgb(80, 80, 80);
+  --ring: rgb(183, 28, 28);
+  --chart-1: rgb(183, 28, 28);
+  --chart-2: rgb(85, 107, 47);
+  --chart-3: rgb(70, 130, 180);
+  --chart-4: rgb(255, 111, 0);
+  --chart-5: rgb(141, 110, 99);
+  --sidebar: rgb(176, 176, 176);
+  --sidebar-foreground: rgb(31, 31, 31);
+  --sidebar-primary: rgb(183, 28, 28);
+  --sidebar-primary-foreground: rgb(255, 255, 255);
+  --sidebar-accent: rgb(70, 130, 180);
+  --sidebar-accent-foreground: rgb(255, 255, 255);
+  --sidebar-border: rgb(80, 80, 80);
+  --sidebar-ring: rgb(183, 28, 28);
+  --font-sans: "Oxanium", sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: "Source Code Pro", monospace;
+  --radius: 0px;
+  --shadow-x: 0px;
+  --shadow-y: 2px;
+  --shadow-blur: 4px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.4;
+  --shadow-color: hsl(0 0% 0%);
+  --shadow-2xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.20);
+  --shadow-xs: 0px 2px 4px 0px hsl(0 0% 0% / 0.20);
+  --shadow-sm: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
+  --shadow: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 1px 2px -1px hsl(0 0% 0% / 0.40);
+  --shadow-md: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 2px 4px -1px hsl(0 0% 0% / 0.40);
+  --shadow-lg: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 4px 6px -1px hsl(0 0% 0% / 0.40);
+  --shadow-xl: 0px 2px 4px 0px hsl(0 0% 0% / 0.40), 0px 8px 10px -1px hsl(0 0% 0% / 0.40);
+  --shadow-2xl: 0px 2px 4px 0px hsl(0 0% 0% / 1.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  /* semantic mapping */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+.dark {
+  --background: rgb(26, 26, 26);
+  --foreground: rgb(224, 224, 224);
+  --card: rgb(42, 42, 42);
+  --card-foreground: rgb(224, 224, 224);
+  --popover: rgb(42, 42, 42);
+  --popover-foreground: rgb(224, 224, 224);
+  --primary: rgb(229, 57, 53);
+  --primary-foreground: rgb(255, 255, 255);
+  --secondary: rgb(104, 159, 56);
+  --secondary-foreground: rgb(0, 0, 0);
+  --muted: rgb(37, 37, 37);
+  --muted-foreground: rgb(160, 160, 160);
+  --accent: rgb(100, 181, 246);
+  --accent-foreground: rgb(0, 0, 0);
+  --destructive: rgb(255, 160, 0);
+  --destructive-foreground: rgb(0, 0, 0);
+  --border: rgb(74, 74, 74);
+  --input: rgb(74, 74, 74);
+  --ring: rgb(229, 57, 53);
+  --chart-1: rgb(229, 57, 53);
+  --chart-2: rgb(104, 159, 56);
+  --chart-3: rgb(100, 181, 246);
+  --chart-4: rgb(255, 160, 0);
+  --chart-5: rgb(161, 136, 127);
+  --sidebar: rgb(20, 20, 20);
+  --sidebar-foreground: rgb(224, 224, 224);
+  --sidebar-primary: rgb(229, 57, 53);
+  --sidebar-primary-foreground: rgb(255, 255, 255);
+  --sidebar-accent: rgb(100, 181, 246);
+  --sidebar-accent-foreground: rgb(0, 0, 0);
+  --sidebar-border: rgb(74, 74, 74);
+  --sidebar-ring: rgb(229, 57, 53);
+}
+
+/* Base resets using tokens */
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-foreground);
+  background: var(--color-background);
+}
+

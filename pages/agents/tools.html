@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agent 应用教学 · 工具与框架</title>
+  <meta name="description" content="概览常见的 Agent 框架与运行时抽象，理解组件边界与取舍。" />
+  <link rel="stylesheet" href="../../assets/css/theme.css" />
+  <link rel="stylesheet" href="../../assets/css/agents.css" />
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand"><div class="logo"></div><a href="index.html" class="title">Agent 应用教学</a></div>
+      <div class="ag-actions"><button id="darkModeToggle" class="btn" title="切换主题">切换主题</button></div>
+    </div>
+    <div class="container" id="agentsNav"></div>
+  </header>
+  <main class="container ag-main">
+    <section class="panel">
+      <div class="h1">工具与框架</div>
+      <p class="lead">关注“抽象边界”和“工程约束”：执行器、规划器、记忆、工具接口、观测与评测。</p>
+    </section>
+
+    <section class="panel">
+      <div class="h2">常见选型</div>
+      <div class="grid cols-3">
+        <div class="card"><div class="title">轻量自研</div><div class="muted">函数式 + 状态机，最灵活，适合强工程团队。</div></div>
+        <div class="card"><div class="title">通用框架</div><div class="muted">快速搭建、组件齐全；需理解框架约束与扩展点。</div></div>
+        <div class="card"><div class="title">平台编排</div><div class="muted">低代码/可视化，适合团队协作与快迭代。</div></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="h2">参考组件边界</div>
+      <ul class="list">
+        <li>Planner：生成/修正任务计划（支持自反思与人机回路）</li>
+        <li>Executor：工具调用、上下文裁剪、重试与超时</li>
+        <li>Memory：短期对话态、长期向量库、结构化知识</li>
+        <li>Tooling：类型化参数、权限边界、幂等与审计</li>
+        <li>Observability：日志、事件流、度量与回放</li>
+        <li>Evaluation：自动化用例、基线、对比实验</li>
+      </ul>
+    </section>
+
+    <section class="panel">
+      <div class="h2">相关指南</div>
+      <ul class="list">
+        <li><a href="openai-agentkit.html">OpenAI AgentKit</a>：社区评价、最佳实践与工程化要点</li>
+        <li><a href="langchain.html">LangChain / LangGraph / Deep Agents</a>：抽象边界、编排与生产可靠性</li>
+        <li><a href="n8n.html">n8n</a>：开源工作流自动化与多代理集成</li>
+      </ul>
+    </section>
+
+    <div class="footer">© Agent 应用教学 · 工具与框架</div>
+  </main>
+  <script src="../../assets/js/agents-nav.js"></script>
+</body>
+</html>

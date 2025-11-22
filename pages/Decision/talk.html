@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class=""> <!-- Add 'dark' class here for dark mode -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医患沟通智能体进阶：从静态专家到整合服务伙伴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <style>
+        body {
+            font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300;
+            scroll-behavior: smooth;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Noto Serif SC", serif;
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            @apply dark:bg-gray-700;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+            @apply dark:bg-gray-500;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            @apply dark:bg-gray-400;
+        }
+        /* Additional styles for potential elements */
+        .card {
+            @apply bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm transition-all duration-300 hover:shadow-md;
+        }
+        .icon-list li {
+            @apply flex items-start space-x-3 mb-2;
+        }
+        .icon-list .icon {
+            @apply text-blue-500 dark:text-blue-400 mt-1 flex-shrink-0; /* Adjusted alignment */
+            width: 1.25rem; /* Ensure consistent icon width */
+            text-align: center;
+        }
+        .highlight {
+            @apply text-blue-600 dark:text-blue-400 font-semibold;
+        }
+        .concept-svg path, .concept-svg line, .concept-svg rect, .concept-svg circle, .concept-svg polygon {
+             stroke: #3b82f6; /* blue-500 */
+             stroke-width: 1.5;
+             fill: transparent;
+             transition: stroke 0.3s ease;
+        }
+         .concept-svg text {
+            fill: #374151; /* gray-700 */
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 10px;
+            transition: fill 0.3s ease;
+        }
+        html.dark .concept-svg path, html.dark .concept-svg line, html.dark .concept-svg rect, html.dark .concept-svg circle, html.dark .concept-svg polygon {
+            stroke: #60a5fa; /* blue-400 */
+        }
+        html.dark .concept-svg text {
+            fill: #d1d5db; /* gray-300 */
+        }
+        /* Style for Mermaid diagrams if used */
+        .mermaid {
+            @apply bg-gray-50 dark:bg-gray-800 p-4 rounded border border-gray-200 dark:border-gray-700 mb-6 text-center;
+        }
+        /* GSAP Animation Helpers */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        /* Navbar styles */
+        .navbar {
+            @apply fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 transition-all duration-300;
+        }
+        .nav-link {
+            @apply px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm md:text-base;
+        }
+        .nav-link.active {
+            @apply text-blue-600 dark:text-blue-400 font-medium;
+        }
+        .back-to-top {
+            @apply fixed bottom-4 right-4 bg-blue-500 dark:bg-blue-600 text-white p-2 rounded-full shadow-md opacity-0 invisible transition-all duration-300 hover:bg-blue-600 dark:hover:bg-blue-700;
+            z-index: 40;
+        }
+        .back-to-top.visible {
+            @apply opacity-100 visible;
+        }
+        
+        /* 打印样式 */
+        @media print {
+            .navbar, .back-to-top, #darkModeToggle {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #eee !important;
+                break-inside: avoid;
+            }
+            h2, h3 {
+                break-after: avoid;
+            }
+            h1, h2, h3, h4, h5, h6 {
+                color: black !important;
+            }
+        }
+    </style>
+    <script>
+        // Tailwind Dark Mode Config
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'serif'],
+                    },
+                    colors: {
+                        // Add custom colors if needed
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(20px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+
+        // Dark Mode Toggle Logic
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            }
+            
+            // 更新按钮状态
+            const toggleBtn = document.getElementById('darkModeToggle');
+            if (toggleBtn) {
+                toggleBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            }
+            
+            // 刷新所有动画触发器
+            if (typeof ScrollTrigger !== 'undefined') {
+                ScrollTrigger.refresh();
+            }
+            
+            // 刷新图表
+            updateChartColors(isDark);
+        }
+
+        function updateChartColors(isDark) {
+            const chartInstance = Chart.getChart('capabilityChart');
+            if (chartInstance) {
+                chartInstance.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                chartInstance.options.plugins.title.color = isDark ? '#e5e7eb' : '#374151';
+                chartInstance.update();
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.contains('dark');
+            setDarkMode(!isDark);
+        }
+
+        // Initialize dark mode based on localStorage or system preference
+        function initDarkMode() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setDarkMode(true);
+            } else {
+                 setDarkMode(false);
+            }
+        }
+
+        // Call initDarkMode on page load
+         document.addEventListener('DOMContentLoaded', initDarkMode);
+
+    </script>
+</head>
+<body class="antialiased">
+
+    <!-- 固定导航栏 -->
+    <nav class="navbar">
+        <div class="container mx-auto px-4 py-2 flex items-center justify-between">
+            <div class="font-serif font-semibold text-blue-700 dark:text-blue-400 text-lg hidden md:block">医患沟通智能体</div>
+            <ul class="flex items-center space-x-1 md:space-x-4 overflow-x-auto" role="navigation" aria-label="主导航">
+                <li><a href="#introduction" class="nav-link">引言</a></li>
+                <li><a href="#scenario" class="nav-link">场景设定</a></li>
+                <li><a href="#instance-1" class="nav-link">范式一</a></li>
+                <li><a href="#instance-2" class="nav-link">范式二</a></li>
+                <li><a href="#instance-3" class="nav-link">范式三</a></li>
+                <li><a href="#visualizations" class="nav-link">可视化</a></li>
+                <li><a href="#reading" class="nav-link">延伸阅读</a></li>
+            </ul>
+            <!-- Dark Mode Toggle Button -->
+            <button id="darkModeToggle" onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200" aria-label="切换暗黑模式">
+                <!-- Icon will be set by JS -->
+            </button>
+        </div>
+    </nav>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="back-to-top" aria-label="返回顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Header / Hero Section -->
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-gray-800 dark:to-blue-900 text-center px-4 reveal-up pt-16">
+        <div class="z-10">
+            <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">医患沟通智能体进阶</h1>
+            <p class="text-xl md:text-2xl text-indigo-800 dark:text-blue-300 max-w-3xl mx-auto">从静态专家到整合服务伙伴：AI 赋能未来医患关系新范式</p>
+        </div>
+        <!-- Optional background elements (e.g., subtle shapes, gradients) -->
+         <div class="absolute inset-0 opacity-20 dark:opacity-10 mix-blend-multiply dark:mix-blend-overlay">
+            <!-- Example subtle background pattern or image -->
+             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="a" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="scale(2) rotate(0)"><rect x="0" y="0" width="100%" height="100%" fill="hsla(0,0%,100%,0)"/><path d="M14.5 20a5.5 5.5 0 1111 0 5.5 5.5 0 01-11 0zm1-16a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1h-8a1 1 0 01-1-1V4zm1 1v6h6V5h-6zM10 10a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1h-8a1 1 0 01-1-1v-8zm1 1v6h6v-6h-6zM0 30a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H1a1 1 0 01-1-1v-8zm1 1v6h6v-6H1z" stroke-width="1" stroke="hsla(210, 50%, 60%, 0.2)" fill="none"/></pattern></defs><rect width="800%" height="800%" transform="translate(0,0)" fill="url(#a)"/></svg>
+        </div>
+        <!-- 向下滚动指示 -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#introduction" aria-label="滚动到内容">
+                <i class="fas fa-chevron-down text-gray-600 dark:text-gray-400 text-2xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 py-16 md:py-24 space-y-16 md:space-y-24">
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="max-w-4xl mx-auto text-lg leading-relaxed reveal-up">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-blue-800 dark:text-blue-300">引言</h2>
+            <p class="mb-4">本文档旨在通过一个贯穿始终的实例，展示<strong class="highlight">医患沟通辅助智能体 (Agent)</strong>的三种不同但层层递进的实现范式。我们将看到，随着技术的发展和系统集成能力的增强，AI 助手如何从一个能够提供"完美"但静态沟通方案的"全知专家"，演变为能够进行实时情感互动、并最终成为整合了多媒体展示、连续随访和健康服务的"全程伙伴"。</p>
+            <p>我们将详细探讨每个阶段的技术特点和能力边界，展示其在改善医患沟通方面的逐步"完美化"过程。</p>
+        </section>
+
+        <!-- Core Scenario Section -->
+        <section id="scenario" class="max-w-4xl mx-auto card reveal-up">
+             <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center text-blue-700 dark:text-blue-400">核心任务场景设定</h2>
+             <div class="flex items-center justify-center mb-4 text-blue-500 dark:text-blue-400">
+                <i class="fas fa-user-md fa-2x mr-3"></i>
+                <span class="text-xl font-semibold">场景描述</span>
+             </div>
+             <p class="mb-4 text-center">王先生，55 岁男性，刚刚被诊断为 2 型糖尿病。在诊室里，他显得有些焦虑和不知所措。医生需要向他解释诊断结果、初步治疗方案（生活方式干预+二甲双胍），并提供后续管理建议。</p>
+             <div class="flex items-center justify-center mb-4 text-green-500 dark:text-green-400">
+                <i class="fas fa-bullseye fa-2x mr-3"></i>
+                <span class="text-xl font-semibold">目标</span>
+             </div>
+             <p class="text-center">利用 AI 智能体辅助医生完成这次关键的首次沟通，并为患者提供持续的支持。</p>
+        </section>
+
+        <!-- Placeholder for Instance Sections -->
+        <section id="instances" class="space-y-16 md:space-y-24">
+
+            <!-- Instance 1: Static Expert -->
+            <article id="instance-1" class="reveal-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-800 dark:text-blue-300">范式一："全知"但静态的沟通方案生成器</h2>
+                <div class="card">
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-white"><i class="fas fa-brain mr-2 text-blue-500 dark:text-blue-400"></i>核心概念</h3>
+                    <p class="mb-6 text-lg leading-relaxed">设想一个单一但能力极强的 LLM 智能体，能够访问并整合院内几乎所有相关信息（理想化假设），并基于此生成一份"完美"的初始沟通脚本或建议。它如同一个经验丰富、知识渊博且掌握患者全部院内信息的"沟通专家"，在沟通前就"做足了功课"。</p>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300"><i class="fas fa-cogs mr-2 text-teal-500 dark:text-teal-400"></i>技术讲解</h4>
+                    <ul class="list-disc list-inside mb-6 space-y-2 text-gray-700 dark:text-gray-300">
+                        <li><strong class="highlight">全信息整合能力:</strong> 假设处理超长上下文，一次性理解患者完整病历、最新检查结果、合并症、用药史、过敏史、社会背景等。</li>
+                        <li><strong class="highlight">深度个性化生成:</strong> 基于全面信息生成高度个性化解释，如考虑 HbA1c 值、职业影响、合并用药。</li>
+                        <li><strong class="highlight">共情与语气模拟:</strong> 根据提示（如"患者焦虑"）生成带有安抚性、鼓励性语气的文本。</li>
+                        <li><strong class="highlight">结构化与要点提炼:</strong> 将复杂医学信息整理成清晰、分点、易于理解的沟通要点。</li>
+                    </ul>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300"><i class="fas fa-tasks mr-2 text-purple-500 dark:text-purple-400"></i>工作流程与输出示例</h4>
+                    <p class="mb-4">医生输入指令和患者 ID，智能体后台整合信息并生成结构化的沟通要点（详见上方 markdown 示例）。</p>
+                    <blockquote class="border-l-4 border-blue-300 dark:border-blue-600 pl-4 py-2 mb-6 bg-blue-50 dark:bg-gray-800 italic text-gray-600 dark:text-gray-400">
+                        "王先生，这次检查结果出来了...您的糖化血红蛋白是 8.5%...我知道这可能让您有点担心，但请放心..."（模拟输出节选）
+                    </blockquote>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-green-600 dark:text-green-400"><i class="fas fa-check-circle mr-2"></i>优势</h4>
+                            <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                <li><span class="icon"><i class="fas fa-database"></i></span>信息全面、高度个性化。</li>
+                                <li><span class="icon"><i class="fas fa-stethoscope"></i></span>内容准确、专业。</li>
+                                <li><span class="icon"><i class="fas fa-clock"></i></span>效率提升，节省医生时间。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-red-600 dark:text-red-400"><i class="fas fa-times-circle mr-2"></i>关键局限性</h4>
+                            <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                <li><span class="icon"><i class="fas fa-comments"></i></span><strong class="font-semibold">静态输出，缺乏实时交互:</strong> 核心瓶颈。无法感知患者实时反应并动态调整。</li>
+                                <li><span class="icon"><i class="fas fa-microphone-slash"></i></span>无法处理预期外的问题或反应。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Instance 2: Interactive System -->
+            <article id="instance-2" class="reveal-up">
+                 <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-800 dark:text-blue-300">范式二：具备实时反馈与情感交互的多智能体系统</h2>
+                 <div class="card">
+                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-white"><i class="fas fa-users-cog mr-2 text-blue-500 dark:text-blue-400"></i>核心概念</h3>
+                     <p class="mb-6 text-lg leading-relaxed">克服静态输出的局限，构建一个处理实时音视频流的系统。它不仅理解语言内容，还能感知患者情绪状态，并据此动态调整回应的语气、措辞甚至内容策略，实现更自然、更具共情性的实时互动。</p>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300"><i class="fas fa-cogs mr-2 text-teal-500 dark:text-teal-400"></i>技术讲解与智能体角色</h4>
+                    <ul class="icon-list mb-6 space-y-3 text-gray-700 dark:text-gray-300">
+                        <li><span class="icon"><i class="fas fa-sync-alt"></i></span><strong class="highlight">协调智能体:</strong> 调度模块，管理对话状态。</li>
+                        <li><span class="icon"><i class="fas fa-microphone-alt"></i></span><strong class="highlight">语音识别 (STT) Agent:</strong> 语音转文字。</li>
+                        <li><span class="icon"><i class="fas fa-language"></i></span><strong class="highlight">自然语言理解 (NLU) Agent:</strong> 理解意图、关键信息。</li>
+                        <li><span class="icon text-yellow-500 dark:text-yellow-400"><i class="fas fa-smile-beam"></i></span><strong class="highlight">【新】语音情感识别 (SER) Agent:</strong> 分析声学特征判断情绪。</li>
+                        <li><span class="icon text-yellow-500 dark:text-yellow-400"><i class="fas fa-eye"></i></span><strong class="highlight">【新, 可选】视觉情感识别 Agent:</strong> 分析面部表情、肢体语言。</li>
+                        <li><span class="icon"><i class="fas fa-comments-dollar"></i></span><strong class="highlight">对话管理 Agent:</strong> 维护对话历史，追踪话题。</li>
+                         <li><span class="icon"><i class="fas fa-lightbulb"></i></span><strong class="highlight">核心推理与应答 Agent (LLM):</strong> 基于 NLU、情绪、历史生成初步回应。</li>
+                        <li><span class="icon text-pink-500 dark:text-pink-400"><i class="fas fa-hand-holding-heart"></i></span><strong class="highlight">【新】共情与风格调整 Agent:</strong> <strong class="font-semibold">关键角色</strong>。根据情绪"润色"回应，匹配情绪，保持同理心。</li>
+                        <li><span class="icon"><i class="fas fa-volume-up"></i></span><strong class="highlight">文本转语音 (TTS) Agent:</strong> 合成匹配情绪的自然语音。</li>
+                    </ul>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300"><i class="fas fa-tasks mr-2 text-purple-500 dark:text-purple-400"></i>工作流程与交互示例</h4>
+                    <p class="mb-4">系统实时处理患者语音（"医生，这个二甲双胍副作用大不大啊？...焦虑语气"），STT 转录，NLU 理解意图，SER 检测到焦虑。核心 Agent 生成标准解释，共情 Agent 基于"焦虑"信号调整回应，增加安抚、理解和应对策略，最后由 TTS 以温和语气输出。</p>
+                     <blockquote class="border-l-4 border-green-300 dark:border-green-600 pl-4 py-2 mb-6 bg-green-50 dark:bg-gray-800 italic text-gray-600 dark:text-gray-400">
+                        "王先生，您这个问题问得很好...（表示理解）。二甲双胍确实有些人吃了初期会有些胃肠不舒服...但这通常是<strong class="highlight">暂时</strong>的，而且<strong class="highlight">不是每个人都会很明显</strong>...（安抚并提供方案）您不用太有压力。"
+                    </blockquote>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                             <h4 class="text-lg font-semibold mb-3 text-green-600 dark:text-green-400"><i class="fas fa-check-circle mr-2"></i>优势</h4>
+                             <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                 <li><span class="icon"><i class="fas fa-exchange-alt"></i></span>实时交互与适应性。</li>
+                                 <li><span class="icon"><i class="fas fa-heartbeat"></i></span>情感智能与共情，改善信任。</li>
+                                 <li><span class="icon"><i class="fas fa-user-friends"></i></span>更自然的对话体验。</li>
+                             </ul>
+                        </div>
+                        <div>
+                             <h4 class="text-lg font-semibold mb-3 text-red-600 dark:text-red-400"><i class="fas fa-times-circle mr-2"></i>局限性</h4>
+                             <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                 <li><span class="icon"><i class="fas fa-notes-medical"></i></span>临床信息访问仍可能受限（主要依赖预加载）。</li>
+                                 <li><span class="icon"><i class="fas fa-comment-slash"></i></span>沟通模态仍较单一（主要语音/文本）。</li>
+                                 <li><span class="icon"><i class="fas fa-bolt"></i></span>技术挑战高（实时处理、情感识别精度、低延迟）。</li>
+                             </ul>
+                        </div>
+                    </div>
+                 </div>
+            </article>
+
+            <!-- Instance 3: Integrated Partner -->
+            <article id="instance-3" class="reveal-up">
+                 <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-800 dark:text-blue-300">范式三：集成 MCP 的多媒体、连续服务智能伙伴</h2>
+                 <div class="card">
+                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-white"><i class="fas fa-hands-helping mr-2 text-blue-500 dark:text-blue-400"></i>核心概念</h3>
+                     <p class="mb-6 text-lg leading-relaxed">医患沟通辅助的终极形态。在范式二基础上，通过 <strong class="highlight">MCP (Medical Collaboration Protocol)</strong> 深度集成医院信息系统和外部服务。智能体不仅能听、看、说、共情，还能实时、安全地调取最新、最全 EHR 数据；调用工具展示多媒体信息；执行实际操作（预约、发消息）；并将服务延伸至诊后，提供连续管理支持。</p>
+
+                     <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300"><i class="fas fa-cogs mr-2 text-teal-500 dark:text-teal-400"></i>技术讲解与 MCP 集成</h4>
+                     <p class="mb-4 font-medium text-gray-700 dark:text-gray-300">保留范式二交互智能体，并增加强大的 MCP 集成能力：</p>
+                     <ul class="icon-list mb-6 space-y-3 text-gray-700 dark:text-gray-300">
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-database"></i></span><strong class="highlight">【关键】实时、精准的 EHR 数据访问 (MCP Resource):</strong> 对话中实时查询最新肾功能、生活方式记录等。</li>
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-photo-video"></i></span><strong class="highlight">【关键】多媒体信息展示 (MCP Tool/Resource):</strong> 实时展示 HbA1c 曲线图、播放教学视频、渲染个性化网页。</li>
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-calendar-check"></i></span><strong class="highlight">【关键】无缝的行动整合 (MCP Tool):</strong> 直接完成预约、通过 APP 安全发送消息（要点、链接）。</li>
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-history"></i></span><strong class="highlight">【关键】连续性健康服务 (通过 MCP 调度):</strong> 自动发送用药/复诊提醒、个性化贴士；分析穿戴设备数据并预警。</li>
+                     </ul>
+
+                     <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300"><i class="fas fa-level-up-alt mr-2 text-indigo-500 dark:text-indigo-400"></i>质的飞跃总结</h4>
+                     <ol class="list-decimal list-inside mb-6 space-y-2 text-gray-700 dark:text-gray-300">
+                         <li><strong class="highlight">沟通深度：</strong>从"告知"到"共建理解"（数据+多媒体）。</li>
+                         <li><strong class="highlight">服务广度：</strong>从"单次交流"到"全程陪伴"（诊后连续管理）。</li>
+                         <li><strong class="highlight">行动效率：</strong>从"建议"到"即时服务"（操作闭环）。</li>
+                         <li><strong class="highlight">个性化精度：</strong>基于完整、动态的健康画像。</li>
+                         <li><strong class="highlight">医患关系：</strong>赋能患者主动参与，建立伙伴关系。</li>
+                     </ol>
+
+                     <div class="grid md:grid-cols-2 gap-6">
+                         <div>
+                              <h4 class="text-lg font-semibold mb-3 text-green-600 dark:text-green-400"><i class="fas fa-check-circle mr-2"></i>优势</h4>
+                              <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                  <li><span class="icon"><i class="fas fa-star"></i></span>前所未有的个性化与情境感知。</li>
+                                  <li><span class="icon"><i class="fas fa-chart-line"></i></span>沟通效率和效果最大化。</li>
+                                  <li><span class="icon"><i class="fas fa-link"></i></span>服务流程无缝整合与自动化。</li>
+                                  <li><span class="icon"><i class="fas fa-infinity"></i></span>实现连续性、一体化的患者管理。</li>
+                                  <li><span class="icon"><i class="fas fa-smile"></i></span>极大提升患者体验和医疗服务价值。</li>
+                              </ul>
+                         </div>
+                         <div>
+                              <h4 class="text-lg font-semibold mb-3 text-red-600 dark:text-red-400"><i class="fas fa-times-circle mr-2"></i>局限性与挑战</h4>
+                              <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                  <li><span class="icon"><i class="fas fa-wrench"></i></span>极高的技术与工程挑战（集成、标准化）。</li>
+                                  <li><span class="icon"><i class="fas fa-shield-alt"></i></span>数据治理与安全要求极高。</li>
+                                  <li><span class="icon"><i class="fas fa-dollar-sign"></i></span>成本投入巨大。</li>
+                                  <li><span class="icon"><i class="fas fa-balance-scale"></i></span>伦理与监管复杂性（责任、偏见）。</li>
+                              </ul>
+                         </div>
+                     </div>
+                 </div>
+            </article>
+
+        </section>
+        <!-- End of Instance Sections -->
+
+        <!-- Placeholder for Visualizations Section -->
+        <section id="visualizations" class="reveal-up space-y-12">
+             <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-blue-800 dark:text-blue-300">可视化洞察</h2>
+
+             <!-- Chart.js Canvas -->
+            <div class="w-full md:w-4/5 lg:w-3/4 mx-auto mb-16 card">
+                <div style="height: 400px;"> <!-- Set fixed height for canvas container -->
+                     <canvas id="capabilityChart"></canvas>
+                 </div>
+            </div>
+
+            <!-- Inline SVG for Instance 2 Architecture -->
+            <div class="w-full md:w-5/6 lg:w-4/5 mx-auto card text-center">
+                <h3 class="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-white">范式二：多智能体交互系统架构 (概念图)</h3>
+                 <svg id="conceptSvg" class="concept-svg w-full h-auto" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                            <polygon points="0 0, 10 3.5, 0 7" class="fill-current text-blue-500 dark:text-blue-400" />
+                        </marker>
+                         <style>
+                             .svg-box {
+                                 @apply fill-blue-50 dark:fill-gray-700 stroke-blue-300 dark:stroke-gray-600;
+                                 rx: 8; /* Rounded corners */
+                                 stroke-width: 1;
+                             }
+                             .svg-text {
+                                 @apply fill-gray-700 dark:fill-gray-200;
+                                 font-size: 14px;
+                                 font-family: "Noto Sans SC", sans-serif;
+                                 text-anchor: middle;
+                                 dominant-baseline: central;
+                             }
+                              .svg-line {
+                                  @apply stroke-blue-500 dark:stroke-blue-400;
+                                 stroke-width: 1.5;
+                                 marker-end: url(#arrowhead);
+                                 fill: none;
+                              }
+                              .svg-label {
+                                 @apply fill-gray-500 dark:fill-gray-400;
+                                 font-size: 11px;
+                                 font-style: italic;
+                                 text-anchor: middle;
+                              }
+                         </style>
+                    </defs>
+
+                    <!-- Nodes -->
+                    <rect class="svg-box" x="350" y="20" width="100" height="40"/>
+                    <text class="svg-text" x="400" y="40">协调器</text>
+
+                    <g id="perception-group" transform="translate(0, 20)"> 
+                         <rect class="svg-box" x="50" y="100" width="150" height="210"/> <!-- Adjusted height -->
+                         <text class="svg-text" x="125" y="115" font-weight="bold">多模态感知</text>
+                         <rect class="svg-box" x="70" y="140" width="110" height="30"/>
+                         <text class="svg-text" x="125" y="155">STT Agent</text>
+                         <rect class="svg-box" x="70" y="180" width="110" height="30"/>
+                         <text class="svg-text" x="125" y="195">NLU Agent</text>
+                         <rect class="svg-box" x="70" y="220" width="110" height="30" style="fill: #FEF9C3;" dark:style="fill: #42401A;"/> <!-- Light yellow / Dark yellow -->
+                         <text class="svg-text" x="125" y="235">SER Agent</text>
+                         <rect class="svg-box" x="70" y="260" width="110" height="30" style="fill: #FEF9C3;" dark:style="fill: #42401A;"/> <!-- Light yellow / Dark yellow -->
+                         <text class="svg-text" x="125" y="275">VER Agent</text>
+                     </g>
+
+                     <g id="core-logic-group" transform="translate(0, 20)"> 
+                         <rect class="svg-box" x="300" y="150" width="200" height="160"/>
+                         <text class="svg-text" x="400" y="165" font-weight="bold">核心对话与响应</text>
+                         <rect class="svg-box" x="320" y="190" width="160" height="30"/>
+                         <text class="svg-text" x="400" y="205">对话管理 Agent</text>
+                          <rect class="svg-box" x="320" y="230" width="160" height="30"/>
+                          <text class="svg-text" x="400" y="245">核心推理 Agent</text>
+                         <rect class="svg-box" x="320" y="270" width="160" height="30" style="fill: #FCE7F3;" dark:style="fill: #501935;"/> <!-- Light pink / Dark pink -->
+                         <text class="svg-text" x="400" y="285">共情调整 Agent</text>
+                     </g>
+
+                     <g id="output-group" transform="translate(0, 20)"> 
+                         <rect class="svg-box" x="600" y="200" width="150" height="60"/>
+                         <text class="svg-text" x="675" y="215" font-weight="bold">输出</text>
+                         <rect class="svg-box" x="620" y="240" width="110" height="30"/>
+                         <text class="svg-text" x="675" y="255">TTS Agent</text>
+                     </g>
+
+                     <rect class="svg-box" x="325" y="420" width="150" height="40"/> <!-- Adjusted y -->
+                     <text class="svg-text" x="400" y="440">患者/医生 (交互)</text>
+
+                    <!-- Lines -->
+                    <!-- User Input Lines -->
+                    <path class="svg-line" d="M 400 420 Q 250 400 125 330"/> <!-- User -> Perception -->
+                    <path class="svg-line" d="M 400 420 Q 400 370 400 330"/> <!-- User -> Core Logic -->
+
+                    <!-- Internal Flow Lines -->
+                    <line class="svg-line" x1="400" y1="60" x2="400" y2="170" /> <!-- Coordinator -> Core Logic -->
+                    <path class="svg-line" d="M 300 225 Q 250 225 200 225" /> <!-- Core Logic -> Perception (Req) -->
+                    <path class="svg-line" d="M 200 245 Q 250 245 300 245" /> <!-- Perception -> Core Logic (Resp) -->
+                    <line class="svg-line" x1="500" y1="265" x2="600" y2="265" /> <!-- Core Logic -> Output -->
+
+                    <!-- Output Line -->
+                     <path class="svg-line" d="M 675 280 Q 525 380 400 420" /> <!-- Output -> User -->
+
+                     <!-- Labels (Optional) -->
+                    <text class="svg-label" x="250" y="215">感知请求</text>
+                    <text class="svg-label" x="250" y="255">感知结果(意图/情绪)</text>
+                    <text class="svg-label" x="550" y="255">调整后回应</text>
+                    <text class="svg-label" x="400" y="100">调度</text>
+                    <text class="svg-label" x="220" y="360">输入 (语音/文本/视觉)</text>
+                    <text class="svg-label" x="580" y="370">输出 (语音)</text>
+
+                 </svg>
+             </div>
+
+        </section>
+
+        <!-- Placeholder for Further Reading Section -->
+        <section id="reading" class="max-w-4xl mx-auto reveal-up">
+             <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-blue-800 dark:text-blue-300">进一步阅读</h2>
+            <div class="space-y-6">
+                <!-- Resource 1 -->
+                 <div class="card hover:shadow-lg transition-shadow duration-300">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Enhancing doctor-patient communication using large language models for pathology report interpretation</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">BMC Medical Informatics and Decision Making (2025)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇研究直接探讨了 LLM 在解读病理报告、简化医学术语以改善医患沟通方面的作用，与本文档的主题高度相关，提供了实证数据支持。</p>
+                     <a href="https://bmcmedinformdecismak.biomedcentral.com/articles/10.1186/s12911-024-02838-z" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline"><i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)</a>
+                 </div>
+                <!-- Resource 2 -->
+                 <div class="card hover:shadow-lg transition-shadow duration-300">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Large language models in patient education: a scoping review of applications in medicine</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Frontiers in Medicine (2024)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇综述系统性地梳理了 LLM 在患者教育中的应用，包括生成材料、解读信息、提供建议等，与本文档讨论的范式演进有紧密联系，并指出了挑战。</p>
+                     <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11554522/" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline"><i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)</a>
+                 </div>
+                <!-- Resource 3 -->
+                 <div class="card hover:shadow-lg transition-shadow duration-300">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">The future landscape of large language models in medicine</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Communications Medicine (2023)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇视角文章全面概述了 LLM 在临床实践、医学研究和教育中的潜力和局限性，提供了更宏观的背景和对未来的展望。</p>
+                     <a href="https://www.nature.com/articles/s43856-023-00370-1" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline"><i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)</a>
+                 </div>
+                <!-- Resource 4 -->
+                 <div class="card hover:shadow-lg transition-shadow duration-300">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Clinical Insights: A Comprehensive Review of Language Models in Medicine.</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">arXiv preprint (2024)</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇预印本综述详细探讨了 LLM 在医疗健康领域的进展和应用，特别关注临床应用，并讨论了技术演进、机遇和挑战，对理解本文的范式演进有帮助。</p>
+                     <a href="https://arxiv.org/html/2408.11735v2" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline"><i class="fas fa-external-link-alt mr-1"></i> 阅读原文</a>
+                 </div>
+                <!-- Resource 5 -->
+                 <div class="card hover:shadow-lg transition-shadow duration-300">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Potential applications and implications of large language models in primary care</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Family Medicine and Community Health (2024)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇文章聚焦于 LLM 在基层医疗（初级保健）中的应用和影响，讨论了实践管理、医患互动和诊断支持，补充了本文档未重点展开的基层视角。</p>
+                     <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10828839/" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline"><i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)</a>
+                 </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-8 px-4 text-center">
+        <div class="container mx-auto">
+            <p class="mb-2">作者: 季晓康</p>
+            <p class="mb-2">微信公众号: 凿壁</p>
+            <p>版权信息: 国家健康医疗大数据研究院</p>
+             <p class="mt-4 text-sm">&copy; 2024 版权所有</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Uncomment if using Mermaid
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@latest/dist/mermaid.min.js"></script>
+    <script>
+        // Initialize Mermaid after DOM content is loaded and dark mode is set
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            mermaid.initialize({
+                startOnLoad: true,
+                theme: isDark ? 'dark' : 'default'
+                // securityLevel: 'loose' // If needed for complex diagrams
+            });
+        });
+    </script>
+     -->
+
+    <!-- Custom JavaScript for Animations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // 确保DOM完全加载并且暗黑模式状态已设置
+            setTimeout(() => {
+                initAnimations();
+            }, 100);
+            
+            function initAnimations() {
+                // 初始化各部分动画
+                initHeroAnimation();
+                initSectionAnimations();
+                initChartAnimation();
+                initSVGAnimation();
+                initCardAnimations();
+            }
+            
+            function initHeroAnimation() {
+                const header = document.querySelector('header');
+                if (!header) return;
+                
+                const headerTitle = header.querySelector('h1');
+                const headerSubtitle = header.querySelector('p');
+                const headerBg = header.querySelector('.absolute');
+                
+                if (headerTitle) {
+                    gsap.from(headerTitle, { 
+                        duration: 1, 
+                        y: -50, 
+                        opacity: 0, 
+                        ease: 'power3.out', 
+                        delay: 0.2,
+                        onComplete: () => gsap.set(headerTitle, { clearProps: "all" })
+                    });
+                }
+                
+                if (headerSubtitle) {
+                    gsap.from(headerSubtitle, { 
+                        duration: 1, 
+                        y: 50, 
+                        opacity: 0, 
+                        ease: 'power3.out', 
+                        delay: 0.5,
+                        onComplete: () => gsap.set(headerSubtitle, { clearProps: "all" })
+                    });
+                }
+                
+                if (headerBg) {
+                    gsap.from(headerBg, { 
+                        duration: 1.5, 
+                        opacity: 0, 
+                        scale: 1.1, 
+                        ease: 'power2.out', 
+                        delay: 0.8,
+                        onComplete: () => gsap.set(headerBg, { clearProps: "all" })
+                    });
+                }
+            }
+            
+            function initSectionAnimations() {
+                const revealUpElements = document.querySelectorAll('.reveal-up');
+                if (!revealUpElements.length) return;
+                
+                revealUpElements.forEach(element => {
+                    gsap.from(element, {
+                        opacity: 0,
+                        y: 30,
+                        duration: 0.8,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: element,
+                            start: 'top 90%',
+                            toggleActions: 'play none none none',
+                            once: true
+                        },
+                        onComplete: () => {
+                            gsap.set(element, { clearProps: "all" });
+                            element.style.opacity = '1';
+                            element.style.transform = 'none';
+                        }
+                    });
+                });
+            }
+            
+            function initChartAnimation() {
+                const chartContainer = document.getElementById('capabilityChart');
+                if (!chartContainer) return;
+                
+                const ctx = chartContainer;
+                const isDark = document.documentElement.classList.contains('dark');
+                
+                Chart.defaults.borderColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                Chart.defaults.color = isDark ? '#e5e7eb' : '#374151';
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['信息整合 (后台)', '实时交互', '情感智能', '多媒体/服务整合'],
+                        datasets: [
+                            {
+                                label: '范式一 (静态专家)',
+                                data: [3, 0.5, 0.5, 0], // Conceptual values 0-5
+                                backgroundColor: 'rgba(96, 165, 250, 0.6)', // blue-400
+                                borderColor: 'rgba(59, 130, 246, 1)', // blue-500
+                                borderWidth: 1
+                            },
+                            {
+                                label: '范式二 (交互系统)',
+                                data: [2, 4, 4, 0.5],
+                                backgroundColor: 'rgba(52, 211, 153, 0.6)', // emerald-400
+                                borderColor: 'rgba(16, 185, 129, 1)', // emerald-500
+                                borderWidth: 1
+                            },
+                            {
+                                label: '范式三 (整合伙伴)',
+                                data: [5, 5, 5, 5],
+                                backgroundColor: 'rgba(168, 85, 247, 0.6)', // purple-400
+                                borderColor: 'rgba(147, 51, 234, 1)', // purple-500
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 5, // Scale from 0 to 5
+                                title: {
+                                    display: true,
+                                    text: '能力水平 (概念值)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            title: {
+                                display: true,
+                                text: '医患沟通智能体能力演进',
+                                padding: {
+                                    top: 10,
+                                    bottom: 20
+                                },
+                                font: {
+                                    size: 18,
+                                    family: '"Noto Serif SC", serif'
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1000,
+                            onComplete: () => {
+                                console.log('Chart animation complete');
+                            }
+                        }
+                    }
+                });
+                
+                // 安全地添加图表容器动画
+                const parentNode = ctx.parentNode;
+                if (parentNode) {
+                    gsap.from(parentNode, { 
+                        opacity: 0, 
+                        y: 20, 
+                        duration: 0.8, 
+                        delay: 0.2, 
+                        scrollTrigger: { 
+                            trigger: parentNode, 
+                            start: 'top 90%', 
+                            once: true 
+                        },
+                        onComplete: () => gsap.set(parentNode, { clearProps: "all" })
+                    });
+                }
+            }
+            
+            function initSVGAnimation() {
+                const svgElement = document.getElementById('conceptSvg');
+                if (!svgElement) return;
+                
+                // 线条动画
+                const lines = svgElement.querySelectorAll('line, path');
+                if (lines.length > 0) {
+                    gsap.from(lines, {
+                        opacity: 0,
+                        duration: 1.5,
+                        stagger: 0.1,
+                        ease: "power2.inOut",
+                        scrollTrigger: {
+                            trigger: svgElement,
+                            start: "top 85%",
+                            toggleActions: "play none none none",
+                            once: true
+                        },
+                        onComplete: function() {
+                            gsap.set(this.targets(), { clearProps: "all" });
+                        }
+                    });
+                }
+                
+                // 文本动画
+                const texts = svgElement.querySelectorAll('text');
+                if (texts.length > 0) {
+                    gsap.from(texts, {
+                        opacity: 0,
+                        duration: 1,
+                        stagger: 0.05,
+                        delay: 0.5,
+                        scrollTrigger: {
+                            trigger: svgElement,
+                            start: "top 85%",
+                            toggleActions: "play none none none",
+                            once: true
+                        },
+                        onComplete: function() {
+                            gsap.set(this.targets(), { clearProps: "all" });
+                            this.targets().forEach(el => {
+                                el.style.opacity = '1';
+                            });
+                        }
+                    });
+                }
+            }
+            
+            function initCardAnimations() {
+                // 获取阅读部分的所有卡片
+                const cards = document.querySelectorAll('#reading .card');
+                if (!cards.length) return;
+                
+                // 为每个卡片创建独立动画
+                cards.forEach((card, index) => {
+                    gsap.from(card, {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.6,
+                        delay: 0.1 * index, // 依次触发
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 90%',
+                            toggleActions: 'play none none none',
+                            once: true
+                        },
+                        onComplete: () => {
+                            gsap.set(card, { clearProps: "all" });
+                            card.style.opacity = '1';
+                            card.style.transform = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OCR 与 LOC：训练数据跃迁的关键里程碑</title>
+  <meta name="description" content="围绕 OCR、LOC、合成数据与医学病案应用的最新洞见，展示多模态数据工程如何突破大模型训练数据瓶颈。" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&family=Source+Code+Pro:wght@400;600&display=swap" />
+  <link rel="stylesheet" href="../assets/css/theme.css" />
+  <link rel="stylesheet" href="../assets/css/agents.css" />
+  <style>
+    .container.ag-main { padding: 0 24px 24px; }
+    .ag-main.ocr-main { padding-top: 0; }
+
+    .ocr-main {
+      display: grid;
+      gap: 36px;
+      grid-template-columns: minmax(0, 1fr) minmax(200px, 240px);
+      padding-top: 0;
+      align-items: start;
+      margin-top: -12px;
+    }
+    .report-body { display: grid; gap: 24px; min-width: 0; grid-column: 1; }
+    .hero { position: relative; overflow: hidden; }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 12% 8%, color-mix(in oklab, var(--color-accent), transparent 60%) 0%, transparent 70%),
+                  radial-gradient(circle at 88% 20%, color-mix(in oklab, var(--color-primary), transparent 65%) 0%, transparent 66%);
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    .hero-content { position: relative; display: grid; gap: 18px; }
+    .hero-meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-lg);
+      background: color-mix(in oklab, var(--color-accent), transparent 72%);
+      color: var(--color-accent-foreground);
+      font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+    }
+    .hero-title { font-size: clamp(2.1rem, 3vw, 2.6rem); font-weight: 700; margin: 0; letter-spacing: 0.5px; }
+    .subtitle { margin: 0; color: var(--color-muted-foreground); font-size: 1.05rem; }
+    .hero-lead { margin: 0; color: var(--color-muted-foreground); line-height: 1.8; max-width: 760px; }
+    .hero-points { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+    .hero-points li {
+      display: flex; gap: 10px; align-items: flex-start;
+      background: color-mix(in oklab, var(--color-card), transparent 30%);
+      border-radius: var(--radius-lg); border: 1px solid color-mix(in oklab, var(--color-border), transparent 35%);
+      padding: 10px 14px; color: var(--color-card-foreground);
+      box-shadow: var(--shadow-2xs);
+    }
+    .hero-points li::before {
+      content: "";
+      margin-top: 5px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--color-primary);
+      box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary), transparent 80%);
+    }
+
+    .metric-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .metric-card {
+      border-radius: var(--radius-lg);
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 25%);
+      background: color-mix(in oklab, var(--color-card), transparent 12%);
+      padding: 18px;
+      box-shadow: var(--shadow-xs);
+    }
+    .metric-card .label { font-size: 13px; text-transform: uppercase; color: var(--color-muted-foreground); letter-spacing: 0.06em; }
+    .metric-card .value { font-size: 28px; font-weight: 800; margin: 6px 0; color: var(--color-primary); }
+    .metric-card .desc { margin: 0; color: var(--color-card-foreground); line-height: 1.6; }
+
+    .panel h2 { margin: 0 0 12px; font-size: 1.6rem; font-weight: 700; letter-spacing: 0.4px; }
+    .panel h3 { margin: 18px 0 8px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.2px; }
+
+    .milestone-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .milestone {
+      border-radius: var(--radius-lg);
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+      padding: 18px;
+      background: color-mix(in oklab, var(--color-card), transparent 18%);
+      display: grid; gap: 10px;
+    }
+    .milestone strong { font-size: 1.05rem; color: var(--color-card-foreground); }
+    .milestone span { color: var(--color-muted-foreground); line-height: 1.6; }
+
+    .chart-card { display: grid; gap: 16px; }
+    .chart-bars { display: grid; gap: 14px; }
+    .chart-row { display: flex; align-items: center; gap: 12px; }
+    .chart-row .name { width: 160px; font-weight: 600; color: var(--color-card-foreground); }
+    .chart-row .bar-track {
+      flex: 1; height: 14px; border-radius: 999px;
+      background: color-mix(in oklab, var(--color-border), transparent 30%);
+      position: relative; overflow: hidden;
+    }
+    .chart-row .bar {
+      position: absolute; inset: 0;
+      width: calc(var(--value) * 1%);
+      background: linear-gradient(90deg, var(--color-primary), color-mix(in oklab, var(--color-accent), var(--color-primary) 40%));
+      border-radius: inherit;
+    }
+    .chart-row .score { width: 64px; text-align: right; font-variant-numeric: tabular-nums; color: var(--color-muted-foreground); }
+    .chart-note { margin: 0; color: var(--color-muted-foreground); font-size: 13px; }
+
+    .ring-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .ring {
+      display: grid; justify-items: center; gap: 10px; padding: 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+      background: color-mix(in oklab, var(--color-card), transparent 20%);
+    }
+    .ring::before {
+      content: attr(data-label);
+      font-size: 13px; color: var(--color-muted-foreground); letter-spacing: 0.05em;
+    }
+    .ring-chart {
+      width: 120px; aspect-ratio: 1 / 1; border-radius: 50%;
+      background:
+        conic-gradient(var(--color-primary) calc(var(--value) * 1turn), color-mix(in oklab, var(--color-muted), transparent 20%) 0);
+      display: grid; place-items: center;
+      font-size: 20px; font-weight: 700; color: var(--color-primary-foreground);
+      box-shadow: inset 0 0 0 12px color-mix(in oklab, var(--color-card), transparent 10%);
+    }
+    .ring-desc { text-align: center; color: var(--color-card-foreground); line-height: 1.6; margin: 0; }
+
+    .pipeline {
+      display: grid; gap: 14px;
+      background: color-mix(in oklab, var(--color-card), transparent 10%);
+      border-radius: var(--radius-lg);
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 30%);
+      padding: 18px;
+    }
+    .pipeline-steps { display: grid; gap: 12px; }
+    .pipeline-step {
+      display: grid; gap: 6px;
+      padding: 12px 14px;
+      border-radius: var(--radius-lg);
+      border: 1px dashed color-mix(in oklab, var(--color-border), transparent 20%);
+      background: color-mix(in oklab, var(--color-muted), transparent 80%);
+    }
+    .pipeline-step strong { font-size: 0.95rem; color: var(--color-card-foreground); }
+    .pipeline-step span { color: var(--color-muted-foreground); line-height: 1.6; }
+
+    .two-column { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .list, .list li { color: var(--color-muted-foreground); }
+    .callout {
+      border-left: 3px solid var(--color-primary);
+      padding: 12px 16px;
+      background: color-mix(in oklab, var(--color-muted), transparent 75%);
+      color: var(--color-card-foreground);
+      border-radius: var(--radius-md);
+      line-height: 1.7;
+    }
+
+    .reading-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 12px; }
+    .reading-list li {
+      border-radius: var(--radius-lg);
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+      padding: 12px 16px;
+      background: color-mix(in oklab, var(--color-card), transparent 15%);
+    }
+    .reading-list a { color: var(--color-primary); font-weight: 600; text-decoration: none; }
+    .reading-list p { margin: 6px 0 0; color: var(--color-muted-foreground); line-height: 1.6; }
+
+    .full-report { display: grid; gap: 24px; }
+    .full-article {
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 25%);
+      border-radius: var(--radius-lg);
+      background: color-mix(in oklab, var(--color-card), transparent 18%);
+      padding: 20px 22px;
+      display: grid;
+      gap: 14px;
+      box-shadow: var(--shadow-xs);
+    }
+    .full-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .full-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), color-mix(in oklab, var(--color-accent), var(--color-primary) 45%));
+      color: var(--color-primary-foreground);
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+    .deep-dive { display: grid; gap: 18px; }
+    .deep-section {
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 20%);
+      border-radius: var(--radius-lg);
+      background: color-mix(in oklab, var(--color-card), transparent 16%);
+      padding: 18px 20px;
+      display: grid;
+      gap: 10px;
+      box-shadow: var(--shadow-2xs);
+    }
+    .deep-section h4 { margin: 0; font-size: 1.22rem; letter-spacing: 0.3px; }
+    .deep-section h5 { margin: 8px 0 4px; font-size: 1.05rem; }
+    .deep-section p { margin: 0; color: var(--color-card-foreground); line-height: 1.78; }
+    .deep-section ul, .deep-section ol {
+      margin: 4px 0 0;
+      padding-left: 20px;
+      color: var(--color-muted-foreground);
+      line-height: 1.72;
+    }
+    .subsection { margin-top: 8px; display: grid; gap: 6px; }
+
+    footer.footer {
+      text-align: center; font-size: 13px;
+      color: var(--color-muted-foreground);
+      padding: 24px 0 36px;
+    }
+
+    .toc-panel {
+      position: sticky;
+      top: 96px;
+      align-self: start;
+      padding: 20px 18px;
+      border-radius: var(--radius-lg);
+      border: 1px solid color-mix(in oklab, var(--color-border), transparent 25%);
+      background: color-mix(in oklab, var(--color-card), transparent 20%);
+      box-shadow: var(--shadow-xs);
+      display: grid;
+      gap: 12px;
+      max-width: 240px;
+      width: 100%;
+      grid-column: 2;
+    }
+    .toc-panel h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--color-card-foreground);
+      text-transform: uppercase;
+    }
+    .toc-panel ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 6px;
+    }
+    .toc-panel a {
+      display: block;
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      color: var(--color-muted-foreground);
+      text-decoration: none;
+      font-size: 0.95rem;
+      border: 1px solid transparent;
+      transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+    .toc-panel a:hover {
+      border-color: color-mix(in oklab, var(--color-border), var(--color-primary) 30%);
+      color: var(--color-card-foreground);
+      background: color-mix(in oklab, var(--color-muted), transparent 70%);
+    }
+    .toc-panel a.active {
+      border-color: var(--color-primary);
+      color: var(--color-card-foreground);
+      background: color-mix(in oklab, var(--color-primary), transparent 85%);
+    }
+    .toc-panel small {
+      display: block;
+      margin-top: 6px;
+      color: var(--color-muted-foreground);
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 720px) {
+      .chart-row .name { width: 120px; font-size: 14px; }
+      .hero-meta { gap: 8px; }
+      .hero-title { font-size: 2rem; }
+      .hero-points li { flex-direction: column; }
+      .chart-row .score { width: 48px; font-size: 14px; }
+      .ring-chart { width: 100px; font-size: 18px; }
+    }
+
+    @media (max-width: 1280px) {
+      .ocr-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .toc-panel {
+        max-width: none;
+        width: 100%;
+        display: none;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .ocr-main {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .toc-panel {
+        position: static;
+        order: -1;
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="ag-header">
+    <div class="container ag-topbar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <a href="../index.html" class="title">多模态数据工程报告</a>
+          <div class="muted" style="font-size:13px;">OCR · LOC · 医疗文档范式</div>
+        </div>
+      </div>
+      <div class="ag-actions">
+        <button id="darkModeToggle" class="btn" title="切换主题">切换主题</button>
+      </div>
+    </div>
+    <div class="container">
+      <nav class="ag-nav" aria-label="页面导航">
+        <a href="#overview" class="active">执行概览</a>
+        <a href="#milestones">关键数据</a>
+        <a href="#ecosystem">生态共振</a>
+        <a href="#tech">技术效能</a>
+        <a href="#pipeline">系统路径</a>
+        <a href="#applications">行业应用</a>
+        <a href="#strategy">策略建议</a>
+        <a href="#deep-dive">章节解读</a>
+        <a href="#reading">参考资料</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container ag-main ocr-main">
+    <aside class="toc-panel" aria-label="页面目录">
+      <h3>目录</h3>
+      <small>快速跳转至核心章节</small>
+      <ul>
+        <li><a href="#overview">执行概览</a></li>
+        <li><a href="#milestones">关键数据</a></li>
+        <li><a href="#ecosystem">生态共振</a></li>
+        <li><a href="#tech">技术效能</a></li>
+        <li><a href="#pipeline">系统路径</a></li>
+        <li><a href="#applications">行业应用</a></li>
+        <li><a href="#strategy">策略建议</a></li>
+        <li><a href="#deep-dive">章节解读</a></li>
+        <li><a href="#reading">参考资料</a></li>
+      </ul>
+    </aside>
+
+    <div class="report-body">
+    <section id="overview" class="panel hero">
+      <div class="hero-content">
+        <div class="hero-meta">
+          <span class="hero-tag">AI TRAINING DATA QUALITY</span>
+          <span class="hero-tag">多模态理解</span>
+        </div>
+        <h1 class="hero-title">OCR 与 LOC 正在重写大模型训练数据的质量与密度</h1>
+        <p class="subtitle">基于近期公开数据与企业访谈，我们总结出一套围绕多模态数据工程的关键洞见。</p>
+        <p class="hero-lead">
+          来自 PaddleOCR-VL、DeepSeek-OCR 与 Un-LOCC 的实践表明：高精度 OCR、视觉布局建模与有损光学压缩（LOC）组成的新基建，
+          能够将 PDF、图表、手写文档等复杂素材转化为可控、可压缩、可审计的训练语料。
+          当它与合成数据、主动学习、去重清洗协同时，大模型告别了“训练数据只靠网页抓取”的旧范式。
+        </p>
+        <ul class="hero-points">
+          <li>高保真 OCR 将文档、图片、扫描件转化为结构化语料，是数据清洗和长上下文压缩的入口。</li>
+          <li>合成数据在数据稀缺场景中填补真值空白，但需要严格的质量打分与迭代筛选以防“模型塌陷”。</li>
+          <li>语音识别（ASR）扩展了多语种口语数据池，仍需攻克口音、多说话人等鲁棒性难题。</li>
+          <li>语料去重与语义级清洗降低训练成本，并减少模型“背稿”风险，但要避免过度删除同义表达。</li>
+          <li>主动学习提供“最小数据量即可达标”的路线，尤其适合垂直行业的精调与快速迭代。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="milestones" class="panel">
+      <h2>关键数据指标</h2>
+      <div class="metric-grid">
+        <article class="metric-card">
+          <div class="label">OmniDocBench 综合得分</div>
+          <div class="value">92.56</div>
+          <p class="desc">PaddleOCR-VL 位列榜首，文本、阅读顺序两个子项分别达到 95.3 与 94.7。</p>
+        </article>
+        <article class="metric-card">
+          <div class="label">LOC 压缩倍率</div>
+          <div class="value">7×–20×</div>
+          <p class="desc">DeepSeek-OCR 报告中通过视觉上下文压缩，让 30M+ 页文档进入长上下文 LLM。</p>
+        </article>
+        <article class="metric-card">
+          <div class="label">结构化准确率</div>
+          <div class="value">≈97%</div>
+          <p class="desc">在多语言 PDF 与图表场景下，经 OCR + 标注迭代后的字段抽取得分维持在 97% 水平。</p>
+        </article>
+        <article class="metric-card">
+          <div class="label">多模态协同</div>
+          <div class="value">99.5%</div>
+          <p class="desc">GPT-4o、Claude 3.5 等多模态模型在历史手写数据上帮助 OCR 纠错，极大提升稀疏场景鲁棒性。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="ecosystem" class="panel">
+      <h2>生态共振：多项里程碑协同</h2>
+      <div class="milestone-grid">
+        <div class="milestone">
+          <strong>OCR 迭代提质</strong>
+          <span>DeepSeek-OCR 继承 PaddleOCR 的布局检测与标注能力，形成“老模型标注 → 新模型训练”的自举循环。</span>
+        </div>
+        <div class="milestone">
+          <strong>合成数据管线</strong>
+          <span>IBM LAB、NVIDIA Nemotron 等方案通过教师模型生成任务、多阶段学习率衰减与回放缓冲控制“合成噪声”。</span>
+        </div>
+        <div class="milestone">
+          <strong>ASR 拓展语料</strong>
+          <span>多语种语音转写提供跨场景资料，但需要在口音、语速和行业术语上做专项微调。</span>
+        </div>
+        <div class="milestone">
+          <strong>去重与清洗</strong>
+          <span>语义去重结合跨模态嵌入，既压缩训练规模，又保留关键变体，避免模型记忆冗余。</span>
+        </div>
+        <div class="milestone">
+          <strong>主动学习</strong>
+          <span>定位高价值文档片段，通过置信度触发再标注，显著降低领域适配成本。</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="benchmark" class="panel chart-card" aria-labelledby="benchmark-title">
+      <div>
+        <h2 id="benchmark-title">OmniDocBench：OCR 排行可视化</h2>
+        <p class="callout">在文档理解评测中，PaddleOCR-VL 与 DeepSeek-OCR 等新模型把传统 OCR 从“终端工具”推向“训练数据的生产线”。</p>
+      </div>
+      <div class="chart-bars" role="list">
+        <div class="chart-row" role="listitem">
+          <div class="name">PaddleOCR-VL</div>
+          <div class="bar-track"><span class="bar" style="--value: 92.56;"></span></div>
+          <div class="score">92.56</div>
+        </div>
+        <div class="chart-row" role="listitem">
+          <div class="name">MinerU 2.5</div>
+          <div class="bar-track"><span class="bar" style="--value: 90.70;"></span></div>
+          <div class="score">90.70</div>
+        </div>
+        <div class="chart-row" role="listitem">
+          <div class="name">MonkeyOCR Pro 3B</div>
+          <div class="bar-track"><span class="bar" style="--value: 88.90;"></span></div>
+          <div class="score">88.90</div>
+        </div>
+        <div class="chart-row" role="listitem">
+          <div class="name">Open-source 平均</div>
+          <div class="bar-track"><span class="bar" style="--value: 85.00;"></span></div>
+          <div class="score">85.00</div>
+        </div>
+      </div>
+      <p class="chart-note">数据来源：OmniDocBench 公布成绩；Open-source 平均基于榜单中主流社区模型取均值。</p>
+    </section>
+
+    <section id="tech" class="panel">
+      <h2>技术效能：LOC 的压缩与增益</h2>
+      <div class="ring-grid">
+        <div class="ring" data-label="压缩后上下文">
+          <div class="ring-chart" style="--value: 0.72;">72%</div>
+          <p class="ring-desc">在 20× 压缩下，一页病历约 72% 内容可在一次上下文中被完整保留。</p>
+        </div>
+        <div class="ring" data-label="Token 节省">
+          <div class="ring-chart" style="--value: 0.80;">80%</div>
+          <p class="ring-desc">LOC 结合视觉编码，可将长文 token 消耗降低约 80%，缓解 O(N²) 推理成本。</p>
+        </div>
+        <div class="ring" data-label="跨模态提升">
+          <div class="ring-chart" style="--value: 0.67;">67%</div>
+          <p class="ring-desc">引入视觉证据溯源后，医学编码错误率下降约 33%，实现 67% 以上的校验覆盖。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pipeline" class="panel">
+      <h2>OCR → LOC → LLM 的端到端流水线</h2>
+      <div class="pipeline">
+        <h3>DeepSeek-OCR / Un-LOCC 实践提炼</h3>
+        <div class="pipeline-steps">
+          <div class="pipeline-step">
+            <strong>01｜输入采集与分层组织</strong>
+            <span>30M+ PDF、图表、化学式、蓝图与手写稿；按文档类型与语种切分批次。</span>
+          </div>
+          <div class="pipeline-step">
+            <strong>02｜经典 OCR 执行初标</strong>
+            <span>采用 PaddleOCR 等成熟模型先行提取文字框、阅读顺序、版面区域，为高质量标注奠定锚点。</span>
+          </div>
+          <div class="pipeline-step">
+            <strong>03｜视觉-文本混合嵌入</strong>
+            <span>将布局、文本、结构标签拼接成 LOC 图像序列，实现 7×–20× 的 token 压缩。</span>
+          </div>
+          <div class="pipeline-step">
+            <strong>04｜多轮清洗与去重</strong>
+            <span>语义重叠检测 + 文本噪声过滤 + 图像清晰度筛选，确保压缩后信息密度稳定。</span>
+          </div>
+          <div class="pipeline-step">
+            <strong>05｜Teacher-Student 迭代</strong>
+            <span>用更新后的模型反向校正标签、动态调整 LOC 策略，形成自举闭环。</span>
+          </div>
+        </div>
+        <p class="chart-note">LOC（Lossy Optical Context）：以视觉通道承载长上下文信息，通过投影层映射进 LLM 的 embeddings。</p>
+      </div>
+    </section>
+
+    <section id="applications" class="panel">
+      <h2>行业应用：LOC 驱动的“全景病史”智能化</h2>
+      <div class="two-column">
+        <article class="card">
+          <div class="title">高价值场景</div>
+          <ul class="list">
+            <li>跨科室病历串联：LOC 图像压缩让 LLM 能一次性阅读超长住院记录，识别时间轴矛盾。</li>
+            <li>医保编码与病案首页：整合诊断、操作、药品信息，生成 ICD/ICD-10-PCS 编码并自动校验。</li>
+            <li>质控巡检：快速定位缺失、重复、逻辑冲突段落，辅助人工审核。</li>
+          </ul>
+        </article>
+        <article class="card">
+          <div class="title">模块化系统蓝图</div>
+          <ol class="list">
+            <li>视觉适配器：定制医学文档视觉编解码器，仅训练投影层，复用主流 LLM。</li>
+            <li>知识对齐：结合院内知识库与医学 LLM（如 Meditron）校正术语与诊疗路径。</li>
+            <li>人机协同：支持医生标注可疑片段，反向优化 LOC 策略与领域 prompts。</li>
+          </ol>
+        </article>
+      </div>
+      <h3>落地挑战</h3>
+      <ul class="list">
+        <li>精度红线：从 93.65% 提升到 99.9% 需要混合架构、对抗训练与人工复核并用。</li>
+        <li>可解释性：视觉嵌入推理难以直接追踪，需建设“视觉证据溯源”机制以高亮判据。</li>
+        <li>算力成本：图像编码比纯文本推理贵，需要针对输入增益进行算力 ROI 评估。</li>
+        <li>安全合规：医疗数据的脱敏、访问审计和边界控制必须内建在流程中。</li>
+      </ul>
+      <p class="callout">与其重新预训练超大型 VLM，更务实的策略是“站在巨人肩膀上”：复用现有多模态大模型，仅训练 LOC 适配层，并构建面向医疗的自定义评测与回路。</p>
+    </section>
+
+    <section id="strategy" class="panel">
+      <h2>工程团队的三项策略</h2>
+      <div class="milestone-grid">
+        <div class="milestone">
+          <strong>从数据出发的验证闭环</strong>
+          <span>为每种文档类型建立“小样本黄金集”与自动化比对脚本，持续监控压缩率与字段准确率。</span>
+        </div>
+        <div class="milestone">
+          <strong>模块化适配与渐进增强</strong>
+          <span>先冻结基座 LLM，只训练视觉投影层；通过插件化方式接入医学术语本体、知识图谱。</span>
+        </div>
+        <div class="milestone">
+          <strong>风险防线与人机共识</strong>
+          <span>部署两道校验：模型间交叉比对 + 人类抽检；为每条自动生成的结论添加来源片段与置信度。</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="deep-dive" class="panel">
+      <h2>深入章节解读</h2>
+      <div class="full-report">
+        <article class="full-article" id="source-view">
+          <div class="full-header">
+            <span class="full-index">A</span>
+            <h3>背景洞见与关键里程碑综述</h3>
+          </div>
+          <p>围绕“大模型训练数据质量”的最新观察显示，OCR、合成数据、ASR、数据去重以及主动学习五大里程碑正在形成互补组合，共同突破数据壁垒。本节从战略角度归纳这些趋势，并提炼代表性证据。</p>
+          <h4>战略观察</h4>
+          <ul class="list">
+            <li>高精度 OCR 让纸质档案、扫描件与 PDF 以更高保真度进入语料池，是大模型迈向结构化数据资产的前置环节；其收益随模型规模与数据类型而异。</li>
+            <li>合成数据缓解稀缺语料困局，并在谨慎筛选下提升模型鲁棒性；若缺乏质量把控，则可能触发“模型塌陷”式的自我退化。</li>
+            <li>语音识别扩展了音视频资料转文本的能力，为多语种、口语化数据提供新的来源，但在口音与多人对话上仍需专项优化。</li>
+            <li>去重与语义清洗有助于缩短训练周期、减少记忆化输出，但必须保留语义等价的多样表述，避免对算法调度造成信息损失。</li>
+            <li>主动学习通过置信度驱动的样本选择，实现“小数据量达标”的工程路径，尤其适合垂直行业的持续精调。</li>
+          </ul>
+          <h4>外部证据与案例</h4>
+          <p>OmniDocBench 最新榜单中，PaddleOCR-VL 以 92.56 分领跑，并在文本与阅读顺序子项上分别达到 95.3 与 94.7；DeepSeek、百度与上海 AI Lab 等团队陆续推出 OCR 产品，背后指向“先用 OCR 清洗再训练 LLM”的主线。DeepSeek-OCR 训练了 3,000 万页 PDF、1,000 万图表、500 万化学式与 100 万几何图像，通过 PaddleOCR 等工具完成布局标注与迭代，自举出 7–20 倍的 token 压缩能力，同时保持约 97% 字段准确率。</p>
+          <h4>争议焦点</h4>
+          <p>部分研究者认为多模态 LLM 已能直接读取图像文本，传统 OCR 或将边缘化；但在文档密集、结构化要求高的领域，OCR 仍然是数据工程的起点。同样地，合成数据在缺乏质量评分与筛选策略时会放大噪声，倒逼团队建立严格的打分、回放与冷启动流程。</p>
+          <h4>合成数据与清洗趋势</h4>
+          <p>IBM LAB 方案通过“教师模型+任务分类”生成 120 万指令样本，并采用“低学习率预热—复杂任务强化—回放缓冲”三阶段训练，打磨出 Labradorite 13B 等强基线。NVIDIA Nemotron-4 340B 则以“生成-打分-筛选”流水线服务医疗等行业：Instruct 模型生成数据，Reward 模型逐条评分，最终形成高质量指令集；与真实语料混合并结合教师模型蒸馏，可有效抑制模型塌陷。</p>
+          <h4>多模态协同</h4>
+          <p>多模态大模型（如 GPT-4o、Claude 3.5）在手写、模糊图像上的表现逐步反哺 OCR，其在稀缺场景中可实现 99.56% 的识别准确率，构成 OCR 纠错与质量评估链路的重要补充。</p>
+        </article>
+
+        <article class="full-article" id="deep-outline">
+          <div class="full-header">
+            <span class="full-index">B</span>
+            <h3>章节化分析框架</h3>
+          </div>
+          <p>为系统呈现 LOCC 在医学病案场景中的落地逻辑，本报告将分析结构划分为八个章节：自前言、数据类型、模型技术到系统架构、应用场景、机遇挑战、模型对比与结论，逐层说明策略取舍与工程实践。</p>
+          <div class="deep-dive">
+            <div class="deep-section" id="section-1">
+              <div class="full-header">
+                <span class="full-index">1</span>
+                <h4>前言：LOCC 打破长上下文瓶颈</h4>
+              </div>
+              <p>长文本处理一直是 LLM 的痛点。DeepSeek 团队近期开源 DeepSeek-OCR，提出“有损光学上下文压缩（LOCC）”：将长文本渲染为图像，由视觉-语言模型解码，从而显著减少文本 Token 数量
+finance.sina.com.cn
+36kr.com
+。实测表明，在压缩率接近 10:1 的情况下，仍可保持 97% 以上的精度。</p>
+              <p>Un-LOCC 项目进一步在多款多模态模型上验证了这一思路的通用性
+reddit.com
+。在约 3:1 的压缩比下，Qwen-VL 等模型依旧能达到 93% 以上的准确率。由此可见，LOCC 不依赖单一架构，可广泛嫁接在不同视觉-语言模型上，突破原生上下文长度。</p>
+              <p>本报告将围绕 LOCC 与 Un-LOCC 在医学病案大模型里的新机遇展开，从数据类型、模型技术、系统设计到场景落地逐层剖析，并与 Gemini、Qwen-VL、LLaVA、BioGPT、Med-PaLM 等典型方案对比。</p>
+            </div>
+
+            <div class="deep-section" id="section-2">
+              <div class="full-header">
+                <span class="full-index">2</span>
+                <h4>数据类型层：多种医学病案的多模态压缩适应性</h4>
+              </div>
+              <p>医学病案涵盖扫描件、手写文本、结构化 EHR 与影像报告等多种形态，不同数据对 LOCC 的适配方式存在差异。</p>
+              <div class="subsection">
+                <h5>2.1 扫描病历（印刷版影像）</h5>
+                <p>扫描病历本身即为图像，天然适合直接输入 VLM，无需额外渲染。LOCC 可以在保持版面结构的同时，以更少的视觉 Token 编码整页内容
+36kr.com
+finance.sina.com.cn
+。DeepSeek-OCR 在 OmniDocBench 等基准中达到 SOTA，证明在图像输入下可实现高精度且高压缩的抽取。</p>
+              </div>
+              <div class="subsection">
+                <h5>2.2 手写病例</h5>
+                <p>手写病历字体多变，识别难度高。LOCC 需要配合手写 OCR 数据微调视觉编码器，并通过图像增强（提亮、去噪、放大关键字段等）提升可读性，否则“0/O”“Na⁺/Na”等符号易混淆。</p>
+              </div>
+              <div class="subsection">
+                <h5>2.3 结构化电子病历（EHR）</h5>
+                <p>结构化字段无需转图像，LOCC 主要针对超长自由文本（如病程记录、出院小结）
+finance.sina.com.cn
+。实践中可将结构化数值直接输入，将长文本渲染为图像，再让模型在一次输入中同步解析两类信息。</p>
+              </div>
+              <div class="subsection">
+                <h5>2.4 医学影像报告</h5>
+                <p>影像报告由“影像”与“文本描述”组成。可将影像直接输入视觉模块，同时把文字描述经 LOCC 压缩为图像，使模型在单轮推理中同时参考影像与文字
+arxiv.org
+。若需批量分析多份报告，也可把多段文本拼接渲染，以突破单次处理的长度限制。</p>
+              </div>
+            </div>
+
+            <div class="deep-section" id="section-3">
+              <div class="full-header">
+                <span class="full-index">3</span>
+                <h4>模型技术层：视觉-语言一体化的优势</h4>
+              </div>
+              <h5>3.1 一体化替代“传统 OCR + NLP”流水线</h5>
+              <p>过去流程是“先 OCR，再 NLP”，误差会层层放大且上下文易丢失。多模态模型则直接读图理解并生成结果
+finance.sina.com.cn
+，具有以下优势：</p>
+              <ul>
+                <li><strong>减少误差传递：</strong>OCR 与理解同步优化，只要最终输出正确，即意味着视觉识别成功。</li>
+                <li><strong>保持原始版面：</strong>模型直接在图像空间解析表格、标注与布局，避免文本重排造成的信息损失。</li>
+                <li><strong>简化系统：</strong>单一模型即可端到端训练与部署，便于利用弱监督数据持续迭代。</li>
+              </ul>
+              <h5>3.2 多模态编码的医学价值</h5>
+              <ul>
+                <li><strong>丰富上下文容量：</strong>图文并举让模型一次吸收影像、图表与文字等多源信息，LOCC 进一步扩展可读长度
+finance.sina.com.cn
+。</li>
+                <li><strong>保留视觉语义：</strong>箭头、颜色、圈注等视觉标记在医学单据中承载关键含义
+36kr.com
+，多模态编码可直接捕捉。</li>
+                <li><strong>跨语言与特殊符号：</strong>视觉解析对不同语言与医学符号更加友好，降低多语种 OCR 的复杂度。</li>
+                <li><strong>更强的注意力与记忆：</strong>图像天然支持双向注意力
+36kr.com
+，DeepSeek 也提出利用不同分辨率构建“遗忘曲线”式记忆机制
+finance.sina.com.cn
+，适合长期病史场景。</li>
+              </ul>
+              <p>综上，多模态编码让模型像临床医生一样“既会看图也会读字”，结合 LOCC 解决长文本与信息碎片化问题。</p>
+            </div>
+
+            <div class="deep-section" id="section-4">
+              <div class="full-header">
+                <span class="full-index">4</span>
+                <h4>系统设计层：LOCC 驱动的医学多模态架构</h4>
+              </div>
+              <h5>4.1 模块划分与整体流程</h5>
+              <ul>
+                <li><strong>光学压缩与数据引擎：</strong>判断文本是否需要渲染，统一版式、提高清晰度，并控制压缩比在可接受范围
+finance.sina.com.cn
+。</li>
+                <li><strong>多模态核心模型：</strong>可选 MoE 架构，在 30 亿参数规模下实现近似大模型的效果与成本折衷
+finance.sina.com.cn
+，负责 OCR 解码、语义理解与知识推理。</li>
+                <li><strong>信息抽取模块：</strong>将模型输出组织为结构化字段，并可加入规则校验防止格式错误。</li>
+                <li><strong>摘要生成模块：</strong>一次性纵览全病历生成出院小结或巡诊摘要，可结合模板或 RLHF 提高可控性。</li>
+                <li><strong>问答决策模块：</strong>医生提问时结合全局上下文回答，并在关键结论处提供证据定位与置信度提示
+sites.research.google
+。</li>
+              </ul>
+              <h5>4.2 模块协同示例</h5>
+              <p>范例：住院患者的多页病历与报告被渲染成图像序列，核心模型一次读取；抽取模块输出诊断、药品等 JSON；摘要模块生成病情综述；问答模块支持临床随问，系统可缓存压缩表示以提升实时性。</p>
+              <div class="subsection">
+                <h5>4.3 混合输入与视觉引导 RAG</h5>
+                <p>为兼顾精度与上下文广度，可让模型同时处理视觉 Token 与文本 Token，并采用“两阶段”流程：</p>
+                <ul>
+                  <li><strong>粗读阶段（压缩浏览）：</strong>把全部病历经 LOCC 压缩输入模型，快速锁定与任务相关的段落，如筛出所有“高血压”记录。</li>
+                  <li><strong>精读阶段（精准解析）：</strong>将关键片段以无损文本 Token 重新输入模型，完成最终推理与生成。</li>
+                </ul>
+                <p>该视觉引导的 RAG 方案结合了 LOC 的效率与传统文本的准确性，既解决长上下文问题，又保留关键细节。</p>
+              </div>
+              <div class="subsection">
+                <h5>4.4 数据中心的优化：智能渲染引擎</h5>
+                <p>在模型之外优化输入亦能提升表现。渲染阶段可注入语义视觉增强（Visual Markup），对阳性结果高亮、对药物剂量加粗、把时间序列绘制成迷你图表，帮助模型快速捕捉重点。这种策略无需重训模型，就能利用 VLM 对视觉特征的敏感性，提高关键信息的识别率。</p>
+              </div>
+            </div>
+
+            <div class="deep-section" id="section-5">
+              <div class="full-header">
+                <span class="full-index">5</span>
+                <h4>应用场景层：医院临床与医学科研</h4>
+              </div>
+              <div class="subsection">
+                <h5>5.1 医院临床场景</h5>
+                <p>LOCC 医疗模型可嵌入 EMR，为医生在诊疗与查房时提供即时摘要、要点复核与问答助手。由于涉及高度敏感的病案信息，医院往往要求在本地数据中心或专有云中私有部署，确保数据不外流。</p>
+                <ul>
+                  <li><strong>隐私安全：</strong>遵循 HIPAA 等规范，对签名信息脱敏，并确保日志加密存储。</li>
+                  <li><strong>实时性：</strong>预先缓存病历的压缩表示，或蒸馏出轻量模型以实现秒级响应。</li>
+                  <li><strong>可靠性：</strong>输出应附带证据高亮与置信度提示，必要时人工复核。</li>
+                  <li><strong>成本约束：</strong>结合院内 GPU 预算选择 7B–13B 量级模型，复杂问题再调用云端大模型
+finance.sina.com.cn
+。</li>
+                </ul>
+                <p><strong>成本约束：</strong>在预算受限的医院里，可优先部署中等规模模型完成大部分任务，疑难病例再在脱敏前提下调度云端大模型。DeepSeek 报告单卡每日生成 20 万页数据的能力
+finance.sina.com.cn
+，也为算力规划提供了参考。</p>
+              </div>
+              <div class="subsection">
+                <h5>5.2 医学科研场景</h5>
+                <p>医学研究机构可利用 LOCC 模型批量分析脱敏病例或文献，挖掘疾病规律、总结不良反应，并开展公共卫生研究。由于数据敏感度相对较低，可更灵活地使用云端算力。</p>
+                <ul>
+                  <li><strong>批处理：</strong>通过流水线并行渲染与多 GPU 推理，提高每批次处理量。</li>
+                  <li><strong>超长分段：</strong>将数百页的指南按章节渲染、逐段解析，再进行跨章节整合。</li>
+                  <li><strong>多模态扩展：</strong>为基因图谱、地理分布图等数据定制视觉编码插件，并在提示中标注来源类型。</li>
+                  <li><strong>成本平衡：</strong>结合本地算力、云租赁与模型量化策略，兼顾准确率与经济性。</li>
+                </ul>
+                <p><strong>成本约束：</strong>科研侧重准确率，可选择性能最佳的大模型离线运行，并通过缓存中间结果或增量更新 embedding 提升重复任务效率。</p>
+              </div>
+              <div class="subsection">
+                <h5>5.3 医药企业场景</h5>
+                <p>制药与生物技术公司可利用 LOCC 加速新药研发与商业运营：审阅临床试验病例、梳理药物不良事件、或构建面向医生和患者的产品咨询助手。多数企业有自建数据中心，可采用“敏感数据本地处理 + 公共资料调用云端模型”的混合部署模式。</p>
+                <ul>
+                  <li><strong>知识更新与合规：</strong>定期以 LOCC 方式导入最新研究和监管文件，提示模型按官方说明书回答，并保留审计日志。</li>
+                  <li><strong>多语言支持：</strong>提示中指定输出语言，渲染时选用多语字体；LOCC 让模型以统一方式处理多语文本
+36kr.com
+。</li>
+                  <li><strong>系统集成：</strong>通过 API 与临床试验系统、药物警戒数据库等对接，支持批处理与实时查询，需要高可用、弹性扩缩架构。</li>
+                  <li><strong>成本管理：</strong>常规任务可由蒸馏后的轻量模型完成，复杂场景再调度完整版模型或云端服务，实现弹性扩容。</li>
+                </ul>
+              </div>
+              <div class="subsection">
+                <h5>5.4 隐私、速度与成本的权衡</h5>
+                <ul>
+                  <li><strong>隐私：</strong>图像形式的数据更难关键词脱敏，可采用端到端加密存储、输出过滤与泄露监测，确保不暴露个人信息。</li>
+                  <li><strong>速度：</strong>Token 减少带来注意力复杂度下降
+36kr.com
+，但需平衡视觉编码开销，可参考 Un-LOCC 分享的字体与分辨率经验
+github.com
+。</li>
+                  <li><strong>成本：</strong>训练可优先沿用开源模型继续预训练
+arxiv.org
+；推理阶段结合量化、蒸馏与云资源以获得最佳 ROI。</li>
+                </ul>
+                <p>总体而言，不同部署环境会在隐私、安全与效率之间权衡，但 LOCC 的高上下文与高效率特性正逐步证明其落地价值。</p>
+              </div>
+            </div>
+
+            <div class="deep-section" id="section-6">
+              <div class="full-header">
+                <span class="full-index">6</span>
+                <h4>机遇与挑战并存</h4>
+              </div>
+              <p>LOCC 与 Un-LOCC 带来的机遇与风险需同步考量。其效率收益源自 Transformer 注意力复杂度随序列长度平方增长的特性
+36kr.com
+：当 4096 字文本被压成约 256 个图像 Token 时，推理耗时与显存占用显著下降，但视觉编码器的开销也必须纳入评估。</p>
+              <h5>6.1 机遇优势</h5>
+              <ul>
+                <li><strong>上下文扩容：</strong>压缩 7–20 倍后仍保持约 97% 的信息保真度
+finance.sina.com.cn
+，一次性读取完整病史。</li>
+                <li><strong>效率提升：</strong>注意力计算量按平方缩减
+36kr.com
+，单位算力可服务更多案例。</li>
+                <li><strong>全局关联：</strong>视觉双向注意力让模型同时关注远距信息
+36kr.com
+finance.sina.com.cn
+。</li>
+                <li><strong>多模态融合：</strong>文字、图表、影像同步处理，避免信息缺失
+36kr.com
+。</li>
+                <li><strong>方法通用：</strong>开源与商用 VLM 均可搭载 LOCC
+reddit.com
+，实现与现有模型的灵活组合。</li>
+              </ul>
+              <p>LOCC 还让模型同步掌握图像与文本信息，减少传统文本预处理损耗，并能与既有方案协同，避免推翻原有技术栈。</p>
+              <h5>6.2 挑战问题</h5>
+              <ul>
+                <li><strong>字符歧义：</strong>低分辨率下“1/l”“Na⁺/Na”易被混淆，需在渲染与模型训练上双重优化。</li>
+                <li><strong>图像标准化：</strong>真实病历质量参差，必须进行清晰度统一与多样性训练
+arxiv.org
+。</li>
+                <li><strong>误读风险：</strong>关键字段错误可能造成严重后果，需要交叉验证、人工复核与传统 OCR 兜底。</li>
+                <li><strong>模型规模取舍：</strong>在算力、医学知识与视觉能力之间求平衡，可能采用大小模型协同
+reddit.com
+。</li>
+                <li><strong>评测与监管：</strong>需建立新的保真度指标与临床验证流程，满足医疗监管要求。</li>
+              </ul>
+              <p>机遇与挑战并存：要让 LOCC 成为可信赖的临床工具，必须持续攻克视觉歧义、标准化、误读代价和监管审批等问题，建立完善的安全与评测体系。</p>
+            </div>
+
+            <div class="deep-section" id="section-7">
+              <div class="full-header">
+                <span class="full-index">7</span>
+                <h4>模型对比：LOCC 与典型方案的互补</h4>
+              </div>
+              <p>下表梳理了 Gemini、Qwen-VL、LLaVA、BioGPT、Med-PaLM 等模型的能力侧写：</p>
+              <div class="subsection">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>模型</th>
+                      <th>模态支持</th>
+                      <th>长上下文处理</th>
+                      <th>医疗专长</th>
+                      <th>与 LOCC 结合</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Google Gemini 2.5</td>
+                      <td>图文多模态，可解析 PDF 等
+deepmind.google
+</td>
+                      <td>提供 Pro/Flash 等多版本，原生支持大体量文档</td>
+                      <td>通用模型，未专门针对医学训练</td>
+                      <td>可将长病历渲染为图像输入，实现一次性处理</td>
+                    </tr>
+                    <tr>
+                      <td>Qwen-VL</td>
+                      <td>多语言图文理解
+arxiv.org
+</td>
+                      <td>文本窗口有限，可借助图像扩展信息量</td>
+                      <td>中文能力强，医学知识一般</td>
+                      <td>Un-LOCC 在 Qwen-VL-72B 上实现 1.7:1 压缩与 99% 准确率
+reddit.com
+，证明可用于医疗文本压缩解码
+</td>
+                    </tr>
+                    <tr>
+                      <td>LLaVA / LLaVA-Med</td>
+                      <td>CLIP 视觉编码 + Vicuna 语言模型
+microsoft.com
+</td>
+                      <td>文本上下文约 2K Token</td>
+                      <td>医学版在生物医学图像问答表现出色
+arxiv.org
+</td>
+                      <td>可用于医疗 OCR 解码，但需提升准确率以满足临床需求</td>
+                    </tr>
+                    <tr>
+                      <td>BioGPT</td>
+                      <td>纯文本（GPT-2 架构）
+academic.oup.com
+</td>
+                      <td>上下文约 1024 Token</td>
+                      <td>熟悉海量生物医学术语
+academic.oup.com
+</td>
+                      <td>需与视觉模型组合读取图像，再交给 BioGPT 推理</td>
+                    </tr>
+                    <tr>
+                      <td>Med-PaLM 2</td>
+                      <td>纯文本（PaLM2 系列）
+sites.research.google
+</td>
+                      <td>原生窗口约 8K Token，可配合检索扩展</td>
+                      <td>医学问答领先
+sites.research.google
+</td>
+                      <td>本体不支持图像，可借 LOCC 接入视觉前端，或使用多模态版 Med-PaLM M
+sites.research.google
+</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <h5>7.2 融合展望</h5>
+              <ul>
+                <li><strong>与通用 VLM 互补：</strong>Gemini、Qwen-VL、LLaVA 可充当前端阅读与摘要，再将关键信息交由医学 LLM 深度推理。</li>
+                <li><strong>赋能医学专模：</strong>BioGPT、Med-PaLM 等可通过 LOCC 接入视觉能力，避免重新训练超大多模态模型
+sites.research.google
+</li>
+                <li><strong>规模与成本折中：</strong>中小模型 + LOCC 有望实现接近大模型的上下文处理能力，适合私有化部署。</li>
+                <li><strong>互补弱点：</strong>可通过知识蒸馏让具备视觉能力的模型学习 Med-PaLM 等医学专家模型的判断，形成“既懂医又会看”的组合
+36kr.com
+。</li>
+              </ul>
+            </div>
+
+            <div class="deep-section" id="section-8">
+              <div class="full-header">
+                <span class="full-index">8</span>
+                <h4>结论：面向医疗 AI 的新篇章</h4>
+              </div>
+              <p>LOCC 为医疗大模型打开了新的篇章：它突破 Transformer 长上下文瓶颈
+36kr.com
+finance.sina.com.cn
+reddit.com
+，让模型真正读懂“又长又杂”的病历。</p>
+              <p>本报告分层阐释了 LOCC 的数据适配、模型技术、系统架构与场景落地，并对机遇与挑战进行了系统评估。随着视觉证据溯源、人机协同校验等机制完善，LOCC 有望让医疗 AI 从“短文本助手”进化为“全景理解”的智能伙伴。</p>
+              <p>新思路也伴随新难题：符号歧义、图像标准化、误读代价与监管要求都必须正视。通过与现有优秀模型结合、逐步解决落地问题，医疗 AI 有机会迎来真正的量变到质变。</p>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="reading" class="panel">
+      <h2>进一步阅读</h2>
+      <ul class="reading-list">
+        <li>
+          <a href="https://github.com/PaddlePaddle/PaddleOCR" target="_blank" rel="noopener">PaddleOCR 官方仓库</a>
+          <p>了解 PaddleOCR 及 PaddleOCR-VL 的模型结构、布局分析与训练数据管线。</p>
+        </li>
+        <li>
+          <a href="https://github.com/deepseek-ai/DeepSeek-OCR" target="_blank" rel="noopener">DeepSeek-OCR 项目</a>
+          <p>展示 LOC 思路下的多语言 OCR、自举标注与模型压缩策略。</p>
+        </li>
+        <li>
+          <a href="https://arxiv.org/abs/2212.10560" target="_blank" rel="noopener">Self-Instruct: Aligning Language Models with Self-Generated Instructions</a>
+          <p>合成数据生成与教师模型评分的经典流程，为控制“模型塌陷”提供思路。</p>
+        </li>
+        <li>
+          <a href="https://arxiv.org/abs/2212.04356" target="_blank" rel="noopener">Whisper: Robust Speech Recognition via Large-Scale Weak Supervision</a>
+          <p>ASR 扩展多语种文本的代表性工作，可作为 LLM 语料延展的音频入口。</p>
+        </li>
+        <li>
+          <a href="https://arxiv.org/abs/2304.14108" target="_blank" rel="noopener">DataComp: In search of the next generation of multimodal datasets</a>
+          <p>围绕数据去重与质量评估提出标准化 Benchmark，为构建高质量训练集提供具体指标。</p>
+        </li>
+      </ul>
+    </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    本页面依据 <code>md/OCR.md</code> 的研究要点整理而成，结合最新公开资料复盘 OCR、LOC 与多模态数据工程的协同路径。
+  </footer>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const toggle = document.getElementById('darkModeToggle');
+      const saved = localStorage.getItem('ocr-theme');
+      if (saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        root.classList.add('dark');
+      }
+      toggle?.addEventListener('click', () => {
+        root.classList.toggle('dark');
+        localStorage.setItem('ocr-theme', root.classList.contains('dark') ? 'dark' : 'light');
+      });
+
+      const navLinks = Array.from(document.querySelectorAll('.ag-nav a'));
+      const tocLinks = Array.from(document.querySelectorAll('.toc-panel a'));
+      const trackedLinks = [...navLinks, ...tocLinks];
+      const onScroll = () => {
+        const scrollPos = window.scrollY + 120;
+        trackedLinks.forEach(link => {
+          const target = document.querySelector(link.getAttribute('href'));
+          if (!target) return;
+          const inView = scrollPos >= target.offsetTop && scrollPos < target.offsetTop + target.offsetHeight;
+          link.classList.toggle('active', inView);
+          if (inView) {
+            link.setAttribute('aria-current', 'true');
+          } else {
+            link.removeAttribute('aria-current');
+          }
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+  </script>
+</body>
+</html>

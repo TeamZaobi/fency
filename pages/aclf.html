@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度探索：慢加急性肝衰竭(ACLF)的治疗挑战与未来</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutral (bg-stone-50, text-slate-800, with teal-600 for accents) -->
+    <!-- Application Structure Plan: The SPA is designed as a four-part interactive journey to deconstruct the complex source report. 
+        1. 'The Challenge': Uses interactive cards to compare ACLF definitions and a CSS diagram for pathophysiology, making abstract concepts tangible.
+        2. 'Therapies & Evidence': Employs interactive tabs for NALS technologies and a dynamic Chart.js chart to visualize the nuanced and conflicting evidence, allowing users to filter by study type.
+        3. 'Core Dilemmas': Visualizes key clinical problems (the "sweet spot" curve, "rebound" mechanism, and "stopping criteria" traffic light) for quick, intuitive understanding.
+        4. 'Future Blueprint': Presents the four proposed research solutions in a clean, tabbed layout.
+        This thematic, task-oriented structure prioritizes user exploration and synthesis over a linear report replication, transforming a dense document into an engaging learning tool.
+    -->
+    <!-- Visualization & Content Choices: 
+        - ACLF Definitions Table -> Goal: Compare/Organize -> Interactive cards with highlights -> Justification: More engaging and less overwhelming than a static table. Users can focus on one definition at a time. -> Method: HTML/CSS/JS.
+        - Pathophysiology -> Goal: Inform -> Simple CSS Flexbox diagram -> Justification: Visually represents the complex inflammation cascade in a simplified, easy-to-digest flow. -> Method: HTML/Tailwind CSS.
+        - NALS Evidence -> Goal: Compare/Analyze -> Dynamic Chart.js Bar Chart -> Justification: Effectively shows the disparity in evidence across patient subgroups and allows interaction (filtering by study type) to demonstrate the report's point about evidence quality. -> Library: Chart.js.
+        - "Sweet Spot" Curve -> Goal: Inform/Change -> Chart.js Line Chart (Inverted U) -> Justification: The best way to visualize a non-linear relationship as described in the report. -> Library: Chart.js.
+        - "Rebound" Mechanism -> Goal: Inform -> Animated CSS diagram -> Justification: A dynamic visual is more effective than static text at explaining the two-compartment model and ongoing toxin production. -> Method: HTML/Tailwind CSS/JS.
+        - Stopping Criteria -> Goal: Organize/Inform -> HTML/CSS "Traffic Light" -> Justification: A strong, universally understood visual metaphor for "Go" and "Stop" signals. -> Method: HTML/Tailwind CSS.
+        All choices adhere to the NO SVG/Mermaid rule, using either Chart.js canvas rendering or structured HTML/CSS for all visuals.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link.active { color: #0d9488; border-bottom-color: #0d9488; font-weight: 500; }
+        .nav-link:not(.active):hover { color: #0f766e; border-bottom-color: #9ca3af; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .tab-button.active { background-color: #0d9488; color: white; }
+        .tab-button:not(.active) { background-color: #e5e7eb; color: #374151; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 50vh; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800 antialiased">
+
+    <div class="container mx-auto px-4 py-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900">深度探索：慢加急性肝衰竭(ACLF)</h1>
+            <p class="text-lg text-slate-600 mt-2">交互式解读治疗挑战、证据困境与未来蓝图</p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="sticky top-0 bg-stone-50/80 backdrop-blur-sm z-10 mb-8 border-b border-slate-200">
+            <div class="flex justify-center space-x-4 sm:space-x-8">
+                <button data-target="challenge" class="nav-link text-sm sm:text-base py-4 border-b-2 border-transparent">挑战与现状</button>
+                <button data-target="therapy" class="nav-link text-sm sm:text-base py-4 border-b-2 border-transparent">疗法与证据</button>
+                <button data-target="dilemmas" class="nav-link text-sm sm:text-base py-4 border-b-2 border-transparent">核心难题</button>
+                <button data-target="blueprint" class="nav-link text-sm sm:text-base py-4 border-b-2 border-transparent">未来蓝图</button>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <!-- Section 1: The Challenge -->
+            <section id="challenge" class="content-section space-y-12">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">挑战与现状：理解ACLF的复杂性</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">慢加急性肝衰竭(ACLF)并非单一疾病，其定义繁多，病理过程复杂。本节将带您厘清这些核心概念，揭示评估治疗方案有效性的根本挑战。</p>
+                </div>
+                
+                <!-- ACLF Definitions -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-center">全球ACLF定义的分野：为何比较如此困难？</h3>
+                    <p class="text-center text-slate-500 mb-6">点击下方不同标准，查看其核心差异。正是这些差异导致了全球研究结果难以直接比较。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                        <div class="md:col-span-8">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="p-3 font-semibold text-slate-700">标准</th>
+                                        <th class="p-3 font-semibold text-slate-700 hidden sm:table-cell">核心特征</th>
+                                        <th class="p-3 font-semibold text-slate-700 hidden md:table-cell">器官衰竭要求</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="definitions-table">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="definition-details" class="md:col-span-4 p-4 bg-teal-50 rounded-lg flex items-center justify-center min-h-[200px] fade-in">
+                            <p class="text-teal-800 text-center">请选择一个标准以查看详情</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pathophysiology Diagram -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-6 text-center">病理生理核心：失控的“炎症引擎”</h3>
+                     <div class="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 text-center text-sm">
+                        <div class="p-3 bg-red-100 rounded-lg shadow"><strong>急性诱因</strong><br>(感染/酒精/病毒)</div>
+                        <div class="text-2xl text-slate-400">→</div>
+                        <div class="p-3 bg-orange-100 rounded-lg shadow"><strong>PAMPs/DAMPs</strong><br>(细胞坏死/细菌易位)</div>
+                        <div class="text-2xl text-slate-400">→</div>
+                        <div class="p-3 bg-amber-100 rounded-lg shadow"><strong>细胞因子风暴</strong><br>(全身性炎症/SIRS)</div>
+                        <div class="text-2xl text-slate-400">→</div>
+                        <div class="p-3 bg-purple-100 rounded-lg shadow"><strong>多器官衰竭<br>& 免疫麻痹</strong></div>
+                    </div>
+                    <p class="text-center mt-4 text-slate-600">这个失控的炎症级联反应是驱动ACLF病情恶化和多器官衰竭的核心引擎，也是NALS试图干预的关键环节。</p>
+                </div>
+            </section>
+
+            <!-- Section 2: Therapy & Evidence -->
+            <section id="therapy" class="content-section space-y-12">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">疗法与证据：NALS技术及其疗效争议</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">非生物型人工肝(NALS)是ACLF的重要支持疗法，技术多样，但其生存获益的证据至今仍充满争议。本节将解析主流技术，并以交互式图表展示证据的复杂性。</p>
+                </div>
+                
+                <!-- NALS Technologies -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-4 text-center">NALS主要技术模式一览</h3>
+                     <div class="flex justify-center mb-6 border-b">
+                        <button data-tab="pe" class="nals-tab-button p-3 text-sm sm:text-base font-medium border-b-2 border-transparent">血浆置换(PE)</button>
+                        <button data-tab="dpmas" class="nals-tab-button p-3 text-sm sm:text-base font-medium border-b-2 border-transparent">双重血浆分子吸附(DPMAS)</button>
+                        <button data-tab="mars" class="nals-tab-button p-3 text-sm sm:text-base font-medium border-b-2 border-transparent">分子吸附再循环(MARS)</button>
+                    </div>
+                    <div id="nals-content" class="min-h-[150px]"></div>
+                </div>
+
+                <!-- Evidence Chart -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold mb-2 text-center">疗效证据的权衡：生存获益有多大？</h3>
+                    <p class="text-center text-slate-500 mb-4">下图展示了NALS在不同ACLF亚群中的证据强度（概念性）。悬停查看详情，并切换证据来源，观察结论的变化。</p>
+                    <div class="flex justify-center mb-4">
+                        <div class="inline-flex rounded-md shadow-sm">
+                            <button id="evidence-all" class="evidence-filter-btn relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">所有研究</button>
+                            <button id="evidence-rct" class="evidence-filter-btn -ml-px relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">仅限RCT</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="evidenceChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 3: Dilemmas -->
+            <section id="dilemmas" class="content-section space-y-12">
+                 <div class="text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">核心难题：临床实践的三大痛点</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">除了疗效不确定，NALS在临床应用中还面临着“何时用”、“如何看”和“何时停”等核心难题。本节将对这些痛点进行可视化解读。</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Sweet Spot -->
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
+                        <h3 class="text-xl font-semibold mb-4 text-center">难题一：是否存在“治疗甜点”？</h3>
+                        <p class="text-center text-slate-500 mb-4 flex-grow">NALS的疗效与病情严重度可能呈倒“U”型关系，在“中晚期/2级”时获益最大。</p>
+                        <div class="relative w-full h-56">
+                            <canvas id="sweetSpotChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Rebound Phenomenon -->
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
+                        <h3 class="text-xl font-semibold mb-4 text-center">难题二：如何理解“病情反弹”？</h3>
+                         <p class="text-center text-slate-500 mb-4 flex-grow">治疗后指标回升，源于毒素的再分布和持续生成，是评估内源性病情的窗口。</p>
+                         <div id="rebound-diagram" class="w-full h-56 border rounded-lg p-4 flex flex-col justify-center items-center space-y-2 relative overflow-hidden bg-slate-50">
+                            <div class="text-center">
+                                <div class="font-bold text-slate-700">患者体内</div>
+                                <div class="flex space-x-2 mt-2">
+                                    <div id="rebound-blood" class="w-20 h-20 bg-red-200 rounded-lg flex flex-col justify-center items-center p-1 text-xs"><span>血管内</span><span class="font-bold">毒素↓</span></div>
+                                    <div id="rebound-tissue" class="w-20 h-20 bg-blue-200 rounded-lg flex flex-col justify-center items-center p-1 text-xs"><span>组织间</span><span class="font-bold">毒素</span></div>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 left-1/2 text-3xl text-slate-400" style="transform: translate(-50%, -50%);">↔</div>
+                            <div class="absolute bottom-2 right-2 text-xs text-center text-orange-600">
+                                🔥<br>持续的炎症<br>和肝坏死
+                            </div>
+                            <button id="rebound-btn" class="absolute bottom-2 left-2 px-2 py-1 text-xs bg-teal-600 text-white rounded">模拟治疗</button>
+                        </div>
+                    </div>
+
+                    <!-- Stopping Criteria -->
+                    <div class="bg-white p-6 rounded-lg shadow-md flex flex-col">
+                        <h3 class="text-xl font-semibold mb-4 text-center">难题三：何时能“放心停机”？</h3>
+                        <p class="text-center text-slate-500 mb-4 flex-grow">停机不应只看“净化”效果，更要看患者自身生物学反应的“交通信号灯”。</p>
+                        <div class="w-full h-56 flex flex-col space-y-4 justify-center">
+                            <div>
+                                <h4 class="font-semibold text-green-600 flex items-center"><span class="w-4 h-4 bg-green-500 rounded-full mr-2"></span>“绿灯”信号 (可考虑停止)</h4>
+                                <p class="text-sm text-slate-600 pl-6">基于<strong class="text-green-700">肝脏再生</strong>的证据，如AFP、HGF持续上升。</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-red-600 flex items-center"><span class="w-4 h-4 bg-red-500 rounded-full mr-2"></span>“红灯”信号 (治疗或无效)</h4>
+                                <p class="text-sm text-slate-600 pl-6">基于<strong class="text-red-700">不可逆衰竭</strong>的证据，如炎症标志物持续高企、剧烈反弹。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 4: Blueprint -->
+            <section id="blueprint" class="content-section space-y-12">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-slate-900">未来蓝图：攻克难题的系统性研究计划</h2>
+                    <p class="mt-2 text-slate-600 max-w-3xl mx-auto">要取得根本性突破，需要超越传统研究框架。报告提出了一个由四个相互关联的方案组成的宏伟蓝图。</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex flex-wrap justify-center -mb-px">
+                        <button class="tab-button m-1 px-4 py-2 text-sm font-medium rounded-md" data-tab="plan1">方案一：PRECISION-ACLF试验</button>
+                        <button class="tab-button m-1 px-4 py-2 text-sm font-medium rounded-md" data-tab="plan2">方案二：DYNAGUIDE-ACLF研究</button>
+                        <button class="tab-button m-1 px-4 py-2 text-sm font-medium rounded-md" data-tab="plan3">方案三：AI赋能的决策模型</button>
+                        <button class="tab-button m-1 px-4 py-2 text-sm font-medium rounded-md" data-tab="plan4">方案四：协同治疗新策略</button>
+                    </div>
+                    <div class="mt-6 border-t pt-6">
+                        <div id="plan1" class="tab-content space-y-3">
+                            <h3 class="text-lg font-semibold text-teal-700">自适应平台试验：实现精准分层治疗</h3>
+                            <p><strong>目标：</strong> 解决证据质量低和患者异质性的双重困境。</p>
+                            <p><strong>设计：</strong> 国际多中心、自适应平台RCT，根据ACLF定义、病因、严重程度对患者进行严格分层，同时比较多种NALS方案。试验能动态“学习”和“进化”，高效找到“何种疗法对何种患者最有效”的答案。</p>
+                            <p><strong>价值：</strong> 为制定真正<strong class="text-teal-600">精准化、分层化</strong>的临床指南提供最高级别证据。</p>
+                        </div>
+                        <div id="plan2" class="tab-content space-y-3">
+                             <h3 class="text-lg font-semibold text-teal-700">动态生物标志物研究：从经验到数据驱动</h3>
+                            <p><strong>目标：</strong> 解决“何时开始、如何优化、何时停止”的难题。</p>
+                            <p><strong>设计：</strong> 嵌套在平台试验中，系列采集患者生物样本，对炎症、细胞死亡、肝再生等核心病理轴的标志物进行动态监测分析。</p>
+                            <p><strong>价值：</strong> 开发基于<strong class="text-teal-600">动态生物标志物</strong>的临床决策支持算法，实现个体化精准调控。</p>
+                        </div>
+                        <div id="plan3" class="tab-content space-y-3">
+                            <h3 class="text-lg font-semibold text-teal-700">人工智能预测模型：辅助最优决策</h3>
+                            <p><strong>目标：</strong> 整合海量多维数据，提供远超传统评分的精准预测。</p>
+                            <p><strong>设计：</strong> 利用机器学习，先通过无监督学习发现新的ACLF临床表型，再通过有监督学习训练动态预测模型，实时预测患者的预后、疗效和风险。</p>
+                             <p><strong>价值：</strong> 打造<strong class="text-teal-600">AI驱动的动态临床决策支持系统(CDSS)</strong>，辅助医生选择最优治疗路径。</p>
+                        </div>
+                        <div id="plan4" class="tab-content space-y-3">
+                            <h3 class="text-lg font-semibold text-teal-700">“NALS + X”协同策略：从支持到干预</h3>
+                            <p><strong>目标：</strong> 从根本上攻击ACLF病根，实现“1+1>2”的协同效应。</p>
+                            <p><strong>设计：</strong> 将NALS与能靶向核心病理环节的药物（如抗炎、促再生、肠道微生态干预）联用，构建从临床前到早期临床的转化研究框架。</p>
+                            <p><strong>价值：</strong> 代表了ACLF治疗理念的范式转变，是从“器官支持”转向“<strong class="text-teal-600">支持与干预并举</strong>”的最有希望的途径。</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mainContent = document.getElementById('main-content');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.content-section');
+
+    const acfDefinitions = {
+        'EASL-CLIF': {
+            name: 'EASL-CLIF',
+            feature: '急性失代偿+器官衰竭+高死亡率',
+            organs: '核心诊断标准 (CLIF-OF评分)',
+            details: '源于欧洲CANONIC研究，严格限定于肝硬化，精准捕获病情危重、以全身性炎症为特征的患者。'
+        },
+        'APASL': {
+            name: 'APASL',
+            feature: '急性肝损伤 (黄疸+凝血障碍)',
+            organs: '非必需，但腹水/脑病是并发症',
+            details: '源于亚太地区，更侧重肝脏本身衰竭，可无肝硬化，能更早期诊断，但预后分层能力弱。'
+        },
+        'COSSH': {
+            name: 'COSSH',
+            feature: '严重肝功能恶化 (TBil+INR)',
+            organs: '肝脏或肝外器官衰竭',
+            details: '专为中国HBV-ACLF设计，诊断门槛宽，敏感性高，旨在更早识别和干预。'
+        },
+        'NACSELD': {
+            name: 'NACSELD',
+            feature: '≥2个肝外器官衰竭',
+            organs: '核心诊断标准',
+            details: '源于北美，定义简洁，床旁应用方便，但敏感性低，可能错过疾病早期。'
+        }
+    };
+
+    const nalsTabsData = {
+        pe: {
+            title: '血浆置换 (Plasma Exchange, PE)',
+            content: '最经典模式。弃去患者血浆，补充新鲜血浆。<strong>优点:</strong> 广谱清除毒素和炎症因子，补充凝血因子和白蛋白。<strong>缺点:</strong> 依赖血浆资源，成本高，有输血相关风险。'
+        },
+        dpmas: {
+            title: '双重血浆分子吸附 (DPMAS)',
+            content: '血浆节约型技术。患者血浆经两个吸附柱净化后回输。<strong>优点:</strong> 无需外源血浆，对特定毒素清除率高。<strong>缺点:</strong> 无法补充凝血因子，常需与小剂量PE联用。'
+        },
+        mars: {
+            title: '分子吸附再循环 (MARS)',
+            content: '复杂系统。利用白蛋白透析液清除白蛋白结合毒素。<strong>优点:</strong> 高效靶向清除，血流动力学稳定。<strong>缺点:</strong> 技术复杂，成本高昂。'
+        }
+    };
+
+    // Initial setup
+    function init() {
+        // Navigation
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const targetId = link.dataset.target;
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                
+                sections.forEach(section => {
+                    section.classList.remove('active', 'fade-in');
+                    if (section.id === targetId) {
+                        section.classList.add('active');
+                        // Use a timeout to ensure the fade-in class is applied after display: block
+                        setTimeout(() => section.classList.add('fade-in'), 10);
+                    }
+                });
+            });
+        });
+        navLinks[0].click();
+
+        // Section 1: ACLF Definitions
+        const definitionsTable = document.getElementById('definitions-table');
+        Object.values(acfDefinitions).forEach(def => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-slate-200 hover:bg-slate-50 cursor-pointer';
+            row.dataset.def = def.name;
+            row.innerHTML = `
+                <td class="p-3 font-medium">${def.name}</td>
+                <td class="p-3 text-slate-600 hidden sm:table-cell">${def.feature}</td>
+                <td class="p-3 text-slate-600 hidden md:table-cell">${def.organs}</td>
+            `;
+            definitionsTable.appendChild(row);
+        });
+
+        definitionsTable.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+
+            const defId = row.dataset.def;
+            const defData = acfDefinitions[defId];
+            const detailsPane = document.getElementById('definition-details');
+
+            document.querySelectorAll('#definitions-table tr').forEach(r => r.classList.remove('bg-teal-100'));
+            row.classList.add('bg-teal-100');
+            
+            detailsPane.innerHTML = `
+                <div class="text-left w-full fade-in">
+                    <h4 class="font-bold text-teal-900">${defData.name}</h4>
+                    <p class="text-sm text-teal-800 mt-2">${defData.details}</p>
+                </div>
+            `;
+        });
+        
+        // Section 2: NALS Tech Tabs
+        const nalsTabButtons = document.querySelectorAll('.nals-tab-button');
+        const nalsContent = document.getElementById('nals-content');
+        nalsTabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                nalsTabButtons.forEach(b => {
+                    b.classList.remove('active', 'text-teal-600', 'border-teal-600');
+                    b.classList.add('text-slate-500', 'border-transparent');
+                });
+                button.classList.add('active', 'text-teal-600', 'border-teal-600');
+                button.classList.remove('text-slate-500', 'border-transparent');
+                
+                const tabData = nalsTabsData[tabId];
+                nalsContent.innerHTML = `<div class="fade-in"><h4 class="font-semibold">${tabData.title}</h4><p class="mt-2 text-slate-600">${tabData.content}</p></div>`;
+            });
+        });
+        document.querySelector('.nals-tab-button[data-tab="pe"]').click();
+
+
+        // Section 2: Evidence Chart
+        renderEvidenceChart('all');
+
+        document.getElementById('evidence-all').addEventListener('click', (e) => {
+            document.querySelectorAll('.evidence-filter-btn').forEach(b => b.classList.remove('bg-teal-600', 'text-white'));
+            e.target.classList.add('bg-teal-600', 'text-white');
+            renderEvidenceChart('all');
+        });
+        document.getElementById('evidence-rct').addEventListener('click', (e) => {
+            document.querySelectorAll('.evidence-filter-btn').forEach(b => b.classList.remove('bg-teal-600', 'text-white'));
+            e.target.classList.add('bg-teal-600', 'text-white');
+            renderEvidenceChart('rct');
+        });
+        document.getElementById('evidence-all').classList.add('bg-teal-600', 'text-white');
+
+        // Section 3: Dilemmas
+        renderSweetSpotChart();
+        setupReboundAnimation();
+
+        // Section 4: Blueprint Tabs
+        const blueprintTabs = document.querySelectorAll('#blueprint .tab-button');
+        const blueprintContents = document.querySelectorAll('#blueprint .tab-content');
+        blueprintTabs.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+                blueprintTabs.forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+
+                blueprintContents.forEach(content => {
+                    content.classList.remove('active', 'fade-in');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                         setTimeout(() => content.classList.add('fade-in'), 10);
+                    }
+                });
+            });
+        });
+        blueprintTabs[0].click();
+    }
+
+    let evidenceChartInstance;
+    function renderEvidenceChart(type) {
+        const ctx = document.getElementById('evidenceChart').getContext('2d');
+        const allData = {
+            labels: ['总体 ACLF (混合病因)', 'HBV-ACLF', '酒精性 ACLF', 'ACLF Grade 2 (中晚期)'],
+            datasets: [{
+                label: '证据强度',
+                data: [0.15, 0.6, -0.2, 0.7],
+                backgroundColor: (context) => {
+                    const value = context.raw;
+                    if (value > 0.5) return 'rgba(13, 148, 136, 0.7)'; // Strong positive
+                    if (value > 0) return 'rgba(74, 222, 128, 0.7)'; // Weak positive
+                    if (value < 0) return 'rgba(239, 68, 68, 0.7)'; // Negative
+                    return 'rgba(156, 163, 175, 0.7)'; // Neutral
+                },
+                borderColor: (context) => {
+                    const value = context.raw;
+                     if (value > 0.5) return 'rgb(13, 148, 136)';
+                    if (value > 0) return 'rgb(74, 222, 128)';
+                    if (value < 0) return 'rgb(239, 68, 68)';
+                    return 'rgb(156, 163, 175)';
+                },
+                borderWidth: 1
+            }]
+        };
+
+        const rctData = {
+            labels: ['总体 ACLF (混合病因)', 'HBV-ACLF', '酒精性 ACLF', 'ACLF Grade 2 (中晚期)'],
+            datasets: [{
+                label: '证据强度 (仅RCT)',
+                data: [-0.1, 0.2, -0.3, 0.1], // Data changes to reflect weaker evidence
+                backgroundColor: (context) => {
+                    const value = context.raw;
+                    if (value > 0.5) return 'rgba(13, 148, 136, 0.7)';
+                    if (value > 0) return 'rgba(74, 222, 128, 0.7)';
+                    if (value < 0) return 'rgba(239, 68, 68, 0.7)';
+                    return 'rgba(156, 163, 175, 0.7)';
+                },
+                 borderColor: (context) => {
+                    const value = context.raw;
+                     if (value > 0.5) return 'rgb(13, 148, 136)';
+                    if (value > 0) return 'rgb(74, 222, 128)';
+                    if (value < 0) return 'rgb(239, 68, 68)';
+                    return 'rgb(156, 163, 175)';
+                },
+                borderWidth: 1
+            }]
+        };
+        
+        const tooltips = {
+            all: [
+                '荟萃分析显示，与SMT相比，死亡率无统计学差异 (RR 0.85, p=0.169)。',
+                '多项来自中国的研究(队列为主)提示DPMAS+PE等模式可提高生存率。',
+                '西方大型试验(以酒精性为主)结果多为阴性。',
+                '陈钇名等队列研究发现，ACLF 2级和MELD 30-40分的患者生存获益最显著。'
+            ],
+            rct: [
+                 '当分析仅限于RCT时，生存获益不具统计学意义。',
+                 '缺乏针对HBV-ACLF的高质量RCT，现有证据等级弱。',
+                 '现有RCT多为酒精性ACLF，未能证实生存获益。',
+                 '缺乏专门针对ACLF Grade 2的RCT，证据不足。'
+            ]
+        };
+
+        const data = type === 'all' ? allData : rctData;
+        const tooltipContent = type === 'all' ? tooltips.all : tooltips.rct;
+
+        if (evidenceChartInstance) {
+            evidenceChartInstance.destroy();
+        }
+
+        evidenceChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        min: -1,
+                        max: 1,
+                        title: { display: true, text: '证据强度 (概念性)' }
+                    },
+                    y: { ticks: { autoSkip: false } }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null) {
+                                    label += context.parsed.x.toFixed(2);
+                                }
+                                return label;
+                            },
+                             afterBody: function(context) {
+                                const index = context[0].dataIndex;
+                                return tooltipContent[index].split('\n');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderSweetSpotChart() {
+        const ctx = document.getElementById('sweetSpotChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Pre-ACLF', 'Grade 1 (早期)', 'Grade 2 (中期)', 'Grade 3 (晚期)', '终末期'],
+                datasets: [{
+                    label: 'NALS治疗潜在获益',
+                    data: [0.1, 0.4, 0.8, 0.3, 0],
+                    borderColor: '#0d9488',
+                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: false }
+                },
+                scales: {
+                    y: { display: false, min: -0.1, max: 1 },
+                    x: { ticks: { font: { size: 10 } } }
+                }
+            }
+        });
+    }
+
+    function setupReboundAnimation() {
+        const btn = document.getElementById('rebound-btn');
+        const blood = document.getElementById('rebound-blood');
+        const tissue = document.getElementById('rebound-tissue');
+
+        btn.addEventListener('click', () => {
+            btn.disabled = true;
+            btn.textContent = '治疗中...';
+            
+            // Step 1: NALS removes toxins from blood
+            blood.classList.add('transition-all', 'duration-1000', 'scale-75', 'opacity-50');
+            blood.querySelector('span:last-child').textContent = '毒素↓↓↓';
+
+            setTimeout(() => {
+                 // Step 2: Toxins redistribute from tissue to blood (rebound)
+                tissue.classList.add('transition-all', 'duration-1000', 'opacity-50');
+                blood.classList.remove('scale-75', 'opacity-50');
+                blood.querySelector('span:last-child').textContent = '毒素回升↑';
+                btn.textContent = '反弹发生';
+            }, 1500);
+
+            setTimeout(() => {
+                // Reset
+                tissue.classList.remove('opacity-50');
+                blood.querySelector('span:last-child').textContent = '毒素↓';
+                btn.disabled = false;
+                btn.textContent = '模拟治疗';
+            }, 3000);
+        });
+    }
+
+    init();
+});
+</script>
+
+</body>
+</html>

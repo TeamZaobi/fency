@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class=""> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>医患沟通智能体进阶：从静态专家到整合服务伙伴</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.staticfile.org/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <style>
+        /* Base body styling */
+        body {
+            /* Apply Noto Sans SC as the primary sans-serif font */
+            font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            /* Tailwind classes for background, text color, and dark mode support with transitions */
+            @apply bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300;
+            /* Enable smooth scrolling for anchor links */
+            scroll-behavior: smooth;
+        }
+        /* Apply Noto Serif SC for headings */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: "Noto Serif SC", serif;
+        }
+        /* Custom scrollbar styling for Webkit browsers */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            @apply dark:bg-gray-700; /* Dark mode track color */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+            @apply dark:bg-gray-500; /* Dark mode thumb color */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+            @apply dark:bg-gray-400; /* Dark mode thumb hover color */
+        }
+        /* Reusable card component style */
+        .card {
+            @apply bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 shadow-sm transition-all duration-300 hover:shadow-md;
+        }
+        /* Styling for lists using icons */
+        .icon-list li {
+            @apply flex items-start space-x-3 mb-2;
+        }
+        .icon-list .icon {
+            /* Icon color and vertical alignment */
+            @apply text-blue-500 dark:text-blue-400 mt-1 flex-shrink-0;
+            width: 1.25rem; /* Fixed width for alignment */
+            text-align: center;
+        }
+        /* Highlight style for important terms */
+        .highlight {
+            @apply text-blue-600 dark:text-blue-400 font-semibold;
+        }
+        /* Styling for the concept SVG diagram elements */
+        .concept-svg path, .concept-svg line, .concept-svg rect, .concept-svg circle, .concept-svg polygon {
+             stroke: #3b82f6; /* Default stroke color (blue-500) */
+             stroke-width: 1.5;
+             fill: transparent; /* Default fill */
+             transition: stroke 0.3s ease;
+        }
+         .concept-svg text {
+            fill: #374151; /* Default text color (gray-700) */
+            font-family: "Noto Sans SC", sans-serif;
+            font-size: 10px;
+            transition: fill 0.3s ease;
+        }
+        /* Dark mode styles for SVG */
+        html.dark .concept-svg path, html.dark .concept-svg line, html.dark .concept-svg rect, html.dark .concept-svg circle, html.dark .concept-svg polygon {
+            stroke: #60a5fa; /* Dark mode stroke color (blue-400) */
+        }
+        html.dark .concept-svg text {
+            fill: #d1d5db; /* Dark mode text color (gray-300) */
+        }
+        /* Style for Mermaid diagrams (if used in the future) */
+        .mermaid {
+            @apply bg-gray-50 dark:bg-gray-800 p-4 rounded border border-gray-200 dark:border-gray-700 mb-6 text-center;
+        }
+        /* GSAP Animation Helper Class (Modified to show elements by default) */
+        .reveal-up {
+            opacity: 1;
+            transform: translateY(0);
+            /* Elements are now visible by default */
+        }
+        /* Fixed Navigation Bar Styles */
+        .navbar {
+            /* Position fixed at the top, full width, high z-index */
+            @apply fixed top-0 left-0 right-0 z-50;
+            /* Semi-transparent background with blur for glass effect */
+            @apply bg-white/80 dark:bg-gray-900/90 backdrop-blur-sm;
+            /* Bottom border */
+            @apply border-b border-gray-200 dark:border-gray-700;
+            /* Smooth transitions for color changes */
+            @apply transition-all duration-300;
+        }
+        /* Navigation Link Styles */
+        .nav-link {
+            @apply px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200 text-sm md:text-base;
+        }
+        /* Active Navigation Link Style */
+        .nav-link.active {
+            @apply text-blue-600 dark:text-blue-400 font-medium;
+        }
+        /* Back to Top Button Styles */
+        .back-to-top {
+            /* Fixed position at bottom right */
+            @apply fixed bottom-4 right-4;
+            /* Appearance: blue background, white text, rounded, shadow */
+            @apply bg-blue-500 dark:bg-blue-600 text-white p-2 rounded-full shadow-md;
+            /* Initial state: hidden */
+            @apply opacity-0 invisible;
+            /* Smooth transition for visibility and hover */
+            @apply transition-all duration-300;
+            /* Hover effect */
+            @apply hover:bg-blue-600 dark:hover:bg-blue-700;
+            /* Ensure it's above most content */
+            z-index: 40;
+        }
+        /* Visible state for Back to Top Button */
+        .back-to-top.visible {
+            @apply opacity-100 visible;
+        }
+
+        /* Print-specific styles */
+        @media print {
+            /* Hide interactive elements during print */
+            .navbar, .back-to-top, #darkModeToggle {
+                display: none !important;
+            }
+            /* Force light theme for printing */
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            /* Simplify card styles for print */
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #eee !important;
+                /* Avoid breaking cards across pages */
+                break-inside: avoid;
+            }
+            /* Avoid breaking pages right after headings */
+            h2, h3 {
+                break-after: avoid;
+            }
+            /* Ensure headings are black */
+            h1, h2, h3, h4, h5, h6 {
+                color: black !important;
+            }
+            /* Ensure SVG elements are visible in print */
+            .concept-svg path, .concept-svg line, .concept-svg rect, .concept-svg circle, .concept-svg polygon {
+                 stroke: #000000 !important; /* Black stroke */
+            }
+            .concept-svg text {
+                fill: #000000 !important; /* Black text */
+            }
+        }
+    </style>
+    <script>
+        // Configure Tailwind CSS (optional, for extending themes or plugins if needed)
+        // Note: Dark mode is enabled via 'class' strategy by default in the <style> block and JS logic.
+        tailwind.config = {
+            darkMode: 'class', // Strategy: use class="dark" on <html>
+            theme: {
+                extend: {
+                    // Define custom font families matching the <link> tags
+                    fontFamily: {
+                        sans: ['"Noto Sans SC"', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
+                        serif: ['"Noto Serif SC"', 'serif'],
+                    },
+                    // Add custom colors here if needed
+                    colors: {
+                        // Example: 'brand-blue': '#1e40af',
+                    },
+                    // Custom animations (can be used with animate-* utility classes)
+                    animation: {
+                        'fade-in': 'fadeIn 1s ease-out forwards',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                    },
+                    // Keyframes for custom animations
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(20px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+
+        // --- Dark Mode Logic ---
+
+        /**
+         * Sets the theme (dark or light) on the HTML element and stores the preference.
+         * @param {boolean} isDark - True to set dark mode, false for light mode.
+         */
+        function setDarkMode(isDark) {
+            const htmlElement = document.documentElement;
+            const toggleBtn = document.getElementById('darkModeToggle');
+
+            if (isDark) {
+                htmlElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-sun"></i>'; // Show sun icon
+            } else {
+                htmlElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-moon"></i>'; // Show moon icon
+            }
+
+            // ScrollTrigger refresh removed as we no longer use ScrollTrigger
+            // No need to recalculate animation positions
+
+            // Update Chart.js colors if the chart exists
+            updateChartColors(isDark);
+
+            // Update Mermaid theme if used
+            // updateMermaidTheme(isDark); // Uncomment if using Mermaid
+        }
+
+        /**
+         * Updates the colors of the Chart.js instance based on the theme.
+         * @param {boolean} isDark - True if dark mode is active.
+         */
+        function updateChartColors(isDark) {
+            // Safely get the chart instance
+            const chartInstance = typeof Chart !== 'undefined' ? Chart.getChart('capabilityChart') : null;
+            if (chartInstance) {
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                const textColor = isDark ? '#e5e7eb' : '#374151'; // gray-200 / gray-700
+
+                // Update scales colors
+                if (chartInstance.options.scales.y) {
+                    chartInstance.options.scales.y.grid.color = gridColor;
+                    chartInstance.options.scales.y.ticks.color = textColor;
+                    if (chartInstance.options.scales.y.title) {
+                         chartInstance.options.scales.y.title.color = textColor;
+                    }
+                }
+                 if (chartInstance.options.scales.x) {
+                    chartInstance.options.scales.x.grid.color = gridColor;
+                     chartInstance.options.scales.x.ticks.color = textColor;
+                     if (chartInstance.options.scales.x.title) {
+                         chartInstance.options.scales.x.title.color = textColor;
+                     }
+                 }
+
+                // Update legend and title colors
+                if (chartInstance.options.plugins.legend) {
+                    chartInstance.options.plugins.legend.labels.color = textColor;
+                }
+                if (chartInstance.options.plugins.title) {
+                    chartInstance.options.plugins.title.color = textColor;
+                }
+
+                // Apply the updates
+                chartInstance.update();
+            }
+        }
+
+        /**
+         * Toggles the dark mode on/off.
+         */
+        function toggleDarkMode() {
+            const isCurrentlyDark = document.documentElement.classList.contains('dark');
+            setDarkMode(!isCurrentlyDark);
+        }
+
+        /**
+         * Initializes dark mode based on localStorage preference or system setting.
+         */
+        function initDarkMode() {
+            // Check localStorage first, then system preference
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setDarkMode(true);
+            } else {
+                // Default to light mode if no preference found
+                setDarkMode(false);
+            }
+        }
+
+        // Initialize dark mode as soon as the DOM is ready
+        document.addEventListener('DOMContentLoaded', initDarkMode);
+
+        // --- Active Navigation Link Logic ---
+        /**
+         * Updates the active state of navigation links based on scroll position.
+         */
+        function updateActiveNavLink() {
+            const sections = document.querySelectorAll('main section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+            let currentSectionId = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100; // Offset for navbar height
+                const sectionHeight = section.offsetHeight;
+                // Check if the current scroll position is within the section's bounds
+                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
+                    currentSectionId = section.getAttribute('id');
+                }
+            });
+
+            // If near the bottom, activate the last link
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 50) {
+                 const lastSection = sections[sections.length - 1];
+                 if (lastSection) currentSectionId = lastSection.getAttribute('id');
+            }
+            // If near the top, potentially deactivate all or activate the first
+            else if (window.scrollY < 200) { // Adjust threshold as needed
+                 const firstSection = sections[0];
+                 if (firstSection && window.scrollY >= (firstSection.offsetTop - 100)) {
+                    currentSectionId = firstSection.getAttribute('id');
+                 } else {
+                    currentSectionId = ''; // Deactivate if above the first section significantly
+                 }
+            }
+
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                // Check if the link's href matches the current section ID
+                if (link.getAttribute('href') === `#${currentSectionId}`) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Add scroll event listener for active nav link updates (throttled)
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(updateActiveNavLink, 100); // Throttle updates
+        });
+
+         // --- Back to Top Button Logic ---
+         /**
+          * Shows or hides the Back to Top button based on scroll position.
+          */
+         function handleBackToTopVisibility() {
+             const backToTopButton = document.getElementById('backToTop');
+             if (!backToTopButton) return;
+
+             if (window.scrollY > 300) { // Show button after scrolling down 300px
+                 backToTopButton.classList.add('visible');
+             } else {
+                 backToTopButton.classList.remove('visible');
+             }
+         }
+
+         /**
+          * Scrolls the page smoothly to the top.
+          */
+         function scrollToTop() {
+             window.scrollTo({ top: 0, behavior: 'smooth' });
+         }
+
+         // Add scroll event listener for Back to Top button visibility
+         window.addEventListener('scroll', handleBackToTopVisibility);
+
+
+        // --- Mermaid Initialization (Example if needed) ---
+        /**
+         * Initializes Mermaid.js diagrams.
+         * Call this after DOMContentLoaded and initial dark mode setting.
+         */
+        /* // Uncomment if using Mermaid
+        function initializeMermaid() {
+            if (typeof mermaid !== 'undefined') {
+                const isDark = document.documentElement.classList.contains('dark');
+                mermaid.initialize({
+                    startOnLoad: false, // We call render manually
+                    theme: isDark ? 'dark' : 'default',
+                    // securityLevel: 'loose' // If needed for complex diagrams
+                });
+                mermaid.init(undefined, '.mermaid'); // Render diagrams with class="mermaid"
+            }
+        }
+        */
+
+        /* // Uncomment if using Mermaid
+        function updateMermaidTheme(isDark) {
+            if (typeof mermaid !== 'undefined') {
+                // Re-initialize or find a way to update theme if API allows
+                // Currently, Mermaid might require re-rendering diagrams on theme change.
+                // This might involve finding all mermaid divs and calling mermaid.init() again.
+                console.log("Mermaid theme update needed. Re-rendering might be required.");
+                 // Example: Re-render all diagrams
+                 // const mermaidDivs = document.querySelectorAll('.mermaid');
+                 // mermaidDivs.forEach(div => {
+                 //     mermaid.init(undefined, div);
+                 // });
+            }
+        }
+        */
+
+        // Ensure all initializations happen after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initial call to set active link based on page load position
+            updateActiveNavLink();
+            // Initial call to set back-to-top visibility
+            handleBackToTopVisibility();
+            // Initialize Mermaid if used
+            // initializeMermaid(); // Uncomment if using Mermaid
+        });
+
+
+    </script>
+</head>
+<body class="antialiased">
+
+    <nav class="navbar" aria-label="主导航">
+        <div class="container mx-auto px-4 py-2 flex items-center justify-between">
+            <div class="font-serif font-semibold text-blue-700 dark:text-blue-400 text-lg hidden md:block">医患沟通智能体</div>
+            <ul class="flex items-center space-x-1 md:space-x-4 overflow-x-auto" role="menubar">
+                <li role="none"><a href="#introduction" class="nav-link" role="menuitem">引言</a></li>
+                <li role="none"><a href="#scenario" class="nav-link" role="menuitem">场景设定</a></li>
+                <li role="none"><a href="#instance-1" class="nav-link" role="menuitem">范式一</a></li>
+                <li role="none"><a href="#instance-2" class="nav-link" role="menuitem">范式二</a></li>
+                <li role="none"><a href="#instance-3" class="nav-link" role="menuitem">范式三</a></li>
+                <li role="none"><a href="#visualizations" class="nav-link" role="menuitem">可视化</a></li>
+                <li role="none"><a href="#reading" class="nav-link" role="menuitem">延伸阅读</a></li>
+            </ul>
+            <button id="darkModeToggle" onclick="toggleDarkMode()" class="ml-4 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-200" aria-label="切换暗黑模式">
+                </button>
+        </div>
+    </nav>
+
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()" aria-label="返回顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-blue-100 to-indigo-200 dark:from-gray-800 dark:to-blue-900 text-center px-4 pt-16">
+        <div class="z-10 relative"> <h1 class="text-4xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 leading-tight reveal-up">医患沟通智能体进阶</h1>
+            <p class="text-xl md:text-2xl text-indigo-800 dark:text-blue-300 max-w-3xl mx-auto reveal-up" style="animation-delay: 0.2s;">从静态专家到整合服务伙伴：AI 赋能未来医患关系新范式</p>
+        </div>
+        <div class="absolute inset-0 opacity-20 dark:opacity-10 mix-blend-multiply dark:mix-blend-overlay z-0 reveal-up" style="animation-delay: 0.4s;">
+             <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="a" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="scale(2) rotate(0)"><rect x="0" y="0" width="100%" height="100%" fill="hsla(0,0%,100%,0)"/><path d="M14.5 20a5.5 5.5 0 1111 0 5.5 5.5 0 01-11 0zm1-16a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1h-8a1 1 0 01-1-1V4zm1 1v6h6V5h-6zM10 10a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1h-8a1 1 0 01-1-1v-8zm1 1v6h6v-6h-6zM0 30a1 1 0 011-1h8a1 1 0 011 1v8a1 1 0 01-1 1H1a1 1 0 01-1-1v-8zm1 1v6h6v-6H1z" stroke-width="1" stroke="hsla(210, 50%, 60%, 0.2)" fill="none"/></pattern></defs><rect width="800%" height="800%" transform="translate(0,0)" fill="url(#a)"/></svg>
+        </div>
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce z-10">
+            <a href="#introduction" aria-label="滚动到内容">
+                <i class="fas fa-chevron-down text-gray-600 dark:text-gray-400 text-2xl"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-16 md:py-24 space-y-16 md:space-y-24">
+
+        <section id="introduction" class="max-w-4xl mx-auto text-lg leading-relaxed reveal-up">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-blue-800 dark:text-blue-300">引言</h2>
+            <p class="mb-4">本文档旨在通过一个贯穿始终的实例，展示<strong class="highlight">医患沟通辅助智能体 (Agent)</strong>的三种不同但层层递进的实现范式。我们将看到，随着技术的发展和系统集成能力的增强，AI 助手如何从一个能够提供"完美"但静态沟通方案的"全知专家"，演变为能够进行实时情感互动、并最终成为整合了多媒体展示、连续随访和健康服务的"全程伙伴"。</p>
+            <p>我们将详细探讨每个阶段的技术特点和能力边界，展示其在改善医患沟通方面的逐步"完美化"过程。</p>
+        </section>
+
+        <section id="scenario" class="max-w-4xl mx-auto card reveal-up">
+             <h2 class="text-2xl md:text-3xl font-bold mb-6 text-center text-blue-700 dark:text-blue-400">核心任务场景设定</h2>
+             <div class="flex flex-col sm:flex-row items-center justify-center mb-6 text-center sm:text-left">
+                <i class="fas fa-user-md fa-2x mr-0 sm:mr-3 mb-2 sm:mb-0 text-blue-500 dark:text-blue-400 flex-shrink-0"></i>
+                <div>
+                    <span class="text-xl font-semibold block mb-1">场景描述</span>
+                    <p>王先生，55 岁男性，刚刚被诊断为 2 型糖尿病。在诊室里，他显得有些焦虑和不知所措。医生需要向他解释诊断结果、初步治疗方案（生活方式干预+二甲双胍），并提供后续管理建议。</p>
+                </div>
+             </div>
+             <div class="flex flex-col sm:flex-row items-center justify-center text-center sm:text-left">
+                 <i class="fas fa-bullseye fa-2x mr-0 sm:mr-3 mb-2 sm:mb-0 text-green-500 dark:text-green-400 flex-shrink-0"></i>
+                 <div>
+                    <span class="text-xl font-semibold block mb-1">目标</span>
+                    <p>利用 AI 智能体辅助医生完成这次关键的首次沟通，并为患者提供持续的支持。</p>
+                 </div>
+             </div>
+        </section>
+
+        <section id="instances" class="space-y-16 md:space-y-24">
+
+            <article id="instance-1" class="reveal-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-800 dark:text-blue-300">范式一："全知"但静态的沟通方案生成器</h2>
+                <div class="card">
+                    <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
+                        <i class="fas fa-brain mr-2 text-blue-500 dark:text-blue-400"></i>核心概念
+                    </h3>
+                    <p class="mb-6 text-lg leading-relaxed">设想一个单一但能力极强的 LLM 智能体，能够访问并整合院内几乎所有相关信息（理想化假设），并基于此生成一份"完美"的初始沟通脚本或建议。它如同一个经验丰富、知识渊博且掌握患者全部院内信息的"沟通专家"，在沟通前就"做足了功课"。</p>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                        <i class="fas fa-cogs mr-2 text-teal-500 dark:text-teal-400"></i>技术讲解
+                    </h4>
+                    <ul class="list-disc list-inside mb-6 space-y-2 text-gray-700 dark:text-gray-300 pl-5">
+                        <li><strong class="highlight">全信息整合能力:</strong> 假设处理超长上下文，一次性理解患者完整病历、最新检查结果、合并症、用药史、过敏史、社会背景等。</li>
+                        <li><strong class="highlight">深度个性化生成:</strong> 基于全面信息生成高度个性化解释，如考虑 HbA1c 值、职业影响、合并用药。</li>
+                        <li><strong class="highlight">共情与语气模拟:</strong> 根据提示（如"患者焦虑"）生成带有安抚性、鼓励性语气的文本。</li>
+                        <li><strong class="highlight">结构化与要点提炼:</strong> 将复杂医学信息整理成清晰、分点、易于理解的沟通要点。</li>
+                    </ul>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                        <i class="fas fa-tasks mr-2 text-purple-500 dark:text-purple-400"></i>工作流程与输出示例
+                    </h4>
+                    <p class="mb-4">医生输入指令和患者 ID，智能体后台整合信息并生成结构化的沟通要点。</p>
+                    <blockquote class="border-l-4 border-blue-300 dark:border-blue-600 pl-4 py-2 mb-6 bg-blue-50 dark:bg-gray-800 italic text-gray-600 dark:text-gray-400">
+                        "王先生，这次检查结果出来了...您的糖化血红蛋白是 8.5%...我知道这可能让您有点担心，但请放心..."（模拟输出节选）
+                    </blockquote>
+
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-green-600 dark:text-green-400 flex items-center"><i class="fas fa-check-circle mr-2"></i>优势</h4>
+                            <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                <li><span class="icon"><i class="fas fa-database"></i></span>信息全面、高度个性化。</li>
+                                <li><span class="icon"><i class="fas fa-stethoscope"></i></span>内容准确、专业。</li>
+                                <li><span class="icon"><i class="fas fa-clock"></i></span>效率提升，节省医生时间。</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-3 text-red-600 dark:text-red-400 flex items-center"><i class="fas fa-times-circle mr-2"></i>关键局限性</h4>
+                            <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                <li><span class="icon"><i class="fas fa-comments"></i></span><strong class="font-semibold">静态输出，缺乏实时交互:</strong> 核心瓶颈。无法感知患者实时反应并动态调整。</li>
+                                <li><span class="icon"><i class="fas fa-microphone-slash"></i></span>无法处理预期外的问题或反应。</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <article id="instance-2" class="reveal-up">
+                 <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-800 dark:text-blue-300">范式二：具备实时反馈与情感交互的多智能体系统</h2>
+                 <div class="card">
+                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
+                         <i class="fas fa-users-cog mr-2 text-blue-500 dark:text-blue-400"></i>核心概念
+                     </h3>
+                     <p class="mb-6 text-lg leading-relaxed">克服静态输出的局限，构建一个处理实时音视频流的系统。它不仅理解语言内容，还能感知患者情绪状态，并据此动态调整回应的语气、措辞甚至内容策略，实现更自然、更具共情性的实时互动。</p>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                        <i class="fas fa-cogs mr-2 text-teal-500 dark:text-teal-400"></i>技术讲解与智能体角色
+                    </h4>
+                    <ul class="icon-list mb-6 space-y-3 text-gray-700 dark:text-gray-300">
+                        <li><span class="icon"><i class="fas fa-sync-alt"></i></span><strong class="highlight">协调智能体:</strong> 调度模块，管理对话状态。</li>
+                        <li><span class="icon"><i class="fas fa-microphone-alt"></i></span><strong class="highlight">语音识别 (STT) Agent:</strong> 语音转文字。</li>
+                        <li><span class="icon"><i class="fas fa-language"></i></span><strong class="highlight">自然语言理解 (NLU) Agent:</strong> 理解意图、关键信息。</li>
+                        <li><span class="icon text-yellow-500 dark:text-yellow-400"><i class="fas fa-smile-beam"></i></span><strong class="highlight">【新】语音情感识别 (SER) Agent:</strong> 分析声学特征判断情绪。</li>
+                        <li><span class="icon text-yellow-500 dark:text-yellow-400"><i class="fas fa-eye"></i></span><strong class="highlight">【新, 可选】视觉情感识别 Agent:</strong> 分析面部表情、肢体语言。</li>
+                        <li><span class="icon"><i class="fas fa-comments-dollar"></i></span><strong class="highlight">对话管理 Agent:</strong> 维护对话历史，追踪话题。</li>
+                         <li><span class="icon"><i class="fas fa-lightbulb"></i></span><strong class="highlight">核心推理与应答 Agent (LLM):</strong> 基于 NLU、情绪、历史生成初步回应。</li>
+                        <li><span class="icon text-pink-500 dark:text-pink-400"><i class="fas fa-hand-holding-heart"></i></span><strong class="highlight">【新】共情与风格调整 Agent:</strong> <strong class="font-semibold">关键角色</strong>。根据情绪"润色"回应，匹配情绪，保持同理心。</li>
+                        <li><span class="icon"><i class="fas fa-volume-up"></i></span><strong class="highlight">文本转语音 (TTS) Agent:</strong> 合成匹配情绪的自然语音。</li>
+                    </ul>
+
+                    <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                        <i class="fas fa-tasks mr-2 text-purple-500 dark:text-purple-400"></i>工作流程与交互示例
+                    </h4>
+                    <p class="mb-4">系统实时处理患者语音（"医生，这个二甲双胍副作用大不大啊？...焦虑语气"），STT 转录，NLU 理解意图，SER 检测到焦虑。核心 Agent 生成标准解释，共情 Agent 基于"焦虑"信号调整回应，增加安抚、理解和应对策略，最后由 TTS 以温和语气输出。</p>
+                     <blockquote class="border-l-4 border-green-300 dark:border-green-600 pl-4 py-2 mb-6 bg-green-50 dark:bg-gray-800 italic text-gray-600 dark:text-gray-400">
+                        "王先生，您这个问题问得很好...（表示理解）。二甲双胍确实有些人吃了初期会有些胃肠不舒服...但这通常是<strong class="highlight">暂时</strong>的，而且<strong class="highlight">不是每个人都会很明显</strong>...（安抚并提供方案）您不用太有压力。"
+                    </blockquote>
+
+                    <div class="grid md:grid-cols-2 gap-6 mt-6">
+                        <div>
+                             <h4 class="text-lg font-semibold mb-3 text-green-600 dark:text-green-400 flex items-center"><i class="fas fa-check-circle mr-2"></i>优势</h4>
+                             <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                 <li><span class="icon"><i class="fas fa-exchange-alt"></i></span>实时交互与适应性。</li>
+                                 <li><span class="icon"><i class="fas fa-heartbeat"></i></span>情感智能与共情，改善信任。</li>
+                                 <li><span class="icon"><i class="fas fa-user-friends"></i></span>更自然的对话体验。</li>
+                             </ul>
+                        </div>
+                        <div>
+                             <h4 class="text-lg font-semibold mb-3 text-red-600 dark:text-red-400 flex items-center"><i class="fas fa-times-circle mr-2"></i>局限性</h4>
+                             <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                 <li><span class="icon"><i class="fas fa-notes-medical"></i></span>临床信息访问仍可能受限（主要依赖预加载）。</li>
+                                 <li><span class="icon"><i class="fas fa-comment-slash"></i></span>沟通模态仍较单一（主要语音/文本）。</li>
+                                 <li><span class="icon"><i class="fas fa-bolt"></i></span>技术挑战高（实时处理、情感识别精度、低延迟）。</li>
+                             </ul>
+                        </div>
+                    </div>
+                 </div>
+            </article>
+
+            <article id="instance-3" class="reveal-up">
+                 <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center text-blue-800 dark:text-blue-300">范式三：集成 MCP 的多媒体、连续服务智能伙伴</h2>
+                 <div class="card">
+                     <h3 class="text-xl md:text-2xl font-semibold mb-4 text-gray-800 dark:text-white flex items-center">
+                         <i class="fas fa-hands-helping mr-2 text-blue-500 dark:text-blue-400"></i>核心概念
+                     </h3>
+                     <p class="mb-6 text-lg leading-relaxed">医患沟通辅助的终极形态。在范式二基础上，通过 <strong class="highlight">MCP (Medical Collaboration Protocol - 假设的协议)</strong> 深度集成医院信息系统和外部服务。智能体不仅能听、看、说、共情，还能实时、安全地调取最新、最全 EHR 数据；调用工具展示多媒体信息；执行实际操作（预约、发消息）；并将服务延伸至诊后，提供连续管理支持。</p>
+
+                     <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                         <i class="fas fa-cogs mr-2 text-teal-500 dark:text-teal-400"></i>技术讲解与 MCP 集成
+                     </h4>
+                     <p class="mb-4 font-medium text-gray-700 dark:text-gray-300">保留范式二交互智能体，并增加强大的 MCP 集成能力：</p>
+                     <ul class="icon-list mb-6 space-y-3 text-gray-700 dark:text-gray-300">
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-database"></i></span><strong class="highlight">【关键】实时、精准的 EHR 数据访问 (MCP Resource):</strong> 对话中实时查询最新肾功能、生活方式记录等。</li>
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-photo-video"></i></span><strong class="highlight">【关键】多媒体信息展示 (MCP Tool/Resource):</strong> 实时展示 HbA1c 曲线图、播放教学视频、渲染个性化网页。</li>
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-calendar-check"></i></span><strong class="highlight">【关键】无缝的行动整合 (MCP Tool):</strong> 直接完成预约、通过 APP 安全发送消息（要点、链接）。</li>
+                         <li><span class="icon text-purple-500 dark:text-purple-400"><i class="fas fa-history"></i></span><strong class="highlight">【关键】连续性健康服务 (通过 MCP 调度):</strong> 自动发送用药/复诊提醒、个性化贴士；分析穿戴设备数据并预警。</li>
+                     </ul>
+
+                     <h4 class="text-lg font-semibold mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                         <i class="fas fa-level-up-alt mr-2 text-indigo-500 dark:text-indigo-400"></i>质的飞跃总结
+                     </h4>
+                     <ol class="list-decimal list-inside mb-6 space-y-2 text-gray-700 dark:text-gray-300 pl-5">
+                         <li><strong class="highlight">沟通深度：</strong>从"告知"到"共建理解"（数据+多媒体）。</li>
+                         <li><strong class="highlight">服务广度：</strong>从"单次交流"到"全程陪伴"（诊后连续管理）。</li>
+                         <li><strong class="highlight">行动效率：</strong>从"建议"到"即时服务"（操作闭环）。</li>
+                         <li><strong class="highlight">个性化精度：</strong>基于完整、动态的健康画像。</li>
+                         <li><strong class="highlight">医患关系：</strong>赋能患者主动参与，建立伙伴关系。</li>
+                     </ol>
+
+                     <div class="grid md:grid-cols-2 gap-6 mt-6">
+                         <div>
+                              <h4 class="text-lg font-semibold mb-3 text-green-600 dark:text-green-400 flex items-center"><i class="fas fa-check-circle mr-2"></i>优势</h4>
+                              <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                  <li><span class="icon"><i class="fas fa-star"></i></span>前所未有的个性化与情境感知。</li>
+                                  <li><span class="icon"><i class="fas fa-chart-line"></i></span>沟通效率和效果最大化。</li>
+                                  <li><span class="icon"><i class="fas fa-link"></i></span>服务流程无缝整合与自动化。</li>
+                                  <li><span class="icon"><i class="fas fa-infinity"></i></span>实现连续性、一体化的患者管理。</li>
+                                  <li><span class="icon"><i class="fas fa-smile"></i></span>极大提升患者体验和医疗服务价值。</li>
+                              </ul>
+                         </div>
+                         <div>
+                              <h4 class="text-lg font-semibold mb-3 text-red-600 dark:text-red-400 flex items-center"><i class="fas fa-times-circle mr-2"></i>局限性与挑战</h4>
+                              <ul class="icon-list space-y-2 text-gray-700 dark:text-gray-300">
+                                  <li><span class="icon"><i class="fas fa-wrench"></i></span>极高的技术与工程挑战（集成、标准化）。</li>
+                                  <li><span class="icon"><i class="fas fa-shield-alt"></i></span>数据治理与安全要求极高。</li>
+                                  <li><span class="icon"><i class="fas fa-dollar-sign"></i></span>成本投入巨大。</li>
+                                  <li><span class="icon"><i class="fas fa-balance-scale"></i></span>伦理与监管复杂性（责任、偏见）。</li>
+                              </ul>
+                         </div>
+                     </div>
+                 </div>
+            </article>
+
+        </section>
+        <section id="visualizations" class="reveal-up space-y-12">
+             <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-blue-800 dark:text-blue-300">可视化洞察</h2>
+
+             <div class="w-full md:w-4/5 lg:w-3/4 mx-auto mb-16 card">
+                <div style="height: 400px;">
+                     <canvas id="capabilityChart"></canvas>
+                 </div>
+                 <p class="text-xs text-center mt-2 text-gray-500 dark:text-gray-400">图表：三种范式在关键能力维度上的概念性对比</p>
+            </div>
+
+            <div class="w-full md:w-5/6 lg:w-4/5 mx-auto card text-center">
+                <h3 class="text-xl md:text-2xl font-semibold mb-6 text-gray-800 dark:text-white">范式二：多智能体交互系统架构 (概念图)</h3>
+                 <svg id="conceptSvg" class="concept-svg w-full h-auto" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" aria-labelledby="svgTitle svgDesc" role="img">
+                    <title id="svgTitle">范式二系统架构图</title>
+                    <desc id="svgDesc">展示了范式二中多智能体如何协同工作，处理输入、进行推理和生成响应的流程图。</desc>
+                    <defs>
+                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" markerUnits="strokeWidth">
+                            <polygon points="0 0, 10 3.5, 0 7" class="fill-current text-blue-500 dark:text-blue-400" />
+                        </marker>
+                         <style>
+                             .svg-box {
+                                 /* Box styling: fill, stroke, rounded corners */
+                                 @apply fill-blue-50 dark:fill-gray-700 stroke-blue-300 dark:stroke-gray-600;
+                                 rx: 8; /* Rounded corners */
+                                 stroke-width: 1;
+                             }
+                             .svg-text {
+                                 /* Text styling: fill, font, size, alignment */
+                                 @apply fill-gray-700 dark:fill-gray-200;
+                                 font-size: 14px;
+                                 font-family: "Noto Sans SC", sans-serif;
+                                 text-anchor: middle; /* Center text horizontally */
+                                 dominant-baseline: central; /* Center text vertically */
+                             }
+                             .svg-text-small {
+                                 /* Smaller text for sub-components */
+                                 font-size: 12px;
+                             }
+                              .svg-line {
+                                  /* Line styling: stroke color, width, arrowhead */
+                                  @apply stroke-blue-500 dark:stroke-blue-400;
+                                 stroke-width: 1.5;
+                                 marker-end: url(#arrowhead);
+                                 fill: none;
+                              }
+                              .svg-label {
+                                  /* Label styling for lines/groups */
+                                 @apply fill-gray-500 dark:fill-gray-400;
+                                 font-size: 11px;
+                                 font-style: italic;
+                                 text-anchor: middle;
+                              }
+                              /* Specific styles for highlighting key new agents */
+                              .svg-box-emotion {
+                                  @apply fill-yellow-50 dark:fill-yellow-900/50 stroke-yellow-300 dark:stroke-yellow-700;
+                              }
+                              .svg-box-empathy {
+                                  @apply fill-pink-50 dark:fill-pink-900/50 stroke-pink-300 dark:stroke-pink-700;
+                              }
+                         </style>
+                    </defs>
+
+                    <rect class="svg-box" x="325" y="430" width="150" height="40"/>
+                    <text class="svg-text" x="400" y="450">用户 (语音/视觉)</text>
+
+                    <g id="perception-group">
+                         <rect class="svg-box" x="50" y="100" width="180" height="260"/>
+                         <text class="svg-text" x="140" y="120" font-weight="bold">多模态感知层</text>
+                         <rect class="svg-box" x="70" y="150" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="140" y="165">语音识别 (STT)</text>
+                         <rect class="svg-box" x="70" y="190" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="140" y="205">自然语言理解 (NLU)</text>
+                         <rect class="svg-box svg-box-emotion" x="70" y="230" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="140" y="245">语音情感识别 (SER)</text>
+                         <rect class="svg-box svg-box-emotion" x="70" y="270" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="140" y="285">视觉情感识别 (VER)</text>
+                         <rect class="svg-box" x="70" y="310" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="140" y="325">...</text> </g>
+
+                     <g id="core-logic-group">
+                         <rect class="svg-box" x="310" y="100" width="180" height="260"/>
+                         <text class="svg-text" x="400" y="120" font-weight="bold">核心处理层</text>
+                         <rect class="svg-box" x="330" y="150" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="400" y="165">协调器</text>
+                         <rect class="svg-box" x="330" y="190" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="400" y="205">对话管理</text>
+                         <rect class="svg-box" x="330" y="230" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="400" y="245">核心推理 (LLM)</text>
+                         <rect class="svg-box svg-box-empathy" x="330" y="270" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="400" y="285">共情调整</text>
+                         <rect class="svg-box" x="330" y="310" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="400" y="325">知识库/工具</text>
+                     </g>
+
+                     <g id="output-group">
+                         <rect class="svg-box" x="570" y="180" width="180" height="100"/> <text class="svg-text" x="660" y="200" font-weight="bold">响应生成层</text>
+                         <rect class="svg-box" x="590" y="230" width="140" height="30"/>
+                         <text class="svg-text svg-text-small" x="660" y="245">文本转语音 (TTS)</text>
+                         </g>
+
+                    <path class="svg-line" d="M 400 430 Q 250 400 140 360" />
+                    <text class="svg-label" x="270" y="385">原始输入 (音/视)</text>
+
+                    <path class="svg-line" d="M 230 230 Q 270 230 310 230" />
+                    <text class="svg-label" x="270" y="220">感知结果 (意图/情感)</text>
+
+                    <path class="svg-line" d="M 400 310 Q 400 340 400 360" /> <path class="svg-line" d="M 400 360 Q 400 340 400 310" marker-start="url(#arrowhead)" marker-end="none"/> <text class="svg-label" x="430" y="350">知识/工具调用</text>
+
+                    <path class="svg-line" d="M 490 255 Q 530 255 570 255" />
+                    <text class="svg-label" x="530" y="245">最终响应指令</text>
+
+                     <path class="svg-line" d="M 660 280 Q 550 380 400 430" />
+                     <text class="svg-label" x="530" y="365">生成响应 (语音)</text>
+
+                 </svg>
+                 <p class="text-xs text-center mt-2 text-gray-500 dark:text-gray-400">图：范式二系统包含感知、处理、响应层，并引入情感和共情智能体。</p>
+            </div>
+
+        </section>
+        <section id="reading" class="max-w-4xl mx-auto reveal-up">
+             <h2 class="text-3xl md:text-4xl font-bold mb-12 text-center text-blue-800 dark:text-blue-300">进一步阅读</h2>
+            <div class="space-y-6">
+                <div class="card hover:shadow-lg transition-shadow duration-300">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Enhancing doctor-patient communication using large language models for pathology report interpretation</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">BMC Medical Informatics and Decision Making (2025)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇研究直接探讨了 LLM 在解读病理报告、简化医学术语以改善医患沟通方面的作用，与本文档的主题高度相关，提供了实证数据支持。</p>
+                     <a href="https://bmcmedinformdecismak.biomedcentral.com/articles/10.1186/s12911-024-02838-z" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline">
+                         <i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)
+                     </a>
+                 </div>
+                <div class="card hover:shadow-lg transition-shadow duration-300">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Large language models in patient education: a scoping review of applications in medicine</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Frontiers in Medicine (2024)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇综述系统性地梳理了 LLM 在患者教育中的应用，包括生成材料、解读信息、提供建议等，与本文档讨论的范式演进有紧密联系，并指出了挑战。</p>
+                     <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11554522/" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline">
+                         <i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)
+                     </a>
+                 </div>
+                <div class="card hover:shadow-lg transition-shadow duration-300">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">The future landscape of large language models in medicine</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Communications Medicine (2023)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇视角文章全面概述了 LLM 在临床实践、医学研究和教育中的潜力和局限性，提供了更宏观的背景和对未来的展望。</p>
+                     <a href="https://www.nature.com/articles/s43856-023-00370-1" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline">
+                         <i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)
+                     </a>
+                 </div>
+                <div class="card hover:shadow-lg transition-shadow duration-300">
+                    <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Clinical Insights: A Comprehensive Review of Language Models in Medicine.</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">arXiv preprint (2024)</p>
+                    <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇预印本综述详细探讨了 LLM 在医疗健康领域的进展和应用，特别关注临床应用，并讨论了技术演进、机遇和挑战，对理解本文的范式演进有帮助。</p>
+                     <a href="https://arxiv.org/html/2408.11735v2" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline">
+                         <i class="fas fa-external-link-alt mr-1"></i> 阅读原文
+                     </a>
+                 </div>
+                <div class="card hover:shadow-lg transition-shadow duration-300">
+                     <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Potential applications and implications of large language models in primary care</h3>
+                     <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Family Medicine and Community Health (2024)</p>
+                     <p class="text-gray-700 dark:text-gray-300 mb-3"><strong>推荐理由:</strong> 这篇文章聚焦于 LLM 在基层医疗（初级保健）中的应用和影响，讨论了实践管理、医患互动和诊断支持，补充了本文档未重点展开的基层视角。</p>
+                     <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10828839/" target="_blank" rel="noopener noreferrer" class="inline-block text-blue-600 dark:text-blue-400 hover:underline">
+                         <i class="fas fa-external-link-alt mr-1"></i> 阅读原文 (Open Access)
+                     </a>
+                 </div>
+            </div>
+        </section>
+        </main>
+    <footer class="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-8 px-4 text-center mt-16">
+        <div class="container mx-auto">
+            <p class="mb-2">作者: 季晓康</p>
+            <p class="mb-2">微信公众号: 凿壁</p>
+            <p>版权信息: 国家健康医疗大数据研究院</p>
+             <p class="mt-4 text-sm">&copy; 2024 版权所有</p>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+    <!-- ScrollTrigger plugin removed as it's no longer needed -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Wrap all JS execution in DOMContentLoaded to ensure elements exist
+        document.addEventListener('DOMContentLoaded', () => {
+            // ScrollTrigger plugin no longer needed
+            // gsap.registerPlugin(ScrollTrigger);
+
+            // --- Initialization Functions ---
+
+            /**
+             * Initializes all animations after a brief delay
+             * to ensure DOM and styles (like dark mode) are settled.
+             */
+            function initAllAnimations() {
+                // Delay slightly to ensure styles are applied
+                setTimeout(() => {
+                    initHeroAnimation();
+                    initRevealUpAnimations(); // Make all reveal-up elements visible
+                    initChart(); // Chart initialization without ScrollTrigger
+                    initSVGAnimation(); // Make SVG elements visible
+                    initReadingCardAnimations(); // Make reading cards visible
+                    console.log("All elements made visible immediately (Triggers Removed)");
+                }, 100); // 100ms delay
+            }
+
+            /**
+             * Initializes animations for the Hero section elements.
+             * (Simplified to make elements visible immediately)
+             */
+            function initHeroAnimation() {
+                const header = document.querySelector('header');
+                if (!header) return; // Exit if header not found
+
+                // Find all hero elements that might need to be visible
+                const heroElements = header.querySelectorAll('.reveal-up, h1, p, .absolute.z-0');
+
+                // Make all hero elements visible immediately
+                if (heroElements.length) {
+                    gsap.set(heroElements, {
+                        opacity: 1,
+                        y: 0,
+                        clearProps: "transform" // Clean up transform property
+                    });
+                    console.log("Hero elements made visible immediately");
+                }
+            }
+
+            /**
+             * Function to make all reveal-up elements visible immediately
+             * (ScrollTrigger animations removed)
+             */
+            function initRevealUpAnimations() {
+                const revealElements = document.querySelectorAll('.reveal-up'); // Get all reveal-up elements
+                if (!revealElements.length) return;
+
+                // Make all elements visible immediately
+                revealElements.forEach(element => {
+                    // Set elements to their final state directly
+                    gsap.set(element, {
+                        opacity: 1,
+                        y: 0,
+                        clearProps: "transform" // Clean up transform property
+                    });
+                });
+                console.log("All reveal-up elements made visible immediately");
+            }
+
+            /**
+             * Initializes the Chart.js instance and its animation trigger.
+             */
+            function initChart() {
+                const chartCanvas = document.getElementById('capabilityChart');
+                if (!chartCanvas) return; // Exit if canvas not found
+
+                const ctx = chartCanvas.getContext('2d');
+                const isDark = document.documentElement.classList.contains('dark');
+                const textColor = isDark ? '#e5e7eb' : '#374151'; // gray-200 / gray-700
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+                const chartData = {
+                    labels: ['信息整合 (后台)', '实时交互', '情感智能', '多媒体/服务整合'],
+                    datasets: [
+                        {
+                            label: '范式一 (静态专家)',
+                            data: [3, 0.5, 0.5, 0], // Conceptual values 0-5
+                            backgroundColor: 'rgba(96, 165, 250, 0.6)', // blue-400 with opacity
+                            borderColor: 'rgba(59, 130, 246, 1)', // blue-500
+                            borderWidth: 1
+                        },
+                        {
+                            label: '范式二 (交互系统)',
+                            data: [2, 4, 4, 0.5],
+                            backgroundColor: 'rgba(52, 211, 153, 0.6)', // emerald-400 with opacity
+                            borderColor: 'rgba(16, 185, 129, 1)', // emerald-500
+                            borderWidth: 1
+                        },
+                        {
+                            label: '范式三 (整合伙伴)',
+                            data: [5, 5, 5, 5],
+                            backgroundColor: 'rgba(168, 85, 247, 0.6)', // purple-400 with opacity
+                            borderColor: 'rgba(147, 51, 234, 1)', // purple-500
+                            borderWidth: 1
+                        }
+                    ]
+                };
+
+                const chartOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false, // Allow chart to fill container height
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5, // Scale from 0 to 5
+                            title: {
+                                display: true,
+                                text: '能力水平 (概念值)',
+                                color: textColor
+                            },
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        },
+                        x: {
+                             grid: { color: gridColor },
+                             ticks: { color: textColor }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: textColor }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        title: {
+                            display: true,
+                            text: '医患沟通智能体能力演进',
+                            padding: { top: 10, bottom: 20 },
+                            font: { size: 18, family: '"Noto Serif SC", serif' },
+                            color: textColor
+                        }
+                    },
+                    animation: { duration: 1200, ease: 'easeInOutQuart' } // Enable animation by default
+                };
+
+                const capabilityChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: chartOptions
+                });
+
+                // Chart animation is now enabled by default in the options
+                console.log("Chart initialized with animation enabled");
+            }
+
+
+            /**
+             * Initializes animations for the inline SVG diagram elements.
+             * (ScrollTrigger animations removed - elements show immediately)
+             */
+            function initSVGAnimation() {
+                const svgElement = document.getElementById('conceptSvg');
+                if (!svgElement) return; // Exit if SVG not found
+
+                const lines = svgElement.querySelectorAll('.svg-line');
+                const texts = svgElement.querySelectorAll('text'); // Select all text elements
+                const boxes = svgElement.querySelectorAll('.svg-box'); // Select all box elements
+
+                // Make all SVG elements visible immediately
+                gsap.set([lines, boxes, texts], { opacity: 1, scale: 1 });
+                console.log("SVG elements made visible immediately");
+            }
+
+            /**
+             * Makes all reading cards visible immediately
+             * (ScrollTrigger animations removed)
+             */
+            function initReadingCardAnimations() {
+                const readingCards = document.querySelectorAll('#reading .card');
+                if (!readingCards.length) return;
+
+                // Make all cards visible immediately
+                gsap.set(readingCards, { opacity: 1, y: 0 });
+                console.log("Reading cards made visible immediately");
+            }
+
+            // --- Run Initializations ---
+            initAllAnimations();
+
+        }); // End of DOMContentLoaded
+    </script>
+
+</body>
+</html>

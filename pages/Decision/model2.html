@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实例二：实时共情交互系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .chat-box {
+            height: 60vh;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+        }
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        .message.patient {
+            background-color: #dbeafe; /* 淡蓝色 */
+            color: #1e40af;
+            margin-left: auto; /* 患者消息靠右 */
+            text-align: right;
+        }
+        .message.doctor {
+            background-color: #d1fae5; /* 淡绿色 */
+            color: #065f46;
+            margin-right: auto; /* 医生消息靠左 */
+        }
+        .message.agent-suggestion {
+            background-color: #fef9c3; /* 更淡的黄色 */
+            color: #713f12;
+            border: 1px dashed #fcd34d; /* 黄色虚线 */
+            font-size: 0.875rem; /* 稍小字体 */
+            margin-top: -0.5rem; /* 紧随医生/患者消息 */
+            margin-left: 2rem; /* 缩进 */
+            max-width: 70%;
+            opacity: 0.8;
+        }
+        .emotion-indicator {
+            font-size: 0.9rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px; /* 胶囊形状 */
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+        .emotion-anxiety { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .emotion-anger { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .emotion-sadness { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .emotion-neutral { background-color: #e5e7eb; color: #4b5563; border: 1px solid #d1d5db; }
+
+        .input-area { display: flex; margin-top: 1rem; }
+        .input-field { flex-grow: 1; border: 1px solid #d1d5db; border-radius: 0.375rem 0 0 0.375rem; padding: 0.5rem; }
+        .send-btn {
+            background-color: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0 0.375rem 0.375rem 0;
+            border: 1px solid #3b82f6; border-left: none;
+        }
+        .send-btn:hover { background-color: #2563eb; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-semibold mb-4 text-center text-gray-800">实例二：实时共情交互系统</h1>
+        <p class="text-sm text-gray-600 mb-6 text-center">模拟 AI 辅助下的实时医患对话，重点展示情绪识别与共情回应。</p>
+
+        <div class="chat-box mb-4" id="chatBox">
+            <div class="message doctor">医生: 李先生，家属，请坐。我们来谈谈您最近的检查结果... 根据病理和 CT，我们发现您肺部的病灶是恶性的，也就是肺癌。检查显示属于晚期（IV期）。</div>
+             <div class="message agent-suggestion">
+                <i class="fas fa-lightbulb mr-1"></i> AI 提示: 准备应对强烈情绪，暂停信息传递，优先共情。
+            </div>
+        </div>
+
+        <div class="text-sm text-gray-600 mb-2">模拟患者/家属实时反应:</div>
+        <div class="input-area mb-4">
+            <input type="text" id="patientInput" class="input-field" placeholder="输入患者/家属的话...">
+            <select id="patientEmotion" class="border border-gray-300 rounded-md px-2 py-1 text-sm mx-2">
+                <option value="anxiety">焦虑</option>
+                <option value="anger">愤怒</option>
+                <option value="sadness">悲伤</option>
+                <option value="denial">否认</option>
+                <option value="neutral">平静</option>
+            </select>
+            <button id="sendPatientMsgBtn" class="send-btn">发送</button>
+        </div>
+
+         <div class="text-sm text-gray-600 mb-2">医生回应 (AI 辅助生成):</div>
+         <div id="doctorResponseArea" class="p-3 border rounded-md bg-gray-50 text-sm text-gray-700 min-h-[50px]">
+             AI 辅助生成的回应将显示在这里...
+         </div>
+
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chatBox');
+        const patientInput = document.getElementById('patientInput');
+        const patientEmotionSelect = document.getElementById('patientEmotion');
+        const sendPatientMsgBtn = document.getElementById('sendPatientMsgBtn');
+        const doctorResponseArea = document.getElementById('doctorResponseArea');
+
+        // 模拟情绪及其样式
+        const emotionClasses = {
+            anxiety: 'emotion-anxiety',
+            anger: 'emotion-anger',
+            sadness: 'emotion-sadness',
+            denial: 'emotion-anxiety', // 否认也可能表现为焦虑
+            neutral: 'emotion-neutral'
+        };
+        const emotionText = {
+            anxiety: '焦虑',
+            anger: '愤怒',
+            sadness: '悲伤',
+            denial: '否认/焦虑',
+            neutral: '平静'
+        };
+
+        function addMessage(sender, text, emotion = 'neutral', isSuggestion = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.textContent = text;
+
+            if (isSuggestion) {
+                 messageDiv.classList.add('agent-suggestion');
+                 messageDiv.innerHTML = `<i class="fas fa-lightbulb mr-1"></i> AI 提示: ${text}`;
+            } else if (sender === 'patient') {
+                messageDiv.classList.add('patient');
+                const emotionSpan = document.createElement('span');
+                emotionSpan.classList.add('emotion-indicator', emotionClasses[emotion]);
+                emotionSpan.textContent = emotionText[emotion];
+                messageDiv.appendChild(emotionSpan); // 将情绪指示器加到消息末尾
+            } else { // doctor
+                messageDiv.classList.add('doctor');
+            }
+
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight; // 滚动到底部
+        }
+
+        function generateDoctorResponse(patientMsg, patientEmotion) {
+            doctorResponseArea.textContent = 'AI 正在思考如何回应...';
+            // 模拟 AI 处理延迟
+            setTimeout(() => {
+                let response = "";
+                // 基于情绪和内容的简单模拟规则
+                if (patientEmotion === 'anger' || patientEmotion === 'denial' || patientMsg.includes('不可能') || patientMsg.includes('搞错')) {
+                    response = `（AI建议语气：非常缓慢、轻柔、充满理解）听到这个结果，您和家人现在肯定非常震惊，很难接受${patientEmotion === 'anger' ? '，甚至感到有些愤怒' : ''}，觉得难以置信。这完全是可以理解的，任何人遇到这种情况，第一反应可能都是这样。我们做出这个诊断是基于非常确切的病理检查结果，这是目前最准确的方法了。我知道您想寻求最好的治疗，这个想法我们非常支持。现在最重要的是，我们先一起冷静下来，想想接下来怎么面对，我们会尽全力提供所有可能的帮助和信息，支持你们做后续的决定。`;
+                    addMessage('agent', '优先处理情绪，确认感受，有限信息确认，转向支持。', 'neutral', true);
+                } else if (patientEmotion === 'sadness' || patientMsg.includes('怎么办')) {
+                    response = `（AI建议语气：轻柔、支持）看到您这么难过，我们心里也很不好受。这确实是一个非常非常艰难的时刻。请相信，您不是一个人在面对，我们整个医疗团队都会在这里，尽我们所能帮助您和家人一起度过难关。无论未来怎样，我们都会陪伴着你们。`;
+                     addMessage('agent', '表达共情和陪伴，给予希望（非虚假承诺）。', 'neutral', true);
+                } else if (patientMsg.includes('副作用')) {
+                     response = `（AI建议语气：专业、耐心）关于治疗的副作用，这是一个很重要的问题。不同的方案副作用不同，程度也因人而异。我们可以详细讨论每种选择可能带来的好处和风险，以及我们有哪些方法可以预防和处理这些副作用。您的担心我们都了解，会充分考虑。`;
+                     addMessage('agent', '回应具体关切，承诺详细讨论，体现专业性。', 'neutral', true);
+                }
+                 else {
+                    response = `（AI建议语气：平静、倾听）嗯，我听到您说的了。您还有其他的想法或者担心吗？我们可以慢慢谈。`;
+                    addMessage('agent', '开放式提问，鼓励表达，保持倾听。', 'neutral', true);
+                }
+                doctorResponseArea.textContent = response;
+            }, 1800); // 模拟思考时间
+        }
+
+        sendPatientMsgBtn.addEventListener('click', () => {
+            const msg = patientInput.value.trim();
+            const emotion = patientEmotionSelect.value;
+            if (msg) {
+                addMessage('patient', msg, emotion);
+                generateDoctorResponse(msg, emotion);
+                patientInput.value = ''; // 清空输入框
+            }
+        });
+
+        // 初始化提示
+         addMessage('agent', '沟通开始，请医生先进行开场白和信息铺垫。', 'neutral', true);
+
+    </script>
+</body>
+</html>

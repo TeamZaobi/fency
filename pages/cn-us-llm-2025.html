@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="zh-CN" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>中美大模型公司对比（截至 2025）</title>
+  <meta name="description" content="基于公开信息与行业观察，对截至 2025 年的中美大模型公司进行结构化对比与定位。" />
+  <style>
+    :root {
+      --background: rgb(232, 235, 237);
+      --foreground: rgb(51, 51, 51);
+      --card: rgb(255, 255, 255);
+      --card-foreground: rgb(51, 51, 51);
+      --popover: rgb(255, 255, 255);
+      --popover-foreground: rgb(51, 51, 51);
+      --primary: rgb(224, 93, 56);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(243, 244, 246);
+      --secondary-foreground: rgb(75, 85, 99);
+      --muted: rgb(249, 250, 251);
+      --muted-foreground: rgb(107, 114, 128);
+      --accent: rgb(214, 228, 240);
+      --accent-foreground: rgb(30, 58, 138);
+      --destructive: rgb(239, 68, 68);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(220, 223, 226);
+      --input: rgb(244, 245, 247);
+      --ring: rgb(224, 93, 56);
+      --chart-1: rgb(134, 167, 200);
+      --chart-2: rgb(238, 165, 145);
+      --chart-3: rgb(90, 124, 166);
+      --chart-4: rgb(70, 100, 148);
+      --chart-5: rgb(51, 76, 130);
+      --sidebar: rgb(221, 223, 226);
+      --sidebar-foreground: rgb(51, 51, 51);
+      --sidebar-primary: rgb(224, 93, 56);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(214, 228, 240);
+      --sidebar-accent-foreground: rgb(30, 58, 138);
+      --sidebar-border: rgb(229, 231, 235);
+      --sidebar-ring: rgb(224, 93, 56);
+      --font-sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      --font-serif: "Source Serif 4", Iowan Old Style, Sitka Text, Cambria, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      --radius: 0.75rem;
+      --shadow-2xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow-md: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
+      --shadow-lg: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
+      --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
+      --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.25);
+      --tracking-normal: 0em;
+      --spacing: 0.25rem;
+    }
+
+    .dark {
+      --background: rgb(28, 36, 51);
+      --foreground: rgb(229, 229, 229);
+      --card: rgb(42, 48, 64);
+      --card-foreground: rgb(229, 229, 229);
+      --popover: rgb(38, 43, 56);
+      --popover-foreground: rgb(229, 229, 229);
+      --primary: rgb(224, 93, 56);
+      --primary-foreground: rgb(255, 255, 255);
+      --secondary: rgb(42, 48, 62);
+      --secondary-foreground: rgb(229, 229, 229);
+      --muted: rgb(42, 48, 62);
+      --muted-foreground: rgb(163, 163, 163);
+      --accent: rgb(42, 54, 86);
+      --accent-foreground: rgb(191, 219, 254);
+      --destructive: rgb(239, 68, 68);
+      --destructive-foreground: rgb(255, 255, 255);
+      --border: rgb(61, 67, 84);
+      --input: rgb(61, 67, 84);
+      --ring: rgb(224, 93, 56);
+      --chart-1: rgb(134, 167, 200);
+      --chart-2: rgb(230, 160, 143);
+      --chart-3: rgb(90, 124, 166);
+      --chart-4: rgb(70, 100, 148);
+      --chart-5: rgb(51, 76, 130);
+      --sidebar: rgb(42, 48, 63);
+      --sidebar-foreground: rgb(229, 229, 229);
+      --sidebar-primary: rgb(224, 93, 56);
+      --sidebar-primary-foreground: rgb(255, 255, 255);
+      --sidebar-accent: rgb(42, 54, 86);
+      --sidebar-accent-foreground: rgb(191, 219, 254);
+      --sidebar-border: rgb(61, 67, 84);
+      --sidebar-ring: rgb(224, 93, 56);
+      --radius: 0.75rem;
+      --shadow-2xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.05);
+      --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 1px 2px -1px hsl(0 0% 0% / 0.10);
+      --shadow-md: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 2px 4px -1px hsl(0 0% 0% / 0.10);
+      --shadow-lg: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 4px 6px -1px hsl(0 0% 0% / 0.10);
+      --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.10), 0px 8px 10px -1px hsl(0 0% 0% / 0.10);
+      --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.25);
+    }
+
+    /* The following @theme block is kept as comment for documentation; browsers ignore it. */
+    /*
+    @theme inline {
+      --color-background: var(--background);
+      --color-foreground: var(--foreground);
+      ...
+    }
+    */
+
+    /* Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--foreground);
+      background: linear-gradient(160deg, var(--background), #fff 60%);
+      letter-spacing: var(--tracking-normal);
+    }
+    a { color: var(--accent-foreground); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 24px 20px 64px;
+    }
+
+    header.site-header {
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(1.1) blur(6px);
+      background: color-mix(in oklab, var(--background) 80%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner { display: flex; align-items: center; gap: 16px; padding: 12px 20px; max-width: 1120px; margin: 0 auto; }
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 700; letter-spacing: 0.2px; font-size: 18px;
+    }
+    .brand-badge {
+      display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px;
+      background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-sm);
+    }
+    .spacer { flex: 1; }
+    .btn {
+      appearance: none; border: 1px solid var(--border); background: var(--secondary);
+      color: var(--secondary-foreground); padding: 8px 12px; border-radius: 10px; cursor: pointer;
+      box-shadow: var(--shadow-xs);
+    }
+    .btn:hover { filter: brightness(0.98); }
+    .btn.primary { background: var(--primary); color: var(--primary-foreground); border-color: color-mix(in oklab, var(--primary), black 10%); }
+
+    /* Layout */
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 960px) { .grid.cols-3 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; } }
+
+    .card { background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+            padding: 16px; }
+    .card-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .card-title { font-weight: 700; font-size: 18px; }
+    .subtle { color: var(--muted-foreground); font-size: 12px; }
+    .section-title { font-size: 22px; font-weight: 800; letter-spacing: 0.2px; margin: 28px 0 8px; }
+    .lead { color: var(--secondary-foreground); line-height: 1.6; }
+    .muted { color: var(--muted-foreground); }
+
+    .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 8px; border-radius: 999px; font-size: 12px; border: 1px solid var(--border); background: var(--muted);
+             color: var(--secondary-foreground); white-space: nowrap; }
+    .badge.primary { background: color-mix(in oklab, var(--primary) 12%, white 88%); color: color-mix(in oklab, var(--primary), black 20%); border-color: color-mix(in oklab, var(--primary), black 10%); }
+    .badge.accent { background: color-mix(in oklab, var(--accent) 60%, white 40%); color: var(--accent-foreground); }
+
+    .chip { display: inline-block; padding: 4px 10px; border-radius: 999px; background: var(--secondary); color: var(--secondary-foreground); font-size: 12px; margin: 2px; border: 1px solid var(--border); }
+
+    .kvs { display: grid; grid-template-columns: 140px 1fr; gap: 6px 12px; margin-top: 8px; }
+    .kvs .k { color: var(--muted-foreground); }
+    .kvs .v { font-weight: 600; }
+
+    table.matrix { width: 100%; border-collapse: collapse; font-size: 14px; }
+    table.matrix th, table.matrix td { border: 1px solid var(--border); padding: 8px 10px; vertical-align: top; }
+    table.matrix th { background: var(--secondary); color: var(--secondary-foreground); text-align: left; }
+
+    .pill { display: inline-block; padding: 2px 8px; border: 1px solid var(--border); border-radius: 999px; font-size: 12px; margin: 2px; background: var(--muted); color: var(--secondary-foreground); }
+
+    .footer { color: var(--muted-foreground); font-size: 12px; margin-top: 40px; }
+
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; }
+    .legend .pill.ok { background: #e7f7ef; color: #0f5132; border-color: #bcd5c7; }
+    .legend .pill.mid { background: #fff5e6; color: #664d03; border-color: #ead2a0; }
+    .legend .pill.risk { background: #fdecec; color: #842029; border-color: #e5b3b8; }
+
+    /* Print */
+    @media print {
+      header.site-header { position: static; backdrop-filter: none; background: none; border: 0; }
+      .btn { display: none; }
+      .container { padding: 0; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+  <script>
+    (function() {
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        root.classList.add('dark');
+      }
+      document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('theme-toggle');
+        btn?.addEventListener('click', () => {
+          root.classList.toggle('dark');
+          localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+        });
+      });
+    })();
+  </script>
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#e05d38" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-badge">AI</span>
+        <span>中美大模型公司对比（截至 2025）</span>
+      </div>
+      <div class="spacer"></div>
+      <button id="theme-toggle" class="btn" title="切换深色/浅色">切换主题</button>
+      <a class="btn primary" href="#summary">快速概览</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="summary" class="card">
+      <div class="card-header">
+        <div class="card-title">总体判断与映射</div>
+        <div class="legend">
+          <span class="pill ok">优势亮点</span>
+          <span class="pill mid">中性/在途</span>
+          <span class="pill risk">挑战/风险</span>
+        </div>
+      </div>
+      <p class="lead">
+        基于公开信息与行业观察，对截至 2025 年的中美大模型公司进行结构化对比与定位。以下企业映射用于把握“角色与战略位形”，非一一对应的严格对标：
+      </p>
+      <ul>
+        <li><span class="badge primary">定位类比</span> 阿里 ≈ 谷歌（基础设施与平台化能力、研究与应用并重）</li>
+        <li><span class="badge primary">定位类比</span> 字节 ≈ OpenAI（产品分发与增长能力突出、模型与应用闭环）</li>
+        <li><span class="badge primary">定位类比</span> Kimi（月之暗面） ≈ Anthropic（安全与长上下文优势、企业场景友好）</li>
+        <li><span class="badge accent">观点</span> DeepSeek ≫ Meta（在开源侧性价比与推理效率层面形成更强冲击）</li>
+      </ul>
+      <p class="muted">说明：以上为策略与生态位的对比视角，非绝对性能或营收的一一匹配。</p>
+    </section>
+
+    <h2 class="section-title">关键参与者</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">中国侧</div><span class="subtle">代表性公司与特征</span></div>
+        <div>
+          <div class="kvs">
+            <div class="k">阿里（通义/千问）</div><div class="v">
+              <span class="chip">云与算力平台</span>
+              <span class="chip">多模态/工具链</span>
+              <span class="chip">开源参与</span>
+            </div>
+            <div class="k">字节（豆包/火山）</div><div class="v">
+              <span class="chip">产品化与分发</span>
+              <span class="chip">端到端闭环</span>
+              <span class="chip">AIGC 应用</span>
+            </div>
+            <div class="k">Kimi（月之暗面）</div><div class="v">
+              <span class="chip">长上下文</span>
+              <span class="chip">对齐与安全</span>
+              <span class="chip">企业协作</span>
+            </div>
+            <div class="k">DeepSeek</div><div class="v">
+              <span class="chip">高性价比推理</span>
+              <span class="chip">开源冲击力</span>
+              <span class="chip">代码/推理强化</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">美国侧</div><span class="subtle">代表性公司与特征</span></div>
+        <div>
+          <div class="kvs">
+            <div class="k">谷歌（Gemini）</div><div class="v">
+              <span class="chip">研究与基础设施</span>
+              <span class="chip">搜索与生态入口</span>
+              <span class="chip">云平台</span>
+            </div>
+            <div class="k">OpenAI</div><div class="v">
+              <span class="chip">闭源前沿模型</span>
+              <span class="chip">产品体验</span>
+              <span class="chip">开发者生态</span>
+            </div>
+            <div class="k">Anthropic</div><div class="v">
+              <span class="chip">安全对齐</span>
+              <span class="chip">企业场景</span>
+              <span class="chip">长上下文</span>
+            </div>
+            <div class="k">Meta（Llama）</div><div class="v">
+              <span class="chip">开源生态</span>
+              <span class="chip">社区影响力</span>
+              <span class="chip">模型规模化</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">维度对比矩阵</h2>
+    <div class="card">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>中国侧（阿里 / 字节 / Kimi / DeepSeek）</th>
+            <th>美国侧（谷歌 / OpenAI / Anthropic / Meta）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>模型能力（通用）</th>
+            <td>
+              <span class="pill ok">快速迭代</span>
+              <span class="pill mid">多模态完善中</span>
+              <span class="pill ok">长上下文（Kimi）</span>
+            </td>
+            <td>
+              <span class="pill ok">SOTA 竞争</span>
+              <span class="pill ok">多模态成熟</span>
+              <span class="pill mid">成本压力</span>
+            </td>
+          </tr>
+          <tr>
+            <th>推理/代码/Agent</th>
+            <td>
+              <span class="pill ok">推理性价比（DeepSeek）</span>
+              <span class="pill mid">Agent 工程化在途</span>
+            </td>
+            <td>
+              <span class="pill ok">复杂工具使用</span>
+              <span class="pill ok">代码能力强</span>
+            </td>
+          </tr>
+          <tr>
+            <th>开源策略</th>
+            <td>
+              <span class="pill ok">活跃（含蒸馏/轻量）</span>
+              <span class="pill ok">社区响应快</span>
+            </td>
+            <td>
+              <span class="pill ok">Meta 领衔</span>
+              <span class="pill mid">其余偏闭源</span>
+            </td>
+          </tr>
+          <tr>
+            <th>商业化与产品分发</th>
+            <td>
+              <span class="pill ok">字节产品化能力</span>
+              <span class="pill ok">产业落地广</span>
+            </td>
+            <td>
+              <span class="pill ok">OpenAI 体验与付费</span>
+              <span class="pill ok">谷歌生态入口</span>
+            </td>
+          </tr>
+          <tr>
+            <th>云与算力/部署</th>
+            <td>
+              <span class="pill ok">阿里云平台化</span>
+              <span class="pill mid">边缘/端侧提升中</span>
+            </td>
+            <td>
+              <span class="pill ok">GCP/Azure</span>
+              <span class="pill mid">成本优化持续</span>
+            </td>
+          </tr>
+          <tr>
+            <th>合规/安全/对齐</th>
+            <td>
+              <span class="pill ok">Kimi 安全导向</span>
+              <span class="pill mid">行业合规深化</span>
+            </td>
+            <td>
+              <span class="pill ok">Anthropic 领先</span>
+              <span class="pill mid">监管动态影响</span>
+            </td>
+          </tr>
+          <tr>
+            <th>生态与开发者</th>
+            <td>
+              <span class="pill ok">开源社区活跃</span>
+              <span class="pill ok">企业集成需求强</span>
+            </td>
+            <td>
+              <span class="pill ok">生态成熟</span>
+              <span class="pill mid">框架碎片化</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-title">机会、挑战与策略</h2>
+    <div class="grid cols-3">
+      <div class="card">
+        <div class="card-header"><div class="card-title">机会</div><span class="subtle">供给侧与需求侧</span></div>
+        <ul>
+          <li><span class="badge accent">行业深化</span> 医疗、政务、制造、能源的高价值场景</li>
+          <li><span class="badge accent">长上下文</span> 文档/知识库/研发协同提效</li>
+          <li><span class="badge accent">性价比</span> 轻量推理、蒸馏与端边部署</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">挑战</div><span class="subtle">可持续与合规</span></div>
+        <ul>
+          <li><span class="badge">成本</span> 训练/推理成本与定价匹配</li>
+          <li><span class="badge">合规</span> 数据/内容与国际监管差异</li>
+          <li><span class="badge">可靠性</span> 幻觉、代理执行与责任界定</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">建议</div><span class="subtle">面向产品与架构</span></div>
+        <ul>
+          <li><span class="badge primary">双轨</span> 前沿模型 + 经济型推理的产品组合</li>
+          <li><span class="badge primary">安全</span> 长上下文+RAG+约束生成，强监控</li>
+          <li><span class="badge primary">生态</span> 开发者工具链与企业集成优先</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 class="section-title">里程碑（简表）</h2>
+    <div class="card">
+      <ul>
+        <li><strong>2023–2024：</strong> 多模态、长上下文、Agent 工程化快速推进；开源生态（含 Llama 系列与国内高性价比模型）形成强外溢效应。</li>
+        <li><strong>2025（至今）：</strong> 持续在推理效率、长文档工作流、行业纵深与成本/安全平衡上迭代，企业级落地进一步扩展。</li>
+      </ul>
+      <p class="muted">注：时间节点为趋势性归纳，非详尽编年。</p>
+    </div>
+
+    <h2 class="section-title">结论要点</h2>
+    <div class="card">
+      <ul>
+        <li>生态位视角更能解释差异：平台/应用/安全/开源侧各司其职。</li>
+        <li>DeepSeek 对开源与性价比路径的推动，显著影响全球工程实践与成本结构。</li>
+        <li>面向企业的“可控、可核算、可合规”的全链路方案，将决定商业化深度。</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      <p>说明：本页为基于公开资料与行业观察的高层对比摘要，部分判断带有观点属性，请结合一线数据与具体评测补充验证。</p>
+    </div>
+  </main>
+</body>
+</html>
+
