@@ -82,6 +82,23 @@ Closes #123
 - 避免过长的函数和复杂的条件语句
 - 详细规则请参考 [audit/code-structure-best-practices.md](audit/code-structure-best-practices.md)
 
+## 设计系统规范
+
+本项目采用 **"Modern Professional" (现代专业)** 设计风格，核心样式定义在 `assets/css/fency-theme.css` 中。
+
+### 核心原则
+1. **Bento Grid 布局**: 使用 `.bento-grid` 和 `.bento-card` 构建模块化界面。
+2. **色彩体系**:
+   - **主色 (Slate)**: 用于文本和边框，传达专业感。
+   - **强调色 (Indigo)**: 用于链接和交互元素。
+   - **背景色 (Warm Sand)**: `#fdfbf7`，提供舒适的阅读体验。
+3. **排版**: 标题使用 `Noto Serif SC`，正文使用 `Inter`。
+
+### 开发要求
+- **禁止硬编码颜色**: 必须使用 CSS 变量（如 `var(--color-primary)`）。
+- **组件复用**: 优先使用 `fency-theme.css` 中定义的 `.btn`, `.tag`, `.card` 等通用类。
+- **响应式**: 确保所有 Bento 卡片在移动端自动堆叠。
+
 ## 文档规范
 
 - 所有新功能必须有相应的文档

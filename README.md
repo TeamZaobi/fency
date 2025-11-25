@@ -34,27 +34,29 @@
 
 ```
 /var/www/
-├── html/                    # 主网站目录
-│   ├── index.html           # 网站首页（动态索引页，由JS读取metadata.json生成）
-│   ├── metadata.json        # 网站页面元数据索引文件 (核心数据源)
-│   └── pages/               # 页面内容目录
-│       ├── ai-tech/
-│       ├── info-upgrade/
-│       ├── knowledge/
-│       └── research/
-├── dist/                    # 分发版本目录 (通常与html目录同步)
-│   └── metadata.json        # 分发版本的元数据索引文件
-├── .cursor/                 # Cursor AI 辅助开发配置
-│   └── rules/               # 项目规则文件目录 (指导AI协作)
-├── docs/                    # 项目详细文档（架构、计划等）
-└── README.md                # 项目说明文档
+├── index.html           # 网站首页（动态索引页，由JS读取metadata.json生成）
+├── metadata.json        # 网站页面元数据索引文件 (核心数据源)
+├── assets/              # 静态资源目录
+│   └── css/
+│       └── fency-theme.css # 核心设计系统样式
+├── pages/               # 页面内容目录
+│   ├── ai-tech/
+│   ├── info-upgrade/
+│   ├── knowledge/
+│   └── research/
+├── scripts/             # 自动化脚本
+│   └── deploy.sh        # 一键部署脚本
+├── .cursor/             # Cursor AI 辅助开发配置
+│   └── rules/           # 项目规则文件目录 (指导AI协作)
+├── docs/                # 项目详细文档
+└── README.md            # 项目说明文档
 ```
 
 ## 元数据与索引
 
 本项目采用**元数据驱动**的内容组织方式。所有HTML页面都必须包含标准化的元数据标签（详情见 [.cursor/rules/html-page-structure.mdc](mdc:.cursor/rules/html-page-structure.mdc)）。
 
-核心数据源是 [html/metadata.json](mdc:html/metadata.json)，它包含了所有页面的元数据，用于动态生成网站首页 [html/index.html](mdc:html/index.html) 的内容卡片和知识图谱。
+核心数据源是 [metadata.json](mdc:metadata.json)，它包含了所有页面的元数据，用于动态生成网站首页 [index.html](mdc:index.html) 的内容卡片和知识图谱。
 
 `metadata.json` 的结构和维护规范请参考 [.cursor/rules/metadata-json-structure.mdc](mdc:.cursor/rules/metadata-json-structure.mdc)。
 
@@ -93,6 +95,16 @@
    ```
 
 3. 访问 `http://localhost:8000` 查看网站
+
+### 部署流程
+
+本项目支持一键部署到 GitHub 和 阿里云服务器。
+
+1. **运行部署脚本**:
+   ```bash
+   ./scripts/deploy.sh
+   ```
+   *(脚本会自动提交代码到 GitHub，并使用 rsync 同步文件到阿里云服务器)*
 
 ### 开发规范
 详细的网页开发规范、LLM 页面生成要求和文件管理流程请参考 [.cursor/rules/web-dev.mdc](mdc:.cursor/rules/web-dev.mdc)。
